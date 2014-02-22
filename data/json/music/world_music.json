@@ -1,0 +1,42 @@
+[
+    {
+        "song-name": "Wildwood",
+        "song-id": 8,
+        "music-tab-id": 6983,
+        "music-button-id": 27071,
+        "location": [
+        	{
+        		"southWest": {
+        			"x": -1,
+        			"y": -1,
+        			"z": -1
+        		},
+        		"northEast": {
+        		    "x": -1,
+        			"y": -1,
+        			"z": -1
+        		}
+        	}
+        ]
+    },
+    {
+        "song-name": "Witching",
+        "song-id": 14,
+        "music-tab-id": 4430,
+        "music-button-id": 17078,
+        "location": [
+        	{
+        		"southWest": {
+        			"x": -1,
+        			"y": -1,
+        			"z": -1
+        		},
+        		"northEast": {
+        		    "x": -1,
+        			"y": -1,
+        			"z": -1
+        		}
+        	}
+        ]
+    }
+]
