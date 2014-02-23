@@ -290,14 +290,14 @@ public final class Misc {
     }
 
     /**
-     * Loads and spawns mobs on startup.
+     * Loads and spawns npc on startup.
      * 
      * @throws Exception
      *         if any errors occur while parsing this file.
      */
     public static void loadWorldNpcs() throws Exception {
         JsonParser parser = new JsonParser();
-        JsonArray array = (JsonArray) parser.parse(new FileReader(new File("./data/json/mobs/world_mobs.json")));
+        JsonArray array = (JsonArray) parser.parse(new FileReader(new File("./data/json/npcs/world_npcs.json")));
         final Gson builder = new GsonBuilder().create();
 
         for (int i = 0; i < array.size(); i++) {
@@ -306,6 +306,12 @@ public final class Misc {
             int id = reader.get("npc-id").getAsInt();
             Position position = builder.fromJson(reader.get("position").getAsJsonObject(), Position.class);
             Coordinator coordinator = builder.fromJson(reader.get("walking-policy").getAsJsonObject(), Coordinator.class);
+
+            if (coordinator.isCoordinate() && coordinator.getRadius() == 0) {
+                throw new IllegalStateException("Radius must be higher than 0 when coordinator is active!");
+            } else if (!coordinator.isCoordinate() && coordinator.getRadius() > 0) {
+                throw new IllegalStateException("Radius must be 0 when coordinator is inactive!");
+            }
 
             Npc npc = new Npc(id, position);
             npc.getMovementCoordinator().setCoordinator(coordinator);
@@ -367,7 +373,7 @@ public final class Misc {
     }
 
     /**
-     * Parse the mob definitions.
+     * Parse the npc definitions.
      * 
      * @throws Exception
      *         if any errors occur while parsing this file.
@@ -376,7 +382,7 @@ public final class Misc {
         NpcDefinition.setNpcDefinition(new NpcDefinition[6102]);
 
         JsonParser parser = new JsonParser();
-        JsonArray array = (JsonArray) parser.parse(new FileReader(new File("./data/json/mobs/mob_definitions.json")));
+        JsonArray array = (JsonArray) parser.parse(new FileReader(new File("./data/json/npcs/npc_definitions.json")));
         int parsed = 0;
 
         for (int i = 0; i < array.size(); i++) {
@@ -516,21 +522,21 @@ public final class Misc {
     }
 
     /**
-     * Parse the all of the data for mob drops.
+     * Parse the all of the data for npc drops.
      * 
      * @throws Exception
      *         if any errors occur while parsing this file.
      */
     public static void loadNpcDrops() throws Exception {
         JsonParser parser = new JsonParser();
-        JsonArray array = (JsonArray) parser.parse(new FileReader(new File("./data/json/mobs/world_mob_drops.json")));
+        JsonArray array = (JsonArray) parser.parse(new FileReader(new File("./data/json/npcs/world_npc_drops.json")));
         final Gson builder = new GsonBuilder().create();
 
         for (int i = 0; i < array.size(); i++) {
             JsonObject reader = (JsonObject) array.get(i);
 
-            final int id = reader.get("mob-id").getAsInt();
-            final DeathDrop[] drops = builder.fromJson(reader.get("mob-drops").getAsJsonArray(), DeathDrop[].class);
+            final int id = reader.get("npc-id").getAsInt();
+            final DeathDrop[] drops = builder.fromJson(reader.get("npc-drops").getAsJsonArray(), DeathDrop[].class);
             NpcDeathDrop.getDropDefinitions()[id] = new NpcDeathDrop(id, drops);
         }
     }

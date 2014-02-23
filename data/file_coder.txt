@@ -14,8 +14,8 @@
 #skill server.world.entity.player.skill.impl.Thieving
 #skill server.world.entity.player.skill.impl.Woodcutting
 
-#dialogue server.world.entity.mob.dialogue.DrunkDwarfDialogue
-#dialogue server.world.entity.mob.dialogue.RunecraftingDialogue
+#dialogue server.world.entity.npc.dialogue.AnnoyingDialogue
+#dialogue server.world.entity.npc.dialogue.NiceWizardDialogue
 
 #packet server.core.net.packet.impl.DecodeAttackPlayerPacket
 #packet server.core.net.packet.impl.DecodeChatOptionsPacket
@@ -33,7 +33,7 @@
 #packet server.core.net.packet.impl.DecodeItemOnItemPacket
 #packet server.core.net.packet.impl.DecodeItemOnObjectPacket
 #packet server.core.net.packet.impl.DecodeItemOnPlayerPacket
-#packet server.core.net.packet.impl.DecodeMobActionPacket
+#packet server.core.net.packet.impl.DecodeNpcActionPacket
 #packet server.core.net.packet.impl.DecodeMovementPacket
 #packet server.core.net.packet.impl.DecodeObjectActionPacket
 #packet server.core.net.packet.impl.DecodePickupItemPacket

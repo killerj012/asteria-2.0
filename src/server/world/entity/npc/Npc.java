@@ -70,7 +70,8 @@ public class Npc extends Entity {
 
     @Override
     public void pulse() throws Exception {
-        this.getMovementQueue().execute();
+        movementCoordinator.coordinate();
+        getMovementQueue().execute();
     }
 
     @Override
