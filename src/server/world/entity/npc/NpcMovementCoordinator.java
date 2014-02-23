@@ -59,7 +59,7 @@ public class NpcMovementCoordinator {
         }
 
         /** Periodic coordinate effect. */
-        if (Misc.getRandom().nextInt(10) == 5) {
+        if (Misc.getRandom().nextInt(13) == 5) {
             switch (coordinateState) {
 
                 /** Coordinate the npc away from its original position. */
