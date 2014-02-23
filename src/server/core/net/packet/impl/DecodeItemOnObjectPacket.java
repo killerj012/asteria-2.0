@@ -10,7 +10,7 @@ import server.world.entity.player.skill.impl.Cooking;
 import server.world.entity.player.skill.impl.Prayer;
 import server.world.entity.player.skill.impl.Smithing;
 import server.world.entity.player.skill.impl.Cooking.CookFish;
-import server.world.entity.player.skill.impl.Prayer.Bone;
+import server.world.entity.player.skill.impl.Prayer.PrayerItem;
 import server.world.entity.player.skill.impl.Smithing.Smelt;
 import server.world.entity.player.skill.impl.Smithing.Smith;
 import server.world.item.Item;
@@ -45,8 +45,8 @@ public class DecodeItemOnObjectPacket extends PacketDecoder {
                 if (Misc.canClickObject(player.getPosition(), new Position(objectX, objectY), size)) {
                     switch (objectId) {
                         case 409:
-                            Bone b = Bone.forId(itemId);
-                            Prayer.getSingleton().altar(player, b, slot);
+                            PrayerItem b = PrayerItem.getPrayerItem(itemId);
+                            Prayer.getSingleton().altarItem(player, b, slot);
                             break;
                         case 2732:
                             CookFish fish = CookFish.getFish(itemId);

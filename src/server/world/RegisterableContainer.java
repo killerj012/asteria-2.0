@@ -9,7 +9,7 @@ import server.world.entity.player.Player;
  * @param <T>
  *        the registerable element we are trying to manage.
  */
-public interface RegisterableWorldContainer<T extends RegisterableWorld> {
+public interface RegisterableContainer<T extends Registerable> {
 
     /**
      * Register something in the world.

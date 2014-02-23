@@ -5,6 +5,7 @@ import server.core.worker.WorkRate;
 import server.util.Misc;
 import server.world.entity.Animation;
 import server.world.entity.Gfx;
+import server.world.entity.combat.Combat;
 import server.world.entity.combat.Hit;
 import server.world.entity.combat.Hit.DamageType;
 import server.world.entity.npc.Npc;
@@ -395,7 +396,7 @@ public class Thieving extends SkillEvent {
                 }
 
                 if (mob.getPosition().withinDistance(player.getPosition(), AREA_RADIUS_TO_CHECK)) {
-                    if (Npc.getDefinition(mob.getNpcId()).getName().equals("Man") || Npc.getDefinition(mob.getNpcId()).getName().equals("Woman")) {
+                    if (mob.getDefinition().getName().equals("Man") || mob.getDefinition().getName().equals("Woman")) {
                         /** Weak mobs will not attack. */
 
                         mob.forceChat("... Hey! Someone is stealing from that stall! Help!");
@@ -407,7 +408,7 @@ public class Thieving extends SkillEvent {
                         /** Anyone else will attack. */
 
                         mob.forceChat("What do you think you're doing?!?");
-                        // Combat.getSingleton().startCombat(mob, player);
+                        Combat.fight(mob, player);
                     }
                 }
             }

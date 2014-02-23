@@ -5,6 +5,10 @@ import server.core.worker.Worker;
 import server.world.entity.Animation;
 import server.world.entity.Entity;
 import server.world.entity.UpdateFlags.Flag;
+import server.world.entity.npc.NpcDeathDrop.DeathDrop;
+import server.world.entity.player.Player;
+import server.world.item.ground.GroundItem;
+import server.world.item.ground.StaticGroundItem;
 import server.world.map.Position;
 
 /**
@@ -16,62 +20,46 @@ import server.world.map.Position;
  */
 public class Npc extends Entity {
 
-    /**
-     * The mob ID.
-     */
-    private int mobId;
+    /** The npc ID. */
+    private int npcId;
 
-    /**
-     * Whether or not the mob is visible.
-     */
+    /** Whether or not the npc is visible. */
     private boolean isVisible = true;
 
-    /**
-     * The mobs max health.
-     */
+    /** The npcs max health. */
     private int maxHealth;
 
-    /**
-     * The mobs current health.
-     */
+    /** The npcs current health. */
     private int currentHealth;
 
-    /**
-     * If this mob respawns or not.
-     */
+    /** If this npc respawns or not. */
     private boolean respawn = true;
 
+    /** The movement coordinator for this npc. */
+    private NpcMovementCoordinator movementCoordinator = new NpcMovementCoordinator(this);
+
     /**
-     * The mobs position from the moment of conception. This position never
+     * The npcs position from the moment of conception. This position never
      * changes.
      */
     private Position originalPosition = new Position();
 
-    /**
-     * If this mob was originally random walking.
-     */
+    /** If this npc was originally random walking. */
     private boolean originalRandomWalk;
 
-    /**
-     * The respawn ticks.
-     */
+    /** The respawn ticks. */
     private int respawnTicks;
-
-    /**
-     * Handles random walking for this mob.
-     */
-    private NpcMovement randomWalking = new NpcMovement(this);
 
     /**
      * Creates a new {@link Npc}.
      * 
-     * @param mobId
-     *        the mob ID.
+     * @param npcId
+     *        the npc ID.
      * @param position
-     *        the mobs position.
+     *        the npcs position.
      */
-    public Npc(int mobId, Position position) {
-        this.mobId = mobId;
+    public Npc(int npcId, Position position) {
+        this.npcId = npcId;
         this.getPosition().setAs(position);
         this.originalPosition.setAs(position);
         this.maxHealth = getDefinition().getHitpoints();
@@ -82,7 +70,6 @@ public class Npc extends Entity {
 
     @Override
     public void pulse() throws Exception {
-        this.getRandomWalking().walk();
         this.getMovementQueue().execute();
     }
 
@@ -93,19 +80,17 @@ public class Npc extends Entity {
             @Override
             public void fire() {
 
-                /** After two ticks play the death animation for this mob. */
+                /** After two ticks play the death animation for this npc. */
                 if (getDeathTicks() == 1) {
                     animation(new Animation(getDefinition().getDeathAnimation()));
 
-                    /** After 7 ticks remove the mob and begin respawning. */
+                    /** After 7 ticks remove the npc and begin respawning. */
                 } else if (getDeathTicks() == 6) {
 
-                    /** Drop the items on death and remove the mob from the area. */
+                    /** Drop the items on death and remove the npc from the area. */
                     if (respawnTicks == 0) {
-                        // XXX: The mob would drop items here! Example...
-                        // new WorldItem(new Item(526), new
-                        // Position(getPosition().getX(), getPosition().getY()),
-                        // World.getPlayer("lare96")).register();
+                        dropDeathItems(Rs2Engine.getWorld().getPlayer("lare96"));
+                        // XXX: Drop items for the entity that killed this npc.
 
                         move(new Position(1, 1));
 
@@ -114,7 +99,7 @@ public class Npc extends Entity {
                         }
                     }
 
-                    /** Respawn the mob when a set amount of time has elapsed. */
+                    /** Respawn the npc when a set amount of time has elapsed. */
                     if (respawnTicks == getRespawnTime()) {
                         getPosition().setAs(getOriginalPosition());
                         register();
@@ -167,7 +152,42 @@ public class Npc extends Entity {
 
     @Override
     public String toString() {
-        return "Mob(" + getSlot() + ":" + getDefinition().getName() + ")";
+        return "NPC(" + getSlot() + ":" + getDefinition().getName() + ")";
+    }
+
+    /**
+     * Drops items for the entity that killed this npc.
+     */
+    public void dropDeathItems(Entity killer) {
+
+        /** Get the drops for this npc. */
+        DeathDrop[] dropItems = NpcDeathDrop.calculateDeathDrop(this);
+
+        /** Block if there are no drops. */
+        if (dropItems.length == 0) {
+            return;
+        }
+
+        /**
+         * If the killer is an npc register static ground items that will vanish
+         * within a minute.
+         */
+        if (killer instanceof Npc) {
+            for (DeathDrop drop : dropItems) {
+                GroundItem.getRegisterable().register(new StaticGroundItem(drop.getItem(), getPosition(), true, false));
+            }
+
+            /**
+             * If the killer is a player register normal ground items just for
+             * the killer.
+             */
+        } else if (killer instanceof Player) {
+            Player player = (Player) killer;
+
+            for (DeathDrop drop : dropItems) {
+                GroundItem.getRegisterable().register(new GroundItem(drop.getItem(), getPosition(), player));
+            }
+        }
     }
 
     /**
@@ -180,7 +200,7 @@ public class Npc extends Entity {
     }
 
     /**
-     * Increases this mobs health.
+     * Increases this npcs health.
      * 
      * @param amount
      *        the amount to increase by.
@@ -195,7 +215,7 @@ public class Npc extends Entity {
     }
 
     /**
-     * Decreases this mobs health.
+     * Decreases this npcs health.
      * 
      * @param amount
      *        the amount to decrease by.
@@ -210,35 +230,35 @@ public class Npc extends Entity {
     }
 
     /**
-     * Gets the mob id.
+     * Gets the npc id.
      * 
-     * @return the mob id.
+     * @return the npc id.
      */
     public int getNpcId() {
-        return mobId;
+        return npcId;
     }
 
     /**
-     * Gets if this mob is visible or not.
+     * Gets if this npc is visible or not.
      * 
-     * @return true if this mob is visible.
+     * @return true if this npc is visible.
      */
     public boolean isVisible() {
         return isVisible;
     }
 
     /**
-     * Set this mob's visibility.
+     * Set this npc's visibility.
      * 
      * @param isVisible
-     *        if this mob should be visible or invisible.
+     *        if this npc should be visible or invisible.
      */
     public void setVisible(boolean isVisible) {
         this.isVisible = isVisible;
     }
 
     /**
-     * Gets the max health of this mob.
+     * Gets the max health of this npc.
      * 
      * @return the max health.
      */
@@ -247,7 +267,7 @@ public class Npc extends Entity {
     }
 
     /**
-     * Gets this mob's current health.
+     * Gets this npc's current health.
      * 
      * @return the current health.
      */
@@ -256,7 +276,7 @@ public class Npc extends Entity {
     }
 
     /**
-     * Sets this mob's current health.
+     * Sets this npc's current health.
      * 
      * @param currentHealth
      *        the new health value to set.
@@ -266,7 +286,7 @@ public class Npc extends Entity {
     }
 
     /**
-     * Gets the original position of this mob (from the moment of conception).
+     * Gets the original position of this npc (from the moment of conception).
      * 
      * @return the original position.
      */
@@ -275,27 +295,18 @@ public class Npc extends Entity {
     }
 
     /**
-     * Gets the class that handles random walking for this mob.
-     * 
-     * @return the random walking.
-     */
-    public NpcMovement getRandomWalking() {
-        return randomWalking;
-    }
-
-    /**
-     * Gets a mob definition.
+     * Gets a npc definition.
      * 
      * @param id
-     *        the mob definition to get.
+     *        the npc definition to get.
      * @return the definition.
      */
     public NpcDefinition getDefinition() {
-        return NpcDefinition.getNpcDefinition()[mobId];
+        return NpcDefinition.getNpcDefinition()[npcId];
     }
 
     /**
-     * Gets if this mob was originally walking.
+     * Gets if this npc was originally walking.
      * 
      * @return the original random walk.
      */
@@ -304,7 +315,7 @@ public class Npc extends Entity {
     }
 
     /**
-     * Sets if this mob was originally walking.
+     * Sets if this npc was originally walking.
      * 
      * @param originalRandomWalk
      *        the original random walk to set.
@@ -314,7 +325,7 @@ public class Npc extends Entity {
     }
 
     /**
-     * Sets if this mob should respawn on death.
+     * Sets if this npc should respawn on death.
      * 
      * @param respawn
      *        the respawn to set.
@@ -324,11 +335,20 @@ public class Npc extends Entity {
     }
 
     /**
-     * Gets if this mob will respawn on death.
+     * Gets if this npc will respawn on death.
      * 
      * @return the respawn.
      */
     public boolean isRespawn() {
         return respawn;
+    }
+
+    /**
+     * Get the movement coordinator.
+     * 
+     * @return the movement coordinator.
+     */
+    public NpcMovementCoordinator getMovementCoordinator() {
+        return movementCoordinator;
     }
 }

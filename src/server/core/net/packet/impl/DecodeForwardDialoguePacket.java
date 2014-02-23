@@ -16,7 +16,7 @@ public class DecodeForwardDialoguePacket extends PacketDecoder {
     @Override
     public void decode(Player player, ReadBuffer in) {
         if (player.getMobDialogue() != 0) {
-            NpcDialogue.getDialogues().get(player.getMobDialogue()).dialogue(player);
+            NpcDialogue.getDialogueMap().get(player.getMobDialogue()).dialogue(player);
         } else {
             player.getPacketBuilder().closeWindows();
         }

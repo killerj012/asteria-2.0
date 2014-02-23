@@ -34,7 +34,7 @@ import server.world.entity.player.skill.impl.Cooking.CookFish;
 import server.world.entity.player.skill.impl.Fishing.Fish;
 import server.world.entity.player.skill.impl.Smithing.Smelt;
 import server.world.item.Item;
-import server.world.item.ground.RegisterableWorldItem;
+import server.world.item.ground.GroundItem;
 import server.world.map.Location;
 import server.world.map.Position;
 import server.world.music.MusicSet;
@@ -543,7 +543,7 @@ public class Player extends Entity {
         getPacketBuilder().sendMapRegion();
 
         if (position.getZ() != 0) {
-            RegisterableWorldItem.getSingleton().searchDatabaseHeightChange(this);
+            GroundItem.getRegisterable().searchDatabaseHeightChange(this);
             RegisterableWorldObject.getSingleton().removeAllHeight(this);
         }
     }
@@ -640,9 +640,9 @@ public class Player extends Entity {
      *        the dialogue to start.
      */
     public void dialogue(int id) {
-        if (NpcDialogue.getDialogues().containsKey(id)) {
+        if (NpcDialogue.getDialogueMap().containsKey(id)) {
             this.setMobDialogue(id);
-            NpcDialogue.getDialogues().get(this.getMobDialogue()).dialogue(this);
+            NpcDialogue.getDialogueMap().get(this.getMobDialogue()).dialogue(this);
         }
     }
 

@@ -6,7 +6,7 @@ package server.world;
  * 
  * @author lare96
  */
-public interface RegisterableWorld {
+public interface Registerable {
 
     /**
      * Anything that can be registered should extend or implement this

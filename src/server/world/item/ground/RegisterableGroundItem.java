@@ -3,28 +3,23 @@ package server.world.item.ground;
 import java.util.ArrayList;
 import java.util.List;
 
-import server.world.RegisterableWorldContainer;
+import server.world.RegisterableContainer;
 import server.world.entity.player.Player;
 import server.world.item.Item;
-import server.world.item.ground.WorldItem.ItemState;
+import server.world.item.ground.GroundItem.ItemState;
 import server.world.map.Position;
 
 /**
- * Manages every single {@link WorldItem} registered to the database.
+ * Manages every single {@link GroundItem} registered to the database.
  * 
  * @author lare96
  */
-public class RegisterableWorldItem implements RegisterableWorldContainer<WorldItem> {
+public class RegisterableGroundItem implements RegisterableContainer<GroundItem> {
 
     /**
-     * The singleton instance.
+     * The database that holds every single registered {@link GroundItem}.
      */
-    private static RegisterableWorldItem singleton;
-
-    /**
-     * The database that holds every single registered {@link WorldItem}.
-     */
-    private static List<WorldItem> items = new ArrayList<WorldItem>();
+    private static List<GroundItem> items = new ArrayList<GroundItem>();
 
     /**
      * Checks if the specified item exists.
@@ -33,13 +28,13 @@ public class RegisterableWorldItem implements RegisterableWorldContainer<WorldIt
      *        the item to check exists.
      * @return the instance of the item in the database.
      */
-    public WorldItem searchDatabase(WorldItem item) {
+    public GroundItem searchDatabase(GroundItem item) {
 
         /**
          * Iterate through all of the global items and check if any of them
          * match the parameter.
          */
-        for (WorldItem w : items) {
+        for (GroundItem w : items) {
             if (w == null) {
                 continue;
             }
@@ -52,14 +47,14 @@ public class RegisterableWorldItem implements RegisterableWorldContainer<WorldIt
     }
 
     /**
-     * Fires the pickup event for an {@link WorldItem}.
+     * Fires the pickup event for an {@link GroundItem}.
      * 
      * @param item
      *        the item's pickup event to fire.
      * @param player
      *        the player that fired the pickup event.
      */
-    public void pickupDatabaseItem(WorldItem item, Player player) {
+    public void pickupDatabaseItem(GroundItem item, Player player) {
 
         /** Fire the pickup event. */
         item.fireOnPickup(player);
@@ -78,7 +73,7 @@ public class RegisterableWorldItem implements RegisterableWorldContainer<WorldIt
          * Iterate through all of the global items and check if any of them are
          * on the position.
          */
-        for (WorldItem w : items) {
+        for (GroundItem w : items) {
             if (w == null) {
                 continue;
             }
@@ -102,7 +97,7 @@ public class RegisterableWorldItem implements RegisterableWorldContainer<WorldIt
          * Iterate through the ground items and remove the ones that aren't
          * supposed to be on this level height level.
          */
-        for (final WorldItem w : items) {
+        for (final GroundItem w : items) {
             if (w == null) {
                 continue;
             }
@@ -114,7 +109,7 @@ public class RegisterableWorldItem implements RegisterableWorldContainer<WorldIt
     }
 
     @Override
-    public void register(WorldItem registerable) {
+    public void register(GroundItem registerable) {
 
         /** Fire the item's registration event. */
         registerable.fireOnRegister();
@@ -124,7 +119,7 @@ public class RegisterableWorldItem implements RegisterableWorldContainer<WorldIt
     }
 
     @Override
-    public void unregister(WorldItem registerable) {
+    public void unregister(GroundItem registerable) {
 
         /** Fire the item's unregistration event. */
         registerable.fireOnUnregister();
@@ -140,19 +135,19 @@ public class RegisterableWorldItem implements RegisterableWorldContainer<WorldIt
          * Iterate through all of the registered ground items and update the
          * region with items in the same region as the player.
          */
-        for (final WorldItem w : items) {
+        for (final GroundItem w : items) {
             if (w == null) {
                 continue;
             }
 
             if (w.getState() == ItemState.SEEN_BY_NO_ONE || w.getState() == null && player.getPosition().withinDistance(w.getPosition(), 60)) {
-                player.getPacketBuilder().sendGroundItem(new WorldItem(new Item(w.getItem().getId(), w.getItem().getAmount()), new Position(w.getPosition().getX(), w.getPosition().getY(), w.getPosition().getZ()), player));
+                player.getPacketBuilder().sendGroundItem(new GroundItem(new Item(w.getItem().getId(), w.getItem().getAmount()), new Position(w.getPosition().getX(), w.getPosition().getY(), w.getPosition().getZ()), player));
                 continue;
             }
 
             if (w.getPlayer() != null) {
                 if (w.getPlayer().getUsername().equals(player.getUsername()) && player.getPosition().withinDistance(w.getPosition(), 60)) {
-                    player.getPacketBuilder().sendGroundItem(new WorldItem(new Item(w.getItem().getId(), w.getItem().getAmount()), new Position(w.getPosition().getX(), w.getPosition().getY(), w.getPosition().getZ()), player));
+                    player.getPacketBuilder().sendGroundItem(new GroundItem(new Item(w.getItem().getId(), w.getItem().getAmount()), new Position(w.getPosition().getX(), w.getPosition().getY(), w.getPosition().getZ()), player));
                     continue;
                 }
             }
@@ -164,19 +159,7 @@ public class RegisterableWorldItem implements RegisterableWorldContainer<WorldIt
      * 
      * @return the database of items.
      */
-    protected List<WorldItem> getItems() {
+    protected List<GroundItem> getItems() {
         return items;
-    }
-
-    /**
-     * Gets the singleton instance.
-     * 
-     * @return the singleton instance.
-     */
-    public static RegisterableWorldItem getSingleton() {
-        if (singleton == null) {
-            singleton = new RegisterableWorldItem();
-        }
-        return singleton;
     }
 }

@@ -6,18 +6,18 @@ import server.world.item.Item;
 import server.world.map.Position;
 
 /**
- * A static {@link WorldItem} that is visible to everyone from the moment of
+ * A static {@link GroundItem} that is visible to everyone from the moment of
  * conception and can be placed anywhere in the rs2 world.
  * 
  * @author lare96
  */
-public class StaticWorldItem extends WorldItem {
+public class StaticGroundItem extends GroundItem {
 
     // TODO: items that respawn on pickup respawn really fast?
     // TODO: test delay remove and respawn on pickup together
 
     /**
-     * If this item should be removed like a normal {@link WorldItem} (by the
+     * If this item should be removed like a normal {@link GroundItem} (by the
      * processor after a certain amount of time has elapsed).
      */
     private boolean delayRemove;
@@ -33,7 +33,7 @@ public class StaticWorldItem extends WorldItem {
     private boolean needsRespawn;
 
     /**
-     * Create a new {@link StaticWorldItem}.
+     * Create a new {@link StaticGroundItem}.
      * 
      * @param item
      *        the actual item.
@@ -44,7 +44,7 @@ public class StaticWorldItem extends WorldItem {
      * @param respawnOnPickup
      *        if this item should respawn once picked up.
      */
-    public StaticWorldItem(Item item, Position position, boolean delayRemove, boolean respawnOnPickup) {
+    public StaticGroundItem(Item item, Position position, boolean delayRemove, boolean respawnOnPickup) {
         super(item, position, null);
         this.delayRemove = delayRemove;
         this.respawnOnPickup = respawnOnPickup;
@@ -90,7 +90,7 @@ public class StaticWorldItem extends WorldItem {
 
         /** If this item was set to be removed after a delay do so now. */
         if (delayRemove && !needsRespawn) {
-            RegisterableWorldItem.getSingleton().unregister(this);
+            getRegisterable().unregister(this);
             return;
         }
 
@@ -106,7 +106,7 @@ public class StaticWorldItem extends WorldItem {
                 p.getPacketBuilder().sendGroundItem(this);
             }
 
-            RegisterableWorldItem.getSingleton().getItems().add(this);
+            getRegisterable().getItems().add(this);
             needsRespawn = false;
             setItemPicked(false);
         }
@@ -127,7 +127,7 @@ public class StaticWorldItem extends WorldItem {
             }
 
             /** Remove the item from the database. */
-            RegisterableWorldItem.getSingleton().getItems().remove(this);
+            getRegisterable().getItems().remove(this);
 
             /** Add the item in the player's inventory. */
             player.getInventory().addItem(getItem());
@@ -138,7 +138,7 @@ public class StaticWorldItem extends WorldItem {
              */
             if (delayRemove) {
                 getProcessor().cancel();
-                setProcessor(new WorldItemWorker(this));
+                setProcessor(new GroundItemWorker(this));
             }
 
             /**

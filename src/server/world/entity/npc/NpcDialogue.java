@@ -6,114 +6,81 @@ import java.util.Map;
 import server.world.entity.player.Player;
 
 /**
- * A conversation between a player and mob. Each entire conversation has its own
- * unique identification.
+ * A click-based conversation in the chatbox between a player and npc.
  * 
  * @author lare96
  */
 public abstract class NpcDialogue {
 
-    /**
-     * A map of the conversation id's mapped to the conversation instance.
-     */
-    private static Map<Integer, NpcDialogue> dialogues = new HashMap<Integer, NpcDialogue>();
+    /** A map of the all of the dialogues. */
+    private static Map<Integer, NpcDialogue> dialogueMap = new HashMap<Integer, NpcDialogue>();
 
     /**
-     * All the expressions that can be used during a conversation.
+     * All the possible expressions that can be used by an entity during a
+     * conversation.
      * 
      * @author lare96
      */
     public enum Expression {
         HAPPY(588),
-
         CALM(589),
-
         CALM_CONTINUED(590),
-
         DEFAULT(591),
-
         EVIL(592),
-
         EVIL_CONTINUED(593),
-
         DELIGHTED_EVIL(594),
-
         ANNOYED(595),
-
         DISTRESSED(596),
-
         DISTRESSED_CONTINUED(597),
-
         DISORIENTED_LEFT(600),
-
         DISORIENTED_RIGHT(601),
-
         UNINTERESTED(602),
-
         SLEEPY(603),
-
         PLAIN_EVIL(604),
-
         LAUGHING(605),
-
         LAUGHING_2(608),
-
         LONGER_LAUGHING(606),
-
         LONGER_LAUGHING_2(607),
-
         EVIL_LAUGH_SHORT(609),
-
         SLIGHTLY_SAD(610),
-
         SAD(599),
-
         VERY_SAD(611),
-
         OTHER(612),
-
         NEAR_TEARS(598),
-
         NEAR_TEARS_2(613),
-
         ANGRY_1(614),
-
         ANGRY_2(615),
-
         ANGRY_3(616),
-
         ANGRY_4(617);
 
-        /**
-         * The id of the expression.
-         */
-        private int id;
+        /** The id of the expression. */
+        private int expressionId;
 
         /**
          * Create a new {@link Expression}.
          * 
-         * @param id
+         * @param expressionId
          *        the id of the expression to create.
          */
-        Expression(int id) {
-            this.id = id;
+        Expression(int expressionId) {
+            this.expressionId = expressionId;
         }
 
         /**
-         * Get the id of the expression.
+         * Gets the id of the expression.
          * 
-         * @return the id.
+         * @return the id of the expression.
          */
-        public int getId() {
-            return id;
+        public int getExpressionId() {
+            return expressionId;
         }
     }
 
     /**
-     * The entire conversation between the player and mob.
+     * The entire conversation between a player and npc.
      * 
      * @param player
-     *        the player taking part in this dialogue.
+     *        the player taking part in this conversation.
      */
     public abstract void dialogue(Player player);
 
@@ -137,7 +104,7 @@ public abstract class NpcDialogue {
      *        the mob speaking.
      */
     public static void oneLineMobDialogue(Player player, Expression expression, String text, int mob) {
-        player.getPacketBuilder().interfaceAnimation(4883, expression.getId());
+        player.getPacketBuilder().interfaceAnimation(4883, expression.getExpressionId());
         player.getPacketBuilder().sendString(NpcDefinition.getNpcDefinition()[mob].getName(), 4884);
         player.getPacketBuilder().sendString(text, 4885);
         player.getPacketBuilder().sendMobHeadModel(mob, 4883);
@@ -159,7 +126,7 @@ public abstract class NpcDialogue {
      *        the mob speaking.
      */
     public static void twoLineMobDialogue(Player player, Expression expression, String text, String text2, int mob) {
-        player.getPacketBuilder().interfaceAnimation(4888, expression.getId());
+        player.getPacketBuilder().interfaceAnimation(4888, expression.getExpressionId());
         player.getPacketBuilder().sendString(NpcDefinition.getNpcDefinition()[mob].getName(), 4889);
         player.getPacketBuilder().sendString(text, 4890);
         player.getPacketBuilder().sendString(text2, 4891);
@@ -184,7 +151,7 @@ public abstract class NpcDialogue {
      *        the mob speaking.
      */
     public static void threeLineMobDialogue(Player player, Expression expression, String text, String text2, String text3, int mob) {
-        player.getPacketBuilder().interfaceAnimation(4894, expression.getId());
+        player.getPacketBuilder().interfaceAnimation(4894, expression.getExpressionId());
         player.getPacketBuilder().sendString(NpcDefinition.getNpcDefinition()[mob].getName(), 4895);
         player.getPacketBuilder().sendString(text, 4896);
         player.getPacketBuilder().sendString(text2, 4897);
@@ -212,7 +179,7 @@ public abstract class NpcDialogue {
      *        the mob speaking.
      */
     public static void fourLineMobDialogue(Player player, Expression expression, String text1, String text2, String text3, String text4, int mob) {
-        player.getPacketBuilder().interfaceAnimation(4901, expression.getId());
+        player.getPacketBuilder().interfaceAnimation(4901, expression.getExpressionId());
         player.getPacketBuilder().sendString(NpcDefinition.getNpcDefinition()[mob].getName(), 4902);
         player.getPacketBuilder().sendString(text1, 4903);
         player.getPacketBuilder().sendString(text2, 4904);
@@ -234,7 +201,7 @@ public abstract class NpcDialogue {
      *        the text that will be displayed.
      */
     public static void oneLinePlayerDialogue(Player player, Expression expression, String text) {
-        player.getPacketBuilder().interfaceAnimation(969, expression.getId());
+        player.getPacketBuilder().interfaceAnimation(969, expression.getExpressionId());
         player.getPacketBuilder().sendString(player.getUsername(), 970);
         player.getPacketBuilder().sendString(text, 971);
         player.getPacketBuilder().sendString("Click here to continue", 972);
@@ -255,7 +222,7 @@ public abstract class NpcDialogue {
      *        the text that will be displayed.
      */
     public static void twoLinePlayerDialogue(Player player, Expression expression, String text1, String text2) {
-        player.getPacketBuilder().interfaceAnimation(974, expression.getId());
+        player.getPacketBuilder().interfaceAnimation(974, expression.getExpressionId());
         player.getPacketBuilder().sendString(player.getUsername(), 975);
         player.getPacketBuilder().sendString(text1, 976);
         player.getPacketBuilder().sendString(text2, 977);
@@ -279,7 +246,7 @@ public abstract class NpcDialogue {
      *        the text that will be displayed.
      */
     public static void threeLinePlayerDialogue(Player player, Expression expression, String text1, String text2, String text3) {
-        player.getPacketBuilder().interfaceAnimation(980, expression.getId());
+        player.getPacketBuilder().interfaceAnimation(980, expression.getExpressionId());
         player.getPacketBuilder().sendString(player.getUsername(), 981);
         player.getPacketBuilder().sendString(text1, 982);
         player.getPacketBuilder().sendString(text2, 983);
@@ -306,7 +273,7 @@ public abstract class NpcDialogue {
      *        the text that will be displayed.
      */
     public static void fourLinePlayerDialogue(Player player, Expression expression, String text1, String text2, String text3, String text4) {
-        player.getPacketBuilder().interfaceAnimation(987, expression.getId());
+        player.getPacketBuilder().interfaceAnimation(987, expression.getExpressionId());
         player.getPacketBuilder().sendString(player.getUsername(), 988);
         player.getPacketBuilder().sendString(text1, 989);
         player.getPacketBuilder().sendString(text2, 990);
@@ -404,10 +371,10 @@ public abstract class NpcDialogue {
     }
 
     /**
-     * Forwards this conversation by one stage.
+     * Advances this conversation by one stage.
      * 
      * @param player
-     *        the player to forward the dialogue for.
+     *        the player to forward the conversation for.
      */
     public void next(Player player) {
         int nextStage = (player.getConversationStage() + 1);
@@ -416,10 +383,10 @@ public abstract class NpcDialogue {
     }
 
     /**
-     * Resets this dialogue for the player.
+     * Stops and resets this conversation for the player.
      * 
      * @param player
-     *        the player to reset the dialogue for.
+     *        the player to stop and reset the conversation for.
      */
     public void stop(Player player) {
         player.setConversationStage(0);
@@ -427,11 +394,11 @@ public abstract class NpcDialogue {
     }
 
     /**
-     * Gets an unmodifiable map of the dialogues.
+     * Gets the map of the dialogues.
      * 
-     * @return the dialogues.
+     * @return the map of dialogues.
      */
-    public static Map<Integer, NpcDialogue> getDialogues() {
-        return dialogues;
+    public static Map<Integer, NpcDialogue> getDialogueMap() {
+        return dialogueMap;
     }
 }

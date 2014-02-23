@@ -5,7 +5,7 @@ import java.util.Iterator;
 import java.util.Set;
 
 import server.core.Rs2Engine;
-import server.world.RegisterableWorldContainer;
+import server.world.RegisterableContainer;
 import server.world.entity.player.Player;
 
 /**
@@ -13,7 +13,7 @@ import server.world.entity.player.Player;
  * 
  * @author lare96
  */
-public class RegisterableWorldObject implements RegisterableWorldContainer<WorldObject> {
+public class RegisterableWorldObject implements RegisterableContainer<WorldObject> {
 
     /**
      * The singleton instance.

@@ -6,8 +6,7 @@ import server.core.net.packet.PacketDecoder;
 import server.world.entity.player.Player;
 import server.world.entity.player.skill.SkillEvent;
 import server.world.item.Item;
-import server.world.item.ground.RegisterableWorldItem;
-import server.world.item.ground.WorldItem;
+import server.world.item.ground.GroundItem;
 import server.world.map.Position;
 
 /**
@@ -29,7 +28,7 @@ public class DecodePickupItemPacket extends PacketDecoder {
             @Override
             public void run() {
                 if (player.getPosition().equals(new Position(itemX, itemY, player.getPosition().getZ()))) {
-                    WorldItem worldItem = RegisterableWorldItem.getSingleton().searchDatabase(new WorldItem(new Item(itemId, 1), new Position(itemX, itemY, player.getPosition().getZ()), player));
+                    GroundItem worldItem = GroundItem.getRegisterable().searchDatabase(new GroundItem(new Item(itemId, 1), new Position(itemX, itemY, player.getPosition().getZ()), player));
 
                     if (worldItem == null) {
                         player.getPacketBuilder().sendMessage("The item you are trying to pickup is not in the item database.");
@@ -41,7 +40,7 @@ public class DecodePickupItemPacket extends PacketDecoder {
                         return;
                     }
 
-                    RegisterableWorldItem.getSingleton().pickupDatabaseItem(worldItem, player);
+                    GroundItem.getRegisterable().pickupDatabaseItem(worldItem, player);
                 }
             }
         });

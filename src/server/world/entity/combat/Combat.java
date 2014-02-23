@@ -14,6 +14,8 @@ import server.world.entity.player.Player;
  */
 public class Combat {
 
+    // TODO: poisoning and retreating
+
     /**
      * Constants representing the different types of combat.
      * 
@@ -64,7 +66,6 @@ public class Combat {
             attacker.setType(player.isAutocastMagic() || player.isUsingMagic() ? CombatType.MAGIC : player.getWeapon().getCombatType());
         } else if (attacker instanceof Npc) {
             Npc mob = (Npc) attacker;
-            mob.getRandomWalking().setRandomWalking(false);
             mob.setType(CombatType.MELEE);
             // TODO: Combat strategies for npcs. We don't need this for players
             // because players 'stratagize' their own combat.

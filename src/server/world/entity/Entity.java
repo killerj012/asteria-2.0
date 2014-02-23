@@ -2,6 +2,7 @@ package server.world.entity;
 
 import server.core.worker.Worker;
 import server.util.Misc;
+import server.world.Registerable;
 import server.world.entity.UpdateFlags.Flag;
 import server.world.entity.combat.CombatSession;
 import server.world.entity.combat.Hit;
@@ -16,7 +17,7 @@ import server.world.map.Position;
  * 
  * @author lare96
  */
-public abstract class Entity {
+public abstract class Entity implements Registerable {
 
     /** The index of the entity. */
     private int slot = -1;

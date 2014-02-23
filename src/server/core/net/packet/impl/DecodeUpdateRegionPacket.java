@@ -3,7 +3,7 @@ package server.core.net.packet.impl;
 import server.core.net.buffer.PacketBuffer.ReadBuffer;
 import server.core.net.packet.PacketDecoder;
 import server.world.entity.player.Player;
-import server.world.item.ground.RegisterableWorldItem;
+import server.world.item.ground.GroundItem;
 import server.world.music.MapMusic;
 import server.world.object.RegisterableWorldObject;
 
@@ -17,7 +17,7 @@ public class DecodeUpdateRegionPacket extends PacketDecoder {
     @Override
     public void decode(Player player, ReadBuffer in) {
         RegisterableWorldObject.getSingleton().loadNewRegion(player);
-        RegisterableWorldItem.getSingleton().loadNewRegion(player);
+        GroundItem.getRegisterable().loadNewRegion(player);
         player.displayInterfaces();
         MapMusic.loadMusic(player);
 

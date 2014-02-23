@@ -2,7 +2,7 @@ package server.world.item.ground;
 
 import server.core.Rs2Engine;
 import server.core.worker.Worker;
-import server.world.RegisterableWorld;
+import server.world.Registerable;
 import server.world.entity.player.Player;
 import server.world.item.Item;
 import server.world.map.Position;
@@ -15,10 +15,13 @@ import server.world.map.Position;
  * @author lare96
  */
 @SuppressWarnings( { "fallthrough", "incomplete-switch" })
-public class WorldItem implements RegisterableWorld {
+public class GroundItem implements Registerable {
 
     // TODO: test items spawning twice
     // TODO: stopwatch for items!
+
+    /** The registerable container. */
+    private static RegisterableGroundItem registerable;
 
     /** The actual item. */
     private Item item;
@@ -48,7 +51,7 @@ public class WorldItem implements RegisterableWorld {
     }
 
     /**
-     * Create a new {@link WorldItem}.
+     * Create a new {@link GroundItem}.
      * 
      * @param item
      *        the actual item.
@@ -57,18 +60,18 @@ public class WorldItem implements RegisterableWorld {
      * @param player
      *        the controller of this item.
      */
-    public WorldItem(Item item, Position position, Player player) {
+    public GroundItem(Item item, Position position, Player player) {
         this.item = item;
         this.position = position;
         this.player = player;
         this.state = ItemState.SEEN_BY_OWNER;
-        this.processor = new WorldItemWorker(this);
+        this.processor = new GroundItemWorker(this);
     }
 
     @Override
     public boolean equals(Object obj) {
-        if (obj instanceof WorldItem) {
-            WorldItem w = (WorldItem) obj;
+        if (obj instanceof GroundItem) {
+            GroundItem w = (GroundItem) obj;
             if (w.getItem().equals(item) && w.getPosition().equals(position)) {
                 return true;
             }
@@ -134,7 +137,7 @@ public class WorldItem implements RegisterableWorld {
                         continue;
                     }
 
-                    p.getPacketBuilder().sendGroundItem(new WorldItem(item, position, player));
+                    p.getPacketBuilder().sendGroundItem(new GroundItem(item, position, player));
                 }
 
                 player = null;
@@ -147,7 +150,7 @@ public class WorldItem implements RegisterableWorld {
                     break;
                 }
 
-                RegisterableWorldItem.getSingleton().unregister(this);
+                registerable.unregister(this);
                 break;
         }
     }
@@ -161,7 +164,7 @@ public class WorldItem implements RegisterableWorld {
     protected void fireOnPickup(Player player) {
         if (!itemPicked) {
             itemPicked = true;
-            RegisterableWorldItem.getSingleton().unregister(this);
+            registerable.unregister(this);
             player.getInventory().addItem(item);
         }
     }
@@ -248,5 +251,18 @@ public class WorldItem implements RegisterableWorld {
      */
     protected void setItemPicked(boolean itemPicked) {
         this.itemPicked = itemPicked;
+    }
+
+    /**
+     * Gets the registerable container.
+     * 
+     * @return the registerable container.
+     */
+    public static RegisterableGroundItem getRegisterable() {
+        if (registerable == null) {
+            registerable = new RegisterableGroundItem();
+        }
+
+        return registerable;
     }
 }

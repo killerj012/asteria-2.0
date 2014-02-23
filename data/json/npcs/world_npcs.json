@@ -1,16 +1,26 @@
 [
     {
-        "id": 460,
-        "x": 3078,
-        "y": 3251,
-        "z": 0,
-        "random-walk": true
+        "npc-id": 460,
+        "position": {
+        	"x": 3078,
+        	"y": 3251,
+        	"z": 0
+        },
+        "walking-policy": {
+        	"coordinate": true,
+        	"radius": 3
+        }
     },
     {
-        "id": 956,
-        "x": 3080,
-        "y": 3250,
-        "z": 0,
-        "random-walk": true
+        "npc-id": 956,
+        "position": {
+        	"x": 3080,
+        	"y": 3250,
+        	"z": 0
+        },
+        "walking-policy": {
+            "coordinate": true,
+        	"radius": 3
+        }
     }
 ]

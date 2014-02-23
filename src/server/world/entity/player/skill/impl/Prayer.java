@@ -17,118 +17,80 @@ import server.world.item.Item;
  */
 public class Prayer extends SkillEvent {
 
-    // TODO: revamp and do further testing.
-
-    /**
-     * The singleton instance.
-     */
+    /** The {@link Prayer} singleton instance. */
     private static Prayer singleton;
 
-    /**
-     * The delay between burying bones.
-     */
+    /** The delay between burying bones. */
     private static final int BURY_DELAY = 1200;
 
-    /**
-     * The delay between using bones on an altar.
-     */
+    /** The delay between using bones on an altar. */
     private static final int ALTAR_DELAY = 3500;
 
-    /**
-     * The animation sent when burying a bone.
-     */
-    private static final Animation BURY_BONE = new Animation(827);
+    /** The animation played when burying an item. */
+    private static final Animation BURY = new Animation(827);
+
+    /** The animation played when using an item on the altar. */
+    private static final Animation ALTAR = new Animation(896);
 
     /**
-     * The animation sent when using a bone on an altar.
-     */
-    private static final Animation BONE_ON_ALTAR = new Animation(896);
-
-    /**
-     * All possible bones that can be buried or used on an altar.
+     * All of the possible items that can be buried or used on an altar for
+     * prayer experience.
      * 
      * @author lare96
      */
-    public enum Bone {
+    public enum PrayerItem {
         BONES(526, 4),
         BAT_BONES(530, 5),
         MONKEY_BONES(3179, 5),
         WOLF_BONES(2859, 4),
         BIG_BONES(532, 15),
         BABYDRAGON_BONES(534, 30),
-        DRAGON_BONES(536, 72),
-        JOGRE_BONES(3125, 15),
-        ZOGRE_BONES(4812, 22),
-        FAYRG_BONES(4830, 84),
-        RAURG_BONES(4832, 96),
-        OURG_BONES(4834, 140),
-        BURNT_BONES(528, 4),
-        SHAIKAHAN_BONES(3123, 25);
+        DRAGON_BONES(536, 72);
 
-        /**
-         * The id of the bone.
-         */
-        private int boneId;
+        /** The id of the item we are using. */
+        private int itemId;
 
-        /**
-         * The experience you get for burying this bone.
-         */
+        /** The experience gained from using this item. */
         private int experience;
 
         /**
-         * Construct new data for a bone.
-         * 
-         * @param boneId
-         *        the bone id.
-         * @param experience
-         *        the experience from burying this bone or using it on an altar.
+         * A map that will allow us to retrieve a {@link PrayerItem} constant by
+         * its item id.
          */
-        Bone(int boneId, int experience) {
-            this.setBoneId(boneId);
-            this.setExperience(experience);
+        private static Map<Integer, PrayerItem> prayerItem = new HashMap<Integer, PrayerItem>();
+
+        /**
+         * Create a new {@link PrayerItem}.
+         * 
+         * @param itemId
+         *        the id of the item we are using.
+         * @param experience
+         *        the experience gained from using this item.
+         */
+        PrayerItem(int itemId, int experience) {
+            this.itemId = itemId;
+            this.experience = experience;
         }
 
-        /**
-         * The map that allows us to retrieve a constant by its id.
-         */
-        private static Map<Integer, Bone> bone = new HashMap<Integer, Bone>();
-
-        /**
-         * Begins loading the data for this enum.
-         */
+        /** Fill our map with the correct data. */
         static {
-            for (Bone b : Bone.values()) {
-                bone.put(b.getBoneId(), b);
+            for (PrayerItem item : PrayerItem.values()) {
+                prayerItem.put(item.getItemId(), item);
             }
         }
 
         /**
-         * Gets the instance by its id.
+         * Gets the id of the item we are using.
          * 
-         * @param id
-         *        the id to get the instance of.
-         * @return the instance.
+         * @return the id of the item.
          */
-        public static Bone forId(int id) {
-            return bone.get(id);
+        public int getItemId() {
+            return itemId;
         }
 
         /**
-         * @return the boneId.
-         */
-        public int getBoneId() {
-            return boneId;
-        }
-
-        /**
-         * @param boneId
-         *        the boneId to set.
-         */
-        public void setBoneId(int boneId) {
-            this.boneId = boneId;
-        }
-
-        /**
+         * Gets the experience gained from using this item.
+         * 
          * @return the experience.
          */
         public int getExperience() {
@@ -136,87 +98,94 @@ public class Prayer extends SkillEvent {
         }
 
         /**
-         * @param experience
-         *        the experience to set.
+         * Gets a {@link PrayerItem} constant by its item id.
+         * 
+         * @param itemId
+         *        the itemId to get the constant of.
+         * @return the constant.
          */
-        public void setExperience(int experience) {
-            this.experience = experience;
+        public static PrayerItem getPrayerItem(int itemId) {
+            return prayerItem.get(itemId);
         }
     }
 
     /**
-     * A method that determines what happens when a player buries a bone.
+     * Buries a prayer item for the specified player.
      * 
      * @param player
-     *        the player burying the bone.
-     * @param bone
-     *        the bone being buried.
+     *        the player burying the item.
+     * @param item
+     *        the item being buried.
      * @param slot
-     *        the inventory slot the bone is in.
+     *        the inventory slot the item is in.
      */
-    public void bury(Player player, Bone bone, int slot) {
-        if (bone == null) {
+    public void buryItem(Player player, PrayerItem item, int slot) {
+
+        /** Block if this is an invalid item. */
+        if (item == null) {
             return;
         }
 
+        /** Check if the delay interval has elapsed. */
         if (player.getBuryTimer().elapsed() > BURY_DELAY) {
-            /** Check if we have the bone in our inventory. */
-            if (player.getInventory().getContainer().contains(bone.getBoneId())) {
 
-                /** Bury the bone. */
+            /** Check if we have the item in our inventory. */
+            if (player.getInventory().getContainer().contains(item.getItemId())) {
+
+                /** Bury the item and grant experience. */
                 player.getMovementQueue().reset();
-                player.getSkillEvent()[eventFireIndex()] = true;
-                player.animation(BURY_BONE);
-                player.getPacketBuilder().sendMessage("You bury the " + bone.name().toLowerCase().replaceAll("_", " ") + ".");
-                exp(player, bone.getExperience());
-                player.getInventory().deleteItemSlot(new Item(bone.getBoneId()), slot);
+                player.animation(BURY);
+                player.getPacketBuilder().sendMessage("You bury the " + item.name().toLowerCase().replaceAll("_", " ") + ".");
+                exp(player, item.getExperience());
+                player.getInventory().deleteItemSlot(new Item(item.getItemId()), slot);
 
-                /** Reset skill. */
+                /** Reset the delay interval. */
                 player.getBuryTimer().reset();
-                fireResetEvent(player);
             }
         }
     }
 
     /**
-     * A method that determines what happens when a player uses a bone on an
-     * altar.
+     * Uses a prayer item on an altar for the specified player.
      * 
      * @param player
-     *        the player using the bone on the altar.
-     * @param bone
-     *        the bone being used.
+     *        the player using the item on the altar.
+     * @param item
+     *        the item being used.
      * @param slot
-     *        the inventory slot the bone is in.
+     *        the inventory slot the item is in.
      */
-    public void altar(Player player, Bone bone, int slot) {
-        if (bone == null) {
+    public void altarItem(Player player, PrayerItem item, int slot) {
+
+        /** Block if this is an invalid item. */
+        if (item == null) {
             return;
         }
 
+        /** Check if the delay interval has elapsed. */
         if (player.getAltarTimer().elapsed() > ALTAR_DELAY) {
 
-            /** Check if we have the bone in our inventory. */
-            if (player.getInventory().getContainer().contains(bone.getBoneId())) {
+            /** Check if we have the item in our inventory. */
+            if (player.getInventory().getContainer().contains(item.getItemId())) {
 
-                /** Use the bone on the altar. */
+                /** Use the item on the altar and grant experience. */
                 player.getMovementQueue().reset();
-                player.getSkillEvent()[eventFireIndex()] = true;
-                player.animation(BONE_ON_ALTAR);
+                player.animation(ALTAR);
                 player.gfx(new Gfx(247));
-                player.getPacketBuilder().sendMessage("You use the " + bone.name().toLowerCase().replaceAll("_", " ") + " on the altar.");
-                exp(player, (bone.getExperience() * 2));
-                player.getInventory().deleteItemSlot(new Item(bone.getBoneId()), slot);
+                player.getPacketBuilder().sendMessage("You use the " + item.name().toLowerCase().replaceAll("_", " ") + " on the altar.");
+                exp(player, (item.getExperience() * 2));
+                player.getInventory().deleteItemSlot(new Item(item.getItemId()), slot);
 
-                /** Reset skill. */
+                /** Reset the delay interval. */
                 player.getAltarTimer().reset();
-                fireResetEvent(player);
             }
         }
     }
 
     /**
-     * @return the singleton.
+     * Gets the {@link Prayer} singleton instance.
+     * 
+     * @return the singleton instance.
      */
     public static Prayer getSingleton() {
         if (singleton == null) {

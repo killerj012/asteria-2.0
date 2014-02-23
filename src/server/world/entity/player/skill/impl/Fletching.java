@@ -9,7 +9,7 @@ import server.world.item.Item;
 
 /**
  * Handles the fletching skill. Has support for making incomplete bows and
- * stringing them later and arrows.
+ * stringing them later, as well as making arrows.
  * 
  * @author lare96
  */

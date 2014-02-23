@@ -7,8 +7,7 @@ import server.world.entity.player.Player;
 import server.world.entity.player.skill.SkillEvent;
 import server.world.item.Item;
 import server.world.item.ItemDefinition;
-import server.world.item.ground.RegisterableWorldItem;
-import server.world.item.ground.WorldItem;
+import server.world.item.ground.GroundItem;
 import server.world.map.Position;
 
 /**
@@ -32,7 +31,7 @@ public class DecodeDropItemPacket extends PacketDecoder {
         if (player.getInventory().getContainer().contains(item)) {
             player.getInventory().deleteItemSlot(new Item(item, amount), slot);
             final Position itemLocation = new Position(player.getPosition().getX(), player.getPosition().getY(), player.getPosition().getZ());
-            RegisterableWorldItem.getSingleton().register(new WorldItem(new Item(item, amount), itemLocation, player));
+            GroundItem.getRegisterable().register(new GroundItem(new Item(item, amount), itemLocation, player));
         }
     }
 

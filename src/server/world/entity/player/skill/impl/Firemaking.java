@@ -14,8 +14,8 @@ import server.world.entity.player.Player;
 import server.world.entity.player.skill.SkillEvent;
 import server.world.entity.player.skill.SkillManager.SkillConstant;
 import server.world.item.Item;
-import server.world.item.ground.RegisterableWorldItem;
-import server.world.item.ground.StaticWorldItem;
+import server.world.item.ground.GroundItem;
+import server.world.item.ground.StaticGroundItem;
 import server.world.map.Position;
 import server.world.object.RegisterableWorldObject;
 import server.world.object.WorldObject;
@@ -186,7 +186,7 @@ public class Firemaking extends SkillEvent {
         }
 
         /** Block if an item or fire is on this position. */
-        if (RegisterableWorldItem.getSingleton().searchDatabasePosition(player.getPosition()) || fireDatabase.contains(player.getPosition())) {
+        if (GroundItem.getRegisterable().searchDatabasePosition(player.getPosition()) || fireDatabase.contains(player.getPosition())) {
             player.getPacketBuilder().sendMessage("You cannot light a fire here!");
             return;
         }
@@ -261,7 +261,7 @@ public class Firemaking extends SkillEvent {
             public void fire() {
                 fireDatabase.remove(logPosition);
                 RegisterableWorldObject.getSingleton().unregister(fire);
-                RegisterableWorldItem.getSingleton().register(new StaticWorldItem(new Item(592, 1), logPosition, true, false));
+                GroundItem.getRegisterable().register(new StaticGroundItem(new Item(592, 1), logPosition, true, false));
                 this.cancel();
             }
         });

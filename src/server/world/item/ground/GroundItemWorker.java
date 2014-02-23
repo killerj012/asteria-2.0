@@ -8,18 +8,18 @@ import server.core.worker.Worker;
  * 
  * @author lare96
  */
-public class WorldItemWorker extends Worker {
+public class GroundItemWorker extends Worker {
 
     /** The item this task has been assigned to process. */
-    private WorldItem item;
+    private GroundItem item;
 
     /**
-     * Create a new {@link WorldItemWorker}.
+     * Create a new {@link GroundItemWorker}.
      * 
      * @param item
      *        the item this task has been assigned to process.
      */
-    public WorldItemWorker(WorldItem item) {
+    public GroundItemWorker(GroundItem item) {
         super(1, false, WorkRate.EXACT_MINUTE);
         this.item = item;
     }

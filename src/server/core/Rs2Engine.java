@@ -97,7 +97,7 @@ public class Rs2Engine implements Runnable {
         gameEngine.setPriority(Thread.MAX_PRIORITY);
         gameEngine.setName(Rs2Engine.class.getName());
 
-        /** Start the network and engine */
+        /** Start the network and engine. */
         networkExecutor.execute(reactor);
         gameExecutor.scheduleAtFixedRate(gameEngine, 0, 600, TimeUnit.MILLISECONDS);
 

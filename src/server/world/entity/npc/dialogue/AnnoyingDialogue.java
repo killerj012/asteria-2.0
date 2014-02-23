@@ -4,25 +4,25 @@ import server.world.entity.npc.NpcDialogue;
 import server.world.entity.player.Player;
 
 /**
- * The dialogue that a typical man will hold with a player on the server.
+ * A conversation where an npc offends the player.
  * 
  * @author lare96
  */
-public class DrunkDwarfDialogue extends NpcDialogue {
+public class AnnoyingDialogue extends NpcDialogue {
 
     @Override
     public void dialogue(Player player) {
         switch (player.getConversationStage()) {
             case 0:
-                NpcDialogue.oneLineMobDialogue(player, Expression.DISORIENTED_LEFT, "Err... hello there uh? arghh?", 956);
+                oneLineMobDialogue(player, Expression.DISORIENTED_LEFT, "Err... hello there uh? arghh?", 956);
                 this.next(player);
                 break;
             case 1:
-                NpcDialogue.oneLineMobDialogue(player, Expression.DISORIENTED_RIGHT, "Urmph... Err... WAIT. HAHAHA.", 956);
+                oneLineMobDialogue(player, Expression.DISORIENTED_RIGHT, "Urmph... WAIT. HAHAHA YOU'RE UGLY.", 956);
                 this.next(player);
                 break;
             case 2:
-                NpcDialogue.oneLinePlayerDialogue(player, Expression.ANNOYED, "Alright.");
+                oneLinePlayerDialogue(player, Expression.ANNOYED, "Oh really? So is your mother.");
                 this.stop(player);
                 break;
         }

@@ -11,7 +11,7 @@ import server.core.net.buffer.PacketBuffer.ValueType;
 import server.core.net.buffer.PacketBuffer.WriteBuffer;
 import server.world.entity.player.Player;
 import server.world.item.Item;
-import server.world.item.ground.WorldItem;
+import server.world.item.ground.GroundItem;
 import server.world.map.MapRegion;
 import server.world.map.MapRegionTile;
 import server.world.map.Position;
@@ -817,7 +817,7 @@ public final class PacketEncoder {
          *        the item to send.
          * @return this packet builder.
          */
-        public PacketBuilder sendGroundItem(WorldItem item) {
+        public PacketBuilder sendGroundItem(GroundItem item) {
             sendCoordinates(item.getPosition());
             PacketBuffer.WriteBuffer out = PacketBuffer.newOutBuffer(6);
             out.writeHeader(44).writeShort(item.getItem().getId(), ValueType.A, ByteOrder.LITTLE).writeShort(item.getItem().getAmount()).writeByte(0);
@@ -832,7 +832,7 @@ public final class PacketEncoder {
          *        the item to remove.
          * @return this packet builder.
          */
-        public PacketBuilder removeGroundItem(WorldItem item) {
+        public PacketBuilder removeGroundItem(GroundItem item) {
             sendCoordinates(item.getPosition());
             PacketBuffer.WriteBuffer out = PacketBuffer.newOutBuffer(4);
             out.writeHeader(156).writeByte(0, ValueType.S).writeShort(item.getItem().getId());

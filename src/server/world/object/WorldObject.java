@@ -1,6 +1,6 @@
 package server.world.object;
 
-import server.world.RegisterableWorld;
+import server.world.Registerable;
 import server.world.map.Position;
 
 /**
@@ -8,7 +8,7 @@ import server.world.map.Position;
  * 
  * @author lare96
  */
-public class WorldObject implements RegisterableWorld {
+public class WorldObject implements Registerable {
 
     /**
      * The id of the object.

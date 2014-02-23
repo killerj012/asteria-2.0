@@ -12,7 +12,6 @@ import java.util.Random;
 import java.util.Scanner;
 
 import server.Main;
-import server.core.Rs2Engine;
 import server.core.net.packet.PacketDecoder;
 import server.core.net.security.HostGateway;
 import server.world.entity.npc.Npc;
@@ -20,12 +19,13 @@ import server.world.entity.npc.NpcDeathDrop;
 import server.world.entity.npc.NpcDefinition;
 import server.world.entity.npc.NpcDialogue;
 import server.world.entity.npc.NpcDeathDrop.DeathDrop;
+import server.world.entity.npc.NpcMovementCoordinator.Coordinator;
 import server.world.entity.player.skill.SkillEvent;
 import server.world.entity.player.skill.impl.Fishing.Fish;
 import server.world.item.Item;
 import server.world.item.ItemDefinition;
-import server.world.item.ground.RegisterableWorldItem;
-import server.world.item.ground.StaticWorldItem;
+import server.world.item.ground.GroundItem;
+import server.world.item.ground.StaticGroundItem;
 import server.world.map.Location;
 import server.world.map.Position;
 import server.world.music.Music;
@@ -244,7 +244,7 @@ public final class Misc {
      *         if any errors occur during the coding of files.
      */
     public static void codeFiles() throws Exception {
-        NpcDialogue.getDialogues().clear();
+        NpcDialogue.getDialogueMap().clear();
         SkillEvent.getSkillEvents().clear();
         PacketDecoder.clear();
 
@@ -262,7 +262,7 @@ public final class Misc {
                     if (file.getSuperclass() == NpcDialogue.class) {
                         NpcDialogue dialogue = (NpcDialogue) file.newInstance();
 
-                        NpcDialogue.getDialogues().put(dialogue.dialogueId(), dialogue);
+                        NpcDialogue.getDialogueMap().put(dialogue.dialogueId(), dialogue);
                         parsed++;
                     }
                 } else if (keyword.equals("#skill")) {
@@ -298,20 +298,18 @@ public final class Misc {
     public static void loadWorldNpcs() throws Exception {
         JsonParser parser = new JsonParser();
         JsonArray array = (JsonArray) parser.parse(new FileReader(new File("./data/json/mobs/world_mobs.json")));
+        final Gson builder = new GsonBuilder().create();
 
         for (int i = 0; i < array.size(); i++) {
             JsonObject reader = (JsonObject) array.get(i);
 
-            int id = reader.get("id").getAsInt();
-            int x = reader.get("x").getAsInt();
-            int y = reader.get("y").getAsInt();
-            int z = reader.get("z").getAsInt();
-            boolean randomWalk = reader.get("random-walk").getAsBoolean();
+            int id = reader.get("npc-id").getAsInt();
+            Position position = builder.fromJson(reader.get("position").getAsJsonObject(), Position.class);
+            Coordinator coordinator = builder.fromJson(reader.get("walking-policy").getAsJsonObject(), Coordinator.class);
 
-            Npc mob = new Npc(id, new Position(x, y, z));
-            Rs2Engine.getWorld().register(mob);
-            mob.getRandomWalking().setRandomWalking(randomWalk);
-            mob.setOriginalRandomWalk(randomWalk);
+            Npc npc = new Npc(id, position);
+            npc.getMovementCoordinator().setCoordinator(coordinator);
+            npc.register();
         }
     }
 
@@ -375,7 +373,7 @@ public final class Misc {
      *         if any errors occur while parsing this file.
      */
     public static void loadNpcDefinitions() throws Exception {
-        NpcDefinition.setMobDefinition(new NpcDefinition[6102]);
+        NpcDefinition.setNpcDefinition(new NpcDefinition[6102]);
 
         JsonParser parser = new JsonParser();
         JsonArray array = (JsonArray) parser.parse(new FileReader(new File("./data/json/mobs/mob_definitions.json")));
@@ -512,8 +510,8 @@ public final class Misc {
         for (int i = 0; i < array.size(); i++) {
             JsonObject reader = (JsonObject) array.get(i);
 
-            StaticWorldItem item = new StaticWorldItem(new Item(reader.get("id").getAsInt(), reader.get("amount").getAsInt()), new Position(reader.get("x").getAsInt(), reader.get("y").getAsInt(), reader.get("z").getAsInt()), false, reader.get("respawns").getAsBoolean());
-            RegisterableWorldItem.getSingleton().register(item);
+            StaticGroundItem item = new StaticGroundItem(new Item(reader.get("id").getAsInt(), reader.get("amount").getAsInt()), new Position(reader.get("x").getAsInt(), reader.get("y").getAsInt(), reader.get("z").getAsInt()), false, reader.get("respawns").getAsBoolean());
+            GroundItem.getRegisterable().register(item);
         }
     }
 

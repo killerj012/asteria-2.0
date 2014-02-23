@@ -9,52 +9,47 @@ import server.util.Misc.Chance;
 import server.world.item.Item;
 
 /**
- * A collection of drops placed by a mob when they die and conditions to manage
- * those drops.
+ * A table of items that can be dropped by a npc when they die.
  * 
  * @author lare96
  */
 public class NpcDeathDrop {
 
-    /**
-     * An array of drop tables for each mob.
-     */
+    // TODO: test npc drops default and with database
+
+    /** An array of drop tables for each npc. */
     private static NpcDeathDrop[] dropDefinitions = new NpcDeathDrop[6102];
 
-    /**
-     * The id of the mob who will drop these items from the table.
-     */
-    private int mobId;
+    /** The id of the npc who will drop these items from the table. */
+    private int npcId;
 
-    /**
-     * All of the possible items that can be dropped when the mob dies.
-     */
+    /** All of the possible items that can be dropped when the npc dies. */
     private DeathDrop[] drops;
 
     /**
      * Create a new {@link NpcDeathDrop}.
      * 
-     * @param mobId
-     *        the id of the mob who will drop these items from the table.
+     * @param npcId
+     *        the id of the npc who will drop these items from the table.
      * @param drops
-     *        the items that can be dropped when the mob dies.
+     *        the items that can be dropped when the npc dies.
      */
-    public NpcDeathDrop(int mobId, DeathDrop[] drops) {
-        this.mobId = mobId;
+    public NpcDeathDrop(int npcId, DeathDrop[] drops) {
+        this.npcId = npcId;
         this.drops = drops;
     }
 
     /**
-     * Gets the if of the mob who will drop these items from the table.
+     * Gets the if of the npc who will drop these items from the table.
      * 
-     * @return the mob id.
+     * @return the npc id.
      */
-    public int getMobId() {
-        return mobId;
+    public int getNpcId() {
+        return npcId;
     }
 
     /**
-     * Gets all of the possible items that can be dropped when the mob dies.
+     * Gets all of the possible items that can be dropped when the npc dies.
      * 
      * @return the drops.
      */
@@ -63,28 +58,80 @@ public class NpcDeathDrop {
     }
 
     /**
-     * Calculates which {@link Item}'s should be dropped when this mob dies.
+     * Calculates which {@link Item}s should be dropped when this npc dies.
      * 
-     * @param dropTable
-     *        the table to calculate from.
+     * @param npc
+     *        the npc's table to retrieve and calculate drops from.
      * @return the item that is dropped on death.
      */
-    public static DeathDrop[] calculateDeathDrop(NpcDeathDrop dropTable) {
+    public static DeathDrop[] calculateDeathDrop(Npc npc) {
+
+        /** Get the npcs death drop table from the database. */
+        NpcDeathDrop dropTable = dropDefinitions[npc.getNpcId()];
+
+        /** If there is no table present for the npc just drop bones. */
+        if (dropTable == null) {
+            return new DeathDrop[] { new DeathDrop(new Item(526), Chance.ALWAYS) };
+        }
+
+        /** Will determine if a rare item is going to be dropped. */
+        boolean foundRare = false;
+
+        /** Will hold all of the drops from the table. */
         List<DeathDrop> choose = Arrays.asList(dropTable.getDrops());
 
+        /**
+         * Iterate through the list with a raw iterator (so we can remove
+         * elements).
+         */
         for (Iterator<DeathDrop> iterator = choose.iterator(); iterator.hasNext();) {
+
+            /** Get the next possible drop. */
             DeathDrop drop = iterator.next();
 
-            if (!((Misc.getRandom().nextInt(100) + 1) <= drop.getItemChance().getPercentage())) {
+            /**
+             * If the drop has a chance of <code>ALWAYS</code> do nothing
+             * because this item is always dropped.
+             */
+            if (drop.getItemChance() == Chance.ALWAYS) {
+                continue;
+            }
+
+            /** Do calculations based on the drop chance. */
+            if ((Misc.getRandom().nextInt(100) + 1) <= drop.getItemChance().getPercentage()) {
+
+                /**
+                 * If the drop chance calculation was successful (the item was
+                 * picked) but we already have a rare then remove this drop. We
+                 * can only have one rare!
+                 */
+                if (drop.getItemChance() == Chance.ALMOST_IMPOSSIBLE || drop.getItemChance() == Chance.EXTREMELY_RARE && foundRare) {
+                    iterator.remove();
+
+                    /**
+                     * If the drop chance calculation was successful (the item
+                     * was picked) but we have no rares then keep the drop and
+                     * set a flag that tells us that we've found a rare.
+                     */
+                } else if (drop.getItemChance() == Chance.ALMOST_IMPOSSIBLE || drop.getItemChance() == Chance.EXTREMELY_RARE && !foundRare) {
+                    foundRare = true;
+                }
+
+                /**
+                 * If the drop chance calculation was unsuccessful (the item was
+                 * not picked) then simply remove it.
+                 */
+            } else {
                 iterator.remove();
             }
         }
 
+        /** Any elements left in the list will be dropped! */
         return (DeathDrop[]) choose.toArray();
     }
 
     /**
-     * Gets the array of drop tables for each mob.
+     * Gets the array of drop tables for each npc.
      * 
      * @return the drop definitions.
      */
@@ -93,20 +140,16 @@ public class NpcDeathDrop {
     }
 
     /**
-     * A single drop placed by a mob when they die.
+     * A single drop placed by a npc when they die.
      * 
      * @author lare96
      */
     public static class DeathDrop {
 
-        /**
-         * The item that will be dropped.
-         */
+        /** The item that will be dropped. */
         private Item item;
 
-        /**
-         * The chance of this item being dropped.
-         */
+        /** The chance of this item being dropped. */
         private Chance itemChance;
 
         /**

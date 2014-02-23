@@ -9,7 +9,7 @@ import server.world.entity.player.content.ConsumeFood;
 import server.world.entity.player.content.ConsumeFood.Food;
 import server.world.entity.player.skill.SkillEvent;
 import server.world.entity.player.skill.impl.Prayer;
-import server.world.entity.player.skill.impl.Prayer.Bone;
+import server.world.entity.player.skill.impl.Prayer.PrayerItem;
 
 /**
  * Sent when the player uses the first click item option.
@@ -30,7 +30,7 @@ public class DecodeClickItemPacket extends PacketDecoder {
         }
 
         ConsumeFood.consume(player, Food.forId(id), slot);
-        Prayer.getSingleton().bury(player, Bone.forId(id), slot);
+        Prayer.getSingleton().buryItem(player, PrayerItem.getPrayerItem(id), slot);
 
         switch (id) {
         /** ... */

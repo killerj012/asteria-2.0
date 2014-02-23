@@ -39,7 +39,7 @@ public class DecodeMovementPacket extends PacketDecoder {
         }
 
         if (player.getMobDialogue() != 0) {
-            NpcDialogue.getDialogues().get(player.getMobDialogue()).stop(player);
+            NpcDialogue.getDialogueMap().get(player.getMobDialogue()).stop(player);
         }
 
         if (player.getTradeSession().inTrade()) {
