@@ -60,7 +60,7 @@ public class Shop {
     /**
      * The worker that will restock this shop.
      */
-    private Worker task;
+    private Worker processor;
 
     /**
      * Create a new shop.
@@ -83,6 +83,7 @@ public class Shop {
         this.setOriginalShopItems(items);
         this.setReplenishStock(restock);
         this.setCurrency(currency);
+        this.processor = new ShopWorker(this);
     }
 
     /**
@@ -397,38 +398,11 @@ public class Shop {
             return;
         }
 
-        if (this.getTask() == null || !this.getTask().isRunning()) {
-            task = new Worker(9, false) {
-                @Override
-                public void fire() {
-                    if (atOriginalAmounts() || !isReplenishStock()) {
-                        this.cancel();
-                        return;
-                    }
-
-                    for (Item item : getShopContainer().toArray()) {
-                        if (item == null) {
-                            continue;
-                        }
-                        if (item.getAmount() < getOriginalAmount(item.getId())) {
-                            item.incrementAmount();
-
-                            for (Player player : Rs2Engine.getWorld().getPlayers()) {
-                                if (player == null) {
-                                    continue;
-                                }
-
-                                if (player.getOpenShopId() == getId()) {
-                                    updateShopItems(player);
-                                }
-                            }
-                        }
-                    }
-                }
-            };
-
-            Rs2Engine.getWorld().submit(this.getTask());
+        if (processor == null || !processor.isRunning()) {
+            processor = new ShopWorker(this);
         }
+
+        Rs2Engine.getWorld().submit(processor);
     }
 
     /**
@@ -661,7 +635,7 @@ public class Shop {
      * @return the restockWorker.
      */
     private Worker getTask() {
-        return task;
+        return processor;
     }
 
     /**

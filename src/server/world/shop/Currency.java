@@ -1,43 +1,37 @@
 package server.world.shop;
 
 /**
- * Holds data for all the different types of currency used in shops.
+ * All of the different types of tangible currencies that can be used in shops.
  * 
  * @author lare96
  */
 public enum Currency {
 
+    /** The default currency - coins. */
     COINS(995),
 
+    /** Usually used in TzHaar shops. */
     TOKKUL(6529);
 
-    /**
-     * The item id of the currency.
-     */
+    /** The item id of this currency. */
     private int itemId;
 
     /**
-     * Construct a new currency.
+     * Construct a new {@link Currency}.
      * 
      * @param itemId
-     *            the item id of the currency.
+     *        the item id of this currency.
      */
     Currency(int itemId) {
-        this.setItemId(itemId);
+        this.itemId = itemId;
     }
 
     /**
-     * @return the itemId.
+     * Gets the item id of this currency.
+     * 
+     * @return the item id.
      */
     public int getItemId() {
         return itemId;
-    }
-
-    /**
-     * @param itemId
-     *            the itemId to set.
-     */
-    public void setItemId(int itemId) {
-        this.itemId = itemId;
     }
 }
