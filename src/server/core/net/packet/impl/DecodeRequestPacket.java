@@ -24,7 +24,7 @@ public class DecodeRequestPacket extends PacketDecoder {
             return;
         }
 
-        SkillEvent.resetSkillEvent(player);
+        SkillEvent.fireSkillEvents(player);
 
         switch (player.getSession().getPacketOpcode()) {
             case 139:

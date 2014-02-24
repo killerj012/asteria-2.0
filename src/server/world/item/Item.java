@@ -1,24 +1,26 @@
 package server.world.item;
 
 /**
- * Represents an item.
+ * An in-game item that can be placed on miscellaneous interfaces using a
+ * packet.
  * 
  * @author lare96
  */
 public class Item {
 
-    /**
-     * The id of the item.
-     */
+    /** The id of the item. */
     private int id;
 
-    /**
-     * The amount of the item.
-     */
+    /** The amount of the item. */
     private int amount;
 
     /**
-     * Construct a new item with the specified amount.
+     * Construct a new {@link Item} with the specified amount.
+     * 
+     * @param id
+     *        the id of the item.
+     * @param amount
+     *        the amount of the item.
      */
     public Item(int id, int amount) {
         this.setId(id);
@@ -26,7 +28,10 @@ public class Item {
     }
 
     /**
-     * Construct a new item with the specified amount as 1.
+     * Construct a new {@link Item} with the specified amount as 1.
+     * 
+     * @param id
+     *        the id of the item.
      */
     public Item(int id) {
         this.setId(id);
@@ -46,6 +51,8 @@ public class Item {
     }
 
     /**
+     * Gets the id of the item.
+     * 
      * @return the id
      */
     public int getId() {
@@ -53,6 +60,8 @@ public class Item {
     }
 
     /**
+     * Sets the id of the item.
+     * 
      * @param id
      *        the id to set
      */
@@ -61,6 +70,8 @@ public class Item {
     }
 
     /**
+     * Gets the amount of the item.
+     * 
      * @return the amount
      */
     public int getAmount() {
@@ -68,6 +79,8 @@ public class Item {
     }
 
     /**
+     * Sets the amount of the item.
+     * 
      * @param amount
      *        the amount to set
      */

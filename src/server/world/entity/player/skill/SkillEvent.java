@@ -7,7 +7,7 @@ import server.world.entity.player.Player;
 import server.world.entity.player.skill.SkillManager.SkillConstant;
 
 /**
- * Handles the main functions of non-combat skills.
+ * A parent class that fires events for skills.
  * 
  * @author lare96
  */
@@ -22,17 +22,14 @@ public abstract class SkillEvent {
             SMITHING = 7, MINING = 8, HERBLORE = 9, AGILITY = 10,
             THIEVING = 11, SLAYER = 12, FARMING = 13, RUNECRAFTING = 14;
 
-    /**
-     * A set of every unique {@link SkillEvent} that was registered from the
-     * <code>server.world.entity.player.skill.impl</code> package.
-     */
+    /** A set of every unique {@link SkillEvent} that has fireable events. */
     private static Set<SkillEvent> skillEvents = new HashSet<SkillEvent>();
 
     /**
-     * Determines what will happen when this {@link SkillEvent} is reset.
+     * Fired when the <code>fireSkillEvent(Player)</code> method is invoked.
      * 
      * @param player
-     *        the player that will be affected by this event.
+     *        the player that this event will be fired for.
      */
     public abstract void fireResetEvent(Player player);
 
@@ -44,7 +41,7 @@ public abstract class SkillEvent {
     public abstract int eventFireIndex();
 
     /**
-     * An instance of the skill itself.
+     * A {@link SkillConstant} instance of the skill.
      * 
      * @return the instance of the skill.
      */
@@ -63,17 +60,16 @@ public abstract class SkillEvent {
     }
 
     /**
-     * Fires the reset policy of a {@link SkillEvent} that needs to be reset.
+     * Fires the <code>fireResetEvent(Player)</code> method for all of the
+     * coded {@link SkillEvent}s.
      * 
      * @param player
      *        the player to fire the policy for.
      */
-    public static void resetSkillEvent(Player player) {
-        for (SkillEvent skill : skillEvents) {
-            if (skill == null) {
-                continue;
-            }
+    public static void fireSkillEvents(Player player) {
 
+        /** Iterate through the registered skills and fire events. */
+        for (SkillEvent skill : skillEvents) {
             if (player.getSkillEvent()[skill.eventFireIndex()]) {
                 skill.fireResetEvent(player);
                 player.getSkillEvent()[skill.eventFireIndex()] = false;
@@ -82,9 +78,9 @@ public abstract class SkillEvent {
     }
 
     /**
-     * Gets the set of skill events.
+     * Gets the {@link HashSet} of coded {@link SkillEvent}s.
      * 
-     * @return the skills.
+     * @return the set of coded skills.
      */
     public static Set<SkillEvent> getSkillEvents() {
         return skillEvents;

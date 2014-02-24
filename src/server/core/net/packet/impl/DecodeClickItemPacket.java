@@ -23,7 +23,7 @@ public class DecodeClickItemPacket extends PacketDecoder {
         in.readShort(true, ValueType.A, ByteOrder.LITTLE);
         int slot = in.readShort(false, ValueType.A);
         int id = in.readShort(false, ByteOrder.LITTLE);
-        SkillEvent.resetSkillEvent(player);
+        SkillEvent.fireSkillEvents(player);
 
         if (id != player.getInventory().getContainer().getIdBySlot(slot)) {
             return;

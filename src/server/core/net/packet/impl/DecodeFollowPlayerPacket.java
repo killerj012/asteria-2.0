@@ -23,7 +23,7 @@ public class DecodeFollowPlayerPacket extends PacketDecoder {
             return;
         }
 
-        SkillEvent.resetSkillEvent(player);
+        SkillEvent.fireSkillEvents(player);
         player.follow(follow);
     }
 

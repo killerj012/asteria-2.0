@@ -21,6 +21,7 @@ import server.world.entity.player.content.AssignWeaponAnimation;
 import server.world.entity.player.content.AssignWeaponInterface;
 import server.world.entity.player.content.DynamicEnergyTask;
 import server.world.entity.player.file.ReadPlayerFileEvent;
+import server.world.entity.player.skill.SkillEvent;
 import server.world.entity.player.skill.SkillManager;
 
 /**
@@ -115,6 +116,7 @@ public class Session {
     public void disconnect() {
         Rs2Engine.getWorld().cancelWorkers(player);
         player.getTradeSession().resetTrade(false);
+        SkillEvent.fireSkillEvents(player);
 
         if (player.getUsername() != null) {
             player.getPrivateMessage().sendPrivateMessageOnLogout();

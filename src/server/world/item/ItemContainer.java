@@ -26,19 +26,13 @@ public class ItemContainer {
         STANDALONE_POLICY
     }
 
-    /**
-     * The maximum amount of items that can be put into this container.
-     */
+    /** The maximum amount of items that can be put into this container. */
     private int capacity;
 
-    /**
-     * The backing array of items in this container.
-     */
+    /** The backing array of items in this container. */
     private Item[] items;
 
-    /**
-     * The policy of this container
-     */
+    /** The policy of this container */
     private ContainerPolicy policy;
 
     /**

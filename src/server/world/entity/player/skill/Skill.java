@@ -1,20 +1,18 @@
 package server.world.entity.player.skill;
 
+import server.world.entity.player.Player;
+
 /**
- * A single skill that can be trained.
+ * A single skill that can be trained by a {@link Player}.
  * 
  * @author lare96
  */
 public class Skill {
 
-    /**
-     * The level of this skill.
-     */
+    /** The level of this skill. */
     private int level;
 
-    /**
-     * The experience for this skill.
-     */
+    /** The experience for this skill. */
     private int experience;
 
     /**

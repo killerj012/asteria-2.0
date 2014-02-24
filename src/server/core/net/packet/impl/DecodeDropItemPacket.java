@@ -24,7 +24,7 @@ public class DecodeDropItemPacket extends PacketDecoder {
         in.readByte(false);
         int slot = in.readShort(false, ValueType.A);
 
-        SkillEvent.resetSkillEvent(player);
+        SkillEvent.fireSkillEvents(player);
 
         int amount = ItemDefinition.getDefinitions()[item].isStackable() ? amount = player.getInventory().getContainer().getCount(item) : 1;
 

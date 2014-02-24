@@ -22,7 +22,7 @@ public class DecodePickupItemPacket extends PacketDecoder {
         final int itemId = in.readShort(false);
         final int itemX = in.readShort(ByteOrder.LITTLE);
 
-        SkillEvent.resetSkillEvent(player);
+        SkillEvent.fireSkillEvents(player);
 
         player.getMovementQueueListener().submit(new Runnable() {
             @Override

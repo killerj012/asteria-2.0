@@ -29,7 +29,7 @@ public class DecodeItemInterfacePacket extends PacketDecoder {
                 interfaceId = in.readShort(PacketBuffer.ValueType.A);
                 slot = in.readShort(PacketBuffer.ValueType.A);
                 itemId = in.readShort(PacketBuffer.ValueType.A);
-                SkillEvent.resetSkillEvent(player);
+                SkillEvent.fireSkillEvents(player);
 
                 switch (interfaceId) {
 
@@ -204,7 +204,7 @@ public class DecodeItemInterfacePacket extends PacketDecoder {
                 interfaceId = in.readShort(false, PacketBuffer.ValueType.A);
 
                 player.getEquipment().equipItem(slot);
-                SkillEvent.resetSkillEvent(player);
+                SkillEvent.fireSkillEvents(player);
                 break;
 
             case 214:

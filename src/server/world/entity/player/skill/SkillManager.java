@@ -68,14 +68,10 @@ public class SkillManager {
          */
         private boolean grammar;
 
-        /**
-         * The line that will be used to refresh the skill.
-         */
+        /** The line that will be used to refresh the skill. */
         private int refreshOne, refreshTwo, refreshThree, refreshFour;
 
-        /**
-         * A map that holds the skill id mapped to the skill instance.
-         */
+        /** A map that holds the skill id mapped to the skill instance. */
         private static Map<Integer, SkillConstant> map = new HashMap<Integer, SkillConstant>();
 
         /** Fill the map with data. */
@@ -114,17 +110,6 @@ public class SkillManager {
             this.refreshTwo = refreshTwo;
             this.refreshThree = refreshThree;
             this.refreshFour = refreshFour;
-        }
-
-        /**
-         * Gets a skill constant by its id.
-         * 
-         * @param id
-         *        the id of the skill constant we are trying to get.
-         * @return the skill constant with this id.
-         */
-        public static SkillConstant getSkill(int id) {
-            return map.get(id);
         }
 
         /**
@@ -197,6 +182,17 @@ public class SkillManager {
          */
         public int getRefreshFour() {
             return refreshFour;
+        }
+
+        /**
+         * Gets a skill constant by its id.
+         * 
+         * @param id
+         *        the id of the skill constant we are trying to get.
+         * @return the skill constant with this id.
+         */
+        public static SkillConstant getSkill(int id) {
+            return map.get(id);
         }
     }
 

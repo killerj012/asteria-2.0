@@ -265,7 +265,7 @@ public class Player extends Entity {
                     getMovementQueue().reset();
                 } else if (getDeathTicks() == 1) {
                     animation(DEATH);
-                    SkillEvent.resetSkillEvent(player);
+                    SkillEvent.fireSkillEvents(player);
                     player.getTradeSession().resetTrade(false);
                     // duel, whatever
                     // send message to whoever killed this player and do
