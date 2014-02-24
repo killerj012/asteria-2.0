@@ -7,39 +7,25 @@ package server.world.entity.player;
  */
 public class PlayerAnimation {
 
-    /**
-     * The standing animation.
-     */
+    /** The standing animation. */
     private static int standEmote = 0x328;
 
-    /**
-     * The turning animation.
-     */
+    /** The turning animation. */
     private static int standTurnEmote = 0x337;
 
-    /**
-     * The walking animation.
-     */
+    /** The walking animation. */
     private static int walkEmote = 0x333;
 
-    /**
-     * The turning 180 degrees animation.
-     */
+    /** The turning 180 degrees animation. */
     private static int turn180Emote = 0x334;
 
-    /**
-     * The turning 90 degrees clockwise animation.
-     */
+    /** The turning 90 degrees clockwise animation. */
     private static int turn90CWEmote = 0x335;
 
-    /**
-     * The turning 90 degrees counter-clockwise animation.
-     */
+    /** The turning 90 degrees counter-clockwise animation. */
     private static int turn90CCWEmote = 0x336;
 
-    /**
-     * The running animation.
-     */
+    /** The running animation. */
     private static int runEmote = 0x338;
 
     /**

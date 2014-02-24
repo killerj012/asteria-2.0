@@ -15,14 +15,10 @@ import server.world.item.Item;
  */
 public class ConsumeFood {
 
-    /**
-     * The delay interval for food consumption.
-     */
+    /** The delay interval for food consumption. */
     private static final int EATING_DELAY = 1800;
 
-    /**
-     * The animation played when the player is consuming food.
-     */
+    /** The animation played when the player is consuming food. */
     private static final Animation CONSUME = new Animation(829);
 
     /**
@@ -32,7 +28,7 @@ public class ConsumeFood {
      * @author lare96
      */
     public enum Food {
-        // XXX: DynamicActionContainer can be used here to make it so certain
+        // XXX: GenericAction<Player> can be used here to make it so certain
         // foods have special effects!
 
         ANCHOVIES(319, 3, true),
@@ -54,23 +50,17 @@ public class ConsumeFood {
         TUNA(361, 10, true),
         SALMON(329, 9, true);
 
-        /**
-         * The item id of the consumable food.
-         */
+        /** The item id of the consumable food. */
         private int itemId;
 
-        /**
-         * The amount of hitpoints the food will heal.
-         */
+        /** The amount of hitpoints the food will heal. */
         private int heal;
 
-        /**
-         * If 'the' should come before the name of the food (for grammar).
-         */
+        /** If 'the' should come before the name of the food (for grammar). */
         private boolean grammarCheck;
 
         /**
-         * The map that holds the consumable food id to the instance of itself.
+         * A map that allows us to get a {@link Food} constant by its id.
          */
         private static Map<Integer, Food> food = new HashMap<Integer, Food>();
 
@@ -79,17 +69,6 @@ public class ConsumeFood {
             for (Food f : Food.values()) {
                 food.put(f.getItemId(), f);
             }
-        }
-
-        /**
-         * Gets an instance of food by its id.
-         * 
-         * @param id
-         *        the id to get the instance of.
-         * @return the instance.
-         */
-        public static Food forId(int id) {
-            return food.get(id);
         }
 
         /**
@@ -133,6 +112,17 @@ public class ConsumeFood {
          */
         public boolean isGrammarCheck() {
             return grammarCheck;
+        }
+
+        /**
+         * Gets an instance of food by its id.
+         * 
+         * @param id
+         *        the id to get the instance of.
+         * @return the instance.
+         */
+        public static Food forId(int id) {
+            return food.get(id);
         }
     }
 

@@ -310,7 +310,7 @@ public class Thieving extends SkillEvent {
             return;
         }
 
-        if (player.getMobTheftTimer().elapsed() > MOB_THIEVING_DELAY) {
+        if (player.getNpcTheftTimer().elapsed() > MOB_THIEVING_DELAY) {
             player.getMovementQueue().reset();
             player.getSkillEvent()[eventFireIndex()] = true;
 
@@ -335,7 +335,7 @@ public class Thieving extends SkillEvent {
                 player.getPacketBuilder().sendMessage("You fail to pickpocket the " + NpcDefinition.getNpcDefinition()[mob.getNpcId()].getName() + ".");
             }
 
-            player.getMobTheftTimer().reset();
+            player.getNpcTheftTimer().reset();
             fireResetEvent(player);
         } else {
             player.getPacketBuilder().sendMessage("You should wait before trying to pickpocket again or you'll look suspicious!");

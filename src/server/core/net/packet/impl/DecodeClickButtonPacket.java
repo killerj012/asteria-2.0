@@ -25,12 +25,6 @@ public class DecodeClickButtonPacket extends PacketDecoder {
         int buttonId = Misc.hexToInt(in.readBytes(2));
 
         switch (buttonId) {
-            case 3146:
-                player.setTwoClickMouse(false);
-                break;
-            case 3145:
-                player.setTwoClickMouse(true);
-                break;
 
             /** Teleports. */
             case 50235:
@@ -163,7 +157,7 @@ public class DecodeClickButtonPacket extends PacketDecoder {
             case 56109:
                 switch (player.getOption()) {
                     case 1:
-                        Runecrafting.getSingleton().teleport(player, player.getRunecraftingMob(), Runecrafting.RUNE_ESSENCE_MINE);
+                        Runecrafting.getSingleton().teleport(player, player.getRunecraftingNpc(), Runecrafting.RUNE_ESSENCE_MINE);
                         player.getPacketBuilder().closeWindows();
                         break;
                     case 6:
@@ -193,7 +187,7 @@ public class DecodeClickButtonPacket extends PacketDecoder {
             case 32017:
                 switch (player.getOption()) {
                     case 5:
-                        Runecrafting.getSingleton().teleport(player, player.getRunecraftingMob(), Altar.DEATH.getTeleport());
+                        Runecrafting.getSingleton().teleport(player, player.getRunecraftingNpc(), Altar.DEATH.getTeleport());
                         player.getPacketBuilder().closeWindows();
                         break;
                 }
@@ -201,7 +195,7 @@ public class DecodeClickButtonPacket extends PacketDecoder {
             case 32018:
                 switch (player.getOption()) {
                     case 5:
-                        Runecrafting.getSingleton().teleport(player, player.getRunecraftingMob(), Altar.BLOOD.getTeleport());
+                        Runecrafting.getSingleton().teleport(player, player.getRunecraftingNpc(), Altar.BLOOD.getTeleport());
                         player.getPacketBuilder().closeWindows();
                         break;
                 }
@@ -209,7 +203,7 @@ public class DecodeClickButtonPacket extends PacketDecoder {
             case 32019:
                 switch (player.getOption()) {
                     case 5:
-                        Runecrafting.getSingleton().teleport(player, player.getRunecraftingMob(), Altar.SOUL.getTeleport());
+                        Runecrafting.getSingleton().teleport(player, player.getRunecraftingNpc(), Altar.SOUL.getTeleport());
                         player.getPacketBuilder().closeWindows();
                         break;
                 }
@@ -226,15 +220,15 @@ public class DecodeClickButtonPacket extends PacketDecoder {
             case 32029:
                 switch (player.getOption()) {
                     case 2:
-                        Runecrafting.getSingleton().teleport(player, player.getRunecraftingMob(), Altar.AIR.getTeleport());
+                        Runecrafting.getSingleton().teleport(player, player.getRunecraftingNpc(), Altar.AIR.getTeleport());
                         player.getPacketBuilder().closeWindows();
                         break;
                     case 3:
-                        Runecrafting.getSingleton().teleport(player, player.getRunecraftingMob(), Altar.FIRE.getTeleport());
+                        Runecrafting.getSingleton().teleport(player, player.getRunecraftingNpc(), Altar.FIRE.getTeleport());
                         player.getPacketBuilder().closeWindows();
                         break;
                     case 4:
-                        Runecrafting.getSingleton().teleport(player, player.getRunecraftingMob(), Altar.CHAOS.getTeleport());
+                        Runecrafting.getSingleton().teleport(player, player.getRunecraftingNpc(), Altar.CHAOS.getTeleport());
                         player.getPacketBuilder().closeWindows();
                         break;
                 }
@@ -242,15 +236,15 @@ public class DecodeClickButtonPacket extends PacketDecoder {
             case 32030:
                 switch (player.getOption()) {
                     case 2:
-                        Runecrafting.getSingleton().teleport(player, player.getRunecraftingMob(), Altar.MIND.getTeleport());
+                        Runecrafting.getSingleton().teleport(player, player.getRunecraftingNpc(), Altar.MIND.getTeleport());
                         player.getPacketBuilder().closeWindows();
                         break;
                     case 3:
-                        Runecrafting.getSingleton().teleport(player, player.getRunecraftingMob(), Altar.BODY.getTeleport());
+                        Runecrafting.getSingleton().teleport(player, player.getRunecraftingNpc(), Altar.BODY.getTeleport());
                         player.getPacketBuilder().closeWindows();
                         break;
                     case 4:
-                        Runecrafting.getSingleton().teleport(player, player.getRunecraftingMob(), Altar.NATURE.getTeleport());
+                        Runecrafting.getSingleton().teleport(player, player.getRunecraftingNpc(), Altar.NATURE.getTeleport());
                         player.getPacketBuilder().closeWindows();
                         break;
                 }
@@ -258,15 +252,15 @@ public class DecodeClickButtonPacket extends PacketDecoder {
             case 32031:
                 switch (player.getOption()) {
                     case 2:
-                        Runecrafting.getSingleton().teleport(player, player.getRunecraftingMob(), Altar.WATER.getTeleport());
+                        Runecrafting.getSingleton().teleport(player, player.getRunecraftingNpc(), Altar.WATER.getTeleport());
                         player.getPacketBuilder().closeWindows();
                         break;
                     case 3:
-                        Runecrafting.getSingleton().teleport(player, player.getRunecraftingMob(), Altar.COSMIC.getTeleport());
+                        Runecrafting.getSingleton().teleport(player, player.getRunecraftingNpc(), Altar.COSMIC.getTeleport());
                         player.getPacketBuilder().closeWindows();
                         break;
                     case 4:
-                        Runecrafting.getSingleton().teleport(player, player.getRunecraftingMob(), Altar.LAW.getTeleport());
+                        Runecrafting.getSingleton().teleport(player, player.getRunecraftingNpc(), Altar.LAW.getTeleport());
                         player.getPacketBuilder().closeWindows();
                         break;
                 }
@@ -274,7 +268,7 @@ public class DecodeClickButtonPacket extends PacketDecoder {
             case 32032:
                 switch (player.getOption()) {
                     case 2:
-                        Runecrafting.getSingleton().teleport(player, player.getRunecraftingMob(), Altar.EARTH.getTeleport());
+                        Runecrafting.getSingleton().teleport(player, player.getRunecraftingNpc(), Altar.EARTH.getTeleport());
                         player.getPacketBuilder().closeWindows();
                         break;
                     case 3:

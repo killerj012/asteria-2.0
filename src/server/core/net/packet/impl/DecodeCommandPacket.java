@@ -52,6 +52,8 @@ public class DecodeCommandPacket extends PacketDecoder {
             }
 
             player.getPacketBuilder().sendMessage("Sucessfully refreshed the coders!");
+        } else if (cmd[0].equals("invisible")) {
+            player.setVisible(false);
         } else if (cmd[0].equals("tele")) {
             final int x = Integer.parseInt(cmd[1]);
             final int y = Integer.parseInt(cmd[2]);

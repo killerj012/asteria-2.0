@@ -15,9 +15,7 @@ import server.world.item.ItemContainer.ContainerPolicy;
  */
 public class TradeSession {
 
-    /**
-     * The controller of this trade session.
-     */
+    /** The controller of this trade session. */
     private Player player;
 
     /**
@@ -26,19 +24,13 @@ public class TradeSession {
      */
     private ItemContainer offering = new ItemContainer(ContainerPolicy.NORMAL_POLICY, 28);
 
-    /**
-     * The other player in this trade session.
-     */
+    /** The other player in this trade session. */
     private Player partner;
 
-    /**
-     * The stage this trade session is currently in.
-     */
+    /** The stage this trade session is currently in. */
     private TradeStage stage;
 
-    /**
-     * If the player has accepted the trade offer.
-     */
+    /** If the player has accepted the trade offer. */
     private boolean acceptInitialOffer, acceptConfirmOffer;
 
     /**
@@ -445,6 +437,8 @@ public class TradeSession {
     }
 
     /**
+     * Gets the amount of items in this trade.
+     * 
      * @return the amount of different items in this player's container
      *         excluding null values.
      */
@@ -465,6 +459,8 @@ public class TradeSession {
     }
 
     /**
+     * Gets the amount of items in the other trade.
+     * 
      * @return the amount of different items in this player's partner's
      *         container excluding null values.
      */

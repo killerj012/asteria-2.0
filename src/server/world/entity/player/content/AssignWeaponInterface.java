@@ -119,24 +119,16 @@ public class AssignWeaponInterface {
         DART(4446, 4449, FightType.DART_ACCURATE, CombatType.RANGE),
         JAVELIN(4446, 4449, FightType.JAVELIN_ACCURATE, CombatType.RANGE);
 
-        /**
-         * The interface that will be displayed on the sidebar.
-         */
+        /** The interface that will be displayed on the sidebar. */
         private int interfaceId;
 
-        /**
-         * The line that the name of the item will be printed to.
-         */
+        /** The line that the name of the item will be printed to. */
         private int nameLineId;
 
-        /**
-         * The default fight type for this interface.
-         */
+        /** The default fight type for this interface. */
         private FightType defaultFightType;
 
-        /**
-         * The combat type of the interface.
-         */
+        /** The combat type of the interface. */
         private CombatType combatType;
 
         /**
@@ -152,70 +144,46 @@ public class AssignWeaponInterface {
          *        the combat type of the interface.
          */
         WeaponInterface(int interfaceId, int nameLineId, FightType defaultFightType, CombatType combatType) {
-            this.setInterfaceId(interfaceId);
-            this.setNameLineId(nameLineId);
-            this.setDefaultFightType(defaultFightType);
-            this.setCombatType(combatType);
+            this.interfaceId = interfaceId;
+            this.nameLineId = nameLineId;
+            this.defaultFightType = defaultFightType;
+            this.combatType = combatType;
         }
 
         /**
-         * @return the interfaceId.
+         * Gets the interface that will be displayed on the sidebar.
+         * 
+         * @return the interface id.
          */
         public int getInterfaceId() {
             return interfaceId;
         }
 
         /**
-         * @param interfaceId
-         *        the interfaceId to set.
-         */
-        public void setInterfaceId(int interfaceId) {
-            this.interfaceId = interfaceId;
-        }
-
-        /**
-         * @return the nameLineId.
+         * Gets the line that the name of the item will be printed to.
+         * 
+         * @return the name line id.
          */
         public int getNameLineId() {
             return nameLineId;
         }
 
         /**
-         * @param nameLineId
-         *        the nameLineId to set.
-         */
-        public void setNameLineId(int nameLineId) {
-            this.nameLineId = nameLineId;
-        }
-
-        /**
-         * @return the defaultFightType.
+         * Gets the default fight type for this interface.
+         * 
+         * @return the default fight type.
          */
         public FightType getDefaultFightType() {
             return defaultFightType;
         }
 
         /**
-         * @param defaultFightType
-         *        the defaultFightType to set.
-         */
-        public void setDefaultFightType(FightType defaultFightType) {
-            this.defaultFightType = defaultFightType;
-        }
-
-        /**
-         * @return the combatType.
+         * Gets the combat type of the interface.
+         * 
+         * @return the combat type.
          */
         public CombatType getCombatType() {
             return combatType;
-        }
-
-        /**
-         * @param combatType
-         *        the combatType to set.
-         */
-        public void setCombatType(CombatType combatType) {
-            this.combatType = combatType;
         }
     }
 

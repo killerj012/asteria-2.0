@@ -9,9 +9,7 @@ import java.io.File;
  */
 public abstract class PlayerFileEvent {
 
-    /**
-     * The player taking part in this event.
-     */
+    /** The player taking part in this event. */
     private Player player;
 
     /**

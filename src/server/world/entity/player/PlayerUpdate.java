@@ -69,7 +69,7 @@ public final class PlayerUpdate {
                 break;
             }
             Player other = Rs2Engine.getWorld().getPlayers()[i];
-            if (other == null || other == player || other.getSession().getStage() != Session.Stage.LOGGED_IN) {
+            if (other == null || other == player || other.getSession().getStage() != Session.Stage.LOGGED_IN || !other.isVisible()) {
                 continue;
             }
             if (!player.getPlayers().contains(other) && other.getPosition().isViewableFrom(player.getPosition())) {

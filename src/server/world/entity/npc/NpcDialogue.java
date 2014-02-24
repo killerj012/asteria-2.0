@@ -390,7 +390,7 @@ public abstract class NpcDialogue {
      */
     public void stop(Player player) {
         player.setConversationStage(0);
-        player.setMobDialogue(0);
+        player.setNpcDialogue(0);
     }
 
     /**

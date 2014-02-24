@@ -26,9 +26,7 @@ import com.google.gson.JsonParser;
  */
 public class ReadPlayerFileEvent extends PlayerFileEvent {
 
-    /**
-     * Used to determine the client's response to the login request.
-     */
+    /** Used to determine the client's response to the login request. */
     private int returnCode = Misc.LOGIN_RESPONSE_OK;
 
     /**

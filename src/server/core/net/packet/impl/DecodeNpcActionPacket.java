@@ -78,7 +78,7 @@ public class DecodeNpcActionPacket extends PacketDecoder {
 
                             switch (firstClickMob.getNpcId()) {
                                 case 460:
-                                    player.setRunecraftingMob(firstClickMob);
+                                    player.setRunecraftingNpc(firstClickMob);
                                     player.dialogue(2);
                                     break;
                                 case 956:

@@ -50,308 +50,189 @@ import server.world.object.RegisterableWorldObject;
 @SuppressWarnings("all")
 public class Player extends Entity {
 
-    /**
-     * The network for this player.
-     */
+    /** The network for this player. */
     private final Session session;
 
+    /** If this player has magic selected or is autocasting. */
     private boolean autocastMagic, usingMagic;
 
-    /**
-     * The weapon animation for this player.
-     */
+    /** The weapon animation for this player. */
     private WeaponAnimationIndex equipmentAnimation = new WeaponAnimationIndex();
 
-    /**
-     * An array of all the trainable skills.
-     */
+    /** An array of all the trainable skills. */
     private Skill[] trainable = new Skill[21];
 
-    /**
-     * This player's cat.
-     */
+    /** This player's cat. */
     private CatFighter cat;
 
-    /**
-     * The current players combat level.
-     */
+    /** The current players combat level. */
     private double combatLevel;
 
-    /**
-     * The wilderness level for this player.
-     */
+    /** The wilderness level for this player. */
     private int wildernessLevel;
 
-    /**
-     * A music set for this player.
-     */
+    /** A music set for this player. */
     private MusicSet musicSet = new MusicSet(this);
 
-    /**
-     * The weapon interface the player currently has open.
-     */
+    /** The weapon interface the player currently has open. */
     private WeaponInterface weapon;
 
-    /**
-     * The entity's current teleport stage.
-     */
+    /** The players's current teleport stage. */
     private int teleportStage;
 
-    /**
-     * The position this entity is current teleporting on.
-     */
+    /** The position this entity is current teleporting on. */
     private Position teleport = new Position();
 
-    /**
-     * Animation played when this player dies.
-     */
+    /** Animation played when this player dies. */
     private static final Animation DEATH = new Animation(0x900);
 
-    /**
-     * If this player is visible.
-     */
+    /** If this player is visible. */
     private boolean isVisible = true;
 
-    /**
-     * The food you are cooking.
-     */
+    /** The food you are cooking. */
     private CookFish cook;
 
-    /**
-     * The bar you are currently smelting.
-     */
+    /** The bar you are currently smelting. */
     private Smelt smelt;
 
-    /**
-     * The amount of bars you are currently smelting.
-     */
+    /** The amount of bars you are currently smelting. */
     private int smeltAmount;
 
-    /**
-     * The amount of sets you are currently smithing.
-     */
+    /** The amount of sets you are currently smithing. */
     private int smithAmount;
 
-    /**
-     * The shop you currently have open.
-     */
+    /** The shop you currently have open. */
     private int openShopId;
 
-    /**
-     * The amount of food you are cooking.
-     */
+    /** The amount of food you are cooking. */
     private int cookAmount;
 
-    /**
-     * Amount of logs the tree you're cutting holds.
-     */
+    /** Amount of logs the tree you're cutting holds. */
     private int woodcuttingLogAmount;
 
-    /**
-     * All possible fish you are able to catch.
-     */
+    /** All possible fish you are able to catch. */
     private List<Fish> fish = new ArrayList<Fish>();
 
-    /**
-     * Skill flags.
-     */
+    /** Skill event firing flags. */
     private boolean[] skillEvent = new boolean[15];
 
-    /**
-     * Combat prayer flags.
-     */
-    private boolean[] prayer = new boolean[18];
-
-    /**
-     * If this player is banned.
-     */
+    /** If this player is banned. */
     private boolean isBanned;
 
-    /**
-     * Options used for npc dialogues,
-     */
+    /** Options used for npc dialogues, */
     private int option;
 
-    /**
-     * The players head icon.
-     */
+    /** The players head icon. */
     private int headIcon = -1;
 
-    /**
-     * The players skull icon.
-     */
+    /** The players skull icon. */
     private int skullIcon = -1;
 
-    /**
-     * The player's run energy.
-     */
+    /** The player's run energy. */
     private int runEnergy = 100;
 
-    /**
-     * The mob teleporting the player.
-     */
-    private Npc runecraftingMob;
+    /** The npc teleporting the player. */
+    private Npc runecraftingNpc;
 
-    /**
-     * Handles a trading session with another player.
-     */
+    /** Handles a trading session with another player. */
     private TradeSession tradeSession = new TradeSession(this);
 
-    /**
-     * A collection of anti-massing timers.
-     */
+    /** A collection of anti-massing timers. */
     private Stopwatch eatingTimer = new Stopwatch().reset(),
             buryTimer = new Stopwatch().reset(),
             altarTimer = new Stopwatch().reset(),
-            mobTheftTimer = new Stopwatch().reset(),
+            npcTheftTimer = new Stopwatch().reset(),
             objectTheftTimer = new Stopwatch().reset();
 
-    /**
-     * The last delay when stealing.
-     */
+    /** The last delay when stealing. */
     private long lastTheftDelay;
 
-    /**
-     * The username.
-     */
+    /** The username. */
     private String username;
 
-    /**
-     * The password.
-     */
+    /** The password. */
     private String password;
 
-    /**
-     * If this player is new.
-     */
+    /** If this player is new. */
     private boolean newPlayer = true;
 
-    /**
-     * Options for banking.
-     */
+    /** Options for banking. */
     private boolean insertItem, withdrawAsNote;
 
-    /**
-     * The conversation id the character is in.
-     */
-    private int mobDialogue;
+    /** The conversation id the character is in. */
+    private int npcDialogue;
 
-    /**
-     * The stage in the conversation the player is in.
-     */
+    /** The stage in the conversation the player is in. */
     private int conversationStage;
 
-    /**
-     * If this is the first packet recieved. Used for global items.
-     */
+    /** If this is the first packet recieved. Used for global items. */
     private boolean firstPacket;
 
-    /**
-     * A list of local players.
-     */
+    /** A list of local players. */
     private final List<Player> players = new LinkedList<Player>();
 
-    /**
-     * A list of local npcs.
-     */
+    /** A list of local npcs. */
     private final List<Npc> npcs = new LinkedList<Npc>();
 
-    /**
-     * The players rights.
-     */
+    /** The players rights. */
     private int staffRights = 0;
 
-    /**
-     * The players current spellbook.
-     */
+    /** The players current spellbook. */
     private Spellbook spellbook = Spellbook.NORMAL;
 
-    /**
-     * Variables for public chatting.
-     */
+    /** Variables for public chatting. */
     private int chatColor, chatEffects;
 
-    /**
-     * The chat message in bytes.
-     */
+    /** The chat message in bytes. */
     private byte[] chatText;
 
-    /**
-     * The gender.
-     */
+    /** The gender. */
     private int gender = Misc.GENDER_MALE;
 
-    /**
-     * The appearance.
-     */
+    /** The appearance. */
     private int[] appearance = new int[7], colors = new int[5];
 
-    /**
-     * The player's bonuses.
-     */
+    /** The player's bonuses. */
     private int[] playerBonus = new int[12];
 
-    /**
-     * The friends list.
-     */
+    /** The friends list. */
     private List<Long> friends = new ArrayList<Long>(200);
 
-    /**
-     * The ignores list.
-     */
+    /** The ignores list. */
     private List<Long> ignores = new ArrayList<Long>(100);
 
-    /**
-     * Flag that determines if this player has entered an incorrect password.
-     */
+    /** Flag that determines if this player has entered an incorrect password. */
     private boolean incorrectPassword;
 
-    /**
-     * An instance of this player.
-     */
+    /** An instance of this player. */
     private Player player = this;
 
-    /**
-     * For player npcs (pnpc).
-     */
+    /** For player npcs (pnpc). */
     private int npcAppearanceId = -1;
 
-    /**
-     * The players inventory.
-     */
+    /** The players inventory. */
     private InventoryContainer inventory = new InventoryContainer(this);
 
-    /**
-     * The players bank.
-     */
+    /** The players bank. */
     private BankContainer bank = new BankContainer(this);
 
-    /**
-     * The players equipment.
-     */
+    /** The players equipment. */
     private EquipmentContainer equipment = new EquipmentContainer(this);
 
-    /**
-     * Private messaging for this player.
-     */
+    /** Private messaging for this player. */
     private PrivateMessage privateMessage = new PrivateMessage(this);
 
-    /**
-     * Field that determines if you are using a stove for cooking.
-     */
+    /** Field that determines if you are using a stove for cooking. */
     private boolean usingStove;
 
-    /** Settings. */
-    private boolean twoClickMouse = true;
-
     /**
-     * Creates a new Player.
+     * Creates a new {@link Player}.
      * 
-     * @param network
-     *        the network.
+     * @param session
+     *        the session to create the player from.
      */
-    public Player(Session network) {
-        this.session = network;
+    public Player(Session session) {
+        this.session = session;
 
         /** Set the default appearance. */
         getAppearance()[Misc.APPEARANCE_SLOT_CHEST] = 18;
@@ -641,8 +522,8 @@ public class Player extends Entity {
      */
     public void dialogue(int id) {
         if (NpcDialogue.getDialogueMap().containsKey(id)) {
-            this.setMobDialogue(id);
-            NpcDialogue.getDialogueMap().get(this.getMobDialogue()).dialogue(this);
+            npcDialogue = id;
+            NpcDialogue.getDialogueMap().get(npcDialogue).dialogue(this);
         }
     }
 
@@ -1047,18 +928,18 @@ public class Player extends Entity {
     }
 
     /**
-     * @return the mobDialogue
+     * @return the npcDialogue
      */
-    public int getMobDialogue() {
-        return mobDialogue;
+    public int getNpcDialogue() {
+        return npcDialogue;
     }
 
     /**
-     * @param mobDialogue
-     *        the mobDialogue to set
+     * @param npcDialogue
+     *        the npcDialogue to set
      */
-    public void setMobDialogue(int mobDialogue) {
-        this.mobDialogue = mobDialogue;
+    public void setNpcDialogue(int npcDialogue) {
+        this.npcDialogue = npcDialogue;
     }
 
     /**
@@ -1084,18 +965,18 @@ public class Player extends Entity {
     }
 
     /**
-     * @return the runecraftingMob
+     * @return the runecraftingNpc
      */
-    public Npc getRunecraftingMob() {
-        return runecraftingMob;
+    public Npc getRunecraftingNpc() {
+        return runecraftingNpc;
     }
 
     /**
-     * @param runecraftingMob
-     *        the runecraftingMob to set
+     * @param runecraftingNpc
+     *        the runecraftingNpc to set
      */
-    public void setRunecraftingMob(Npc runecraftingMob) {
-        this.runecraftingMob = runecraftingMob;
+    public void setRunecraftingNpc(Npc runecraftingNpc) {
+        this.runecraftingNpc = runecraftingNpc;
     }
 
     /**
@@ -1115,21 +996,6 @@ public class Player extends Entity {
 
     public void addCookAmount() {
         cookAmount++;
-    }
-
-    /**
-     * @return the prayer
-     */
-    public boolean[] getPrayer() {
-        return prayer;
-    }
-
-    /**
-     * @param prayer
-     *        the prayer to set
-     */
-    public void setPrayer(boolean[] prayer) {
-        this.prayer = prayer;
     }
 
     /**
@@ -1375,8 +1241,8 @@ public class Player extends Entity {
     /**
      * @return the theftTimer
      */
-    public Stopwatch getMobTheftTimer() {
-        return mobTheftTimer;
+    public Stopwatch getNpcTheftTimer() {
+        return npcTheftTimer;
     }
 
     /**
@@ -1469,21 +1335,6 @@ public class Player extends Entity {
      */
     public WeaponAnimationIndex getUpdateAnimation() {
         return equipmentAnimation;
-    }
-
-    /**
-     * @return the twoClickMouse
-     */
-    public boolean isTwoClickMouse() {
-        return twoClickMouse;
-    }
-
-    /**
-     * @param twoClickMouse
-     *        the twoClickMouse to set
-     */
-    public void setTwoClickMouse(boolean twoClickMouse) {
-        this.twoClickMouse = twoClickMouse;
     }
 
     /**

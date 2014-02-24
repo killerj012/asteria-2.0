@@ -12,9 +12,7 @@ import server.world.item.ItemContainer.ContainerPolicy;
  */
 public class InventoryContainer {
 
-    /**
-     * The player's inventory being managed.
-     */
+    /** The player's inventory being managed. */
     private Player player;
 
     /**

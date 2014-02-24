@@ -22,9 +22,7 @@ public class EquipmentContainer {
      */
     private Player player;
 
-    /**
-     * The container that will hold this player's equipped items.
-     */
+    /** The container that will hold this player's equipped items. */
     private ItemContainer container = new ItemContainer(ContainerPolicy.NORMAL_POLICY, 14);
 
     /**

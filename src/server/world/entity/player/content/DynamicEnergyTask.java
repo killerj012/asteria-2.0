@@ -12,9 +12,7 @@ import server.world.entity.player.Player;
  */
 public class DynamicEnergyTask extends Worker {
 
-    /**
-     * The player we are restoring run energy for.
-     */
+    /** The player we are restoring run energy for. */
     private Player player;
 
     /**

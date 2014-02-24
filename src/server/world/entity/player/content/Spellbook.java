@@ -10,7 +10,10 @@ import server.world.entity.player.Player;
  */
 public enum Spellbook {
 
+    /** The normal spellbook. */
     NORMAL(1151, Teleport.NORMAL_SPELLBOOK_TELEPORT),
+
+    /** The ancient spellbook. */
     ANCIENT(12855, Teleport.ANCIENTS_SPELLBOOK_TELEPORT);
 
     /**
@@ -19,9 +22,7 @@ public enum Spellbook {
      */
     private int sidebarInterface;
 
-    /**
-     * The teleport type this spellbook uses.
-     */
+    /** The teleport type this spellbook uses. */
     private Teleport teleport;
 
     /**

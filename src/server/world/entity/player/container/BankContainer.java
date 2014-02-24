@@ -12,14 +12,10 @@ import server.world.item.ItemContainer.ContainerPolicy;
  */
 public class BankContainer {
 
-    /**
-     * The player's bank being managed.
-     */
+    /** The player's bank being managed. */
     private Player player;
 
-    /**
-     * The item container that holds and manages all of the items in this bank.
-     */
+    /** The item container that holds and manages all of the items in this bank. */
     private ItemContainer container = new ItemContainer(ContainerPolicy.STACKABLE_POLICY, 250);
 
     /**

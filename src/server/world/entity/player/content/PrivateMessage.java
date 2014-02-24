@@ -12,14 +12,10 @@ import server.world.entity.player.Player;
  */
 public class PrivateMessage {
 
-    /**
-     * The player in control of the private message.
-     */
+    /** The player in control of the private message. */
     private Player player;
 
-    /**
-     * The last private messaging id made by the player.
-     */
+    /** The last private messaging id made by the player. */
     private int lastPrivateMessageId = 1;
 
     /**
