@@ -10,119 +10,96 @@ import server.world.item.ItemContainer;
 import server.world.item.ItemContainer.ContainerPolicy;
 
 /**
- * A collection of functions that represent a shop. Every shop contains its own
- * restocking worker that allows every shop to individually restock itself,
- * which takes away the need for a massive loop every 600ms (sound familiar?
- * check out the <code>WorldItem</code> class). This also means that if no
- * items are being restocked, no workers are even running! Which in my opinion,
- * is a ton better than looping through a massive array every 600ms, when half
- * the time restocking isn't even needed.
+ * A shop from which a {@link Player} can buy items at.
  * 
  * @author lare96
  */
 public class Shop {
 
-    /**
-     * An array of active shops.
-     */
+    // TODO: shops not restocking!
+    // TODO: you can't sell items that aren't a part of the shop now?
+
+    /** A primitive array of registered shops. */
     private static Shop[] shops = new Shop[10];
 
-    /**
-     * The shop id.
-     */
-    private int id;
+    /** The index of this shop. */
+    private int index;
 
-    /**
-     * The shop name.
-     */
+    /** The name of this shop. */
     private String name;
 
-    /**
-     * The modifiable shop container.
-     */
+    /** An {@link ItemContainer} that holds the items within this shop. */
     private ItemContainer container = new ItemContainer(ContainerPolicy.STACKABLE_POLICY, 48);
 
-    /**
-     * The original shop items.
-     */
-    private Item[] originalShopItems;
+    /** A primitive array of the original shop items. */
+    private Item[] originalItems;
 
-    /**
-     * Flag that determines if the shop will replenish its stock or not.
-     */
-    private boolean stock;
+    /** If the shop will replenish its stock once it runs out. */
+    private boolean restockItems;
 
-    /**
-     * The currency this shop is running on.
-     */
+    /** If a {@link Player} is able to sell items to this shop. */
+    private boolean sellItems;
+
+    /** The currency this shop is using. */
     private Currency currency;
 
-    /**
-     * The worker that will restock this shop.
-     */
+    /** A {@link Worker} that will restock this shop. */
     private Worker processor;
 
     /**
-     * Create a new shop.
+     * Create a new {@link Shop}.
      * 
-     * @param id
-     *        the id of the shop.
+     * @param index
+     *        the index of this shop.
      * @param name
-     *        the name of the shop.
+     *        the name of this shop.
      * @param items
      *        the items in this shop.
-     * @param restock
-     *        if this shop will restock itself.
+     * @param restockItems
+     *        if the shop will replenish its stock once it runs out.
+     * @param sellItems
+     *        if a {@link Player} is able to sell items to this shop.
      * @param currency
-     *        the currency this shop runs on.
+     *        the currency this shop is using.
      */
-    public Shop(int id, String name, Item[] items, boolean restock, Currency currency) {
-        this.setId(id);
-        this.setName(name);
-        this.getShopContainer().setItems(items);
-        this.setOriginalShopItems(items);
-        this.setReplenishStock(restock);
-        this.setCurrency(currency);
+    public Shop(int index, String name, Item[] items, boolean restockItems, boolean sellItems, Currency currency) {
+        this.index = index;
+        this.name = name;
+        this.container.setItems(items);
+        this.originalItems = items;
+        this.restockItems = restockItems;
+        this.sellItems = sellItems;
+        this.currency = currency;
         this.processor = new ShopWorker(this);
     }
 
     /**
-     * Open and configure this shop.
+     * Open this shop for the specified {@link Player}.
      * 
      * @param player
      *        the player to open the shop for.
      */
     public void openShop(Player player) {
-
-        /**
-         * Open the shop, display the shop items and send an interface to the
-         * inventory that allows the player to right click buy and sell.
-         */
         player.getPacketBuilder().sendUpdateItems(3823, player.getInventory().getContainer().toArray());
         updateShopItems(player);
-        player.setOpenShopId(this.getId());
+        player.setOpenShopId(index);
         player.getPacketBuilder().sendInventoryInterface(3824, 3822);
-        player.getPacketBuilder().sendString(this.getName(), 3901);
+        player.getPacketBuilder().sendString(name, 3901);
     }
 
     /**
-     * Updates the items in this shop.
+     * Updates the images of the {@link Item}s in this shop.
      * 
      * @param player
-     *        the player to update the items for.
+     *        the player to update the images of the items for.
      */
     protected void updateShopItems(Player player) {
-
-        /**
-         * A custom implementation of the <code>sendItemUpdates</code> method
-         * used for shops.
-         */
         PacketBuffer.WriteBuffer out = PacketBuffer.newOutBuffer(2048);
         out.writeVariableShortPacketHeader(53);
         out.writeShort(3900);
-        out.writeShort(this.getShopItemAmount());
+        out.writeShort(getShopItemAmount());
 
-        for (Item item : this.getShopContainer().toArray()) {
+        for (Item item : container.toArray()) {
             if (item == null) {
                 continue;
             }
@@ -144,26 +121,25 @@ public class Shop {
     }
 
     /**
-     * Purchase an item from this shop.
+     * Purchases an {@link Item} from this shop for the specified {@link Player}.
      * 
      * @param player
      *        the player purchasing the item.
      * @param item
      *        the item being purchased.
      */
-    public void buyItem(Player player, Item item) {
+    public void purchaseItem(Player player, Item item) {
 
-        /** Check if the item you are buying as 0 stock. */
+        /** Check if the item you are buying is at 0 stock. */
         if (item.getAmount() == 0) {
             player.getPacketBuilder().sendMessage("There is none of this item left in stock!");
             return;
         }
 
         /**
-         * Check if the shop even contains the item you're trying to buy
-         * (protection from packet injection).
+         * Check if the shop even contains the item you're trying to buy.
          */
-        if (!this.getShopContainer().contains(item.getId())) {
+        if (!container.contains(item.getId())) {
             return;
         }
 
@@ -171,14 +147,14 @@ public class Shop {
          * Check if the player has the required amount of the currency needed to
          * buy this item.
          */
-        if (this.getCurrency() == Currency.COINS) {
-            if (!(player.getInventory().getContainer().getCount(this.getCurrency().getItemId()) >= (item.getDefinition().getGeneralStorePrice() * item.getAmount()))) {
+        if (currency == Currency.COINS) {
+            if (!(player.getInventory().getContainer().getCount(currency.getItemId()) >= (item.getDefinition().getGeneralStorePrice() * item.getAmount()))) {
                 player.getPacketBuilder().sendMessage("You do not have enough coins to buy this item.");
                 return;
             }
         } else {
-            if (!(player.getInventory().getContainer().getCount(this.getCurrency().getItemId()) >= (item.getDefinition().getSpecialStorePrice() * item.getAmount()))) {
-                player.getPacketBuilder().sendMessage("You do not have enough " + this.getCurrency().name().toLowerCase().replaceAll("_", " ") + " to buy this item.");
+            if (!(player.getInventory().getContainer().getCount(currency.getItemId()) >= (item.getDefinition().getSpecialStorePrice() * item.getAmount()))) {
+                player.getPacketBuilder().sendMessage("You do not have enough " + currency.name().toLowerCase().replaceAll("_", " ") + " to buy this item.");
                 return;
             }
         }
@@ -187,8 +163,8 @@ public class Shop {
          * If you are buying more than the shop has in stock, set the amount you
          * are buying to how much is in stock.
          */
-        if (item.getAmount() > this.getShopContainer().getCount(item.getId())) {
-            item.setAmount(this.getShopContainer().getCount(item.getId()));
+        if (item.getAmount() > container.getCount(item.getId())) {
+            item.setAmount(container.getCount(item.getId()));
         }
 
         /**
@@ -204,14 +180,14 @@ public class Shop {
             }
         }
 
-        /** Buy the item. */
+        /** Here we actually buy the item. */
         if (player.getInventory().getContainer().freeSlots() >= item.getAmount() && !item.getDefinition().isStackable() || player.getInventory().getContainer().freeSlots() >= 1 && item.getDefinition().isStackable()) {
-            this.getShopContainer().getById(item.getId()).decrementAmountBy(item.getAmount());
+            container.getById(item.getId()).decrementAmountBy(item.getAmount());
 
-            if (this.getCurrency() == Currency.COINS) {
-                player.getInventory().deleteItem(new Item(this.getCurrency().getItemId(), item.getAmount() * item.getDefinition().getGeneralStorePrice()));
+            if (currency == Currency.COINS) {
+                player.getInventory().deleteItem(new Item(currency.getItemId(), item.getAmount() * item.getDefinition().getGeneralStorePrice()));
             } else {
-                player.getInventory().deleteItem(new Item(this.getCurrency().getItemId(), item.getAmount() * item.getDefinition().getSpecialStorePrice()));
+                player.getInventory().deleteItem(new Item(currency.getItemId(), item.getAmount() * item.getDefinition().getSpecialStorePrice()));
             }
 
             player.getInventory().addItem(item);
@@ -229,29 +205,35 @@ public class Shop {
                 continue;
             }
 
-            if (p.getOpenShopId() == this.getId()) {
-                this.updateShopItems(p);
+            if (p.getOpenShopId() == index) {
+                updateShopItems(p);
             }
         }
 
-        /** Check if this shop needs to be restocked, if so restock it. */
-        restockShop();
+        /** Check if this shop needs to be restocked and do so if needed. */
+        fireRestock();
     }
 
     /**
-     * Sell an item to this shop.
+     * Sell an {@link Item} to this shop for the specified {@link Player}.
      * 
      * @param player
-     *        the player selling the item.
+     *        the player selling the item to this shop.
      * @param item
-     *        the item being sold.
+     *        the item being sold to this shop.
      * @param fromSlot
-     *        the slot being sold from.
+     *        the inventory slot this item is being sold from.
      */
     public void sellItem(Player player, Item item, int fromSlot) {
 
         /** Check if this is a valid item. */
-        if (item.getId() < 1 || item.getAmount() < 1 || item == null) {
+        if (item == null || item.getId() < 1 || item.getAmount() < 1) {
+            return;
+        }
+
+        /** Check if we can sell to this shop. */
+        if (!sellItems) {
+            player.getPacketBuilder().sendMessage("The shop owner doesn't want any of your items.");
             return;
         }
 
@@ -264,8 +246,7 @@ public class Shop {
         }
 
         /**
-         * Checks if you have the item you want to sell in your inventory, to
-         * protect against packet injection.
+         * Checks if you have the item you want to sell in your inventory.
          */
         if (!player.getInventory().getContainer().contains(item.getId())) {
             return;
@@ -275,13 +256,13 @@ public class Shop {
          * Block if this shop isn't a general store and you are trying to sell
          * an item that the shop doesn't even have in stock.
          */
-        if (!this.getShopContainer().contains(item.getId()) && !this.getName().equalsIgnoreCase("General Store")) {
+        if (!container.contains(item.getId()) && !name.equalsIgnoreCase("General Store")) {
             player.getPacketBuilder().sendMessage("You can't sell " + item.getDefinition().getItemName() + " to this store.");
             return;
         }
 
         /** Checks if this shop has room for the item you are trying to sell. */
-        if (!this.getShopContainer().hasRoomFor(item)) {
+        if (!container.hasRoomFor(item)) {
             player.getPacketBuilder().sendMessage("There is no room for the item you are trying to sell in this store!");
             return;
         }
@@ -290,14 +271,14 @@ public class Shop {
          * Checks if you have enough space in your inventory to receive the
          * currency.
          */
-        if (player.getInventory().getContainer().freeSlots() == 0 && !player.getInventory().getContainer().contains(this.getCurrency().getItemId())) {
+        if (player.getInventory().getContainer().freeSlots() == 0 && !player.getInventory().getContainer().contains(currency.getItemId())) {
             player.getPacketBuilder().sendMessage("You do not have enough space in your inventory to sell this item!");
             return;
         }
 
         /**
-         * If you try and sell more then you have, it sets the amount to what
-         * you have.
+         * If you try and sell more then you have it sets the amount to what you
+         * have.
          */
         if (item.getAmount() > player.getInventory().getContainer().getCount(item.getId()) && !item.getDefinition().isStackable()) {
             item.setAmount(player.getInventory().getContainer().getCount(item.getId()));
@@ -305,10 +286,10 @@ public class Shop {
             item.setAmount(player.getInventory().getContainer().getItem(fromSlot).getAmount());
         }
 
-        /** Sell the item. */
+        /** Actually sell the item. */
         player.getInventory().deleteItemSlot(item, fromSlot);
-        player.getInventory().addItem(new Item(this.getCurrency().getItemId(), item.getAmount() * getSellingPrice(item)));
-        this.getShopContainer().getById(item.getId()).incrementAmountBy(item.getAmount());
+        player.getInventory().addItem(new Item(currency.getItemId(), item.getAmount() * calculateSellingPrice(item)));
+        container.getById(item.getId()).incrementAmountBy(item.getAmount());
 
         /** Update your inventory. */
         player.getPacketBuilder().sendUpdateItems(3823, player.getInventory().getContainer().toArray());
@@ -319,14 +300,15 @@ public class Shop {
                 continue;
             }
 
-            if (p.getOpenShopId() == this.getId()) {
-                this.updateShopItems(p);
+            if (p.getOpenShopId() == index) {
+                updateShopItems(p);
             }
         }
     }
 
     /**
-     * Sends the value of the item to the player when selling.
+     * Sends the shop value of an {@link Item} to the specified {@link Player}
+     * when selling.
      * 
      * @param player
      *        the player to send the value for.
@@ -338,7 +320,7 @@ public class Shop {
         /** Checks if this item is able to be sold. */
         for (int i : Misc.NO_SHOP_ITEMS) {
             if (i == item.getId()) {
-                player.getPacketBuilder().sendMessage("You can't sell " + item.getDefinition().getItemName() + " to this store.");
+                player.getPacketBuilder().sendMessage("You can't sell " + item.getDefinition().getItemName() + " here.");
                 return;
             }
         }
@@ -347,21 +329,18 @@ public class Shop {
          * Block if this shop isn't a general store and you are trying to sell
          * an item that the shop doesn't even have in stock.
          */
-        if (!this.getShopContainer().contains(item.getId()) && !this.getName().equalsIgnoreCase("General Store")) {
+        if (!container.contains(item.getId()) && !name.equalsIgnoreCase("General Store")) {
             player.getPacketBuilder().sendMessage("You can't sell " + item.getDefinition().getItemName() + " to this store.");
             return;
         }
 
-        /** Send the value. */
-        if (this.getCurrency() == Currency.COINS) {
-            player.getPacketBuilder().sendMessage(item.getDefinition().getItemName() + ": shop will buy for " + this.getSellingPrice(item) + " " + this.getCurrency().name().toLowerCase().replaceAll("_", " ") + "" + Misc.formatPrice(this.getSellingPrice(item)) + ".");
-        } else {
-            player.getPacketBuilder().sendMessage(item.getDefinition().getItemName() + ": shop will buy for " + this.getSellingPrice(item) + " " + this.getCurrency().name().toLowerCase().replaceAll("_", " ") + "" + Misc.formatPrice(this.getSellingPrice(item)) + ".");
-        }
+        /** Send the actual value here. */
+        player.getPacketBuilder().sendMessage(item.getDefinition().getItemName() + ": shop will buy for " + calculateSellingPrice(item) + " " + currency.name().toLowerCase().replaceAll("_", " ") + "" + Misc.formatPrice(calculateSellingPrice(item)) + ".");
     }
 
     /**
-     * Sends the value of the item to the player when buying.
+     * Sends the shop value of an {@link Item} to the specified {@link Player}
+     * when buying.
      * 
      * @param player
      *        the player to send the value for.
@@ -371,123 +350,149 @@ public class Shop {
     public void sendItemBuyingPrice(Player player, Item item) {
 
         /** Send the value of the item based on the currency. */
-        if (this.getCurrency() == Currency.COINS) {
-            player.getPacketBuilder().sendMessage(item.getDefinition().getItemName() + ": shop will sell for " + item.getDefinition().getGeneralStorePrice() + " " + this.getCurrency().name().toLowerCase().replaceAll("_", " ") + "" + Misc.formatPrice(item.getDefinition().getGeneralStorePrice()) + ".");
+        if (currency == Currency.COINS) {
+            player.getPacketBuilder().sendMessage(item.getDefinition().getItemName() + ": shop will sell for " + item.getDefinition().getGeneralStorePrice() + " " + currency.name().toLowerCase().replaceAll("_", " ") + "" + Misc.formatPrice(item.getDefinition().getGeneralStorePrice()) + ".");
         } else {
-            player.getPacketBuilder().sendMessage(item.getDefinition().getItemName() + ": shop will sell for " + item.getDefinition().getSpecialStorePrice() + " " + this.getCurrency().name().toLowerCase().replaceAll("_", " ") + "" + Misc.formatPrice(item.getDefinition().getSpecialStorePrice()) + ".");
+            player.getPacketBuilder().sendMessage(item.getDefinition().getItemName() + ": shop will sell for " + item.getDefinition().getSpecialStorePrice() + " " + currency.name().toLowerCase().replaceAll("_", " ") + "" + Misc.formatPrice(item.getDefinition().getSpecialStorePrice()) + ".");
         }
     }
 
     /**
-     * Gets the selling price of a certain item (the item has to be worth less
-     * when selling or people would just buy then sell for profit).
+     * Gets the selling price of an {@link Item}.
      * 
      * @param item
      *        the item to get the selling price for.
-     * @return the price.
+     * @return the selling price of this item.
      */
-    private int getSellingPrice(Item item) {
-        return (int) (this.getCurrency() == Currency.COINS ? Math.floor((item.getDefinition().getGeneralStorePrice() / 2)) : Math.floor((item.getDefinition().getSpecialStorePrice() / 2)));
+    private int calculateSellingPrice(Item item) {
+        return (int) (currency == Currency.COINS ? Math.floor((item.getDefinition().getGeneralStorePrice() / 2)) : Math.floor((item.getDefinition().getSpecialStorePrice() / 2)));
     }
 
     /**
-     * Instantiate and schedule a new worker that will restock this shop.
+     * Assigns a new {@link Worker} to restock this shop if needed.
      */
-    private void restockShop() {
-        if (!this.needsRestock() || !this.isReplenishStock()) {
+    private void fireRestock() {
+
+        /**
+         * If this shop does not need restocking or is not set to restock then
+         * just block.
+         */
+        if (!needRestockFire() || !restockItems) {
             return;
         }
 
-        if (processor == null || !processor.isRunning()) {
+        /** If this worker isn't running creating a new one. */
+        if (!processor.isRunning()) {
             processor = new ShopWorker(this);
         }
 
+        /** And submit it to the world. */
         Rs2Engine.getWorld().submit(processor);
     }
 
     /**
-     * Checks if this shops needs to restock its items.
+     * Determines if this shops needs to restock its {@link Item}s.
      * 
-     * @return if the shop needs to be restocked.
+     * @return true if 1 or more items is out of stock.
      */
-    private boolean needsRestock() {
+    private boolean needRestockFire() {
 
-        /**
-         * Loop through the current shop items and check if the stock of any
-         * original shop items are 0. If so, return true.
-         */
-        for (Item item : this.getShopContainer().toArray()) {
+        /** Iterate through the shop items. */
+        for (Item item : container.toArray()) {
+
+            /** Skip all malformed items. */
             if (item == null) {
                 continue;
             }
 
+            /**
+             * Flag true if the item is apart of the shop (not sold by a player)
+             * and its out of stock.
+             */
             if (item.getAmount() < 1 && isOriginalItem(item.getId())) {
                 return true;
             }
         }
+
+        /** Otherwise flag false. */
         return false;
     }
 
     /**
-     * Checks if an item id is apart of the original shop items.
+     * Determines if an {@link Item} is apart of the original shop.
      * 
-     * @param id
-     *        the id to check for.
-     * @return if the item is apart of the original shop items.
+     * @param itemId
+     *        the id of the item to check for.
+     * @return true if the item is apart of the original shop items.
      */
-    private boolean isOriginalItem(int id) {
+    private boolean isOriginalItem(int itemId) {
 
-        /**
-         * Loop through the original shop items. If the id specified matches
-         * with any of the original shop items, return true.
-         */
-        for (Item item : this.getOriginalShopItems()) {
+        /** Iterate through the original shop items. */
+        for (Item item : originalItems) {
+
+            /** Skip any malformed items. */
             if (item == null) {
                 continue;
             }
 
-            if (item.getId() == id) {
+            /** Flag true if there's a match. */
+            if (item.getId() == itemId) {
                 return true;
             }
         }
+
+        /** Otherwise flag false. */
         return false;
     }
 
     /**
-     * Checks if the current shop items are at the original amount.
+     * Determines if the current shop is fully restocked.
      * 
-     * @return if the current shop items are at the original amount.
+     * @return true if the current shop is fully restocked.
      */
-    protected boolean atOriginalAmounts() {
-        int amountNeeded = this.getOriginalShopItemAmount();
+    protected boolean isFullyRestocked() {
+
+        /** Local fields to hold data for us. */
+        int amountNeeded = getOriginalShopItemAmount();
         int amountGotten = 0;
 
-        for (Item item : this.getShopContainer().toArray()) {
+        /** Iterate through the shop. */
+        for (Item item : container.toArray()) {
+
+            /** Skip any malformed items. */
             if (item == null) {
                 continue;
             }
 
+            /** Checks if the item is at its original amount. */
             if (item.getAmount() == getOriginalAmount(item.getId())) {
                 amountGotten++;
             }
         }
+
+        /** Flag true if the shop is fully restocked. */
         return amountNeeded == amountGotten ? true : false;
     }
 
     /**
-     * Gets the original amount of a shop item.
+     * Gets the original amount of an {@link Item} within the shop.
      * 
-     * @param id
-     *        the item to get the original amount of.
-     * @return the original amount.
+     * @param itemId
+     *        the id of item to get the original amount of.
+     * @return the original amount of the item.
      */
-    protected int getOriginalAmount(int id) {
-        for (Item item : this.getOriginalShopItems()) {
+    protected int getOriginalAmount(int itemId) {
+
+        /** Iterate through the original shop items. */
+        for (Item item : originalItems) {
+
+            /** Skip any malformed items. */
             if (item == null) {
                 continue;
             }
 
-            if (item.getId() == id) {
+            /** If there's a match return the amount. */
+            if (item.getId() == itemId) {
                 return item.getAmount();
             }
         }
@@ -500,12 +505,16 @@ public class Shop {
     private int getShopItemAmount() {
         int total = 0;
 
-        for (Item i : this.getShopContainer().toArray()) {
-            if (i == null) {
+        /** Iterate through the shop items. */
+        for (Item item : container.toArray()) {
+
+            /** Skip any malformed items. */
+            if (item == null) {
                 continue;
             }
 
-            if (i.getId() > 0) {
+            /** Increment the total. */
+            if (item.getId() > 0) {
                 total++;
             }
         }
@@ -514,17 +523,23 @@ public class Shop {
     }
 
     /**
-     * @return the amount of different items in this shop excluding null values
-     *         and non-primitive shop items.
+     * Gets the amount of different items in this shop excluding malformed items
+     * and non-primitive shop items sold by players.
+     * 
+     * @return the amount of different items in this shop.
      */
     private int getOriginalShopItemAmount() {
         int total = 0;
 
-        for (Item item : this.getShopContainer().toArray()) {
+        /** Iterate through the shop items. */
+        for (Item item : container.toArray()) {
+
+            /** Skip any malformed items. */
             if (item == null) {
                 continue;
             }
 
+            /** Increment the total. */
             if (item.getId() > 0 && isOriginalItem(item.getId())) {
                 total++;
             }
@@ -545,116 +560,36 @@ public class Shop {
     }
 
     /**
-     * Gets an instance of a shop by it's name.
+     * Gets the index of this shop.
      * 
-     * @param id
-     *        the name of the shop to get.
-     * @return the static instance of the shop.
+     * @return the index of this shop.
      */
-    public static Shop getShop(String name) {
-        for (Shop s : shops) {
-            if (s == null) {
-                continue;
-            }
-
-            if (s.getName().equals(name)) {
-                return s;
-            }
-        }
-        return null;
+    public int getIndex() {
+        return index;
     }
 
     /**
-     * @return the id.
-     */
-    public int getId() {
-        return id;
-    }
-
-    /**
-     * @param id
-     *        the id to set.
-     */
-    private void setId(int id) {
-        this.id = id;
-    }
-
-    /**
-     * @return the name.
-     */
-    public String getName() {
-        return name;
-    }
-
-    /**
-     * @param name
-     *        the name to set.
-     */
-    private void setName(String name) {
-        this.name = name;
-    }
-
-    /**
-     * @return the container.
+     * Gets the container of shop items.
+     * 
+     * @return the container of items.
      */
     public ItemContainer getShopContainer() {
         return container;
     }
 
     /**
-     * @return the replenishStock.
+     * Gets if this shop should replenish its stock or not.
+     * 
+     * @return true if the shop should restock items.
      */
-    protected boolean isReplenishStock() {
-        return stock;
+    protected boolean isRestockItems() {
+        return restockItems;
     }
 
     /**
-     * @param replenishStock
-     *        the replenishStock to set.
-     */
-    public void setReplenishStock(boolean stock) {
-        this.stock = stock;
-    }
-
-    /**
-     * @return the currency.
-     */
-    public Currency getCurrency() {
-        return currency;
-    }
-
-    /**
-     * @param currency
-     *        the currency to set.
-     */
-    private void setCurrency(Currency currency) {
-        this.currency = currency;
-    }
-
-    /**
-     * @return the restockWorker.
-     */
-    private Worker getTask() {
-        return processor;
-    }
-
-    /**
-     * @return the originalShopItems.
-     */
-    private Item[] getOriginalShopItems() {
-        return originalShopItems;
-    }
-
-    /**
-     * @param originalShopItems
-     *        the originalShopItems to set.
-     */
-    private void setOriginalShopItems(Item[] originalShopItems) {
-        this.originalShopItems = originalShopItems;
-    }
-
-    /**
-     * @return the shops
+     * Gets the array of registered shops.
+     * 
+     * @return the registered shops.
      */
     public static Shop[] getShops() {
         return shops;

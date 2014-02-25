@@ -49,6 +49,7 @@
         }
        ],
        "restock": true,
+       "can-sell-items": true,
        "currency": "COINS"
     }
 ]

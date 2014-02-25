@@ -7,7 +7,7 @@ package server.world.shop;
  */
 public enum Currency {
 
-    /** The default currency - coins. */
+    /** The default currency. */
     COINS(995),
 
     /** Usually used in TzHaar shops. */
