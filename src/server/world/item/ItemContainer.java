@@ -16,13 +16,13 @@ public class ItemContainer {
      */
     public enum ContainerPolicy {
 
-        /** Stacks items that are stackable. */
+        /** Stacks the items that are stackable. */
         NORMAL_POLICY,
 
-        /** Stacks all items. */
+        /** Stacks all of the items. */
         STACKABLE_POLICY,
 
-        /** Doesn't stack any items. */
+        /** Doesn't stack any of the items. */
         STANDALONE_POLICY
     }
 

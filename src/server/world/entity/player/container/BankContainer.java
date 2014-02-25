@@ -12,6 +12,9 @@ import server.world.item.ItemContainer.ContainerPolicy;
  */
 public class BankContainer {
 
+    // TODO: when the player's bank is full, when you click on the item it goes
+    // in but inventory doesn't update
+
     /** The player's bank being managed. */
     private Player player;
 
