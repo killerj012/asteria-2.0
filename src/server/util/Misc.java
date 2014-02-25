@@ -359,7 +359,7 @@ public final class Misc {
         for (int i = 0; i < array.size(); i++) {
             JsonObject reader = (JsonObject) array.get(i);
 
-            Shop shop = new Shop(reader.get("id").getAsInt(), reader.get("name").getAsString(), builder.fromJson(reader.get("items").getAsJsonArray(), Item[].class), reader.get("restock").getAsBoolean(), Currency.valueOf(reader.get("currency").getAsString()));
+            Shop shop = new Shop(reader.get("id").getAsInt(), reader.get("name").getAsString(), builder.fromJson(reader.get("items").getAsJsonArray(), Item[].class), reader.get("restock").getAsBoolean(), reader.get("can-sell-items").getAsBoolean(), Currency.valueOf(reader.get("currency").getAsString()));
 
             for (int e : NO_SHOP_ITEMS) {
                 if (shop.getShopContainer().contains(e)) {
@@ -367,7 +367,7 @@ public final class Misc {
                 }
             }
 
-            Shop.getShops()[shop.getId()] = shop;
+            Shop.getShops()[shop.getIndex()] = shop;
             parsed++;
         }
     }
@@ -874,6 +874,64 @@ public final class Misc {
          */
         public long elapsed() {
             return System.currentTimeMillis() - time;
+        }
+    }
+
+    /**
+     * An inclusive or exclusive interval.
+     * 
+     * @author lare96
+     */
+    public static class Interval {
+
+        /** The starting point. */
+        private int start;
+
+        /** The ending point. */
+        private int end;
+
+        /**
+         * Creates a new inclusive {@link Interval}.
+         * 
+         * @param start
+         *        the starting point.
+         * @param end
+         *        the ending point.
+         * @return the inclusive interval.
+         */
+        public Interval inclusiveInterval(int start, int end) {
+            this.start = start;
+            this.end = end;
+            return this;
+        }
+
+        /**
+         * Creates a new exclusive {@link Interval}.
+         * 
+         * @return the exclusive interval.
+         */
+        public Interval exclusiveInterval(int start, int end) {
+            this.start = start + 1;
+            this.end = end - 1;
+            return this;
+        }
+
+        /**
+         * The starting point.
+         * 
+         * @return the starting point.
+         */
+        public int getStart() {
+            return start;
+        }
+
+        /**
+         * The ending point.
+         * 
+         * @return the ending point.
+         */
+        public int getEnd() {
+            return end;
         }
     }
 
