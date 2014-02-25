@@ -101,7 +101,7 @@ public class DecodeItemInterfacePacket extends PacketDecoder {
                         player.getBank().withdraw(slot, new Item(itemId, 5));
                         break;
                     case 3900:
-                        Shop.getShop(player.getOpenShopId()).buyItem(player, new Item(itemId, 1));
+                        Shop.getShop(player.getOpenShopId()).purchaseItem(player, new Item(itemId, 1));
                         break;
                     case 3823:
                         Shop.getShop(player.getOpenShopId()).sellItem(player, new Item(itemId, 1), slot);
@@ -143,7 +143,7 @@ public class DecodeItemInterfacePacket extends PacketDecoder {
                         player.getBank().withdraw(slot, new Item(itemId, 10));
                         break;
                     case 3900:
-                        Shop.getShop(player.getOpenShopId()).buyItem(player, new Item(itemId, 5));
+                        Shop.getShop(player.getOpenShopId()).purchaseItem(player, new Item(itemId, 5));
                         break;
                     case 3823:
                         Shop.getShop(player.getOpenShopId()).sellItem(player, new Item(itemId, 5), slot);
@@ -181,7 +181,7 @@ public class DecodeItemInterfacePacket extends PacketDecoder {
                         player.getBank().withdraw(slot, new Item(itemId, withdrawAmount));
                         break;
                     case 3900:
-                        Shop.getShop(player.getOpenShopId()).buyItem(player, new Item(itemId, 10));
+                        Shop.getShop(player.getOpenShopId()).purchaseItem(player, new Item(itemId, 10));
                         break;
 
                     case 3823:
