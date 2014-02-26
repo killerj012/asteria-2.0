@@ -434,7 +434,6 @@ public class Woodcutting extends SkillEvent {
                  * Block and cancel this worker if the skill has been stopped.
                  */
                 if (!player.getSkillEvent()[eventFireIndex()]) {
-                    fireResetEvent(player);
                     this.cancel();
                     return;
                 }
@@ -471,6 +470,7 @@ public class Woodcutting extends SkillEvent {
             public void fire() {
                 WorldObject.getRegisterable().register(new WorldObject(treeStump.getTreeId(), position, Rotation.SOUTH, 10));
                 stumps.remove(position);
+                this.cancel();
             }
         });
     }
@@ -566,6 +566,7 @@ public class Woodcutting extends SkillEvent {
 
     @Override
     public void fireResetEvent(Player player) {
+        player.getSkillEvent()[eventFireIndex()] = false;
         player.getPacketBuilder().resetAnimation();
         player.setWoodcuttingLogAmount(0);
     }

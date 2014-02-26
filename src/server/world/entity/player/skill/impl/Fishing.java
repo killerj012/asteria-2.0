@@ -470,6 +470,7 @@ public class Fishing extends SkillEvent {
 
     @Override
     public void fireResetEvent(Player player) {
+        player.getSkillEvent()[eventFireIndex()] = false;
         player.getPacketBuilder().resetAnimation();
         player.getFish().clear();
     }
