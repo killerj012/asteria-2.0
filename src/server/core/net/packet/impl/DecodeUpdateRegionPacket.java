@@ -5,7 +5,7 @@ import server.core.net.packet.PacketDecoder;
 import server.world.entity.player.Player;
 import server.world.item.ground.GroundItem;
 import server.world.music.MapMusic;
-import server.world.object.RegisterableWorldObject;
+import server.world.object.WorldObject;
 
 /**
  * Sent when the player loads a new map region
@@ -16,7 +16,7 @@ public class DecodeUpdateRegionPacket extends PacketDecoder {
 
     @Override
     public void decode(Player player, ReadBuffer in) {
-        RegisterableWorldObject.getSingleton().loadNewRegion(player);
+        WorldObject.getRegisterable().loadNewRegion(player);
         GroundItem.getRegisterable().loadNewRegion(player);
         player.displayInterfaces();
         MapMusic.loadMusic(player);

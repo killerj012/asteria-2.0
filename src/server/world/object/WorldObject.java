@@ -10,6 +10,9 @@ import server.world.map.Position;
  */
 public class WorldObject implements Registerable {
 
+    /** The registerable container. */
+    private static RegisterableWorldObject registerable;
+
     /**
      * The id of the object.
      */
@@ -96,7 +99,7 @@ public class WorldObject implements Registerable {
 
         WorldObject o = (WorldObject) obj;
 
-        return o.getId() == this.getId() && o.getPosition().equals(this.getPosition()) && o.getFace() == this.getFace() && o.getType() == this.getType() ? true : false;
+        return o.getId() == this.getId() && o.getPosition().equals(this.getPosition()) && o.getFace() == this.getFace() && o.getType() == this.getType();
     }
 
     /**
@@ -157,5 +160,18 @@ public class WorldObject implements Registerable {
      */
     public void setType(int type) {
         this.type = type;
+    }
+
+    /**
+     * Gets the registerable container.
+     * 
+     * @return the registerable container.
+     */
+    public static RegisterableWorldObject getRegisterable() {
+        if (registerable == null) {
+            registerable = new RegisterableWorldObject();
+        }
+
+        return registerable;
     }
 }

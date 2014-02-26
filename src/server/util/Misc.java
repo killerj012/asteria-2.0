@@ -29,7 +29,6 @@ import server.world.item.ground.StaticGroundItem;
 import server.world.map.Location;
 import server.world.map.Position;
 import server.world.music.Music;
-import server.world.object.RegisterableWorldObject;
 import server.world.object.WorldObject;
 import server.world.object.WildernessObeliskSet.WildernessObelisk;
 import server.world.object.WorldObject.Rotation;
@@ -498,7 +497,7 @@ public final class Misc {
 
             int type = reader.get("type").getAsInt();
 
-            RegisterableWorldObject.getSingleton().getObjects().add(new WorldObject(id, new Position(x, y, z), face, type));
+            WorldObject.getRegisterable().getObjects().add(new WorldObject(id, new Position(x, y, z), face, type));
             parsed++;
         }
     }

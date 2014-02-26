@@ -16,11 +16,6 @@ import server.world.entity.player.Player;
 public class RegisterableWorldObject implements RegisterableContainer<WorldObject> {
 
     /**
-     * The singleton instance.
-     */
-    private static RegisterableWorldObject singleton;
-
-    /**
      * A set to keep track of the objects in the world. We use a set so there
      * cannot be duplicates of an object.
      */
@@ -149,15 +144,5 @@ public class RegisterableWorldObject implements RegisterableContainer<WorldObjec
      */
     public Set<WorldObject> getObjects() {
         return objects;
-    }
-
-    /**
-     * @return the singleton instance.
-     */
-    public static RegisterableWorldObject getSingleton() {
-        if (singleton == null) {
-            singleton = new RegisterableWorldObject();
-        }
-        return singleton;
     }
 }

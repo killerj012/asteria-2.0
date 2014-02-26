@@ -13,7 +13,6 @@ import server.world.entity.player.skill.SkillEvent;
 import server.world.entity.player.skill.SkillManager.SkillConstant;
 import server.world.item.Item;
 import server.world.map.Position;
-import server.world.object.RegisterableWorldObject;
 import server.world.object.WorldObject;
 import server.world.object.WorldObject.Rotation;
 
@@ -444,14 +443,14 @@ public class Mining extends SkillEvent {
         final OreObject respawn = getOreObject(ore, objectId);
 
         /** Register an empty rock. */
-        RegisterableWorldObject.getSingleton().register(new WorldObject(respawn.getEmpty(), position, Rotation.SOUTH, 10));
+        WorldObject.getRegisterable().register(new WorldObject(respawn.getEmpty(), position, Rotation.SOUTH, 10));
         rocks.add(position);
 
         /** Schedule a task to respawn the proper ore in place of the empty rock. */
         Rs2Engine.getWorld().submit(new Worker(ore.getRespawnTime(), false, WorkRate.APPROXIMATE_SECOND) {
             @Override
             public void fire() {
-                RegisterableWorldObject.getSingleton().register(new WorldObject(respawn.getOre(), position, Rotation.SOUTH, 10));
+                WorldObject.getRegisterable().register(new WorldObject(respawn.getOre(), position, Rotation.SOUTH, 10));
                 rocks.remove(position);
             }
         });

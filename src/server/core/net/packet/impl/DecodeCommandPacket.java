@@ -26,7 +26,6 @@ import server.world.item.ItemDefinition;
 import server.world.map.MapRegion;
 import server.world.map.MapRegionTile;
 import server.world.map.Position;
-import server.world.object.RegisterableWorldObject;
 import server.world.object.WorldObject;
 import server.world.object.WorldObject.Rotation;
 
@@ -204,7 +203,7 @@ public class DecodeCommandPacket extends PacketDecoder {
             player.gfx(new Gfx(gfx));
         } else if (cmd[0].equals("object")) {
             int id = Integer.parseInt(cmd[1]);
-            RegisterableWorldObject.getSingleton().register(new WorldObject(id, player.getPosition(), Rotation.SOUTH, 10));
+            WorldObject.getRegisterable().register(new WorldObject(id, player.getPosition(), Rotation.SOUTH, 10));
         }
     }
 

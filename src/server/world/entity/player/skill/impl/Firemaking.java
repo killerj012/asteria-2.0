@@ -17,7 +17,6 @@ import server.world.item.Item;
 import server.world.item.ground.GroundItem;
 import server.world.item.ground.StaticGroundItem;
 import server.world.map.Position;
-import server.world.object.RegisterableWorldObject;
 import server.world.object.WorldObject;
 import server.world.object.WorldObject.Rotation;
 
@@ -29,6 +28,9 @@ import server.world.object.WorldObject.Rotation;
  * @author lare96
  */
 public class Firemaking extends SkillEvent {
+
+    // TODO: Almost perfect firemaking with fires and proper ashes. The lighting
+    // speed formula needs work though.
 
     /**
      * The {@link Firemaking} singleton instance.
@@ -253,14 +255,14 @@ public class Firemaking extends SkillEvent {
 
         /** Make and register the fire. */
         fireDatabase.add(logPosition);
-        RegisterableWorldObject.getSingleton().register(fire);
+        WorldObject.getRegisterable().register(fire);
 
         /** Unregister the fire and replace it with ashes after the delay */
         Rs2Engine.getWorld().submit(new Worker(log.getBurnTime(), false, WorkRate.APPROXIMATE_SECOND) {
             @Override
             public void fire() {
                 fireDatabase.remove(logPosition);
-                RegisterableWorldObject.getSingleton().unregister(fire);
+                WorldObject.getRegisterable().unregister(fire);
                 GroundItem.getRegisterable().register(new StaticGroundItem(new Item(592, 1), logPosition, true, false));
                 this.cancel();
             }

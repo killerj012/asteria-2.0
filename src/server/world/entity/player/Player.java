@@ -38,7 +38,7 @@ import server.world.item.ground.GroundItem;
 import server.world.map.Location;
 import server.world.map.Position;
 import server.world.music.MusicSet;
-import server.world.object.RegisterableWorldObject;
+import server.world.object.WorldObject;
 
 /**
  * Represents a logged-in player that is able to receive and send packets and
@@ -425,7 +425,7 @@ public class Player extends Entity {
 
         if (position.getZ() != 0) {
             GroundItem.getRegisterable().searchDatabaseHeightChange(this);
-            RegisterableWorldObject.getSingleton().removeAllHeight(this);
+            WorldObject.getRegisterable().removeAllHeight(this);
         }
     }
 
