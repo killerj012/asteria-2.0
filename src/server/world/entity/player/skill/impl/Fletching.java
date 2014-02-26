@@ -15,13 +15,11 @@ import server.world.item.Item;
  */
 public class Fletching extends SkillEvent {
 
-    /**
-     * The {@link Fletching} singleton instance.
-     */
+    /** The {@link Fletching} singleton instance. */
     private static Fletching singleton;
 
     /**
-     * All of the logs that can be used in fletching.
+     * All of the types of logs that can be used in fletching.
      * 
      * @author lare96
      */
@@ -232,7 +230,7 @@ public class Fletching extends SkillEvent {
     }
 
     // use string with incomplete bow
-    public void fletchCompleteBow(Player player, FletchLog log, FletchBow bow, int amount) {
+    public void stringBow(Player player, FletchLog log, FletchBow bow, int amount) {
         // knife id = 946
         // fletching emote = 6782
     }
