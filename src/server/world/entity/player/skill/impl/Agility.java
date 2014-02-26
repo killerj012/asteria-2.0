@@ -9,7 +9,8 @@ import server.world.entity.player.skill.SkillEvent;
 import server.world.entity.player.skill.SkillManager.SkillConstant;
 
 /**
- * Handles the agility skill. Currently has support for two agility courses.
+ * Handles the agility skill. Currently has support for two full agility
+ * courses.
  * 
  * @author lare96
  */
@@ -90,6 +91,10 @@ public class Agility extends SkillEvent {
         }
     }
 
+    public void startObstacle(AgilityObstacle obstacle) {
+
+    }
+
     @Override
     public int eventFireIndex() {
         return SkillEvent.AGILITY;
@@ -107,6 +112,10 @@ public class Agility extends SkillEvent {
     }
 
     public static class AgilityObstacle {
+
+        private int level;
+
+        private int experience;
 
         private int object;
 
