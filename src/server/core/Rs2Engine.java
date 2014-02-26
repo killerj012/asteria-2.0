@@ -12,12 +12,13 @@ import server.core.net.AsynchronousReactor;
 import server.core.net.Session;
 import server.core.net.buffer.PacketBuffer;
 import server.core.net.packet.PacketEncoder;
+import server.core.task.PooledNpcResetTask;
+import server.core.task.PooledPlayerResetTask;
+import server.core.task.PooledPlayerUpdateTask;
 import server.util.Misc.Stopwatch;
 import server.world.World;
 import server.world.entity.npc.Npc;
-import server.world.entity.npc.NpcUpdate;
 import server.world.entity.player.Player;
-import server.world.entity.player.PlayerUpdate;
 
 /**
  * The 'heart' of the the server that fires tickable game logic and gives access
@@ -48,22 +49,15 @@ public class Rs2Engine implements Runnable {
     private static ExecutorService networkExecutor;
 
     /**
-     * An {@link ExecutorService} that will concurrently perform updating on
-     * players.
+     * An {@link ExecutorService} that takes care of engine tasks in parallel.
      */
-    private static ExecutorService updatePool;
+    private static ExecutorService engineTask;
 
     /**
      * A {@link ScheduledExecutorService} that ticks game logic and updating
      * every 600ms.
      */
     private static ScheduledExecutorService gameExecutor;
-
-    /**
-     * A {@link Thread} that fires general game logic and updates players every
-     * tick.
-     */
-    private static Thread gameEngine;
 
     /**
      * Starts the {@link Rs2Engine} which creates and configures the core
@@ -81,25 +75,18 @@ public class Rs2Engine implements Runnable {
         world = new World();
         reactor = new AsynchronousReactor();
         encoder = new PacketEncoder();
-        updatePool = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
-        networkExecutor = Executors.newSingleThreadExecutor();
-        gameExecutor = Executors.newSingleThreadScheduledExecutor();
-
-        /** Create the actual engine. */
-        gameEngine = new Thread(new Rs2Engine());
+        engineTask = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors(), new GameThreadFactory());
+        networkExecutor = Executors.newSingleThreadExecutor(new NetworkThreadFactory());
+        gameExecutor = Executors.newSingleThreadScheduledExecutor(new GameThreadFactory());
 
         /** Configure engine components. */
         world.configure();
         reactor.configure();
         encoder.configure();
 
-        /** Configure the actual engine. */
-        gameEngine.setPriority(Thread.MAX_PRIORITY);
-        gameEngine.setName(Rs2Engine.class.getName());
-
         /** Start the network and engine. */
         networkExecutor.execute(reactor);
-        gameExecutor.scheduleAtFixedRate(gameEngine, 0, 600, TimeUnit.MILLISECONDS);
+        gameExecutor.scheduleAtFixedRate(new Rs2Engine(), 0, 600, TimeUnit.MILLISECONDS);
 
         /** ... and we are online :) */
         Main.getLogger().info(Main.SERVER_NAME + " took " + startup.elapsed() + "ms to load!");
@@ -119,7 +106,7 @@ public class Rs2Engine implements Runnable {
         world.terminate();
         reactor.terminate();
         networkExecutor.shutdownNow();
-        updatePool.shutdownNow();
+        engineTask.shutdownNow();
         gameExecutor.shutdownNow();
         System.exit(0);
     }
@@ -166,92 +153,58 @@ public class Rs2Engine implements Runnable {
             }
 
             /**
-             * Now we perform concurrent updating for all players. We use a
-             * countdown latch to ensure updating is completed by the
-             * <code>updatePool</code> before the <code>gameEngine</code>
-             * continues.
+             * A countdown latch to block this thread while our thread pool
+             * takes care of updating.
              */
-            final CountDownLatch updateLatch = new CountDownLatch(world.playerAmount());
+            CountDownLatch updateLatch = new CountDownLatch(world.playerAmount());
 
             for (final Player player : world.getPlayers()) {
                 if (player == null) {
                     continue;
                 }
 
-                /**
-                 * Here we use our thread pool to perform updating.
-                 */
-                updatePool.execute(new Runnable() {
-                    @Override
-                    public void run() {
-
-                        /**
-                         * Put a concurrent lock on the player we are currently
-                         * updating - so only one thread in the pool can access
-                         * this player at a time.
-                         */
-                        synchronized (player) {
-
-                            /** Now we actually update the player. */
-                            try {
-                                PlayerUpdate.update(player);
-                                NpcUpdate.update(player);
-                            } catch (Exception ex) {
-                                ex.printStackTrace();
-                                Main.getLogger().warning(player + " error while updating concurrently!");
-                                player.getSession().disconnect();
-
-                                /**
-                                 * And here we decrement the latch by one - one
-                                 * less player we need to update. Once this
-                                 * reaches zero the flow of code below will
-                                 * continue :)
-                                 */
-                            } finally {
-                                updateLatch.countDown();
-                            }
-                        }
-                    }
-                });
+                /** Here we use our thread pool to perform updating in parallel. */
+                engineTask.execute(new PooledPlayerUpdateTask(player, updateLatch));
             }
 
-            /**
-             * The flow of code will literally stop here until our thread pool
-             * is done updating players - when the countdown for the
-             * <code>updateLatch</code> reaches 0 (no more players to
-             * update!).
-             */
+            /** Block until the update task is complete. */
             updateLatch.await();
 
-            /** Reset all players. */
+            /**
+             * Create a new countdown latch to block this thread while our
+             * thread pool resets players.
+             */
+            updateLatch = new CountDownLatch(world.playerAmount());
+
             for (Player player : world.getPlayers()) {
                 if (player == null) {
                     continue;
                 }
 
-                try {
-                    player.reset();
-                } catch (Exception ex) {
-                    ex.printStackTrace();
-                    Main.getLogger().warning(player + " error while resetting for the next game tick!");
-                    player.getSession().disconnect();
-                }
+                /** Here we use our thread pool to perform resetting in parallel. */
+                engineTask.execute(new PooledPlayerResetTask(player, updateLatch));
             }
 
-            /** Reset all NPCs. */
+            /** Block until the reset task is complete. */
+            updateLatch.await();
+
+            /**
+             * Create a new countdown latch to block this thread while our
+             * thread pool resets npcs.
+             */
+            updateLatch = new CountDownLatch(world.npcAmount());
+
             for (Npc npc : world.getNpcs()) {
                 if (npc == null) {
                     continue;
                 }
 
-                try {
-                    npc.reset();
-                } catch (Exception ex) {
-                    ex.printStackTrace();
-                    Main.getLogger().warning(npc + " error while resetting for the next game tick!");
-                    world.unregister(npc);
-                }
+                /** Here we use our thread pool to perform resetting in parallel. */
+                engineTask.execute(new PooledNpcResetTask(npc, updateLatch));
             }
+
+            /** Block until the reset task is complete. */
+            updateLatch.await();
         } catch (Exception ex) {
             ex.printStackTrace();
         }

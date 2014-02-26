@@ -112,15 +112,6 @@ public final class AsynchronousReactor implements Runnable {
     @Override
     public void run() {
 
-        /** Set the name of this thread. */
-        Thread.currentThread().setName(AsynchronousReactor.class.getName());
-
-        /**
-         * Set the priority - this thread isn't high priority because all it
-         * does is send out events.
-         */
-        Thread.currentThread().setPriority(Thread.NORM_PRIORITY);
-
         /**
          * This thread will stay alive as long as the selector and server socket
          * channel are open.
