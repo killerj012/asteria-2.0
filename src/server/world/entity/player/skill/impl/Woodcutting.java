@@ -1,9 +1,9 @@
 package server.world.entity.player.skill.impl;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 import server.core.Rs2Engine;
 import server.core.worker.WorkRate;
@@ -15,80 +15,68 @@ import server.world.entity.player.skill.SkillEvent;
 import server.world.entity.player.skill.SkillManager.SkillConstant;
 import server.world.item.Item;
 import server.world.map.Position;
-import server.world.object.RegisterableWorldObject;
 import server.world.object.WorldObject;
 import server.world.object.WorldObject.Rotation;
 
 /**
- * Class which handles everything to do with the woodcutting skill. This
- * supports multiple players cutting on the same tree, being able to get more
- * than one log from every tree except normal, and tree respawning with stumps
- * (not all correct).
+ * Handles the woodcutting skill. This has support for multiple players cutting
+ * on the same tree, being able to get more than one log from every tree except
+ * normal, tree stumps, and respawning.
  * 
  * @author lare96
  */
 public class Woodcutting extends SkillEvent {
 
-    // TODO: check and revamp...
+    // XXX: Near perfect woodcutting, just needs random nests and a better speed
+    // formula :)
 
-    /**
-     * The singleton instance.
-     */
+    // test, also test prayer and firemaking
+
+    /** The {@link Woodcutting} singleton instance. */
     private static Woodcutting singleton;
 
     /**
-     * A list of the positions of the stumps currently placed throughout the
-     * world.
+     * A {@link HashSet} of the positions of {@link TreeStump}s currently
+     * placed throughout the game.
      */
-    private static List<Position> stumps = new ArrayList<Position>();
+    private static Set<Position> stumps = new HashSet<Position>();
 
     /**
-     * Holds data for all of the possible trees that can be cut.
+     * All of the possible types of trees that can be cut.
      * 
      * @author lare96
      */
     public enum Tree {
-        NORMAL(1, 1511, 10, 100, 1, 2, new StumpObject[] { new StumpObject(1276, 1342), new StumpObject(1277, 1341), new StumpObject(1278, 1342), new StumpObject(1279, 1341), new StumpObject(1280, 1341), new StumpObject(1282, 1347), new StumpObject(1283, 1347), new StumpObject(1284, 1350), new StumpObject(1285, 1341), new StumpObject(1286, 1352), new StumpObject(1287, 1341), new StumpObject(1288, 1341), new StumpObject(1289, 1352), new StumpObject(1290, 1341), new StumpObject(1291, 1352), new StumpObject(1301, 1341), new StumpObject(1303, 1341), new StumpObject(1304, 1341), new StumpObject(1305, 1341), new StumpObject(1318, 1355), new StumpObject(1319, 1355), new StumpObject(1315, 1342), new StumpObject(1316, 1355), new StumpObject(1330, 1355), new StumpObject(1331, 1355), new StumpObject(1332, 1355), new StumpObject(1333, 1341), new StumpObject(1383, 1341), new StumpObject(1384, 1352), new StumpObject(2409, 1341), new StumpObject(2447, 1341), new StumpObject(2448, 1341), new StumpObject(3033, 1341), new StumpObject(3034, 1341), new StumpObject(3035, 1341), new StumpObject(3036, 1341), new StumpObject(3879, 1341), new StumpObject(3881, 1341), new StumpObject(3883, 1341), new StumpObject(3893, 1341), new StumpObject(3885, 1341), new StumpObject(3886, 1341), new StumpObject(3887, 1341), new StumpObject(3888, 1341), new StumpObject(3892, 1341), new StumpObject(3889, 1341), new StumpObject(3890, 1341), new StumpObject(3891, 1341), new StumpObject(3928, 1341), new StumpObject(3967, 1341), new StumpObject(3968, 1341), new StumpObject(4048, 1341), new StumpObject(4049, 1341), new StumpObject(4050, 1341), new StumpObject(4051, 1341), new StumpObject(4052, 1341), new StumpObject(4053, 1341), new StumpObject(4054, 1341), new StumpObject(4060, 1341), new StumpObject(5004, 1341), new StumpObject(5005, 1341), new StumpObject(5045, 1341), new StumpObject(5902, 1341), new StumpObject(5903, 1341), new StumpObject(5904, 1341), new StumpObject(8973, 1341), new StumpObject(8974, 1341) }),
-        OAK(15, 1521, 15, 250, 7, 3, new StumpObject[] { new StumpObject(1281, 1356), new StumpObject(3037, 1341), new StumpObject(8462, 1341), new StumpObject(8463, 1341), new StumpObject(8464, 1341), new StumpObject(8465, 1341), new StumpObject(8466, 1341), new StumpObject(8467, 1341), new StumpObject(10083, 1341), new StumpObject(13413, 1341), new StumpObject(13420, 1341) }),
-        WILLOW(30, 1519, 25, 500, 20, 3, new StumpObject[] { new StumpObject(1308, 7399), new StumpObject(5551, 5554), new StumpObject(5552, 5554), new StumpObject(5553, 5554), new StumpObject(8481, 1341), new StumpObject(8482, 1341), new StumpObject(8483, 1341), new StumpObject(8484, 1341), new StumpObject(8485, 1341), new StumpObject(8486, 1341), new StumpObject(8487, 1341), new StumpObject(8488, 1341), new StumpObject(8496, 1341), new StumpObject(8497, 1341), new StumpObject(8498, 1341), new StumpObject(8499, 1341), new StumpObject(8500, 1341), new StumpObject(8501, 1341) }),
-        MAPLE(45, 1517, 45, 550, 25, 4, new StumpObject[] { new StumpObject(1307, 1342), new StumpObject(4674, 1342), new StumpObject(8435, 1341), new StumpObject(8436, 1341), new StumpObject(8437, 1341), new StumpObject(8438, 1341), new StumpObject(8439, 1341), new StumpObject(8440, 1341), new StumpObject(8441, 1341), new StumpObject(8442, 1341), new StumpObject(8443, 1341), new StumpObject(8444, 1341), new StumpObject(8454, 1341), new StumpObject(8455, 1341), new StumpObject(8456, 1341), new StumpObject(8457, 1341), new StumpObject(8458, 1341), new StumpObject(8459, 1341), new StumpObject(8460, 1341), new StumpObject(8461, 1341) }),
-        YEW(60, 1515, 80, 800, 40, 6, new StumpObject[] { new StumpObject(1309, 7402), new StumpObject(8503, 1341), new StumpObject(8504, 1341), new StumpObject(8505, 1341), new StumpObject(8506, 1341), new StumpObject(8507, 1341), new StumpObject(8508, 1341), new StumpObject(8509, 1341), new StumpObject(8510, 1341), new StumpObject(8511, 1341), new StumpObject(8512, 1341), new StumpObject(8513, 1341) }),
-        MAGIC(75, 1513, 120, 1500, 50, 8, new StumpObject[] { new StumpObject(1306, 1341), new StumpObject(8396, 1341), new StumpObject(8397, 1341), new StumpObject(8398, 1341), new StumpObject(8399, 1341), new StumpObject(8400, 1341), new StumpObject(8401, 1341), new StumpObject(8402, 1341), new StumpObject(8403, 1341), new StumpObject(8404, 1341), new StumpObject(8405, 1341), new StumpObject(8406, 1341), new StumpObject(8407, 1341), new StumpObject(8408, 1341), new StumpObject(840, 1341) });
+        NORMAL(1, 1511, 10, 25, 1, 2, new TreeStump[] { new TreeStump(1276, 1342), new TreeStump(1277, 1341), new TreeStump(1278, 1342), new TreeStump(1279, 1341), new TreeStump(1280, 1341), new TreeStump(1282, 1347), new TreeStump(1283, 1347), new TreeStump(1284, 1350), new TreeStump(1285, 1341), new TreeStump(1286, 1352), new TreeStump(1287, 1341), new TreeStump(1288, 1341), new TreeStump(1289, 1352), new TreeStump(1290, 1341), new TreeStump(1291, 1352), new TreeStump(1301, 1341), new TreeStump(1303, 1341), new TreeStump(1304, 1341), new TreeStump(1305, 1341), new TreeStump(1318, 1355), new TreeStump(1319, 1355), new TreeStump(1315, 1342), new TreeStump(1316, 1355), new TreeStump(1330, 1355), new TreeStump(1331, 1355), new TreeStump(1332, 1355), new TreeStump(1333, 1341), new TreeStump(1383, 1341), new TreeStump(1384, 1352), new TreeStump(2409, 1341), new TreeStump(2447, 1341), new TreeStump(2448, 1341), new TreeStump(3033, 1341), new TreeStump(3034, 1341), new TreeStump(3035, 1341), new TreeStump(3036, 1341), new TreeStump(3879, 1341), new TreeStump(3881, 1341), new TreeStump(3883, 1341), new TreeStump(3893, 1341), new TreeStump(3885, 1341), new TreeStump(3886, 1341), new TreeStump(3887, 1341), new TreeStump(3888, 1341), new TreeStump(3892, 1341), new TreeStump(3889, 1341), new TreeStump(3890, 1341), new TreeStump(3891, 1341), new TreeStump(3928, 1341), new TreeStump(3967, 1341), new TreeStump(3968, 1341), new TreeStump(4048, 1341), new TreeStump(4049, 1341), new TreeStump(4050, 1341), new TreeStump(4051, 1341), new TreeStump(4052, 1341), new TreeStump(4053, 1341), new TreeStump(4054, 1341), new TreeStump(4060, 1341), new TreeStump(5004, 1341), new TreeStump(5005, 1341), new TreeStump(5045, 1341), new TreeStump(5902, 1341), new TreeStump(5903, 1341), new TreeStump(5904, 1341), new TreeStump(8973, 1341), new TreeStump(8974, 1341) }),
+        OAK(15, 1521, 15, 37, 7, 3, new TreeStump[] { new TreeStump(1281, 1356), new TreeStump(3037, 1341), new TreeStump(8462, 1341), new TreeStump(8463, 1341), new TreeStump(8464, 1341), new TreeStump(8465, 1341), new TreeStump(8466, 1341), new TreeStump(8467, 1341), new TreeStump(10083, 1341), new TreeStump(13413, 1341), new TreeStump(13420, 1341) }),
+        WILLOW(30, 1519, 25, 67, 20, 3, new TreeStump[] { new TreeStump(1308, 7399), new TreeStump(5551, 5554), new TreeStump(5552, 5554), new TreeStump(5553, 5554), new TreeStump(8481, 1341), new TreeStump(8482, 1341), new TreeStump(8483, 1341), new TreeStump(8484, 1341), new TreeStump(8485, 1341), new TreeStump(8486, 1341), new TreeStump(8487, 1341), new TreeStump(8488, 1341), new TreeStump(8496, 1341), new TreeStump(8497, 1341), new TreeStump(8498, 1341), new TreeStump(8499, 1341), new TreeStump(8500, 1341), new TreeStump(8501, 1341) }),
+        MAPLE(45, 1517, 45, 100, 25, 4, new TreeStump[] { new TreeStump(1307, 1342), new TreeStump(4674, 1342), new TreeStump(8435, 1341), new TreeStump(8436, 1341), new TreeStump(8437, 1341), new TreeStump(8438, 1341), new TreeStump(8439, 1341), new TreeStump(8440, 1341), new TreeStump(8441, 1341), new TreeStump(8442, 1341), new TreeStump(8443, 1341), new TreeStump(8444, 1341), new TreeStump(8454, 1341), new TreeStump(8455, 1341), new TreeStump(8456, 1341), new TreeStump(8457, 1341), new TreeStump(8458, 1341), new TreeStump(8459, 1341), new TreeStump(8460, 1341), new TreeStump(8461, 1341) }),
+        YEW(60, 1515, 80, 175, 40, 6, new TreeStump[] { new TreeStump(1309, 7402), new TreeStump(8503, 1341), new TreeStump(8504, 1341), new TreeStump(8505, 1341), new TreeStump(8506, 1341), new TreeStump(8507, 1341), new TreeStump(8508, 1341), new TreeStump(8509, 1341), new TreeStump(8510, 1341), new TreeStump(8511, 1341), new TreeStump(8512, 1341), new TreeStump(8513, 1341) }),
+        MAGIC(75, 1513, 120, 250, 50, 8, new TreeStump[] { new TreeStump(1306, 1341), new TreeStump(8396, 1341), new TreeStump(8397, 1341), new TreeStump(8398, 1341), new TreeStump(8399, 1341), new TreeStump(8400, 1341), new TreeStump(8401, 1341), new TreeStump(8402, 1341), new TreeStump(8403, 1341), new TreeStump(8404, 1341), new TreeStump(8405, 1341), new TreeStump(8406, 1341), new TreeStump(8407, 1341), new TreeStump(8408, 1341), new TreeStump(840, 1341) });
 
-        /**
-         * The level needed to cut this type of tree.
-         */
+        /** The level needed to cut this type of tree. */
         private int level;
 
-        /**
-         * The item id of the log obtained after cutting this type of tree.
-         */
+        /** The item id of the log obtained after cutting this type of tree. */
         private int logId;
 
-        /**
-         * The time it takes for this type of tree to respawn in seconds.
-         */
+        /** The time it takes for this type of tree to respawn in seconds. */
         private int respawnTime;
 
-        /**
-         * The experience received when you get a log from this type of tree.
-         */
+        /** The experience received when you get a log from this type of tree. */
         private int experience;
 
-        /**
-         * The maximum amount of logs in a single tree of this type.
-         */
+        /** The maximum amount of logs in a single tree of this type. */
         private int logsInTree;
 
-        /**
-         * The speed in getting logs from this type of tree.
-         */
+        /** The speed in getting logs from this type of tree. */
         private int speed;
 
         /**
-         * The tree object ids and the stump object ids that replace them.
+         * The tree object id's and the stump object id's that replace them once
+         * cut.
          */
-        private StumpObject[] trees;
+        private TreeStump[] trees;
 
         /**
          * A map with the object id of every tree mapped to an instance of the
@@ -96,44 +84,59 @@ public class Woodcutting extends SkillEvent {
          */
         private static Map<Integer, Tree> treeMap = new HashMap<Integer, Tree>();
 
-        /** Loads the <code>treeMap</code> with the appropriate data. */
+        /**
+         * A map with the object id of every tree mapped to an instance of the
+         * stump object.
+         */
+        private static Map<Integer, TreeStump> stumpMap = new HashMap<Integer, TreeStump>();
+
+        /**
+         * Loads the <code>treeMap</code> and <code>stumpMap</code> with the
+         * appropriate data.
+         */
         static {
             for (Tree tree : Tree.values()) {
-                for (StumpObject stump : tree.getTrees()) {
+                for (TreeStump stump : tree.getTrees()) {
                     treeMap.put(stump.getTreeId(), tree);
+                    stumpMap.put(stump.getTreeId(), stump);
                 }
             }
         }
 
         /**
-         * Construct data for a new tree type.
+         * Create a new {@link Tree}.
          * 
          * @param level
-         *        the level.
+         *        the level needed to cut this type of tree.
          * @param logId
-         *        the log id.
+         *        the item id of the log obtained after cutting this type of
+         *        tree.
          * @param respawnTime
-         *        the respawn time.
+         *        the time it takes for this type of tree to respawn in seconds.
          * @param experience
-         *        the experience.
+         *        the experience received when you get a log from this type of
+         *        tree.
          * @param logsInTree
-         *        the amount of logs in this tree.
+         *        the maximum amount of logs in a single tree of this type.
          * @param speed
-         *        the speed.
+         *        the speed in getting logs from this type of tree.
          * @param trees
-         *        the trees and corresponding stumps.
+         *        the tree object id's and the stump object id's that replace
+         *        them once cut.
          */
-        Tree(int level, int logId, int respawnTime, int experience, int logsInTree, int speed, StumpObject[] trees) {
-            this.setLevel(level);
-            this.setLogId(logId);
-            this.setRespawnTime(respawnTime);
-            this.setExperience(experience);
-            this.setLogsInTree(logsInTree);
-            this.setSpeed(speed);
-            this.setTrees(trees);
+        Tree(int level, int logId, int respawnTime, int experience, int logsInTree, int speed, TreeStump[] trees) {
+            this.level = level;
+            this.logId = logId;
+            this.respawnTime = respawnTime;
+            this.experience = experience;
+            this.logsInTree = logsInTree;
+            this.speed = speed;
+            this.trees = trees;
         }
 
         /**
+         * Gets the level needed to cut this type of tree.
+         * 
          * @return the level.
          */
         public int getLevel() {
@@ -141,44 +144,27 @@ public class Woodcutting extends SkillEvent {
         }
 
         /**
-         * @param level
-         *        the level to set.
-         */
-        public void setLevel(int level) {
-            this.level = level;
-        }
-
-        /**
-         * @return the logId.
+         * Gets the item id of the log obtained after cutting this type of tree.
+         * 
+         * @return the log id.
          */
         public int getLogId() {
             return logId;
         }
 
         /**
-         * @param logId
-         *        the logId to set.
-         */
-        public void setLogId(int logId) {
-            this.logId = logId;
-        }
-
-        /**
-         * @return the respawnTime.
+         * Gets the time it takes for this type of tree to respawn in seconds.
+         * 
+         * @return the respawn time.
          */
         public int getRespawnTime() {
             return respawnTime;
         }
 
         /**
-         * @param respawnTime
-         *        the respawnTime to set.
-         */
-        public void setRespawnTime(int respawnTime) {
-            this.respawnTime = respawnTime;
-        }
-
-        /**
+         * Gets the experience received when you get a log from this type of
+         * tree.
+         * 
          * @return the experience.
          */
         public int getExperience() {
@@ -186,29 +172,17 @@ public class Woodcutting extends SkillEvent {
         }
 
         /**
-         * @param experience
-         *        the experience to set.
-         */
-        public void setExperience(int experience) {
-            this.experience = experience;
-        }
-
-        /**
-         * @return the logsInTree.
+         * Gets the maximum amount of logs in a single tree of this type.
+         * 
+         * @return the logs in tree.
          */
         public int getLogsInTree() {
             return logsInTree;
         }
 
         /**
-         * @param logsInTree
-         *        the logsInTree to set.
-         */
-        public void setLogsInTree(int logsInTree) {
-            this.logsInTree = logsInTree;
-        }
-
-        /**
+         * Gets the speed in getting logs from this type of tree.
+         * 
          * @return the speed.
          */
         public int getSpeed() {
@@ -216,217 +190,194 @@ public class Woodcutting extends SkillEvent {
         }
 
         /**
-         * @param speed
-         *        the speed to set.
-         */
-        public void setSpeed(int speed) {
-            this.speed = speed;
-        }
-
-        /**
+         * Gets the tree object id's and the stump object id's that replace them
+         * once cut.
+         * 
          * @return the trees.
          */
-        public StumpObject[] getTrees() {
+        public TreeStump[] getTrees() {
             return trees;
         }
 
         /**
-         * @param trees
-         *        the trees to set.
+         * Gets the stump for the specified tree.
+         * 
+         * @param objectId
+         *        the specified tree to get the stump for.
+         * @return the
          */
-        public void setTrees(StumpObject[] trees) {
-            this.trees = trees;
+        public TreeStump getStumpObject(int objectId) {
+            return stumpMap.get(objectId);
         }
 
-        public static Tree getTree(int id) {
-            return treeMap.get(id);
+        /**
+         * Gets a {@link Tree} constant by its object id.
+         * 
+         * @param objectId
+         *        the id of the constant to get.
+         * @return the constant.
+         */
+        public static Tree getTree(int objectId) {
+            return treeMap.get(objectId);
         }
 
+        /**
+         * Determines if this enum contains a {@link Tree} constant with this
+         * object id.
+         * 
+         * @param id
+         *        the object id to check this enum for.
+         * @return if this enum contains a constant with this object id.
+         */
         public static boolean containsTree(int id) {
             return !(getTree(id) == null);
         }
     }
 
     /**
-     * Holds data for all of the possible axes that can be used to cut a tree.
+     * All of the possible types axes that can be used to cut a tree.
      * 
      * @author lare96
      */
     public enum Axe {
         BRONZE(1351, 1, 879, 7),
-
         IRON(1349, 1, 877, 7),
-
         STEEL(1353, 6, 875, 6),
-
         BLACK(1361, 6, 873, 5),
-
         MITHRIL(1355, 21, 871, 4),
-
         ADAMANT(1357, 31, 869, 3),
-
         RUNE(1359, 41, 867, 2),
-
         DRAGON(6739, 61, 2846, 0);
 
-        /**
-         * The id of the axe.
-         */
-        private int axeId;
+        /** The id of the axe. */
+        private int id;
 
-        /**
-         * The level of the axe.
-         */
+        /** The level of the axe. */
         private int level;
 
-        /**
-         * The animation that will be used when cutting with this axe.
-         */
+        /** The animation that will be used when cutting with this axe. */
         private int animation;
 
-        /**
-         * The speed of this axe.
-         */
+        /** The speed of this axe. */
         private int speed;
 
         /**
-         * Construct data for each axe.
+         * Create a new {@link Axe}.
          * 
-         * @param axeId
-         *        the axe.
+         * @param id
+         *        the id of the axe.
          * @param level
-         *        the level.
+         *        the level of the axe.
          * @param animation
-         *        the animation
+         *        the animation that will be used when cutting with this axe.
          * @param speed
-         *        the speed.
+         *        the speed of this axe.
          */
-        Axe(int axeId, int level, int animation, int speed) {
-            this.setAxeId(axeId);
-            this.setLevel(level);
-            this.setAnimation(animation);
-            this.setSpeed(speed);
+        Axe(int id, int level, int animation, int speed) {
+            this.id = id;
+            this.level = level;
+            this.animation = animation;
+            this.speed = speed;
         }
 
         /**
-         * @return the axeId
+         * Gets the id of the axe.
+         * 
+         * @return the axe id.
          */
-        public int getAxeId() {
-            return axeId;
+        public int getId() {
+            return id;
         }
 
         /**
-         * @param axeId
-         *        the axeId to set
-         */
-        public void setAxeId(int axeId) {
-            this.axeId = axeId;
-        }
-
-        /**
-         * @return the level
+         * Gets the level of the axe.
+         * 
+         * @return the level.
          */
         public int getLevel() {
             return level;
         }
 
         /**
-         * @param level
-         *        the level to set
-         */
-        public void setLevel(int level) {
-            this.level = level;
-        }
-
-        /**
-         * @return the animation
+         * Gets the animation that will be used when cutting with this axe.
+         * 
+         * @return the animation.
          */
         public int getAnimation() {
             return animation;
         }
 
         /**
-         * @param animation
-         *        the animation to set
-         */
-        public void setAnimation(int animation) {
-            this.animation = animation;
-        }
-
-        /**
-         * @return the speed
+         * Gets the speed of this axe.
+         * 
+         * @return the speed.
          */
         public int getSpeed() {
             return speed;
         }
-
-        /**
-         * @param speed
-         *        the speed to set
-         */
-        public void setSpeed(int speed) {
-            this.speed = speed;
-        }
     }
 
     /**
-     * Begin cutting the the designated tree for the player.
+     * Start cutting a {@link Tree} for the specified {@link Player}.
      * 
      * @param player
      *        the player cutting this tree.
      * @param tree
-     *        the tree this player is cutting.
+     *        the type of tree this player is cutting.
      * @param axe
-     *        the axe being used.
+     *        the type of axe being used.
      * @param position
      *        the position of this tree.
      * @param objectId
-     *        the id of this tree.
+     *        the object id of this tree.
      */
-    public void cut(final Player player, final Tree tree, final Axe axe, final Position position, final int objectId) {
+    public void chopTree(final Player player, final Tree tree, final Axe axe, final Position position, final int objectId) {
 
-        /** If we are already skilling, block. */
+        /** Block if we are already woodcutting. */
         if (player.getSkillEvent()[eventFireIndex()]) {
-            fireResetEvent(player);
+            player.getPacketBuilder().resetAnimation();
+            player.animation(new Animation(axe.getAnimation()));
+            player.getPacketBuilder().sendMessage("You swing your axe at the tree...");
             return;
         }
 
-        /** If we have no space in our inventory, block. */
+        /** Block if we have no space in our inventory. */
         if (player.getInventory().getContainer().freeSlots() < 1) {
             player.getPacketBuilder().sendMessage("You do not have any space left in your inventory.");
             return;
         }
 
-        /** If we aren't a high enough level to cut this tree, block. */
+        /** Block if we aren't a high enough level to cut this tree. */
         if (!player.getSkills()[Misc.WOODCUTTING].reqLevel(tree.getLevel())) {
             player.getPacketBuilder().sendMessage("You need a woodcutting level of " + tree.getLevel() + " to cut " + tree.name().toLowerCase().replaceAll("_", " ") + " trees.");
             return;
         }
 
-        /** Begin woodcutting. */
+        /** Prepare the player for woodcutting. */
         player.getPacketBuilder().sendMessage("You swing your axe at the tree...");
         player.getSkillEvent()[eventFireIndex()] = true;
         player.animation(new Animation(axe.getAnimation()));
         player.setWoodcuttingLogAmount(getLogsInTree(tree));
         player.getMovementQueue().reset();
 
+        /** Submit the woodcutting worker. */
         Rs2Engine.getWorld().submit(new Worker(Misc.getRandom().nextInt(getWoodcuttingTime(player, tree, axe)) + 1, false, WorkRate.APPROXIMATE_SECOND) {
             @Override
             public void fire() {
 
                 /**
-                 * If there is a stump where you are cutting (someone cut the
-                 * tree faster than you) than block and stop the task.
+                 * Block and cancel this worker if there is a stump where you
+                 * are cutting (someone cut the tree faster than you).
                  */
-                if (checkStump(position)) {
+                if (isStumpOnPosition(position)) {
                     fireResetEvent(player);
                     this.cancel();
                     return;
                 }
 
                 /**
-                 * If a random integer between 0-15 is equal to 0, block and
-                 * stop the task (used for making the player randomly stop
+                 * Block and cancel this worker if a random integer between 0-15
+                 * is equal to 0 (used for making the player randomly stop
                  * mining).
                  */
                 if (Misc.getRandom().nextInt(15) == 0) {
@@ -435,20 +386,25 @@ public class Woodcutting extends SkillEvent {
                     return;
                 }
 
-                /** If the skill has been stopped, block, and stop the task. */
+                /**
+                 * Block and cancel this worker if the skill has been stopped.
+                 */
                 if (!player.getSkillEvent()[eventFireIndex()]) {
                     fireResetEvent(player);
                     this.cancel();
                     return;
                 }
 
-                /** Get some logs. */
+                /** Here we get some logs. */
                 player.getPacketBuilder().sendMessage("You recieve some " + tree.name().toLowerCase().replaceAll("_", " ") + " logs.");
                 player.getInventory().addItem(new Item(tree.getLogId()));
                 exp(player, tree.getExperience());
                 player.decrementWoodcuttingLogAmount();
 
-                /** Respawn the tree */
+                /**
+                 * If the tree is out of logs we stop this worker, replace the
+                 * tree with a stump and work on getting a new one in its place.
+                 */
                 if (player.getWoodcuttingLogAmount() == 0) {
                     respawnTree(tree, position, objectId);
                     fireResetEvent(player);
@@ -467,89 +423,68 @@ public class Woodcutting extends SkillEvent {
         }.attach(player));
 
         /**
-         * Because the woodcutting animation is based on a strict time of 4
-         * seconds, we use a separate task for the animation.
+         * Because the woodcutting animation is based on a strict time we use a
+         * separate worker for the animation.
          */
         Rs2Engine.getWorld().submit(new Worker(5, true) {
             @Override
             public void fire() {
 
-                /** If the skill has been stopped, block, and stop the task. */
+                /**
+                 * Block and cancel this worker if the skill has been stopped.
+                 */
                 if (!player.getSkillEvent()[eventFireIndex()]) {
                     fireResetEvent(player);
-                    cancel();
+                    this.cancel();
                     return;
                 }
 
-                /** Perform the animation */
+                /** Perform the animation. */
                 player.animation(new Animation(axe.getAnimation()));
             }
         }.attach(player));
     }
 
     /**
-     * Replaces the cut tree with the stump, then schedules a worker to respawn
-     * the tree.
+     * Replaces the cut {@link Tree} with the stump and submits a {@link Worker}
+     * to respawn the {@link Tree} that was cut.
      * 
      * @param tree
-     *        the tree to respawn.
+     *        the type of tree to respawn.
      * @param position
      *        the position of the stump.
      * @param objectId
-     *        the tree to respawn.
+     *        the object id to replace the stump with.
      */
     private void respawnTree(Tree tree, final Position position, int objectId) {
-        final StumpObject respawn = getStumpObject(tree, objectId);
 
-        /** Register a stump. */
-        RegisterableWorldObject.getSingleton().register(new WorldObject(respawn.getStump(), position, Rotation.SOUTH, 10));
+        /** The stump we are going to place. */
+        final TreeStump treeStump = tree.getStumpObject(objectId);
+
+        /** Place the stump object. */
+        WorldObject.getRegisterable().register(new WorldObject(treeStump.getStumpId(), position, Rotation.SOUTH, 10));
         stumps.add(position);
 
-        /** Schedule a task to respawn the tree in place of the stump. */
+        /** Submit a worker to respawn the tree in place of the stump. */
         Rs2Engine.getWorld().submit(new Worker(tree.getRespawnTime(), false, WorkRate.APPROXIMATE_SECOND) {
             @Override
             public void fire() {
-                RegisterableWorldObject.getSingleton().register(new WorldObject(respawn.getTreeId(), position, Rotation.SOUTH, 10));
+                WorldObject.getRegisterable().register(new WorldObject(treeStump.getTreeId(), position, Rotation.SOUTH, 10));
                 stumps.remove(position);
             }
         });
     }
 
     /**
-     * Gets the correct stump for the specified tree.
-     * 
-     * @param tree
-     *        the tree.
-     * @param objectId
-     *        the objectId.
-     * @return the stump object.
-     */
-    private StumpObject getStumpObject(Tree tree, int objectId) {
-        for (StumpObject object : tree.getTrees()) {
-            if (object == null) {
-                continue;
-            }
-
-            if (object.getTreeId() == objectId) {
-                return object;
-            }
-        }
-        return null;
-    }
-
-    /**
-     * Checks if there is a stump where you are cutting.
+     * Determines if there is a {@link TreeStump} on the specified
+     * {@link Position}.
      * 
      * @param position
-     *        the position to check.
+     *        the position to check for a stump.
      * @return true if there is on stump on the position.
      */
-    private boolean checkStump(Position position) {
+    private boolean isStumpOnPosition(Position position) {
         for (Position p : stumps) {
-            if (p == null) {
-                continue;
-            }
-
             if (p.equals(position)) {
                 return true;
             }
@@ -558,14 +493,14 @@ public class Woodcutting extends SkillEvent {
     }
 
     /**
-     * Gets the time it takes to cut a tree.
+     * Calculates the time it takes to receive a log from a {@link Tree}.
      * 
      * @param player
-     *        the player.
+     *        the player trying to cut this tree.
      * @param tree
-     *        the tree.
+     *        the type of tree being cut.
      * @param axe
-     *        the axe.
+     *        the type of axe being used.
      */
     private int getWoodcuttingTime(Player player, Tree tree, Axe axe) {
         if (player.getSkills()[Misc.WOODCUTTING].getLevel() <= 45) {
@@ -580,10 +515,10 @@ public class Woodcutting extends SkillEvent {
     }
 
     /**
-     * Get the amount of logs in the tree for the player.
+     * Gets the amount of logs in the tree.
      * 
      * @param tree
-     *        the tree.
+     *        the type of tree.
      * @return the amount of logs in the tree.
      */
     private int getLogsInTree(Tree tree) {
@@ -593,21 +528,16 @@ public class Woodcutting extends SkillEvent {
     }
 
     /**
-     * Checks if you have an axe and if you have the required level to use it.
-     * If you do then it returns an instance of it as an <code>Axe</code>
-     * object.
+     * Determines if you have an axe and the required level to use it to cut a
+     * tree.
      * 
      * @param player
-     *        the player.
-     * @return the axe you are wielding.
+     *        the player being checked.
+     * @return the axe you are wielding (if any).
      */
     public Axe getAxe(Player player) {
         for (Axe axe : Axe.values()) {
-            if (axe == null) {
-                continue;
-            }
-
-            if (player.getInventory().getContainer().contains(axe.getAxeId()) || player.getEquipment().getContainer().contains(axe.getAxeId())) {
+            if (player.getInventory().getContainer().contains(axe.getId()) || player.getEquipment().getContainer().contains(axe.getId())) {
                 if (player.getSkills()[Misc.WOODCUTTING].getLevel() >= axe.getLevel()) {
                     return axe;
                 }
@@ -622,7 +552,9 @@ public class Woodcutting extends SkillEvent {
     }
 
     /**
-     * @return the singleton.
+     * Gets the {@link Woodcutting} singleton instance.
+     * 
+     * @return the singleton instance.
      */
     public static Woodcutting getSingleton() {
         if (singleton == null) {
@@ -649,63 +581,47 @@ public class Woodcutting extends SkillEvent {
     }
 
     /**
-     * Holds data for a tree and its corresponding stump.
+     * A container for the object id of a tree and its corresponding stump.
      * 
      * @author lare96
      */
-    public static class StumpObject {
+    public static class TreeStump {
 
-        /**
-         * The trees that will be replaced by this specified stump.
-         */
+        /** The object id of the tree that will replace the stump. */
         private int treeId;
 
-        /**
-         * The stump that will replace the tree.
-         */
-        private int stump;
+        /** The object id of the stump that will replace the tree. */
+        private int stumpId;
 
         /**
-         * Construct a new stump object.
+         * Create a new {@link TreeStump}.
          * 
          * @param treeId
-         *        the id of the tree.
-         * @param stump
-         *        the id of the stump.
+         *        the object id of the tree that will replace the stump.
+         * @param stumpId
+         *        the object id of the stump that will replace the tree.
          */
-        public StumpObject(int treeId, int stump) {
-            this.setTreeId(treeId);
-            this.setStump(stump);
+        public TreeStump(int treeId, int stumpId) {
+            this.treeId = treeId;
+            this.stumpId = stumpId;
         }
 
         /**
-         * @return the treeId.
+         * Gets the object id of the tree that will replace the stump.
+         * 
+         * @return the tree id.
          */
         public int getTreeId() {
             return treeId;
         }
 
         /**
-         * @param treeId
-         *        the treeId to set.
+         * Gets the object id of the stump that will replace the tree.
+         * 
+         * @return the stump id.
          */
-        public void setTreeId(int treeId) {
-            this.treeId = treeId;
-        }
-
-        /**
-         * @return the stump.
-         */
-        public int getStump() {
-            return stump;
-        }
-
-        /**
-         * @param stump
-         *        the stump to set.
-         */
-        public void setStump(int stump) {
-            this.stump = stump;
+        public int getStumpId() {
+            return stumpId;
         }
     }
 }

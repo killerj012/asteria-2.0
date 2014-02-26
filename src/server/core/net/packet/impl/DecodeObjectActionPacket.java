@@ -56,7 +56,7 @@ public class DecodeObjectActionPacket extends PacketDecoder {
                                 Axe axe = Woodcutting.getSingleton().getAxe(player);
 
                                 if (axe != null) {
-                                    Woodcutting.getSingleton().cut(player, tree, axe, new Position(objectX, objectY, player.getPosition().getZ()), objectId);
+                                    Woodcutting.getSingleton().chopTree(player, tree, axe, new Position(objectX, objectY, player.getPosition().getZ()), objectId);
                                 }
                             }
 
