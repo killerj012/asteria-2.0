@@ -92,16 +92,16 @@ public class DecodeNpcActionPacket extends PacketDecoder {
                                     break;
                                 case 319:
                                     if (player.getInventory().getContainer().contains(FishingTool.NET.getId())) {
-                                        Fishing.getSingleton().fish(player, FishingTool.NET);
+                                        Fishing.getSingleton().startFish(player, FishingTool.NET);
                                     } else {
-                                        Fishing.getSingleton().fish(player, FishingTool.BIG_NET);
+                                        Fishing.getSingleton().startFish(player, FishingTool.BIG_NET);
                                     }
                                     break;
                                 case 324:
-                                    Fishing.getSingleton().fish(player, FishingTool.LOBSTER_POT);
+                                    Fishing.getSingleton().startFish(player, FishingTool.LOBSTER_POT);
                                     break;
                                 case 328:
-                                    Fishing.getSingleton().fish(player, FishingTool.FLY_FISHING_ROD);
+                                    Fishing.getSingleton().startFish(player, FishingTool.FLY_FISHING_ROD);
                                     break;
                                 case 520:
                                     Shop.getShop(0).openShop(player);
@@ -210,19 +210,19 @@ public class DecodeNpcActionPacket extends PacketDecoder {
                                     break;
                                 case 319:
                                     if (player.getInventory().getContainer().contains(FishingTool.FISHING_ROD.getId())) {
-                                        Fishing.getSingleton().fish(player, FishingTool.FISHING_ROD);
+                                        Fishing.getSingleton().startFish(player, FishingTool.FISHING_ROD);
                                     } else {
-                                        Fishing.getSingleton().fish(player, FishingTool.OILY_FISHING_ROD);
+                                        Fishing.getSingleton().startFish(player, FishingTool.OILY_FISHING_ROD);
                                     }
                                     break;
                                 case 324:
-                                    Fishing.getSingleton().fish(player, FishingTool.HARPOON);
+                                    Fishing.getSingleton().startFish(player, FishingTool.HARPOON);
                                     break;
                                 case 328:
                                     if (player.getInventory().getContainer().contains(FishingTool.FISHING_ROD.getId())) {
-                                        Fishing.getSingleton().fish(player, FishingTool.FISHING_ROD);
+                                        Fishing.getSingleton().startFish(player, FishingTool.FISHING_ROD);
                                     } else {
-                                        Fishing.getSingleton().fish(player, FishingTool.OILY_FISHING_ROD);
+                                        Fishing.getSingleton().startFish(player, FishingTool.OILY_FISHING_ROD);
                                     }
                                     break;
                             }

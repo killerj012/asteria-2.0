@@ -248,7 +248,7 @@ public class Fishing extends SkillEvent {
      * @param tool
      *        the tool this player is fishing with.
      */
-    public void fish(final Player player, final FishingTool tool) {
+    public void startFish(final Player player, final FishingTool tool) {
 
         /** Block and reset if we are already fishing. */
         if (player.getSkillEvent()[eventFireIndex()]) {
