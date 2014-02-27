@@ -7,7 +7,7 @@ import server.world.entity.player.Player;
  * 
  * @author lare96
  * @param <T>
- *        the registerable element we are trying to manage.
+ *        the registerable type to manage.
  */
 public interface RegisterableContainer<T extends Registerable> {
 
