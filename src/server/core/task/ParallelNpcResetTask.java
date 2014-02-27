@@ -11,7 +11,7 @@ import server.world.entity.npc.Npc;
  * 
  * @author lare96
  */
-public class PooledNpcResetTask implements Runnable {
+public class ParallelNpcResetTask implements Runnable {
 
     /** The {@link Npc} we need to reset. */
     private Npc npc;
@@ -23,7 +23,7 @@ public class PooledNpcResetTask implements Runnable {
     private CountDownLatch updateLatch;
 
     /**
-     * Create a new {@link PooledNpcResetTask}.
+     * Create a new {@link ParallelNpcResetTask}.
      * 
      * @param npc
      *        the {@link Npc} we need to reset.
@@ -31,7 +31,7 @@ public class PooledNpcResetTask implements Runnable {
      *        the {@link CountDownLatch} being used to keep the main game thread
      *        in sync with resetting.
      */
-    public PooledNpcResetTask(Npc npc, CountDownLatch updateLatch) {
+    public ParallelNpcResetTask(Npc npc, CountDownLatch updateLatch) {
         this.npc = npc;
         this.updateLatch = updateLatch;
     }

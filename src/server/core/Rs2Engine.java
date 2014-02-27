@@ -8,13 +8,16 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
 import server.Main;
+import server.core.factory.GameThreadFactory;
+import server.core.factory.ReactorThreadFactory;
+import server.core.factory.WorkerThreadFactory;
 import server.core.net.AsynchronousReactor;
 import server.core.net.Session;
 import server.core.net.buffer.PacketBuffer;
 import server.core.net.packet.PacketEncoder;
-import server.core.task.PooledNpcResetTask;
-import server.core.task.PooledPlayerResetTask;
-import server.core.task.PooledPlayerUpdateTask;
+import server.core.task.ParallelNpcResetTask;
+import server.core.task.ParallelPlayerResetTask;
+import server.core.task.ParallelPlayerUpdateTask;
 import server.util.Misc.Stopwatch;
 import server.world.World;
 import server.world.entity.npc.Npc;
@@ -54,8 +57,7 @@ public class Rs2Engine implements Runnable {
     private static ExecutorService engineTask;
 
     /**
-     * A {@link ScheduledExecutorService} that ticks game logic and updating
-     * every 600ms.
+     * A {@link ScheduledExecutorService} that ticks game logic every 600ms.
      */
     private static ScheduledExecutorService gameExecutor;
 
@@ -75,8 +77,8 @@ public class Rs2Engine implements Runnable {
         world = new World();
         reactor = new AsynchronousReactor();
         encoder = new PacketEncoder();
-        engineTask = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors(), new GameThreadFactory());
-        networkExecutor = Executors.newSingleThreadExecutor(new NetworkThreadFactory());
+        engineTask = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors(), new WorkerThreadFactory());
+        networkExecutor = Executors.newSingleThreadExecutor(new ReactorThreadFactory());
         gameExecutor = Executors.newSingleThreadScheduledExecutor(new GameThreadFactory());
 
         /** Configure engine components. */
@@ -122,7 +124,7 @@ public class Rs2Engine implements Runnable {
 
         try {
 
-            /** Perform any logic processing for players. */
+            /** Perform any general logic processing for players. */
             for (Player player : world.getPlayers()) {
                 if (player == null) {
                     continue;
@@ -137,7 +139,7 @@ public class Rs2Engine implements Runnable {
                 }
             }
 
-            /** Perform any logic processing for NPCs. */
+            /** Perform any general logic processing for NPCs. */
             for (Npc npc : world.getNpcs()) {
                 if (npc == null) {
                     continue;
@@ -164,7 +166,7 @@ public class Rs2Engine implements Runnable {
                 }
 
                 /** Here we use our thread pool to perform updating in parallel. */
-                engineTask.execute(new PooledPlayerUpdateTask(player, updateLatch));
+                engineTask.execute(new ParallelPlayerUpdateTask(player, updateLatch));
             }
 
             /** Block until the update task is complete. */
@@ -182,7 +184,7 @@ public class Rs2Engine implements Runnable {
                 }
 
                 /** Here we use our thread pool to perform resetting in parallel. */
-                engineTask.execute(new PooledPlayerResetTask(player, updateLatch));
+                engineTask.execute(new ParallelPlayerResetTask(player, updateLatch));
             }
 
             /** Block until the reset task is complete. */
@@ -190,7 +192,7 @@ public class Rs2Engine implements Runnable {
 
             /**
              * Create a new countdown latch to block this thread while our
-             * thread pool resets npcs.
+             * thread pool resets NPCs.
              */
             updateLatch = new CountDownLatch(world.npcAmount());
 
@@ -200,7 +202,7 @@ public class Rs2Engine implements Runnable {
                 }
 
                 /** Here we use our thread pool to perform resetting in parallel. */
-                engineTask.execute(new PooledNpcResetTask(npc, updateLatch));
+                engineTask.execute(new ParallelNpcResetTask(npc, updateLatch));
             }
 
             /** Block until the reset task is complete. */

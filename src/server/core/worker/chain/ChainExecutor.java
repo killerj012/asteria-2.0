@@ -1,4 +1,4 @@
-package server.core.worker.factory;
+package server.core.worker.chain;
 
 import java.util.Collection;
 import java.util.LinkedList;
@@ -9,7 +9,7 @@ import server.core.worker.WorkRate;
 import server.core.worker.Worker;
 
 /**
- * A {@link FactoryExecutor} holds a queue of {@link ChainWorker}s that can be
+ * A {@link ChainExecutor} holds a queue of {@link ChainWorker}s that can be
  * ran in first in first out order. When logic from a worker is executed the
  * next worker waits for its specified delay and then executes its logic, and so
  * on (like a chain) until the end is reached and the executor automatically
@@ -62,7 +62,7 @@ import server.core.worker.Worker;
  * 
  * @author lare96
  */
-public class FactoryExecutor {
+public class ChainExecutor {
 
     /**
      * Queue of internal workers in this factory executor.
@@ -100,42 +100,42 @@ public class FactoryExecutor {
     private WorkRate fireRate = WorkRate.DEFAULT;
 
     /**
-     * Create a new {@link FactoryExecutor}.
+     * Create a new {@link ChainExecutor}.
      * 
      * @param name
      *        the name desired for this factory executor.
      * @param fireRate
      *        the rate to fire tasks at.
      */
-    public FactoryExecutor(String name, WorkRate fireRate) {
+    public ChainExecutor(String name, WorkRate fireRate) {
         this.name = name;
         this.fireRate = fireRate;
     }
 
     /**
-     * Create a new {@link FactoryExecutor}.
+     * Create a new {@link ChainExecutor}.
      * 
      * @param name
      *        the name desired for this factory executor.
      */
-    public FactoryExecutor(String name) {
+    public ChainExecutor(String name) {
         this.name = name;
     }
 
     /**
-     * Create a new {@link FactoryExecutor}.
+     * Create a new {@link ChainExecutor}.
      * 
      * @param fireRate
      *        the rate to fire tasks at.
      */
-    public FactoryExecutor(WorkRate fireRate) {
+    public ChainExecutor(WorkRate fireRate) {
         this.fireRate = fireRate;
     }
 
     /**
-     * Create a new {@link FactoryExecutor}.
+     * Create a new {@link ChainExecutor}.
      */
-    public FactoryExecutor() {
+    public ChainExecutor() {
 
         /**
          * Nothing in here so the default settings will remain the same.
@@ -333,7 +333,7 @@ public class FactoryExecutor {
     }
 
     /**
-     * Gets the name of this {@link FactoryExecutor}.
+     * Gets the name of this {@link ChainExecutor}.
      * 
      * @return the name.
      */
@@ -342,17 +342,17 @@ public class FactoryExecutor {
     }
 
     /**
-     * Sets a new name for this {@link FactoryExecutor}.
+     * Sets a new name for this {@link ChainExecutor}.
      * 
      * @param name
-     *        the new name for this {@link FactoryExecutor}.
+     *        the new name for this {@link ChainExecutor}.
      */
     public void setName(String name) {
         this.name = name;
     }
 
     /**
-     * Gets if this {@link FactoryExecutor} should be emptied when it is
+     * Gets if this {@link ChainExecutor} should be emptied when it is
      * canceled and/or shutdown.
      * 
      * @return true if it should be emptied.
@@ -362,11 +362,11 @@ public class FactoryExecutor {
     }
 
     /**
-     * Determine whether this {@link FactoryExecutor} should be emptied when it
+     * Determine whether this {@link ChainExecutor} should be emptied when it
      * is shutdown.
      * 
      * @param shouldEmpty
-     *        if this {@link FactoryExecutor} should be emptied when it is
+     *        if this {@link ChainExecutor} should be emptied when it is
      *        canceled and/or shutdown.
      */
     public void setShouldEmpty(boolean shouldEmpty) {
@@ -374,9 +374,9 @@ public class FactoryExecutor {
     }
 
     /**
-     * Gets if this {@link FactoryExecutor} is running or not.
+     * Gets if this {@link ChainExecutor} is running or not.
      * 
-     * @return true if this {@link FactoryExecutor} is running.
+     * @return true if this {@link ChainExecutor} is running.
      */
     public boolean isRunningExecutor() {
         return runningExecutor;

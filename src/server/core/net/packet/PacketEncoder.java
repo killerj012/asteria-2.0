@@ -613,7 +613,7 @@ public final class PacketEncoder {
         public PacketBuilder sendObject(WorldObject object) {
             sendCoordinates(object.getPosition());
             PacketBuffer.WriteBuffer out = PacketBuffer.newOutBuffer(5);
-            out.writeHeader(151).writeByte(0, ValueType.S).writeShort(object.getId(), ByteOrder.LITTLE).writeByte((object.getType() << 2) + (object.getFace().getFaceId() & 3), ValueType.S);
+            out.writeHeader(151).writeByte(0, ValueType.S).writeShort(object.getId(), ByteOrder.LITTLE).writeByte((object.getType() << 2) + (object.getRotation().getFaceId() & 3), ValueType.S);
             Rs2Engine.getEncoder().encode(out, player.getSession());
             return this;
         }
@@ -628,7 +628,7 @@ public final class PacketEncoder {
         public PacketBuilder removeObject(WorldObject object) {
             sendCoordinates(object.getPosition());
             PacketBuffer.WriteBuffer out = PacketBuffer.newOutBuffer(3);
-            out.writeHeader(101).writeByte((object.getType() << 2) + (object.getFace().getFaceId() & 3), ValueType.C).writeByte(0);
+            out.writeHeader(101).writeByte((object.getType() << 2) + (object.getRotation().getFaceId() & 3), ValueType.C).writeByte(0);
             Rs2Engine.getEncoder().encode(out, player.getSession());
             return this;
         }

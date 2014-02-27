@@ -1,14 +1,14 @@
-package server.core.worker.factory;
+package server.core.worker.chain;
 
 import server.core.worker.Logic;
 
 /**
- * A basic worker contained within a {@link FactoryExecutor}.
+ * A basic worker contained within a {@link ChainExecutor}.
  * 
  * @author lare96
- * @see FactoryExecutor#append(ChainWorker)
- * @see FactoryExecutor#appendAll(ChainWorker[])
- * @see FactoryExecutor#appendAll(java.util.Collection)
+ * @see ChainExecutor#append(ChainWorker)
+ * @see ChainExecutor#appendAll(ChainWorker[])
+ * @see ChainExecutor#appendAll(java.util.Collection)
  */
 public interface ChainWorker extends Logic {
 
