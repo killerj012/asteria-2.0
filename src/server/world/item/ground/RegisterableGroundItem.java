@@ -10,7 +10,8 @@ import server.world.item.ground.GroundItem.ItemState;
 import server.world.map.Position;
 
 /**
- * Manages every single {@link GroundItem} registered to the database.
+ * Manages every single {@link GroundItem} registered to the
+ * <code>itemList</code> database.
  * 
  * @author lare96
  */
@@ -19,7 +20,7 @@ public class RegisterableGroundItem implements RegisterableContainer<GroundItem>
     /**
      * The database that holds every single registered {@link GroundItem}.
      */
-    private static List<GroundItem> items = new ArrayList<GroundItem>();
+    private static List<GroundItem> itemList = new ArrayList<GroundItem>();
 
     /**
      * Checks if the specified item exists.
@@ -34,7 +35,7 @@ public class RegisterableGroundItem implements RegisterableContainer<GroundItem>
          * Iterate through all of the global items and check if any of them
          * match the parameter.
          */
-        for (GroundItem w : items) {
+        for (GroundItem w : itemList) {
             if (w == null) {
                 continue;
             }
@@ -73,7 +74,7 @@ public class RegisterableGroundItem implements RegisterableContainer<GroundItem>
          * Iterate through all of the global items and check if any of them are
          * on the position.
          */
-        for (GroundItem w : items) {
+        for (GroundItem w : itemList) {
             if (w == null) {
                 continue;
             }
@@ -97,7 +98,7 @@ public class RegisterableGroundItem implements RegisterableContainer<GroundItem>
          * Iterate through the ground items and remove the ones that aren't
          * supposed to be on this level height level.
          */
-        for (final GroundItem w : items) {
+        for (final GroundItem w : itemList) {
             if (w == null) {
                 continue;
             }
@@ -115,7 +116,7 @@ public class RegisterableGroundItem implements RegisterableContainer<GroundItem>
         registerable.fireOnRegister();
 
         /** Add the item in the database. */
-        items.add(registerable);
+        itemList.add(registerable);
     }
 
     @Override
@@ -125,7 +126,7 @@ public class RegisterableGroundItem implements RegisterableContainer<GroundItem>
         registerable.fireOnUnregister();
 
         /** Remove the item from the database. */
-        items.remove(registerable);
+        itemList.remove(registerable);
     }
 
     @Override
@@ -135,7 +136,7 @@ public class RegisterableGroundItem implements RegisterableContainer<GroundItem>
          * Iterate through all of the registered ground items and update the
          * region with items in the same region as the player.
          */
-        for (final GroundItem w : items) {
+        for (final GroundItem w : itemList) {
             if (w == null) {
                 continue;
             }
@@ -159,7 +160,7 @@ public class RegisterableGroundItem implements RegisterableContainer<GroundItem>
      * 
      * @return the database of items.
      */
-    protected List<GroundItem> getItems() {
-        return items;
+    protected List<GroundItem> getItemList() {
+        return itemList;
     }
 }

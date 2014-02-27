@@ -106,7 +106,7 @@ public class StaticGroundItem extends GroundItem {
                 p.getPacketBuilder().sendGroundItem(this);
             }
 
-            getRegisterable().getItems().add(this);
+            getRegisterable().getItemList().add(this);
             needsRespawn = false;
             setItemPicked(false);
         }
@@ -127,7 +127,7 @@ public class StaticGroundItem extends GroundItem {
             }
 
             /** Remove the item from the database. */
-            getRegisterable().getItems().remove(this);
+            getRegisterable().getItemList().remove(this);
 
             /** Add the item in the player's inventory. */
             player.getInventory().addItem(getItem());
