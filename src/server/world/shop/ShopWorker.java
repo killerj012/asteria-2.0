@@ -48,19 +48,21 @@ public class ShopWorker extends Worker {
             }
 
             /** If this item is not at its original amount... */
-            if (item.getAmount() < shop.getOriginalAmount(item.getId())) {
+            if (shop.getShopMap().containsKey(item.getId())) {
+                if (item.getAmount() < shop.getShopMap().get(item.getId())) {
 
-                /** Increment the item's amount by 1. */
-                item.incrementAmount();
+                    /** Increment the item's amount by 1. */
+                    item.incrementAmount();
 
-                /** And update it for every player viewing that shop! */
-                for (Player player : Rs2Engine.getWorld().getPlayers()) {
-                    if (player == null) {
-                        continue;
-                    }
+                    /** And update it for every player viewing that shop! */
+                    for (Player player : Rs2Engine.getWorld().getPlayers()) {
+                        if (player == null) {
+                            continue;
+                        }
 
-                    if (player.getOpenShopId() == shop.getIndex()) {
-                        shop.updateShopItems(player);
+                        if (player.getOpenShopId() == shop.getIndex()) {
+                            shop.updateShopItems(player);
+                        }
                     }
                 }
             }

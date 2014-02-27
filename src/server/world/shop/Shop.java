@@ -1,5 +1,8 @@
 package server.world.shop;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import server.core.Rs2Engine;
 import server.core.net.buffer.PacketBuffer;
 import server.core.worker.Worker;
@@ -31,8 +34,8 @@ public class Shop {
     /** An {@link ItemContainer} that holds the items within this shop. */
     private ItemContainer container = new ItemContainer(ContainerPolicy.STACKABLE_POLICY, 48);
 
-    /** A primitive array of the original shop items. */
-    private Item[] originalItems;
+    /** A map of the original shop items and their amounts. */
+    private Map<Integer, Integer> shopMap = new HashMap<Integer, Integer>();
 
     /** If the shop will replenish its stock once it runs out. */
     private boolean restockItems;
@@ -66,11 +69,17 @@ public class Shop {
         this.index = index;
         this.name = name;
         this.container.setItems(items);
-        this.originalItems = items;
         this.restockItems = restockItems;
         this.sellItems = sellItems;
         this.currency = currency;
-        this.processor = new ShopWorker(this);
+
+        for (Item item : items) {
+            if (item == null) {
+                continue;
+            }
+
+            shopMap.put(item.getId(), item.getAmount());
+        }
     }
 
     /**
@@ -182,7 +191,12 @@ public class Shop {
 
         /** Here we actually buy the item. */
         if (player.getInventory().getContainer().freeSlots() >= item.getAmount() && !item.getDefinition().isStackable() || player.getInventory().getContainer().freeSlots() >= 1 && item.getDefinition().isStackable()) {
-            container.getById(item.getId()).decrementAmountBy(item.getAmount());
+
+            if (shopMap.containsKey(item.getId())) {
+                container.getById(item.getId()).decrementAmountBy(item.getAmount());
+            } else if (!shopMap.containsKey(item.getId())) {
+                container.remove(item);
+            }
 
             if (currency == Currency.COINS) {
                 player.getInventory().deleteItem(new Item(currency.getItemId(), item.getAmount() * item.getDefinition().getGeneralStorePrice()));
@@ -289,7 +303,16 @@ public class Shop {
         /** Actually sell the item. */
         player.getInventory().deleteItemSlot(item, fromSlot);
         player.getInventory().addItem(new Item(currency.getItemId(), item.getAmount() * calculateSellingPrice(item)));
-        container.getById(item.getId()).incrementAmountBy(item.getAmount());
+
+        /**
+         * Add on to the item if its in the shop already or add it to a whole
+         * new slot if its not.
+         */
+        if (container.contains(item.getId())) {
+            container.getById(item.getId()).incrementAmountBy(item.getAmount());
+        } else if (!container.contains(item.getId())) {
+            container.add(item);
+        }
 
         /** Update your inventory. */
         player.getPacketBuilder().sendUpdateItems(3823, player.getInventory().getContainer().toArray());
@@ -382,8 +405,10 @@ public class Shop {
         }
 
         /** If this worker isn't running creating a new one. */
-        if (!processor.isRunning()) {
+        if (processor == null || !processor.isRunning()) {
             processor = new ShopWorker(this);
+        } else if (processor.isRunning()) {
+            return;
         }
 
         /** And submit it to the world. */
@@ -409,34 +434,7 @@ public class Shop {
              * Flag true if the item is apart of the shop (not sold by a player)
              * and its out of stock.
              */
-            if (item.getAmount() < 1 && isOriginalItem(item.getId())) {
-                return true;
-            }
-        }
-
-        /** Otherwise flag false. */
-        return false;
-    }
-
-    /**
-     * Determines if an {@link Item} is apart of the original shop.
-     * 
-     * @param itemId
-     *        the id of the item to check for.
-     * @return true if the item is apart of the original shop items.
-     */
-    private boolean isOriginalItem(int itemId) {
-
-        /** Iterate through the original shop items. */
-        for (Item item : originalItems) {
-
-            /** Skip any malformed items. */
-            if (item == null) {
-                continue;
-            }
-
-            /** Flag true if there's a match. */
-            if (item.getId() == itemId) {
+            if (item.getAmount() < 1 && shopMap.containsKey(item.getId())) {
                 return true;
             }
         }
@@ -451,56 +449,24 @@ public class Shop {
      * @return true if the current shop is fully restocked.
      */
     protected boolean isFullyRestocked() {
-
-        /** Local fields to hold data for us. */
-        int amountNeeded = getOriginalShopItemAmount();
-        int amountGotten = 0;
-
-        /** Iterate through the shop. */
         for (Item item : container.toArray()) {
-
-            /** Skip any malformed items. */
             if (item == null) {
                 continue;
             }
 
-            /** Checks if the item is at its original amount. */
-            if (item.getAmount() == getOriginalAmount(item.getId())) {
-                amountGotten++;
+            if (shopMap.containsKey(item.getId())) {
+                if (item.getAmount() < shopMap.get(item.getId())) {
+                    return false;
+                }
             }
         }
-
-        /** Flag true if the shop is fully restocked. */
-        return amountNeeded == amountGotten ? true : false;
+        return true;
     }
 
     /**
-     * Gets the original amount of an {@link Item} within the shop.
+     * Gets the amount of different items in this shop excluding null values.
      * 
-     * @param itemId
-     *        the id of item to get the original amount of.
-     * @return the original amount of the item.
-     */
-    protected int getOriginalAmount(int itemId) {
-
-        /** Iterate through the original shop items. */
-        for (Item item : originalItems) {
-
-            /** Skip any malformed items. */
-            if (item == null) {
-                continue;
-            }
-
-            /** If there's a match return the amount. */
-            if (item.getId() == itemId) {
-                return item.getAmount();
-            }
-        }
-        return -1;
-    }
-
-    /**
-     * @return the amount of different items in this shop excluding null values.
+     * @return the amount of different items in this shop.
      */
     private int getShopItemAmount() {
         int total = 0;
@@ -523,32 +489,6 @@ public class Shop {
     }
 
     /**
-     * Gets the amount of different items in this shop excluding malformed items
-     * and non-primitive shop items sold by players.
-     * 
-     * @return the amount of different items in this shop.
-     */
-    private int getOriginalShopItemAmount() {
-        int total = 0;
-
-        /** Iterate through the shop items. */
-        for (Item item : container.toArray()) {
-
-            /** Skip any malformed items. */
-            if (item == null) {
-                continue;
-            }
-
-            /** Increment the total. */
-            if (item.getId() > 0 && isOriginalItem(item.getId())) {
-                total++;
-            }
-        }
-
-        return total;
-    }
-
-    /**
      * Gets an instance of a shop by it's id.
      * 
      * @param id
@@ -557,6 +497,15 @@ public class Shop {
      */
     public static Shop getShop(int id) {
         return shops[id];
+    }
+
+    /**
+     * Gets the map of original shop items.
+     * 
+     * @return the map of original shop items.
+     */
+    protected Map<Integer, Integer> getShopMap() {
+        return shopMap;
     }
 
     /**
