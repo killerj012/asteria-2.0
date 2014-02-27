@@ -4,7 +4,7 @@ import server.world.Registerable;
 import server.world.map.Position;
 
 /**
- * A registerable object that can be placed anywhere in the rs2 world.
+ * An object that can be placed anywhere in the world.
  * 
  * @author lare96
  */
@@ -13,82 +13,77 @@ public class WorldObject implements Registerable {
     /** The registerable container. */
     private static RegisterableWorldObject registerable;
 
-    /**
-     * The id of the object.
-     */
+    /** The id of the object. */
     private int id;
 
-    /**
-     * The position of the object
-     */
+    /** The position of the object */
     private Position position;
 
-    /**
-     * The face of the object.
-     */
-    private Rotation face;
+    /** The direction this object is facing.. */
+    private Rotation rotation;
 
-    /**
-     * The type of object.
-     */
+    /** The type of object. */
     private int type;
 
     /**
-     * All possible directions the object can be facing.
+     * All of the directions an object can face.
      * 
      * @author lare96
      */
     public enum Rotation {
-        WEST(0), NORTH(1), EAST(2), SOUTH(3);
 
-        /**
-         * The id of the direction.
-         */
+        /** The west direction. */
+        WEST(0),
+
+        /** The north direction. */
+        NORTH(1),
+
+        /** The east direction. */
+        EAST(2),
+
+        /** The south direction. */
+        SOUTH(3);
+
+        /** The id of the direction. */
         private int faceId;
 
         /**
-         * Create a new object face.
+         * Create a new {@link Rotation}.
          * 
          * @param faceId
          *        the id of the direction.
          */
         Rotation(int faceId) {
-            this.setFaceId(faceId);
+            this.faceId = faceId;
         }
 
         /**
-         * @return the faceId.
+         * Gets the id of the direction.
+         * 
+         * @return the face id.
          */
         public int getFaceId() {
             return faceId;
         }
-
-        /**
-         * @param faceId
-         *        the faceId to set.
-         */
-        public void setFaceId(int faceId) {
-            this.faceId = faceId;
-        }
     }
 
     /**
-     * Construct a new world object.
+     * Create a new {@link WorldObject}.
      * 
      * @param id
-     *        the id of this object.
+     *        the id of the object.
      * @param position
-     *        the position of this object.
-     * @param face
-     *        the face of this object.
+     *        the position of the object.
+     * @param rotation
+     *        the direction this object is facing.
      * @param type
-     *        the type of object.
+     *        the type of object that this is.
      */
-    public WorldObject(int id, Position position, Rotation face, int type) {
-        this.setId(id);
-        this.setPosition(position);
-        this.setFace(face);
-        this.setType(type);
+    public WorldObject(int id, Position position, Rotation rotation, int type) {
+        this.id = id;
+        this.position = position;
+        this.rotation = rotation;
+        this.type = type;
     }
 
     @Override
@@ -97,12 +92,14 @@ public class WorldObject implements Registerable {
             return false;
         }
 
-        WorldObject o = (WorldObject) obj;
+        WorldObject object = (WorldObject) obj;
 
-        return o.getId() == this.getId() && o.getPosition().equals(this.getPosition()) && o.getFace() == this.getFace() && o.getType() == this.getType();
+        return object.id == id && object.position.equals(position) && object.rotation == rotation && object.type == type;
     }
 
     /**
+     * Gets the id of the object.
+     * 
      * @return the id.
      */
     public int getId() {
@@ -110,14 +107,8 @@ public class WorldObject implements Registerable {
     }
 
     /**
-     * @param id
-     *        the id to set.
-     */
-    public void setId(int id) {
-        this.id = id;
-    }
-
-    /**
+     * Gets the position of the object.
+     * 
      * @return the position.
      */
     public Position getPosition() {
@@ -125,41 +116,21 @@ public class WorldObject implements Registerable {
     }
 
     /**
-     * @param position
-     *        the position to set.
-     */
-    public void setPosition(Position position) {
-        this.position = position;
-    }
-
-    /**
+     * Gets the direction this object is facing.
+     * 
      * @return the face.
      */
-    public Rotation getFace() {
-        return face;
+    public Rotation getRotation() {
+        return rotation;
     }
 
     /**
-     * @param face
-     *        the face to set.
-     */
-    public void setFace(Rotation face) {
-        this.face = face;
-    }
-
-    /**
+     * Gets the type of object that this is.
+     * 
      * @return the type.
      */
     public int getType() {
         return type;
-    }
-
-    /**
-     * @param type
-     *        the type to set.
-     */
-    public void setType(int type) {
-        this.type = type;
     }
 
     /**

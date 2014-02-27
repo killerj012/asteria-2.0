@@ -135,14 +135,10 @@ public class WildernessObeliskSet {
      */
     public static class WildernessObelisk {
 
-        /**
-         * The index of this wilderness obelisk.
-         */
+        /** The index of this wilderness obelisk. */
         private int index;
 
-        /**
-         * The obelisk object id.
-         */
+        /** The obelisk object id. */
         private int obeliskId;
 
         /**
@@ -151,19 +147,13 @@ public class WildernessObeliskSet {
          */
         private Position teleportFrom;
 
-        /**
-         * Any players in this location will be teleported.
-         */
+        /** Any players in this location will be teleported. */
         private Location teleportAllOn;
 
-        /**
-         * The position of each obelisk.
-         */
+        /** The position of each obelisk. */
         private Position[] obeliskPosition;
 
-        /**
-         * If this obelisk has been activated.
-         */
+        /** If this obelisk has been activated. */
         private boolean activated;
 
         /**

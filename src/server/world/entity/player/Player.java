@@ -425,7 +425,7 @@ public class Player extends Entity {
 
         if (position.getZ() != 0) {
             GroundItem.getRegisterable().searchDatabaseHeightChange(this);
-            WorldObject.getRegisterable().removeAllHeight(this);
+            WorldObject.getRegisterable().removeOnHeight(this);
         }
     }
 
