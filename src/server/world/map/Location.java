@@ -4,45 +4,39 @@ import server.util.Misc;
 import server.world.entity.Entity;
 
 /**
- * South-west and north-east coordinates that form a rectangle or square region.
+ * A south-west and north-east {@link Position} that form a square on the map.
  * 
  * @author lare96
  */
 public class Location {
 
-    /**
-     * A location constant holding the values that make up the wilderness area.
-     */
+    /** A location constant holding the values that make up the wilderness area. */
     private static final Location WILDERNESS = new Location(new Position(2941, 3518), new Position(3392, 3966));
 
-    /**
-     * The south-west coordinates.
-     */
+    /** The south-west coordinates. */
     private Position southWest;
 
-    /**
-     * The north-east coordinates.
-     */
+    /** The north-east coordinates. */
     private Position northEast;
 
     /**
-     * Creates a new location.
+     * Create a new {@link Location}.
      * 
      * @param southWest
-     *            the south-west coordinates.
+     *        the south-west coordinates.
      * @param northEast
-     *            the north-east coordinates.
+     *        the north-east coordinates.
      */
     public Location(Position southWest, Position northEast) {
-        this.setSouthWest(southWest);
-        this.setNorthEast(northEast);
+        this.southWest = southWest;
+        this.northEast = northEast;
     }
 
     /**
-     * Checks if a position is within this location.
+     * Checks if a {@link Position} is within this location.
      * 
      * @param position
-     *            the position to check.
+     *        the position to check.
      * @return true if the position is within this location.
      */
     public boolean inLocation(Position position) {
@@ -53,9 +47,9 @@ public class Location {
     }
 
     /**
-     * Generates a random position within this location.
+     * Generates a random {@link Position} within this location.
      * 
-     * @return the position generated.
+     * @return the new position generated.
      */
     public Position randomPosition() {
         int x = Math.min(southWest.getX(), northEast.getX());
@@ -85,54 +79,42 @@ public class Location {
     }
 
     /**
-     * Checks if this entity is in the wilderness.
+     * Checks if this {@link Entity} is in the wilderness.
      * 
-     * @param player
-     *            the player to check for.
-     * @return true if the player is in the wilderness.
+     * @param entity
+     *        the entity to check for.
+     * @return true if the entity is in the wilderness.
      */
     public static boolean inWilderness(Entity entity) {
         return WILDERNESS.inLocation(new Position(entity.getPosition().getX(), entity.getPosition().getY()));
     }
 
     /**
-     * Checks if this entity is in a multicombat zone.
+     * Checks if this {@link Entity} is in a multicombat zone.
      * 
-     * @param player
-     *            the player to check for.
-     * @return true if the player is in multicombat zone.
+     * @param entity
+     *        the entity to check for.
+     * @return true if the entity is in multicombat zone.
      */
     public static boolean inMultiCombat(Entity entity) {
         return false;
     }
 
     /**
-     * @return the southWest.
+     * Gets the south-west coordinates.
+     * 
+     * @return the south-west coordinates.
      */
     public Position getSouthWest() {
         return southWest;
     }
 
     /**
-     * @param southWest
-     *            the southWest to set.
-     */
-    public void setSouthWest(Position southWest) {
-        this.southWest = southWest;
-    }
-
-    /**
-     * @return the northEast.
+     * Gets the north-east coordinates.
+     * 
+     * @return the north-east coordinates.
      */
     public Position getNorthEast() {
         return northEast;
-    }
-
-    /**
-     * @param northEast
-     *            the northEast to set.
-     */
-    public void setNorthEast(Position northEast) {
-        this.northEast = northEast;
     }
 }
