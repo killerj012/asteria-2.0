@@ -1,8 +1,8 @@
 package server.core.net.event.impl;
 
 import java.nio.channels.SelectionKey;
+import java.util.logging.Logger;
 
-import server.Main;
 import server.core.Rs2Engine;
 import server.core.net.Session;
 import server.core.net.Session.Stage;
@@ -19,6 +19,9 @@ import server.util.Misc;
  * @author blakeman8192
  */
 public final class AsynchronousDecodeEvent implements AsynchronousEvent {
+
+    /** A {@link Logger} for printing debugging info. */
+    private static Logger logger = Logger.getLogger(AsynchronousDecodeEvent.class.getSimpleName());
 
     @Override
     public void dispatch(SelectionKey key) {
@@ -89,7 +92,7 @@ public final class AsynchronousDecodeEvent implements AsynchronousEvent {
                         if (PacketDecoder.getPackets()[session.getPacketOpcode()] != null) {
                             PacketDecoder.getPackets()[session.getPacketOpcode()].decode(session.getPlayer(), in);
                         } else {
-                            Main.getLogger().info(session.getPlayer() + " unhandled packet " + session.getPacketOpcode());
+                            logger.info(session.getPlayer() + " unhandled packet " + session.getPacketOpcode());
                         }
 
                         /** Take care of any errors that may have occurred. */

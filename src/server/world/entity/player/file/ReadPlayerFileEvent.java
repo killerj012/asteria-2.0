@@ -2,8 +2,8 @@ package server.world.entity.player.file;
 
 import java.io.File;
 import java.io.FileReader;
+import java.util.logging.Logger;
 
-import server.Main;
 import server.util.Misc;
 import server.world.entity.player.Player;
 import server.world.entity.player.PlayerFileEvent;
@@ -26,6 +26,9 @@ import com.google.gson.JsonParser;
  */
 public class ReadPlayerFileEvent extends PlayerFileEvent {
 
+    /** A {@link Logger} for printing debugging info. */
+    private static Logger logger = Logger.getLogger(ReadPlayerFileEvent.class.getName());
+
     /** Used to determine the client's response to the login request. */
     private int returnCode = Misc.LOGIN_RESPONSE_OK;
 
@@ -40,7 +43,7 @@ public class ReadPlayerFileEvent extends PlayerFileEvent {
 
         if (!file().exists()) {
             SkillManager.login(player);
-            Main.getLogger().info(player + " is logging in for the first time!");
+            logger.info(player + " is logging in for the first time!");
             returnCode = Misc.LOGIN_RESPONSE_OK;
         }
     }
@@ -118,7 +121,7 @@ public class ReadPlayerFileEvent extends PlayerFileEvent {
                 }
             } catch (Exception e) {
                 e.printStackTrace();
-                Main.getLogger().info("Error while reading data for " + getPlayer());
+                logger.info("Error while reading data for " + getPlayer());
                 returnCode = Misc.LOGIN_RESPONSE_COULD_NOT_COMPLETE_LOGIN;
             }
         }

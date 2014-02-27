@@ -5,6 +5,7 @@ import java.nio.ByteBuffer;
 import java.nio.channels.SelectionKey;
 import java.nio.channels.SocketChannel;
 import java.security.SecureRandom;
+import java.util.logging.Logger;
 
 import server.Main;
 import server.core.Rs2Engine;
@@ -35,6 +36,9 @@ public class Session {
     /** The RSA modulus and exponent key pairs. */
     private static final BigInteger RSA_MODULUS = new BigInteger("95938610921572746524650133814858151901913076652480429598183870656291246099349831798849348614985734300731049329237933048794504022897746723376579898629175025215880393800715209863314290417958725518169765091231358927530763716352174212961746574137578805287960782611757859202906381434888168466423570348398899194541"),
             RSA_EXPONENT = new BigInteger("5378312350669976818157141639620196989298085716789189287634886259536048921510158872529601703029702119732149400119324443005798370082950416736889917871791338756888938417005708590957237003926710452309501641625737520695929480769820807041774825159548922857357239208866414166598649761006651610675718558204518453657");
+
+    /** A {@link Logger} for printing debugging info. */
+    private static Logger logger = Logger.getLogger(Session.class.getSimpleName());
 
     /** The selection key assigned for this session. */
     private SelectionKey key;
@@ -188,7 +192,7 @@ public class Session {
                 inData.get();
 
                 if (request != 14) {
-                    Main.getLogger().info("Invalid login request: " + request);
+                    logger.info("Invalid login request: " + request);
                     disconnect();
                     return;
                 }
@@ -212,7 +216,7 @@ public class Session {
                 int loginType = inData.get();
 
                 if (loginType != 16 && loginType != 18) {
-                    Main.getLogger().info("Invalid login type: " + loginType);
+                    logger.info("Invalid login type: " + loginType);
                     disconnect();
                     return;
                 }
@@ -222,7 +226,7 @@ public class Session {
                 int loginEncryptPacketSize = blockLength - (36 + 1 + 1 + 2);
 
                 if (loginEncryptPacketSize <= 0) {
-                    Main.getLogger().info("Zero RSA packet size");
+                    logger.info("Zero RSA packet size");
                     disconnect();
                     return;
                 }
@@ -242,7 +246,7 @@ public class Session {
                 int clientVersion = in.readShort();
 
                 if (clientVersion != 317) {
-                    Main.getLogger().info("Invalid client version: " + clientVersion);
+                    logger.info("Invalid client version: " + clientVersion);
                     disconnect();
                     return;
                 }
@@ -268,7 +272,7 @@ public class Session {
                     int rsaOpcode = rsaBuffer.get();
 
                     if (rsaOpcode != 10) {
-                        Main.getLogger().info("Unable to decode RSA block properly!");
+                        logger.info("Unable to decode RSA block properly!");
                         packetDisconnect = true;
                         disconnect();
                         return;
@@ -441,7 +445,7 @@ public class Session {
                 /** Assign the new animation based on the weapon. */
                 AssignWeaponAnimation.assignAnimation(player, player.getEquipment().getContainer().getItem(Misc.EQUIPMENT_SLOT_WEAPON));
 
-                Main.getLogger().info(player + " has logged in.");
+                logger.info(player + " has logged in.");
                 stage = Stage.LOGGED_IN;
                 break;
             case LOGGED_OUT:

@@ -3,8 +3,8 @@ package server.world.entity.player;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.logging.Logger;
 
-import server.Main;
 import server.core.Rs2Engine;
 import server.core.net.Session;
 import server.core.net.packet.PacketEncoder.PacketBuilder;
@@ -49,6 +49,9 @@ import server.world.object.WorldObject;
  */
 @SuppressWarnings("all")
 public class Player extends Entity {
+
+    /** A {@link Logger} for printing debugging info. */
+    private static Logger logger = Logger.getLogger(Player.class.getSimpleName());
 
     /** The network for this player. */
     private final Session session;
@@ -475,7 +478,7 @@ public class Player extends Entity {
             getPacketBuilder().sendLogout();
         }
 
-        Main.getLogger().info(this + " has logged out.");
+        logger.info(this + " has logged out.");
     }
 
     /**

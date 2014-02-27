@@ -1,6 +1,7 @@
 package server.core.net.packet.impl;
 
-import server.Main;
+import java.util.logging.Logger;
+
 import server.core.net.buffer.PacketBuffer;
 import server.core.net.packet.PacketDecoder;
 import server.util.Misc;
@@ -19,6 +20,9 @@ import server.world.map.Position;
  * @author lare96
  */
 public class DecodeClickButtonPacket extends PacketDecoder {
+
+    /** A {@link Logger} for printing debugging info. */
+    private static Logger logger = Logger.getLogger(DecodeClickButtonPacket.class.getSimpleName());
 
     @Override
     public void decode(Player player, PacketBuffer.ReadBuffer in) {
@@ -362,7 +366,7 @@ public class DecodeClickButtonPacket extends PacketDecoder {
                 }
                 break;
             default:
-                Main.getLogger().info("Unhandled button: " + buttonId);
+                logger.info("Unhandled button: " + buttonId);
                 break;
         }
     }

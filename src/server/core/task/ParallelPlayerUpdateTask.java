@@ -1,8 +1,8 @@
 package server.core.task;
 
 import java.util.concurrent.CountDownLatch;
+import java.util.logging.Logger;
 
-import server.Main;
 import server.world.entity.npc.NpcUpdate;
 import server.world.entity.player.Player;
 import server.world.entity.player.PlayerUpdate;
@@ -13,6 +13,9 @@ import server.world.entity.player.PlayerUpdate;
  * @author lare96
  */
 public class ParallelPlayerUpdateTask implements Runnable {
+
+    /** A {@link Logger} for printing debugging info. */
+    private static Logger logger = Logger.getLogger(ParallelPlayerUpdateTask.class.getSimpleName());
 
     /** The {@link Player} to perform updating on. */
     private Player player;
@@ -54,7 +57,7 @@ public class ParallelPlayerUpdateTask implements Runnable {
                 /** Handle any errors with the player. */
             } catch (Exception ex) {
                 ex.printStackTrace();
-                Main.getLogger().warning(player + " error while updating concurrently!");
+                logger.warning(player + " error while updating concurrently!");
                 player.getSession().disconnect();
 
                 /** Count down the latch regardless if there was an error or not. */

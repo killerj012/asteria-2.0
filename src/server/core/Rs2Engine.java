@@ -6,6 +6,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
+import java.util.logging.Logger;
 
 import server.Main;
 import server.core.factory.GameThreadFactory;
@@ -46,20 +47,17 @@ public class Rs2Engine implements Runnable {
      */
     private static PacketEncoder encoder;
 
-    /**
-     * An {@link ExecutorService} dedicated to the {@link AsynchronousReactor}.
-     */
+    /** An {@link ExecutorService} dedicated to the {@link AsynchronousReactor}. */
     private static ExecutorService networkExecutor;
 
-    /**
-     * An {@link ExecutorService} that takes care of engine tasks in parallel.
-     */
+    /** An {@link ExecutorService} that takes care of engine tasks in parallel. */
     private static ExecutorService engineTask;
 
-    /**
-     * A {@link ScheduledExecutorService} that ticks game logic every 600ms.
-     */
+    /** A {@link ScheduledExecutorService} that ticks game logic every 600ms. */
     private static ScheduledExecutorService gameExecutor;
+
+    /** A {@link Logger} for printing debugging info. */
+    private static Logger logger;
 
     /**
      * Starts the {@link Rs2Engine} which creates and configures the core
@@ -70,8 +68,9 @@ public class Rs2Engine implements Runnable {
      */
     public static void start() throws Exception {
 
-        /** Create and start the timer. */
+        /** Create and start utilities. */
         Stopwatch startup = new Stopwatch().reset();
+        logger = Logger.getLogger(Rs2Engine.class.getSimpleName());
 
         /** Create engine components. */
         world = new World();
@@ -91,8 +90,8 @@ public class Rs2Engine implements Runnable {
         gameExecutor.scheduleAtFixedRate(new Rs2Engine(), 0, 600, TimeUnit.MILLISECONDS);
 
         /** ... and we are online :) */
-        Main.getLogger().info(Main.SERVER_NAME + " took " + startup.elapsed() + "ms to load!");
-        Main.getLogger().info(Main.SERVER_NAME + " is online on " + reactor.getAddress());
+        logger.info(Main.SERVER_NAME + " took " + startup.elapsed() + "ms to load!");
+        logger.info(Main.SERVER_NAME + " is online on " + reactor.getAddress());
     }
 
     /**
@@ -134,7 +133,7 @@ public class Rs2Engine implements Runnable {
                     player.pulse();
                 } catch (Exception ex) {
                     ex.printStackTrace();
-                    Main.getLogger().warning(player + " error while firing game logic!");
+                    logger.warning(player + " error while firing game logic!");
                     player.getSession().disconnect();
                 }
             }
@@ -149,7 +148,7 @@ public class Rs2Engine implements Runnable {
                     npc.pulse();
                 } catch (Exception ex) {
                     ex.printStackTrace();
-                    Main.getLogger().warning(npc + " error while firing game logic!");
+                    logger.warning(npc + " error while firing game logic!");
                     world.unregister(npc);
                 }
             }

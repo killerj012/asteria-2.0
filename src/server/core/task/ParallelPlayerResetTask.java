@@ -1,8 +1,8 @@
 package server.core.task;
 
 import java.util.concurrent.CountDownLatch;
+import java.util.logging.Logger;
 
-import server.Main;
 import server.world.entity.player.Player;
 
 /**
@@ -11,6 +11,9 @@ import server.world.entity.player.Player;
  * @author lare96
  */
 public class ParallelPlayerResetTask implements Runnable {
+
+    /** A {@link Logger} for printing debugging info. */
+    private static Logger logger = Logger.getLogger(ParallelPlayerResetTask.class.getSimpleName());
 
     /** The {@link Player} we need to reset. */
     private Player player;
@@ -51,7 +54,7 @@ public class ParallelPlayerResetTask implements Runnable {
                 /** Handle any errors with the player. */
             } catch (Exception ex) {
                 ex.printStackTrace();
-                Main.getLogger().warning(player + " error while concurrently resetting for the next game tick!");
+                logger.warning(player + " error while concurrently resetting for the next game tick!");
                 player.getSession().disconnect();
 
                 /** Count down the latch regardless if there was an error or not. */

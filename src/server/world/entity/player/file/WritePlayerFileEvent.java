@@ -3,8 +3,8 @@ package server.world.entity.player.file;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.logging.Logger;
 
-import server.Main;
 import server.world.entity.player.Player;
 import server.world.entity.player.PlayerFileEvent;
 
@@ -19,6 +19,11 @@ import com.google.gson.JsonObject;
  * @author lare96
  */
 public class WritePlayerFileEvent extends PlayerFileEvent {
+
+    /**
+     * A {@link Logger} for printing debugging info.
+     */
+    private static Logger logger = Logger.getLogger(WritePlayerFileEvent.class.getSimpleName());
 
     /**
      * Create a new {@link WritePlayerFileEvent}.
@@ -74,7 +79,7 @@ public class WritePlayerFileEvent extends PlayerFileEvent {
                 fileWriter.close();
             } catch (Exception e) {
                 e.printStackTrace();
-                Main.getLogger().info("Error while writing data for " + getPlayer());
+                logger.info("Error while writing data for " + getPlayer());
             }
         }
     }

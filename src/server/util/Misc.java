@@ -10,8 +10,8 @@ import java.lang.reflect.Modifier;
 import java.util.List;
 import java.util.Random;
 import java.util.Scanner;
+import java.util.logging.Logger;
 
-import server.Main;
 import server.core.net.packet.PacketDecoder;
 import server.core.net.security.HostGateway;
 import server.world.entity.npc.Npc;
@@ -50,6 +50,9 @@ import com.google.gson.JsonSyntaxException;
  * @author lare96
  */
 public final class Misc {
+
+    /** A {@link Logger} for printing debugging info. */
+    private static Logger logger = Logger.getLogger(Misc.class.getSimpleName());
 
     /** An instance of the random class for arithmetic operations. */
     private static Random random = new Random();
@@ -285,7 +288,7 @@ public final class Misc {
             scanner.close();
         }
 
-        Main.getLogger().info("Coded " + parsed + " file utilities!");
+        logger.info("Coded " + parsed + " file utilities!");
     }
 
     /**
@@ -592,7 +595,7 @@ public final class Misc {
             scanner.close();
         }
 
-        Main.getLogger().info("Coded " + parsed + " equipment utilities!");
+        logger.info("Coded " + parsed + " equipment utilities!");
     }
 
     /**

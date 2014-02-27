@@ -1,8 +1,8 @@
 package server.core.net.security;
 
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.logging.Logger;
 
-import server.Main;
 import server.util.Misc.Stopwatch;
 
 /**
@@ -12,6 +12,9 @@ import server.util.Misc.Stopwatch;
  * @author lare96
  */
 public class HostThrottler {
+
+    /** A {@link Logger} for printing debugging info. */
+    private static Logger logger = Logger.getLogger(HostThrottler.class.getSimpleName());
 
     /** A map of hosts and their respective timers. */
     private static ConcurrentHashMap<String, Stopwatch> timeMap = new ConcurrentHashMap<String, Stopwatch>();
@@ -58,7 +61,7 @@ public class HostThrottler {
              * connecting too fast.
              */
             if (time < THROTTLE_TIME_INTERVAL && connection >= AMOUNT_OF_CONNECTIONS_PER_INTERVAL) {
-                Main.getLogger().warning("Session request from " + host + " denied: connecting too fast!");
+                logger.warning("Session request from " + host + " denied: connecting too fast!");
                 return false;
             }
 

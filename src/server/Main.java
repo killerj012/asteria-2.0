@@ -1,7 +1,6 @@
 package server;
 
 import java.nio.channels.ServerSocketChannel;
-import java.util.logging.Logger;
 
 import server.core.Rs2Engine;
 
@@ -27,12 +26,6 @@ public final class Main {
     public static final boolean DECODE_RSA = true;
 
     /**
-     * A {@link Logger} for printing info, warnings, and other important things
-     * to the console.
-     */
-    private static Logger logger;
-
-    /**
      * The first method invoked when the server is ran.
      * 
      * @param args
@@ -40,23 +33,11 @@ public final class Main {
      */
     public static void main(String[] args) {
 
-        /** Create the logger. */
-        logger = Logger.getLogger(Main.class.getName());
-
         /** Prepare and start the server. */
         try {
             Rs2Engine.start();
         } catch (Exception e) {
             e.printStackTrace();
         }
-    }
-
-    /**
-     * Gets the logger that logs info to the console.
-     * 
-     * @return the logger that prints info.
-     */
-    public static Logger getLogger() {
-        return logger;
     }
 }

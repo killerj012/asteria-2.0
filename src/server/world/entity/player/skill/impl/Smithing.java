@@ -3,7 +3,6 @@ package server.world.entity.player.skill.impl;
 import java.util.HashMap;
 import java.util.Map;
 
-import server.Main;
 import server.core.Rs2Engine;
 import server.core.worker.Worker;
 import server.util.Misc;
@@ -331,7 +330,6 @@ public class Smithing extends SkillEvent {
         // for (int j = 0; j < SMELT_FRAME.length; j++) {
         // c.getPA().sendFrame246(SMELT_FRAME[j], 150, SMELT_BARS[j]);
         // }
-        Main.getLogger().info("sent");
         player.getPacketBuilder().sendChatInterface(2400);
     }
 

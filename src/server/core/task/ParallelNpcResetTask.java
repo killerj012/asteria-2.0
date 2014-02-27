@@ -1,8 +1,8 @@
 package server.core.task;
 
 import java.util.concurrent.CountDownLatch;
+import java.util.logging.Logger;
 
-import server.Main;
 import server.core.Rs2Engine;
 import server.world.entity.npc.Npc;
 
@@ -12,6 +12,9 @@ import server.world.entity.npc.Npc;
  * @author lare96
  */
 public class ParallelNpcResetTask implements Runnable {
+
+    /** A {@link Logger} for printing debugging info. */
+    private static Logger logger = Logger.getLogger(ParallelNpcResetTask.class.getSimpleName());
 
     /** The {@link Npc} we need to reset. */
     private Npc npc;
@@ -52,7 +55,7 @@ public class ParallelNpcResetTask implements Runnable {
                 /** Handle any errors with the npc. */
             } catch (Exception ex) {
                 ex.printStackTrace();
-                Main.getLogger().warning(npc + " error while resetting for the next game tick!");
+                logger.warning(npc + " error while resetting for the next game tick!");
                 Rs2Engine.getWorld().unregister(npc);
 
                 /** Count down the latch regardless if there was an error or not. */

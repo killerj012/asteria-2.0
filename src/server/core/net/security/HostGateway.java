@@ -2,8 +2,7 @@ package server.core.net.security;
 
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
-
-import server.Main;
+import java.util.logging.Logger;
 
 /**
  * A static gateway type class that is used to limit the maximum amount of
@@ -13,6 +12,9 @@ import server.Main;
  * @author lare96
  */
 public class HostGateway {
+
+    /** A {@link Logger} for printing debugging info. */
+    private static Logger logger = Logger.getLogger(HostGateway.class.getSimpleName());
 
     /** The maximum amount of connections per host. */
     public static final int MAX_CONNECTIONS_PER_HOST = 1;
@@ -48,7 +50,7 @@ public class HostGateway {
 
         /** Reject if this host is banned. */
         if (disabledHosts.contains(host)) {
-            Main.getLogger().warning("Session request from IP banned host(" + host + ") rejected.");
+            logger.warning("Session request from IP banned host(" + host + ") rejected.");
             return false;
         }
 
@@ -56,19 +58,19 @@ public class HostGateway {
 
         /** If the host was not in the map, they're clear to go. */
         if (amount == null) {
-            Main.getLogger().info("Session request from " + host + "(1) accepted.");
+            logger.info("Session request from " + host + "(1) accepted.");
             return true;
         }
 
         /** If they've reached the connection limit, return false. */
         if (amount == MAX_CONNECTIONS_PER_HOST) {
-            Main.getLogger().warning("Session request from " + host + "(" + amount + ") over connection limit, rejected.");
+            logger.warning("Session request from " + host + "(" + amount + ") over connection limit, rejected.");
             return false;
         }
 
         /** Otherwise, replace the key with the next value if it was present. */
         hostMap.put(host, amount + 1);
-        Main.getLogger().info("Session request from " + host + "(" + hostMap.get(host) + ") accepted.");
+        logger.info("Session request from " + host + "(" + hostMap.get(host) + ") accepted.");
         return true;
     }
 
