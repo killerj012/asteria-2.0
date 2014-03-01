@@ -12,7 +12,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 public class WorkerThreadFactory implements ThreadFactory {
 
     /** The amount of worker threads prepared by this factory. */
-    private AtomicInteger threadCount = new AtomicInteger();
+    private static AtomicInteger threadCount = new AtomicInteger();
 
     @Override
     public Thread newThread(Runnable r) {

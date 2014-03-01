@@ -205,7 +205,7 @@ public final class World {
     /**
      * Configures the world by loading miscellaneous things.
      */
-    public void configure() {
+    public void init() {
 
         /** Create world objects. */
         npcs = new Npc[500];
@@ -227,7 +227,7 @@ public final class World {
             Misc.loadWorldNpcs();
             AssignWeaponAnimation.class.newInstance();
             AssignWeaponInterface.class.newInstance();
-            // Misc.loadNpcDrops();
+            Misc.loadNpcDrops();
             Misc.loadMusic();
         } catch (Exception e) {
             e.printStackTrace();

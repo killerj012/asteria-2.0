@@ -51,7 +51,7 @@ public final class AsynchronousReactor implements Runnable {
      * @throws Exception
      *         if any errors occurs during configuration.
      */
-    public void configure() throws Exception {
+    public void init() throws Exception {
 
         /** Configure the session map. */
         sessionMap = new ConcurrentHashMap<SelectionKey, Session>();

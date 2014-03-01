@@ -37,7 +37,7 @@ public final class PacketEncoder {
     /**
      * Configures the {@link PacketEncoder}.
      */
-    public void configure() {
+    public void init() {
         packets = new ConcurrentLinkedQueue<QueuedEncode>();
     }
 

@@ -81,9 +81,9 @@ public class Rs2Engine implements Runnable {
         gameExecutor = Executors.newSingleThreadScheduledExecutor(new GameThreadFactory());
 
         /** Configure engine components. */
-        world.configure();
-        reactor.configure();
-        encoder.configure();
+        world.init();
+        reactor.init();
+        encoder.init();
 
         /** Start the network and engine. */
         networkExecutor.execute(reactor);

@@ -55,7 +55,7 @@ public class ParallelNpcResetTask implements Runnable {
                 /** Handle any errors with the npc. */
             } catch (Exception ex) {
                 ex.printStackTrace();
-                logger.warning(npc + " error while resetting for the next game tick!");
+                logger.warning(npc + " error while concurrently resetting for the next game tick!");
                 Rs2Engine.getWorld().unregister(npc);
 
                 /** Count down the latch regardless if there was an error or not. */
