@@ -17,45 +17,43 @@ import server.world.map.Position;
  */
 public class RegisterableGroundItem implements RegisterableContainer<GroundItem> {
 
-    /**
-     * The database that holds every single registered {@link GroundItem}.
-     */
+    /** A database that holds every single registered {@link GroundItem}. */
     private static List<GroundItem> itemList = new ArrayList<GroundItem>();
 
     /**
      * Checks if the specified item exists.
      * 
-     * @param item
+     * @param searchItem
      *        the item to check exists.
-     * @return the instance of the item in the database.
+     * @return the instance of the item in the database (if it exists).
      */
-    public GroundItem searchDatabase(GroundItem item) {
+    public GroundItem searchDatabase(GroundItem searchItem) {
 
         /**
          * Iterate through all of the global items and check if any of them
          * match the parameter.
          */
-        for (GroundItem w : itemList) {
-            if (w == null) {
+        for (GroundItem databaseItem : itemList) {
+            if (databaseItem == null) {
                 continue;
             }
 
-            if (w.getItem().getId() == item.getItem().getId() && w.getPosition().getX() == item.getPosition().getX() && w.getPosition().getY() == item.getPosition().getY() && w.getPosition().getZ() == item.getPosition().getZ()) {
-                return w;
+            if (databaseItem.getItem().getId() == searchItem.getItem().getId() && databaseItem.getPosition().getX() == searchItem.getPosition().getX() && databaseItem.getPosition().getY() == searchItem.getPosition().getY() && databaseItem.getPosition().getZ() == searchItem.getPosition().getZ()) {
+                return databaseItem;
             }
         }
         return null;
     }
 
     /**
-     * Fires the pickup event for an {@link GroundItem}.
+     * Fires the pickup event for a {@link GroundItem}.
      * 
      * @param item
      *        the item's pickup event to fire.
      * @param player
      *        the player that fired the pickup event.
      */
-    public void pickupDatabaseItem(GroundItem item, Player player) {
+    public void firePickupEvent(GroundItem item, Player player) {
 
         /** Fire the pickup event. */
         item.fireOnPickup(player);
@@ -74,12 +72,12 @@ public class RegisterableGroundItem implements RegisterableContainer<GroundItem>
          * Iterate through all of the global items and check if any of them are
          * on the position.
          */
-        for (GroundItem w : itemList) {
-            if (w == null) {
+        for (GroundItem databaseItem : itemList) {
+            if (databaseItem == null) {
                 continue;
             }
 
-            if (w.getPosition().equals(position)) {
+            if (databaseItem.getPosition().equals(position)) {
                 return true;
             }
         }
@@ -98,14 +96,30 @@ public class RegisterableGroundItem implements RegisterableContainer<GroundItem>
          * Iterate through the ground items and remove the ones that aren't
          * supposed to be on this level height level.
          */
-        for (final GroundItem w : itemList) {
-            if (w == null) {
+        for (final GroundItem databaseItem : itemList) {
+            if (databaseItem == null) {
                 continue;
             }
 
-            if (player.getPosition().getZ() != w.getPosition().getZ()) {
-                player.getPacketBuilder().removeGroundItem(w);
+            if (player.getPosition().getZ() != databaseItem.getPosition().getZ()) {
+                player.getPacketBuilder().removeGroundItem(databaseItem);
             }
+        }
+    }
+
+    /**
+     * Remove all registered items for the player.
+     * 
+     * @param player
+     *        the player to remove registered items for.
+     */
+    public void removeAllItems(Player player) {
+        for (final GroundItem databaseItem : itemList) {
+            if (databaseItem == null) {
+                continue;
+            }
+
+            player.getPacketBuilder().removeGroundItem(databaseItem);
         }
     }
 
@@ -132,23 +146,26 @@ public class RegisterableGroundItem implements RegisterableContainer<GroundItem>
     @Override
     public void loadNewRegion(Player player) {
 
+        /** First remove all items. */
+        removeAllItems(player);
+
         /**
          * Iterate through all of the registered ground items and update the
          * region with items in the same region as the player.
          */
-        for (final GroundItem w : itemList) {
-            if (w == null) {
+        for (final GroundItem databaseItem : itemList) {
+            if (databaseItem == null) {
                 continue;
             }
 
-            if (w.getState() == ItemState.SEEN_BY_NO_ONE || w.getState() == null && player.getPosition().withinDistance(w.getPosition(), 60)) {
-                player.getPacketBuilder().sendGroundItem(new GroundItem(new Item(w.getItem().getId(), w.getItem().getAmount()), new Position(w.getPosition().getX(), w.getPosition().getY(), w.getPosition().getZ()), player));
+            if (databaseItem.getState() == ItemState.SEEN_BY_NO_ONE || databaseItem.getState() == null) {
+                player.getPacketBuilder().sendGroundItem(new GroundItem(new Item(databaseItem.getItem().getId(), databaseItem.getItem().getAmount()), new Position(databaseItem.getPosition().getX(), databaseItem.getPosition().getY(), databaseItem.getPosition().getZ()), player));
                 continue;
             }
 
-            if (w.getPlayer() != null) {
-                if (w.getPlayer().getUsername().equals(player.getUsername()) && player.getPosition().withinDistance(w.getPosition(), 60)) {
-                    player.getPacketBuilder().sendGroundItem(new GroundItem(new Item(w.getItem().getId(), w.getItem().getAmount()), new Position(w.getPosition().getX(), w.getPosition().getY(), w.getPosition().getZ()), player));
+            if (databaseItem.getPlayer() != null) {
+                if (databaseItem.getPlayer().getUsername().equals(player.getUsername())) {
+                    player.getPacketBuilder().sendGroundItem(new GroundItem(new Item(databaseItem.getItem().getId(), databaseItem.getItem().getAmount()), new Position(databaseItem.getPosition().getX(), databaseItem.getPosition().getY(), databaseItem.getPosition().getZ()), player));
                     continue;
                 }
             }

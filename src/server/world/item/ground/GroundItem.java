@@ -8,34 +8,33 @@ import server.world.item.Item;
 import server.world.map.Position;
 
 /**
- * A registerable ground item that can be placed anywhere in the rs2 world. Each
- * item is assigned a {@link Worker} that asynchronously fires processing events
- * for it in 1-minute intervals.
+ * A ground item that can be placed anywhere in the world.
  * 
  * @author lare96
  */
-@SuppressWarnings( { "fallthrough", "incomplete-switch" })
 public class GroundItem implements Registerable {
 
-    // TODO: test items spawning twice
-    // TODO: stopwatch for items!
+    // XXX: afaik I've fixed all of the issues with this, its still a work in
+    // progress though so I'm wondering if there were any bugs I missed. Design
+    // is a ton better than it was in my previous release, and written in less
+    // code as well :)
 
-    /** The registerable container. */
+    /** The registerable container for item management. */
     private static RegisterableGroundItem registerable;
 
-    /** The actual item. */
+    /** The actual {@link Item} on the ground. */
     private Item item;
 
-    /** The position of the item. */
+    /** The {@link Position} of the item. */
     private Position position;
 
-    /** The controller of this item. */
+    /** The {@link Player} who owns this item. */
     private Player player;
 
     /** The current state of this item. */
     private ItemState state;
 
-    /** The {@link Worker} assigned to process this item. */
+    /** The {@link Worker} assigned to fire events for this item. */
     private Worker processor;
 
     /** Flag that determines whether this item has been picked up or not. */
@@ -47,7 +46,15 @@ public class GroundItem implements Registerable {
      * @author lare96
      */
     public enum ItemState {
-        SEEN_BY_OWNER, SEEN_BY_EVERYONE, SEEN_BY_NO_ONE
+
+        /** This item is only visible to the {@link Player} registered with it. */
+        SEEN_BY_OWNER,
+
+        /** This item is visible to everyone. */
+        SEEN_BY_EVERYONE,
+
+        /** This item is visible to no one and is awaiting unregistration. */
+        SEEN_BY_NO_ONE
     }
 
     /**
@@ -58,7 +65,7 @@ public class GroundItem implements Registerable {
      * @param position
      *        the position of the item.
      * @param player
-     *        the controller of this item.
+     *        the player who owns this item.
      */
     public GroundItem(Item item, Position position, Player player) {
         this.item = item;
@@ -68,19 +75,8 @@ public class GroundItem implements Registerable {
         this.processor = new GroundItemWorker(this);
     }
 
-    @Override
-    public boolean equals(Object obj) {
-        if (obj instanceof GroundItem) {
-            GroundItem w = (GroundItem) obj;
-            if (w.getItem().equals(item) && w.getPosition().equals(position)) {
-                return true;
-            }
-        }
-        return false;
-    }
-
     /**
-     * Method fired on the registration of this item.
+     * An asynchronous event fired upon registration of this item.
      */
     protected void fireOnRegister() {
 
@@ -92,14 +88,15 @@ public class GroundItem implements Registerable {
     }
 
     /**
-     * Method fired on the unregistration of this item.
+     * An asynchronous event fired upon the unregistration of this item.
      */
+    @SuppressWarnings("incomplete-switch")
     protected void fireOnUnregister() {
 
         /** Cancels the processing for this item. */
         processor.cancel();
 
-        /** Removes the ground item image. */
+        /** Removes the ground item image depending on the state of the item. */
         switch (state) {
             case SEEN_BY_NO_ONE:
                 for (Player p : Rs2Engine.getWorld().getPlayers()) {
@@ -117,8 +114,10 @@ public class GroundItem implements Registerable {
     }
 
     /**
-     * Method fired by the <code>processor</code> at 1-minute intervals.
+     * An asynchronous event fired by the assigned {@link Worker} at 1-minute
+     * intervals.
      */
+    @SuppressWarnings("fallthrough")
     protected void fireOnProcess() {
         switch (state) {
 
@@ -156,7 +155,8 @@ public class GroundItem implements Registerable {
     }
 
     /**
-     * Method fired when a player tries to pick this item up.
+     * An asynchronous event fired when a {@link Player} tries to pick this item
+     * up.
      * 
      * @param player
      *        the player trying to pick this item up.
@@ -167,6 +167,17 @@ public class GroundItem implements Registerable {
             registerable.unregister(this);
             player.getInventory().addItem(item);
         }
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj instanceof GroundItem) {
+            GroundItem w = (GroundItem) obj;
+            if (w.getItem().equals(item) && w.getPosition().equals(position)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     /**

@@ -1,35 +1,29 @@
 package server.world.item.ground;
 
 import server.core.Rs2Engine;
+import server.core.worker.Worker;
 import server.world.entity.player.Player;
 import server.world.item.Item;
 import server.world.map.Position;
 
 /**
- * A static {@link GroundItem} that is visible to everyone from the moment of
- * conception and can be placed anywhere in the rs2 world.
+ * A static implementation of a {@link GroundItem} that has no owner and is
+ * visible to everyone from the moment of conception.
  * 
  * @author lare96
  */
 public class StaticGroundItem extends GroundItem {
 
-    // TODO: items that respawn on pickup respawn really fast?
-    // TODO: test delay remove and respawn on pickup together
-
     /**
      * If this item should be removed like a normal {@link GroundItem} (by the
-     * processor after a certain amount of time has elapsed).
+     * assigned {@link Worker} after a certain amount of time has elapsed).
      */
-    private boolean delayRemove;
+    private boolean removeOnProcess;
 
-    /**
-     * If this item should respawn once picked up.
-     */
+    /** If this item should respawn once picked up. */
     private boolean respawnOnPickup;
 
-    /**
-     * If this item needs to be respawned.
-     */
+    /** If this item is awaiting re-registration. */
     private boolean needsRespawn;
 
     /**
@@ -39,14 +33,25 @@ public class StaticGroundItem extends GroundItem {
      *        the actual item.
      * @param position
      *        the position of the item.
-     * @param delayRemove
+     * @param removeOnProcess
      *        if this item should be removed like a normal world item.
      * @param respawnOnPickup
      *        if this item should respawn once picked up.
      */
-    public StaticGroundItem(Item item, Position position, boolean delayRemove, boolean respawnOnPickup) {
+    public StaticGroundItem(Item item, Position position, boolean removeOnProcess, boolean respawnOnPickup) {
         super(item, position, null);
-        this.delayRemove = delayRemove;
+
+        /**
+         * Having these two conditions flagged at the same time is illogical and
+         * will cause issues so we throw an exception if an attempt is made to
+         * flag both.
+         */
+        if (removeOnProcess && respawnOnPickup) {
+            throw new IllegalStateException("Static ground items cannot be configured to be removed and respawned at the same time!");
+        }
+
+        /** Set the appropriate values. */
+        this.removeOnProcess = removeOnProcess;
         this.respawnOnPickup = respawnOnPickup;
         setState(null);
     }
@@ -64,7 +69,7 @@ public class StaticGroundItem extends GroundItem {
         }
 
         /** Start the <code>processor</code> if needed. */
-        if (delayRemove) {
+        if (removeOnProcess) {
             Rs2Engine.getWorld().submit(getProcessor());
         }
     }
@@ -89,7 +94,7 @@ public class StaticGroundItem extends GroundItem {
     protected void fireOnProcess() {
 
         /** If this item was set to be removed after a delay do so now. */
-        if (delayRemove && !needsRespawn) {
+        if (removeOnProcess) {
             getRegisterable().unregister(this);
             return;
         }
@@ -109,6 +114,7 @@ public class StaticGroundItem extends GroundItem {
             getRegisterable().getItemList().add(this);
             needsRespawn = false;
             setItemPicked(false);
+            getProcessor().cancel();
         }
     }
 
@@ -133,19 +139,16 @@ public class StaticGroundItem extends GroundItem {
             player.getInventory().addItem(getItem());
 
             /**
-             * Cancel the <code>processor</code> and create a new one if
-             * needed.
+             * Cancel the worker - we don't need it anymore because the item was
+             * picked up.
              */
-            if (delayRemove) {
+            if (removeOnProcess) {
                 getProcessor().cancel();
-                setProcessor(new GroundItemWorker(this));
             }
 
-            /**
-             * Schedule a new <code>processor</code> to respawn the item if
-             * needed.
-             */
+            /** Submit a new worker to respawn the item if needed. */
             if (respawnOnPickup) {
+                setProcessor(new GroundItemWorker(this));
                 Rs2Engine.getWorld().submit(getProcessor());
                 needsRespawn = true;
             }
