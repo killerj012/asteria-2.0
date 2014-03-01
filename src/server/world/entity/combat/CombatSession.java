@@ -25,6 +25,8 @@ public class CombatSession {
 
     private Entity currentlyAttacking;
 
+    private Entity lastHitBy;
+
     public CombatSession(Entity entity) {
         this.thisEntity = entity;
     }
@@ -123,5 +125,20 @@ public class CombatSession {
      */
     public Map<Entity, Integer> getDamageMap() {
         return damageMap;
+    }
+
+    /**
+     * @return the lastHitBy
+     */
+    public Entity getLastHitBy() {
+        return lastHitBy;
+    }
+
+    /**
+     * @param lastHitBy
+     *        the lastHitBy to set
+     */
+    public void setLastHitBy(Entity lastHitBy) {
+        this.lastHitBy = lastHitBy;
     }
 }

@@ -145,6 +145,11 @@ public class Position {
         return false;
     }
 
+    @Override
+    public Position clone() {
+        return new Position(x, y, z);
+    }
+
     /**
      * Sets the X coordinate.
      * 

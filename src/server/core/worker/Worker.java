@@ -8,34 +8,22 @@ package server.core.worker;
  */
 public abstract class Worker implements Logic {
 
-    /**
-     * The delay for this worker (in ticks).
-     */
+    /** The delay for this worker (in ticks). */
     private int delay;
 
-    /**
-     * The amount of ticks this worker has accumulated.
-     */
+    /** The amount of ticks this worker has accumulated. */
     private int currentDelay;
 
-    /**
-     * If this worker should be ran initially before being scheduled.
-     */
+    /** If this worker should be ran initially before being scheduled. */
     private boolean initialRun;
 
-    /**
-     * The key bound to this worker.
-     */
+    /** The key bound to this worker. */
     private Object key;
 
-    /**
-     * The rate this worker is firing logic at.
-     */
+    /** The rate this worker is firing logic at. */
     private WorkRate workRate;
 
-    /**
-     * If this worker is currently running.
-     */
+    /** If this worker is currently running. */
     private boolean running;
 
     /**

@@ -3,105 +3,75 @@ package server.world.item;
 import server.util.Misc;
 
 /**
- * Represents a single item definition that was parsed.
+ * A single entry in a table of important data used for {@link Item}s.
  * 
  * @author lare96
  */
 public class ItemDefinition {
 
-    /**
-     * The item definitions.
-     */
+    /** The item definitions. */
     private static ItemDefinition[] definitions;
 
-    /**
-     * The item id.
-     */
+    /** The item id. */
     private int itemId;
 
-    /**
-     * The item name.
-     */
+    /** The item name. */
     private String itemName;
 
-    /**
-     * The item description.
-     */
+    /** The item description. */
     private String itemDescription;
 
-    /**
-     * The equipment slot.
-     */
+    /** The equipment slot. */
     private int equipmentSlot;
 
-    /**
-     * If this item is noted.
-     */
+    /** If this item is noted. */
     private boolean isNoted;
 
-    /**
-     * If this item is noteable.
-     */
+    /** If this item is noteable. */
     private boolean isNoteable;
 
-    /**
-     * If this item is stackable.
-     */
+    /** If this item is stackable. */
     private boolean isStackable;
 
-    /**
-     * The unnoted id of this item.
-     */
+    /** The unnoted id of this item. */
     private int unNotedId;
 
-    /**
-     * The noted id of this item.
-     */
+    /** The noted id of this item. */
     private int notedId;
 
-    /**
-     * If this item is members only.
-     */
+    /** If this item is members only. */
     private boolean membersItem;
 
-    /**
-     * The special store price.
-     */
+    /** The special store price. */
     private int specialStorePrice;
 
-    /**
-     * The general store price.
-     */
+    /** The general store price. */
     private int generalStorePrice;
 
-    /**
-     * The low alch value price.
-     */
+    /** The low alch value price. */
     private int lowAlchValue;
 
-    /**
-     * The high alch value price.
-     */
+    /** The high alch value price. */
     private int highAlchValue;
 
-    /**
-     * The weight of the item.
-     */
+    /** The weight of the item. */
     private double weight;
 
-    /**
-     * The item bonuses.
-     */
+    /** The item bonuses. */
     private int[] bonus = new int[12];
 
     /**
-     * @return the itemId.
+     * Gets the item id
+     * 
+     * @return the item id.
      */
     public int getItemId() {
         return itemId;
     }
 
     /**
+     * Sets the item id
+     * 
      * @param itemId
      *        the itemId to set.
      */
@@ -110,13 +80,17 @@ public class ItemDefinition {
     }
 
     /**
-     * @return the itemName.
+     * Gets the item name
+     * 
+     * @return the item name.
      */
     public String getItemName() {
         return itemName;
     }
 
     /**
+     * Sets the item name
+     * 
      * @param itemName
      *        the itemName to set.
      */
@@ -125,13 +99,17 @@ public class ItemDefinition {
     }
 
     /**
-     * @return the itemDescription.
+     * Gets the item description
+     * 
+     * @return the item description.
      */
     public String getItemDescription() {
         return itemDescription;
     }
 
     /**
+     * Sets the item description
+     * 
      * @param itemDescription
      *        the itemDescription to set.
      */
@@ -140,13 +118,17 @@ public class ItemDefinition {
     }
 
     /**
-     * @return the equipmentSlot.
+     * Gets the equipment slot
+     * 
+     * @return the equipment slot.
      */
     public int getEquipmentSlot() {
         return equipmentSlot;
     }
 
     /**
+     * Sets the equipment slot
+     * 
      * @param equipmentSlot
      *        the equipmentSlot to set.
      */
@@ -155,13 +137,17 @@ public class ItemDefinition {
     }
 
     /**
-     * @return the isNoted.
+     * Gets if this item is noted.
+     * 
+     * @return true if this item is noted.
      */
     public boolean isNoted() {
         return isNoted;
     }
 
     /**
+     * Sets if this item is noted.
+     * 
      * @param isNoted
      *        the isNoted to set.
      */
@@ -170,13 +156,17 @@ public class ItemDefinition {
     }
 
     /**
-     * @return the isNoteable.
+     * Gets if this item is noteable.
+     * 
+     * @return true if this item is able to be noted.
      */
     public boolean isNoteable() {
         return isNoteable;
     }
 
     /**
+     * Sets if this item is noteable.
+     * 
      * @param isNoteable
      *        the isNoteable to set.
      */
@@ -185,13 +175,17 @@ public class ItemDefinition {
     }
 
     /**
-     * @return the isStackable.
+     * Gets if this item is stackable.
+     * 
+     * @return true if this item is stackable.
      */
     public boolean isStackable() {
         return isStackable;
     }
 
     /**
+     * Sets if this item is stackable
+     * 
      * @param isStackable
      *        the isStackable to set.
      */
@@ -200,13 +194,17 @@ public class ItemDefinition {
     }
 
     /**
-     * @return the unNotedId.
+     * Gets the un-noted id.
+     * 
+     * @return the un-noted id.
      */
     public int getUnNotedId() {
         return unNotedId;
     }
 
     /**
+     * Sets the un-noted id.
+     * 
      * @param unNotedId
      *        the unNotedId to set.
      */
@@ -215,13 +213,17 @@ public class ItemDefinition {
     }
 
     /**
-     * @return the notedId.
+     * Gets the noted id.
+     * 
+     * @return the noted id.
      */
     public int getNotedId() {
         return notedId;
     }
 
     /**
+     * Sets the noted id.
+     * 
      * @param notedId
      *        the notedId to set.
      */
@@ -230,13 +232,17 @@ public class ItemDefinition {
     }
 
     /**
-     * @return the membersItem.
+     * Gets if this is a members item.
+     * 
+     * @return true if this item is a members item.
      */
     public boolean isMembersItem() {
         return membersItem;
     }
 
     /**
+     * Sets if this is a members item.
+     * 
      * @param membersItem
      *        the membersItem to set.
      */
@@ -245,13 +251,17 @@ public class ItemDefinition {
     }
 
     /**
-     * @return the specialStorePrice.
+     * Gets the special store price.
+     * 
+     * @return the special store price.
      */
     public int getSpecialStorePrice() {
         return specialStorePrice;
     }
 
     /**
+     * Sets the special store price.
+     * 
      * @param specialStorePrice
      *        the specialStorePrice to set.
      */
@@ -260,13 +270,17 @@ public class ItemDefinition {
     }
 
     /**
-     * @return the generalStorePrice.
+     * Gets the general store price.
+     * 
+     * @return the general store price.
      */
     public int getGeneralStorePrice() {
         return generalStorePrice;
     }
 
     /**
+     * Sets the general store price.
+     * 
      * @param generalStorePrice
      *        the generalStorePrice to set.
      */
@@ -275,13 +289,17 @@ public class ItemDefinition {
     }
 
     /**
-     * @return the lowAlchValue.
+     * Gets the low alch value.
+     * 
+     * @return the low alch value.
      */
     public int getLowAlchValue() {
         return lowAlchValue;
     }
 
     /**
+     * Sets the low alch value.
+     * 
      * @param lowAlchValue
      *        the lowAlchValue to set.
      */
@@ -290,13 +308,17 @@ public class ItemDefinition {
     }
 
     /**
-     * @return the highAlchValue.
+     * Gets the high alch value.
+     * 
+     * @return the high alch value.
      */
     public int getHighAlchValue() {
         return highAlchValue;
     }
 
     /**
+     * Sets the high alch value.
+     * 
      * @param highAlchValue
      *        the highAlchValue to set.
      */
@@ -305,6 +327,8 @@ public class ItemDefinition {
     }
 
     /**
+     * Gets the weight.
+     * 
      * @return the weight.
      */
     public double getWeight() {
@@ -312,6 +336,8 @@ public class ItemDefinition {
     }
 
     /**
+     * Sets the weight.
+     * 
      * @param weight
      *        the weight to set.
      */
@@ -320,6 +346,8 @@ public class ItemDefinition {
     }
 
     /**
+     * Gets the bonus.
+     * 
      * @return the bonus.
      */
     public int[] getBonus() {
@@ -327,6 +355,8 @@ public class ItemDefinition {
     }
 
     /**
+     * Sets the bonus.
+     * 
      * @param bonus
      *        the bonus to set.
      */
@@ -335,6 +365,8 @@ public class ItemDefinition {
     }
 
     /**
+     * Gets the definitions
+     * 
      * @return the definitions.
      */
     public static ItemDefinition[] getDefinitions() {
@@ -342,6 +374,8 @@ public class ItemDefinition {
     }
 
     /**
+     * Sets the definitions
+     * 
      * @param definitions
      *        the definitions to set.
      */
@@ -349,6 +383,11 @@ public class ItemDefinition {
         ItemDefinition.definitions = definitions;
     }
 
+    /**
+     * Gets if this item is two handed.
+     * 
+     * @return true if this item is two handed.
+     */
     public boolean isTwoHanded() {
         return Misc.getIs2H()[itemId];
     }

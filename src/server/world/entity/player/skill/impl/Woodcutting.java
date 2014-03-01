@@ -30,8 +30,6 @@ public class Woodcutting extends SkillEvent {
     // XXX: Near perfect woodcutting, just needs random nests and a better speed
     // formula :)
 
-    // test, also test prayer and firemaking
-
     /** The {@link Woodcutting} singleton instance. */
     private static Woodcutting singleton;
 

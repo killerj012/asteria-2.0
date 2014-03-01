@@ -79,6 +79,22 @@ public class InventoryContainer {
     }
 
     /**
+     * Adds a set of items into the inventory.
+     * 
+     * @param item
+     *        the set of items to add.
+     */
+    public void addItemSet(Item[] item) {
+        for (Item addItem : item) {
+            if (item == null) {
+                continue;
+            }
+
+            addItem(addItem);
+        }
+    }
+
+    /**
      * Overrides the specified slot with a new item.
      * 
      * @param item
@@ -130,7 +146,23 @@ public class InventoryContainer {
     }
 
     /**
-     * Replaces an existing item in your inventory with a new one.
+     * Deletes a set of items from the inventory.
+     * 
+     * @param item
+     *        the set of items to delete.
+     */
+    public void deleteItemSet(Item[] item) {
+        for (Item deleteItem : item) {
+            if (item == null) {
+                continue;
+            }
+
+            deleteItem(deleteItem);
+        }
+    }
+
+    /**
+     * Replaces an existing item in the inventory with a new one.
      * 
      * @param oldItem
      *        the item to replace.

@@ -202,6 +202,50 @@ public class ItemContainer {
     }
 
     /**
+     * Checks if this container has a set of certain item.
+     * 
+     * @param item
+     *        the item to check in this container for.
+     * @return true if this container has the item.
+     */
+    public boolean contains(Item[] item) {
+        if (item.length == 0) {
+            return false;
+        }
+
+        for (Item nextItem : item) {
+            if (nextItem == null) {
+                continue;
+            }
+
+            if (!contains(nextItem)) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    /**
+     * Checks if this container has a set of certain item id's.
+     * 
+     * @param item
+     *        the item id's to check in this container for.
+     * @return true if this container has the item id.
+     */
+    public boolean contains(int[] id) {
+        if (id.length == 0) {
+            return false;
+        }
+
+        for (int nextItemId : id) {
+            if (!contains(nextItemId)) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    /**
      * Calculates a free slot.
      * 
      * @return the free slot, -1 if there are no free slots left.

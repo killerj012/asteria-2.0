@@ -17,7 +17,7 @@ public class HostGateway {
     private static Logger logger = Logger.getLogger(HostGateway.class.getSimpleName());
 
     /** The maximum amount of connections per host. */
-    public static final int MAX_CONNECTIONS_PER_HOST = 1;
+    public static final int MAX_CONNECTIONS_PER_HOST = 2;
 
     /** Used to keep track of hosts and their amount of connections. */
     private static ConcurrentHashMap<String, Integer> hostMap = new ConcurrentHashMap<String, Integer>();

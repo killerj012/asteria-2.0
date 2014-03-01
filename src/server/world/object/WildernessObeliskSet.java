@@ -34,7 +34,7 @@ public class WildernessObeliskSet {
      * @param id
      *        the id of the wilderness obelisk to activate.
      */
-    public static void activate(final Player player, int id) {
+    public static void activateObelisk(final Player player, int id) {
 
         /** The obelisk we are activating. */
         final WildernessObelisk obelisk = obeliskSet[id];

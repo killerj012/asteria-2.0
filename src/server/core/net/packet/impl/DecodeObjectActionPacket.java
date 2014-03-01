@@ -62,22 +62,22 @@ public class DecodeObjectActionPacket extends PacketDecoder {
 
                             switch (objectId) {
                                 case 14829:
-                                    WildernessObeliskSet.activate(player, 0);
+                                    WildernessObeliskSet.activateObelisk(player, 0);
                                     break;
                                 case 14830:
-                                    WildernessObeliskSet.activate(player, 1);
+                                    WildernessObeliskSet.activateObelisk(player, 1);
                                     break;
                                 case 14827:
-                                    WildernessObeliskSet.activate(player, 2);
+                                    WildernessObeliskSet.activateObelisk(player, 2);
                                     break;
                                 case 14828:
-                                    WildernessObeliskSet.activate(player, 3);
+                                    WildernessObeliskSet.activateObelisk(player, 3);
                                     break;
                                 case 14826:
-                                    WildernessObeliskSet.activate(player, 4);
+                                    WildernessObeliskSet.activateObelisk(player, 4);
                                     break;
                                 case 14831:
-                                    WildernessObeliskSet.activate(player, 5);
+                                    WildernessObeliskSet.activateObelisk(player, 5);
                                     break;
                                 case 450:
                                 case 451:

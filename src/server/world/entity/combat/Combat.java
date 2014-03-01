@@ -181,7 +181,7 @@ public class Combat {
         if (entity instanceof Player) {
             switch (type) {
                 case MELEE:
-                    return new Hit(Misc.getRandom().nextInt(5));
+                    return new Hit(Misc.getRandom().nextInt(10));
                 case RANGE:
                     return new Hit(Misc.getRandom().nextInt(5));
                 case MAGIC:
@@ -190,7 +190,7 @@ public class Combat {
         } else if (entity instanceof Npc) {
             switch (type) {
                 case MELEE:
-                    return new Hit(Misc.getRandom().nextInt(5));
+                    return new Hit(Misc.getRandom().nextInt(2));
                 case RANGE:
                     return new Hit(Misc.getRandom().nextInt(5));
                 case MAGIC:

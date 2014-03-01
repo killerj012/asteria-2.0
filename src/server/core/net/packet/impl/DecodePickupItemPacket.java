@@ -40,7 +40,7 @@ public class DecodePickupItemPacket extends PacketDecoder {
                         return;
                     }
 
-                    GroundItem.getRegisterable().pickupDatabaseItem(worldItem, player);
+                    GroundItem.getRegisterable().firePickupEvent(worldItem, player);
                 }
             }
         });

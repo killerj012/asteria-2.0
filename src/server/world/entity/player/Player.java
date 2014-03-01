@@ -26,6 +26,7 @@ import server.world.entity.player.content.Spellbook;
 import server.world.entity.player.content.TradeSession;
 import server.world.entity.player.content.AssignWeaponAnimation.WeaponAnimationIndex;
 import server.world.entity.player.content.AssignWeaponInterface.WeaponInterface;
+import server.world.entity.player.content.DwarfMultiCannon.CannonCredentials;
 import server.world.entity.player.skill.Skill;
 import server.world.entity.player.skill.SkillEvent;
 import server.world.entity.player.skill.SkillManager;
@@ -49,6 +50,9 @@ import server.world.object.WorldObject;
  */
 @SuppressWarnings("all")
 public class Player extends Entity {
+
+    /** The credentials for this player's cannon. */
+    private CannonCredentials cannonCredentials = new CannonCredentials(this);
 
     /** A {@link Logger} for printing debugging info. */
     private static Logger logger = Logger.getLogger(Player.class.getSimpleName());
@@ -1383,5 +1387,12 @@ public class Player extends Entity {
      */
     public void setUsingMagic(boolean usingMagic) {
         this.usingMagic = usingMagic;
+    }
+
+    /**
+     * @return the cannonCredentials
+     */
+    public CannonCredentials getCannonCredentials() {
+        return cannonCredentials;
     }
 }

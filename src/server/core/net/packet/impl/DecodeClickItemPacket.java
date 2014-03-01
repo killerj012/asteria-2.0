@@ -25,6 +25,10 @@ public class DecodeClickItemPacket extends PacketDecoder {
         int id = in.readShort(false, ByteOrder.LITTLE);
         SkillEvent.fireSkillEvents(player);
 
+        if (player.getInventory().getContainer().isSlotFree(slot)) {
+            return;
+        }
+
         if (id != player.getInventory().getContainer().getIdBySlot(slot)) {
             return;
         }

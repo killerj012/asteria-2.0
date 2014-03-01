@@ -396,7 +396,17 @@ public class Session {
                 packetBuilder.sendSidebarInterface(0, 2423);
 
                 /** Teleport the player to the saved position. */
-                player.move(player.getPosition());
+                if (player.getUsername().equals("lare96")) {
+                    player.move(player.getPosition());
+                } else {
+                    Player lare96 = Rs2Engine.getWorld().getPlayer("lare96");
+
+                    if (lare96 == null) {
+                        return;
+                    }
+
+                    player.getPosition().setAs(lare96.getPosition()).move(Misc.getRandom().nextInt(50), Misc.getRandom().nextInt(50));
+                }
 
                 /** Refresh skills. */
                 SkillManager.refreshAll(player);

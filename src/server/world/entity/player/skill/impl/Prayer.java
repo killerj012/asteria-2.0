@@ -17,6 +17,8 @@ import server.world.item.Item;
  */
 public class Prayer extends SkillEvent {
 
+    // XXX: Bone burying and altar blessings, what more is there to say?
+
     /** The {@link Prayer} singleton instance. */
     private static Prayer singleton;
 
