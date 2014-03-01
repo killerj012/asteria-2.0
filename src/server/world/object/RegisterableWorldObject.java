@@ -7,6 +7,7 @@ import java.util.Set;
 import server.core.Rs2Engine;
 import server.world.RegisterableContainer;
 import server.world.entity.player.Player;
+import server.world.map.Position;
 
 /**
  * Manages every single {@link WorldObject} registered to the
@@ -33,6 +34,22 @@ public class RegisterableWorldObject implements RegisterableContainer<WorldObjec
         for (final WorldObject object : objectSet) {
             if (player.getPosition().getZ() != object.getPosition().getZ()) {
                 player.getPacketBuilder().removeObject(object);
+            }
+        }
+    }
+
+    /**
+     * Removes the object on the specified position.
+     * 
+     * @param position
+     *        the position to remove an object on.
+     */
+    public void removeOnPosition(Position position) {
+        for (Iterator<WorldObject> iter = objectSet.iterator(); iter.hasNext();) {
+            WorldObject object = iter.next();
+
+            if (object.getPosition().equals(position)) {
+                iter.remove();
             }
         }
     }
