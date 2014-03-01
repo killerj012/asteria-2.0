@@ -43,6 +43,7 @@ public class MeleeHitWorker extends Worker {
         victim.primaryHit(hit);
         victim.getCombatSession().getParticipants().add(attacker);
         victim.getCombatSession().addToDamage(attacker, hit.getDamage());
+        victim.getCombatSession().setLastHitBy(attacker);
         Combat.fight(victim, attacker);
         this.cancel();
     }

@@ -537,8 +537,8 @@ public final class Misc {
         for (int i = 0; i < array.size(); i++) {
             JsonObject reader = (JsonObject) array.get(i);
 
-            final int id = reader.get("npc-id").getAsInt();
-            final DeathDrop[] drops = builder.fromJson(reader.get("npc-drops").getAsJsonArray(), DeathDrop[].class);
+            final int id = reader.get("id").getAsInt();
+            final DeathDrop[] drops = builder.fromJson(reader.get("drops").getAsJsonArray(), DeathDrop[].class);
             NpcDeathDrop.getDropDefinitions()[id] = new NpcDeathDrop(id, drops);
         }
     }

@@ -1,5 +1,7 @@
 package server.world.entity.npc;
 
+import java.util.List;
+
 import server.core.Rs2Engine;
 import server.core.worker.Worker;
 import server.world.entity.Animation;
@@ -90,9 +92,9 @@ public class Npc extends Entity {
 
                     /** Drop the items on death and remove the npc from the area. */
                     if (respawnTicks == 0) {
-                        dropDeathItems(Rs2Engine.getWorld().getPlayer("lare96"));
-                        // XXX: Drop items for the entity that killed this npc.
-
+                        Entity killer = getCombatSession().getLastHitBy();
+                        // TODO: ^^ proper death calculations
+                        dropDeathItems(killer);
                         move(new Position(1, 1));
 
                         if (!isRespawn()) {
@@ -158,14 +160,19 @@ public class Npc extends Entity {
 
     /**
      * Drops items for the entity that killed this npc.
+     * 
+     * @param killer
+     *        the killer for this entity (if any).
+     * @param global
+     *        if this drop should be static.
      */
     public void dropDeathItems(Entity killer) {
 
         /** Get the drops for this npc. */
-        DeathDrop[] dropItems = NpcDeathDrop.calculateDeathDrop(this);
+        List<DeathDrop> dropItems = NpcDeathDrop.calculateDeathDrop(this);
 
         /** Block if there are no drops. */
-        if (dropItems.length == 0) {
+        if (dropItems.size() == 0) {
             return;
         }
 
@@ -173,7 +180,7 @@ public class Npc extends Entity {
          * If the killer is an npc register static ground items that will vanish
          * within a minute.
          */
-        if (killer instanceof Npc) {
+        if (killer == null || killer instanceof Npc) {
             for (DeathDrop drop : dropItems) {
                 GroundItem.getRegisterable().register(new StaticGroundItem(drop.getItem(), getPosition(), true, false));
             }
@@ -186,7 +193,7 @@ public class Npc extends Entity {
             Player player = (Player) killer;
 
             for (DeathDrop drop : dropItems) {
-                GroundItem.getRegisterable().register(new GroundItem(drop.getItem(), getPosition(), player));
+                GroundItem.getRegisterable().register(new GroundItem(drop.getItem(), new Position(getPosition().getX(), getPosition().getY(), getPosition().getZ()), player));
             }
         }
     }

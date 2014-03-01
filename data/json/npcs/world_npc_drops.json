@@ -1,16 +1,28 @@
 [
     {
-        "id": 460,
-        "x": 3078,
-        "y": 3251,
-        "z": 0,
-        "random-walk": true
-    },
-    {
         "id": 1,
-        "x": 3080,
-        "y": 3250,
-        "z": 0,
-        "random-walk": true
+        "drops": [
+        	{
+        	    "item": {
+        			"id": 526,
+        			"amount": 1
+        		},
+        		"chance": ALWAYS
+        	},
+        	{
+        		"item": {
+        			"id": 995,
+        			"amount": 25
+        		},
+        		"chance": COMMON
+        	},
+        	{
+        		"item": {
+        		    "id": 1205,
+        			"amount": 1
+        		},
+        		"chance": COMMON
+        	}
+        ]
     }
 ]

@@ -1,5 +1,6 @@
 package server.world.entity.npc;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
@@ -14,8 +15,6 @@ import server.world.item.Item;
  * @author lare96
  */
 public class NpcDeathDrop {
-
-    // TODO: test npc drops default and with database
 
     /** An array of drop tables for each npc. */
     private static NpcDeathDrop[] dropDefinitions = new NpcDeathDrop[6102];
@@ -64,21 +63,25 @@ public class NpcDeathDrop {
      *        the npc's table to retrieve and calculate drops from.
      * @return the item that is dropped on death.
      */
-    public static DeathDrop[] calculateDeathDrop(Npc npc) {
+    public static List<DeathDrop> calculateDeathDrop(Npc npc) {
 
         /** Get the npcs death drop table from the database. */
         NpcDeathDrop dropTable = dropDefinitions[npc.getNpcId()];
 
         /** If there is no table present for the npc just drop bones. */
         if (dropTable == null) {
-            return new DeathDrop[] { new DeathDrop(new Item(526), Chance.ALWAYS) };
+            return Arrays.asList(new DeathDrop[] { new DeathDrop(new Item(526), Chance.ALWAYS) });
         }
 
         /** Will determine if a rare item is going to be dropped. */
         boolean foundRare = false;
 
         /** Will hold all of the drops from the table. */
-        List<DeathDrop> choose = Arrays.asList(dropTable.getDrops());
+        List<DeathDrop> choose = new ArrayList<DeathDrop>();
+
+        for (DeathDrop drop : dropTable.getDrops()) {
+            choose.add(drop);
+        }
 
         /**
          * Iterate through the list with a raw iterator (so we can remove
@@ -93,19 +96,19 @@ public class NpcDeathDrop {
              * If the drop has a chance of <code>ALWAYS</code> do nothing
              * because this item is always dropped.
              */
-            if (drop.getItemChance() == Chance.ALWAYS) {
+            if (drop.getChance() == Chance.ALWAYS) {
                 continue;
             }
 
             /** Do calculations based on the drop chance. */
-            if ((Misc.getRandom().nextInt(100) + 1) <= drop.getItemChance().getPercentage()) {
+            if ((Misc.getRandom().nextInt(100) + 1) <= drop.getChance().getPercentage()) {
 
                 /**
                  * If the drop chance calculation was successful (the item was
                  * picked) but we already have a rare then remove this drop. We
                  * can only have one rare!
                  */
-                if (drop.getItemChance() == Chance.ALMOST_IMPOSSIBLE || drop.getItemChance() == Chance.EXTREMELY_RARE && foundRare) {
+                if (drop.getChance() == Chance.ALMOST_IMPOSSIBLE || drop.getChance() == Chance.EXTREMELY_RARE && foundRare) {
                     iterator.remove();
 
                     /**
@@ -113,7 +116,7 @@ public class NpcDeathDrop {
                      * was picked) but we have no rares then keep the drop and
                      * set a flag that tells us that we've found a rare.
                      */
-                } else if (drop.getItemChance() == Chance.ALMOST_IMPOSSIBLE || drop.getItemChance() == Chance.EXTREMELY_RARE && !foundRare) {
+                } else if (drop.getChance() == Chance.ALMOST_IMPOSSIBLE || drop.getChance() == Chance.EXTREMELY_RARE && !foundRare) {
                     foundRare = true;
                 }
 
@@ -127,7 +130,7 @@ public class NpcDeathDrop {
         }
 
         /** Any elements left in the list will be dropped! */
-        return (DeathDrop[]) choose.toArray();
+        return choose;
     }
 
     /**
@@ -150,14 +153,19 @@ public class NpcDeathDrop {
         private Item item;
 
         /** The chance of this item being dropped. */
-        private Chance itemChance;
+        private Chance chance;
 
         /**
          * Create a new {@link DeathDrop}.
+         * 
+         * @param item
+         *        the item that will be dropped.
+         * @param chance
+         *        the chance of this item being dropped.
          */
-        public DeathDrop(Item item, Chance itemChance) {
+        public DeathDrop(Item item, Chance chance) {
             this.item = item;
-            this.itemChance = itemChance;
+            this.chance = chance;
         }
 
         /**
@@ -174,8 +182,8 @@ public class NpcDeathDrop {
          * 
          * @return the item chance.
          */
-        public Chance getItemChance() {
-            return itemChance;
+        public Chance getChance() {
+            return chance;
         }
     }
 }
