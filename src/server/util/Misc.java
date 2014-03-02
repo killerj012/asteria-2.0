@@ -919,6 +919,15 @@ public final class Misc {
         }
 
         /**
+         * Gets a random value based on the interval.
+         * 
+         * @return the random value.
+         */
+        public int calculate() {
+            return (start + Misc.getRandom().nextInt(end));
+        }
+
+        /**
          * The starting point.
          * 
          * @return the starting point.

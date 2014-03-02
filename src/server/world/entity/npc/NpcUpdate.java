@@ -27,8 +27,8 @@ public class NpcUpdate {
      */
     public static void update(Player player) {
         // XXX: The buffer sizes may need to be tuned.
-        PacketBuffer.WriteBuffer out = PacketBuffer.newOutBuffer(2048);
-        PacketBuffer.WriteBuffer block = PacketBuffer.newOutBuffer(1024);
+        PacketBuffer.WriteBuffer out = PacketBuffer.newWriteBuffer(2048);
+        PacketBuffer.WriteBuffer block = PacketBuffer.newWriteBuffer(1024);
 
         /** Initialize the update packet. */
         out.writeVariableShortPacketHeader(65);

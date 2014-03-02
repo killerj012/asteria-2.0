@@ -7,12 +7,23 @@ import server.core.Rs2Engine;
 import server.core.worker.Worker;
 import server.util.Misc.Interval;
 import server.world.entity.Animation;
+import server.world.entity.combat.Combat;
+import server.world.entity.combat.Hit;
+import server.world.entity.npc.Npc;
 import server.world.entity.player.Player;
 import server.world.item.Item;
+import server.world.item.ground.GroundItem;
+import server.world.map.Location;
 import server.world.map.Position;
 import server.world.object.WorldObject;
 import server.world.object.WorldObject.Rotation;
 
+/**
+ * A collection of classes and methods that handle everything that has to do
+ * with the dwarf multicannon.
+ * 
+ * @author lare96
+ */
 public class DwarfMultiCannon {
 
     /** The damage interval for cannons (inclusive). */
@@ -64,28 +75,120 @@ public class DwarfMultiCannon {
     public enum FireDirection {
 
         /** Turns <code>NORTH_EAST</code> next. */
-        NORTH,
+        NORTH(FireDirection.NORTH_EAST, 516, new TargetSequence() {
+            @Override
+            public boolean canTarget(Position cannonPosition, Position targetPosition) {
+                return (targetPosition.getY() > cannonPosition.getY() && targetPosition.getX() >= cannonPosition.getX() - 1 && targetPosition.getX() <= cannonPosition.getX() + 1);
+            }
+        }),
 
         /** Turns <code>EAST</code> next. */
-        NORTH_EAST,
+        NORTH_EAST(FireDirection.EAST, 517, new TargetSequence() {
+            @Override
+            public boolean canTarget(Position cannonPosition, Position targetPosition) {
+                return (targetPosition.getX() >= cannonPosition.getX() + 1 && targetPosition.getY() >= cannonPosition.getY() + 1);
+            }
+        }),
 
         /** Turns <code>SOUTH_EAST</code> next. */
-        EAST,
+        EAST(FireDirection.SOUTH_EAST, 518, new TargetSequence() {
+            @Override
+            public boolean canTarget(Position cannonPosition, Position targetPosition) {
+                return (targetPosition.getX() > cannonPosition.getX() && targetPosition.getY() >= cannonPosition.getY() - 1 && targetPosition.getY() <= cannonPosition.getY() + 1);
+            }
+        }),
 
         /** Turns <code>SOUTH</code> next. */
-        SOUTH_EAST,
+        SOUTH_EAST(FireDirection.SOUTH, 519, new TargetSequence() {
+            @Override
+            public boolean canTarget(Position cannonPosition, Position targetPosition) {
+                return (targetPosition.getY() <= cannonPosition.getY() - 1 && targetPosition.getX() >= cannonPosition.getX() + 1);
+            }
+        }),
 
         /** Turns <code>SOUTH_WEST</code> next. */
-        SOUTH,
+        SOUTH(FireDirection.SOUTH_WEST, 520, new TargetSequence() {
+            @Override
+            public boolean canTarget(Position cannonPosition, Position targetPosition) {
+                return (targetPosition.getY() < cannonPosition.getY() && targetPosition.getX() >= cannonPosition.getX() - 1 && targetPosition.getX() <= cannonPosition.getX() + 1);
+            }
+        }),
 
         /** Turns <code>WEST</code> next. */
-        SOUTH_WEST,
+        SOUTH_WEST(FireDirection.WEST, 521, new TargetSequence() {
+            @Override
+            public boolean canTarget(Position cannonPosition, Position targetPosition) {
+                return (targetPosition.getX() <= cannonPosition.getX() - 1 && targetPosition.getY() <= cannonPosition.getY() - 1);
+            }
+        }),
 
         /** Turns <code>NORTH_WEST</code> next. */
-        WEST,
+        WEST(FireDirection.NORTH_WEST, 514, new TargetSequence() {
+            @Override
+            public boolean canTarget(Position cannonPosition, Position targetPosition) {
+                return (targetPosition.getX() < cannonPosition.getX() && targetPosition.getY() >= cannonPosition.getY() - 1 && targetPosition.getY() <= cannonPosition.getY() + 1);
+            }
+        }),
 
         /** Turns <code>NORTH</code> next. */
-        NORTH_WEST
+        NORTH_WEST(FireDirection.NORTH, 515, new TargetSequence() {
+            @Override
+            public boolean canTarget(Position cannonPosition, Position targetPosition) {
+                return (targetPosition.getX() <= cannonPosition.getX() - 1 && targetPosition.getY() >= cannonPosition.getY() + 1);
+            }
+        });
+
+        /** The next direction in the rotation sequence. */
+        private FireDirection nextDirection;
+
+        /** The object animation for this direction. */
+        private int objectAnimation;
+
+        /** The target sequence for this direction. */
+        private TargetSequence sequence;
+
+        /**
+         * Create a new {@link FireDirection}.
+         * 
+         * @param nextDirection
+         *        the next direction in the rotation sequence.
+         * @param objectAnimation
+         *        the object animation for this direction.
+         * @param sequence
+         *        the target sequence for this direction.
+         */
+        private FireDirection(FireDirection nextDirection, int objectAnimation, TargetSequence sequence) {
+            this.nextDirection = nextDirection;
+            this.objectAnimation = objectAnimation;
+            this.sequence = sequence;
+        }
+
+        /**
+         * Gets the next direction in the rotation sequence.
+         * 
+         * @return the next direction.
+         */
+        public FireDirection getNextDirection() {
+            return nextDirection;
+        }
+
+        /**
+         * Gets the object animation for this direction.
+         * 
+         * @return the object animation.
+         */
+        public int getObjectAnimation() {
+            return objectAnimation;
+        }
+
+        /**
+         * Gets the target sequence for this direction.
+         * 
+         * @return the sequence.
+         */
+        public TargetSequence getSequence() {
+            return sequence;
+        }
     }
 
     /**
@@ -158,125 +261,244 @@ public class DwarfMultiCannon {
                     case FURNACE:
                         player.animation(new Animation(827));
                         player.getInventory().deleteItem(new Item(12));
-                        WorldObject.getRegisterable().register(new WorldObject(6, player.getPosition().clone(), Rotation.SOUTH, 10));
+                        player.getCannonCredentials().setCannon(new Cannon(player));
                         player.getCannonCredentials().setSetupStage(CannonSetup.CANNON);
                     case CANNON:
+                        WorldObject.getRegisterable().register(player.getCannonCredentials().getCannon());
                         positionSet.add(player.getPosition().clone());
-                        player.getCannonCredentials().setCannon(new Cannon(player));
                         player.getMovementQueue().setLockMovement(false);
                         player.getPacketBuilder().sendMessage("You attach the furnace to the barrels and finish putting your cannon together!");
                         this.cancel();
                         break;
                 }
             }
-
-            @Override
-            public void fireOnCancel() {
-                player.getInventory().deleteItemSet(new Item[] { new Item(6), new Item(8), new Item(10), new Item(12) });
-                player.getInventory().addItemSet(new Item[] { new Item(6), new Item(8), new Item(10), new Item(12) });
-
-                WorldObject.getRegisterable().removeOnPosition(player.getPosition().clone());
-            }
         }.attach(player));
     }
 
-    public static void retrieveCannon(Player player) {
+    /**
+     * The cannon retrieval process.
+     * 
+     * @param player
+     *        the player retrieving this cannon.
+     * @param cannonPosition
+     *        the position of the cannon being retrieved.
+     */
+    public static void retrieveCannon(Player player, Position cannonPosition) {
 
+        /**
+         * Check if we own this cannon by comparing the position of your cannon
+         * and the cannon trying to be picked up.
+         */
+        if (!player.getCannonCredentials().hasCannon() || !player.getCannonCredentials().getCannon().equals(cannonPosition)) {
+            player.getPacketBuilder().sendMessage("This is not your cannon to pick up!");
+            return;
+        }
+
+        /** Remove the cannon from the world. */
+        player.animation(new Animation(827));
+        positionSet.remove(cannonPosition);
+        WorldObject.getRegisterable().removeOnPosition(cannonPosition);
+        player.getCannonCredentials().getCannon().setCurrentlyFiring(false);
+        player.getCannonCredentials().setSetupStage(CannonSetup.NOTHING);
+
+        /** Return the items to your inventory, bank or the ground. */
+        if (player.getInventory().getContainer().freeSlots() > 4) {
+            player.getInventory().addItem(new Item(6));
+            player.getInventory().addItem(new Item(8));
+            player.getInventory().addItem(new Item(10));
+            player.getInventory().addItem(new Item(12));
+            player.getPacketBuilder().sendMessage("The cannon parts were returned to your inventory.");
+
+            if (player.getCannonCredentials().getCannon().getAmmunition() > 0) {
+                player.getInventory().addItem(new Item(2, player.getCannonCredentials().getCannon().getAmmunition()));
+                player.getCannonCredentials().getCannon().setAmmunition(0);
+                player.getPacketBuilder().sendMessage("The leftover ammunition was returned to your inventory.");
+            }
+        } else if (player.getInventory().getContainer().freeSlots() < 5) {
+
+            if (player.getBank().getContainer().freeSlots() < 5) {
+                GroundItem.getRegisterable().register(new GroundItem(new Item(6), player.getPosition().clone(), player));
+                GroundItem.getRegisterable().register(new GroundItem(new Item(8), player.getPosition().clone(), player));
+                GroundItem.getRegisterable().register(new GroundItem(new Item(10), player.getPosition().clone(), player));
+                GroundItem.getRegisterable().register(new GroundItem(new Item(12), player.getPosition().clone(), player));
+                player.getPacketBuilder().sendMessage("The cannon parts were placed on the ground.");
+
+                if (player.getCannonCredentials().getCannon().getAmmunition() > 0) {
+                    GroundItem.getRegisterable().register(new GroundItem(new Item(2, player.getCannonCredentials().getCannon().getAmmunition()), player.getPosition().clone(), player));
+                    player.getCannonCredentials().getCannon().setAmmunition(0);
+                    player.getPacketBuilder().sendMessage("The leftover ammunition was placed on the ground.");
+                }
+                return;
+            }
+
+            player.getBank().addItem(new Item(6));
+            player.getBank().addItem(new Item(8));
+            player.getBank().addItem(new Item(10));
+            player.getBank().addItem(new Item(12));
+            player.getPacketBuilder().sendMessage("The cannon parts were returned to your bank.");
+
+            if (player.getCannonCredentials().getCannon().getAmmunition() > 0) {
+                player.getBank().addItem(new Item(2, player.getCannonCredentials().getCannon().getAmmunition()));
+                player.getCannonCredentials().getCannon().setAmmunition(0);
+                player.getPacketBuilder().sendMessage("The leftover ammunition was returned to your bank.");
+            }
+        }
     }
 
-    public static void fireCannon(Player player) {
-        // /**
-        // * Checks if the cannon we are shooting is our cannon
-        // */
-        // if (cannon.getPosition().getX() == p.getX() &&
-        // cannon.getPosition().getY() == p.getY() &&
-        // cannon.getPosition().getZ() == p.getZ()) {
-        //
-        // /**
-        // * Do not shoot if we are already firing
-        // */
-        // if (shooting) {
-        // player.sendMessage("Your cannon is already firing!");
-        // return;
-        // }
-        //
-        // /**
-        // * Load cannonballs and begin rotating the cannon and firing at mobs
-        // * based on the direction the cannon is facing.
-        // */
-        // if (balls < 1) {
-        // int amountOfCannonBalls = player.getItems().itemAmount(2) > 30 ? 30 :
-        // player.getItems().itemAmount(2);
-        //
-        // if (amountOfCannonBalls < 1) {
-        // player.sendMessage("You need ammo to shoot this cannon!");
-        // return;
-        // }
-        //
-        // balls = amountOfCannonBalls;
-        // player.getItems().deleteItem(2, amountOfCannonBalls);
-        // shooting = true;
-        //
-        // Server.getTaskScheduler().schedule(new
-        // Task((player.getRegion().inMulti() ? 2 : 4), false) {
-        // @Override
-        // protected void execute() {
-        // if (player.disconnected || !shooting) {
-        // this.stop();
-        // return;
-        // }
-        //
-        // if (balls < 1) {
-        // player.sendMessage("Your cannon has run out of ammo!");
-        // shooting = false;
-        // this.stop();
-        // return;
-        // } else {
-        // if (rotation == null) {
-        // rotation = Rotation.NORTH;
-        // rotate(cannon);
-        // fireAtMobs();
-        // return;
-        // }
-        //
-        // switch (rotation) {
-        // case NORTH: // north
-        // rotation = Rotation.NORTH_EAST;
-        // break;
-        // case NORTH_EAST: // north-east
-        // rotation = Rotation.EAST;
-        // break;
-        // case EAST: // east
-        // rotation = Rotation.SOUTH_EAST;
-        // break;
-        // case SOUTH_EAST: // south-east
-        // rotation = Rotation.SOUTH;
-        // break;
-        // case SOUTH: // south
-        // rotation = Rotation.SOUTH_WEST;
-        // break;
-        // case SOUTH_WEST: // south-west
-        // rotation = Rotation.WEST;
-        // break;
-        // case WEST: // west
-        // rotation = Rotation.NORTH_WEST;
-        // break;
-        // case NORTH_WEST: // north-west
-        // rotation = null;
-        // break;
-        // }
-        //
-        // rotate(cannon);
-        // fireAtMobs();
-        // }
-        // }
-        // });
-        // }
-        // } else {
-        // player.sendMessage("This is not your cannon to fire!");
-        // }
+    /**
+     * The cannon firing process.
+     * 
+     * @param player
+     *        the player who fired this cannon.
+     */
+    public static void fireCannon(final Player player, Position cannonPosition) {
+
+        /**
+         * Check if we own this cannon by comparing the position of your cannon
+         * and the cannon trying to be fired.
+         */
+        if (!player.getCannonCredentials().hasCannon() || !player.getCannonCredentials().getCannon().equals(cannonPosition)) {
+            player.getPacketBuilder().sendMessage("This is not your cannon to fire!");
+            return;
+        }
+
+        /** Check if we're already shooting. */
+        if (player.getCannonCredentials().getCannon().isCurrentlyFiring()) {
+            player.getPacketBuilder().sendMessage("Your cannon is already firing!");
+            return;
+        }
+
+        /** Load the ammunition in the cannon (if any). */
+        int count = player.getInventory().getContainer().getCount(2);
+
+        if (count >= 30) {
+            player.getCannonCredentials().getCannon().setAmmunition(30);
+            player.getInventory().deleteItem(new Item(2, 30));
+            player.getPacketBuilder().sendMessage("You load 30 of your " + count + " cannon balls and begin firing.");
+        } else if (count > 0 && count < 30) {
+            player.getCannonCredentials().getCannon().setAmmunition(count);
+            player.getInventory().deleteItem(new Item(2, count));
+            player.getPacketBuilder().sendMessage("You load " + count + " of your cannon balls and begin firing.");
+        } else if (count == 0) {
+            player.getPacketBuilder().sendMessage("You need cannon balls in order to fire this cannon!");
+            return;
+        }
+
+        /** Flag the cannon as firing. */
+        player.getCannonCredentials().getCannon().setCurrentlyFiring(true);
+
+        /** Cache an instance of the cannon. */
+        final Cannon cannon = player.getCannonCredentials().getCannon();
+
+        /** Start firing the cannon. */
+        Rs2Engine.getWorld().submit(new Worker((Location.inMultiCombat(player) ? 2 : 4), false) {
+            @Override
+            public void fire() {
+                if (player.isUnregistered() || !cannon.isCurrentlyFiring()) {
+                    this.cancel();
+                    return;
+                }
+
+                if (cannon.getAmmunition() == 0) {
+                    player.getPacketBuilder().sendMessage("Your cannon has run out of ammo.");
+                    this.cancel();
+                    return;
+                }
+
+                /** Do the cannon rotation animation. */
+                player.getPacketBuilder().sendGlobalObjectAnimation(cannon.getPosition(), cannon.getDirection().getObjectAnimation(), 10, -1);
+
+                /** Target based on the direction. */
+                for (Npc npc : Rs2Engine.getWorld().getNpcs()) {
+                    if (npc == null || npc.isHasDied() || !npc.getPosition().withinDistance(cannon.getPosition(), RADIUS)) {
+                        continue;
+                    }
+
+                    if (cannon.getDirection().getSequence().canTarget(cannon.getPosition(), npc.getPosition())) {
+                        if (!Location.inMultiCombat(npc) && npc.getCombatSession().isBeingAttacked() || npc.getCombatSession().isAttacking()) {
+                            continue;
+                        }
+
+                        // TODO: fire cannonball projectile...
+                        Rs2Engine.getWorld().submit(new FireWorker(npc, player));
+                        cannon.decrementAmmunition();
+                    }
+                }
+
+                /** Rotate the cannon. */
+                cannon.setDirection(cannon.getDirection().getNextDirection());
+            }
+        });
     }
 
+    /**
+     * A {@link Worker} implementation that will deal damage to NPCs targeted by
+     * the cannon after one second. This is to ensure that the damage is dealt
+     * only when the actual cannonball projectile reaches them.
+     * 
+     * @author lare96
+     */
+    public static class FireWorker extends Worker {
+
+        /**
+         * Create a new {@link FireWorker}.
+         * 
+         * @param npc
+         *        the npc being hit.
+         * @param player
+         *        the player who owns the cannon.
+         */
+        public FireWorker(Npc npc, Player player) {
+            super(2, false);
+            this.hit = new Hit(DAMAGE_INTERVAL.calculate());
+            this.npc = npc;
+            this.player = player;
+        }
+
+        /** The actual damage that will be inflicted. */
+        private Hit hit;
+
+        /** The npc being hit. */
+        private Npc npc;
+
+        /** The player who owns the cannon. */
+        private Player player;
+
+        @Override
+        public void fire() {
+            npc.primaryHit(hit);
+            Combat.fight(npc, player);
+            npc.faceEntity(player.getSlot());
+            this.cancel();
+        }
+    }
+
+    /**
+     * An abstract container that provides open implementation for different
+     * targeting methods.
+     * 
+     * @author lare96
+     */
+    public static interface TargetSequence {
+
+        /**
+         * Determines if the position can be targeted based on the cannon's
+         * position and the position trying to be targeted.
+         * 
+         * @param cannonPosition
+         *        the cannon's position.
+         * @param targetPosition
+         *        the position trying to be targeted.
+         * @return true if the position can be targeted.
+         */
+        public boolean canTarget(Position cannonPosition, Position targetPosition);
+    }
+
+    /**
+     * A container that holds important credentials for a player.
+     * 
+     * @author lare96
+     */
     public static class CannonCredentials {
 
         private Player player;
@@ -288,7 +510,7 @@ public class DwarfMultiCannon {
         }
 
         public boolean hasCannon() {
-            return cannon != null;
+            return setupStage != CannonSetup.NOTHING;
         }
 
         /**
@@ -322,6 +544,12 @@ public class DwarfMultiCannon {
         }
     }
 
+    /**
+     * A {@link WorldObject} implementation that holds important data for a
+     * dwarf multicannon.
+     * 
+     * @author lare96
+     */
     public static class Cannon extends WorldObject {
 
         private Player player;
@@ -331,8 +559,13 @@ public class DwarfMultiCannon {
             this.player = player;
         }
 
+        private FireDirection direction = FireDirection.NORTH;
         private boolean currentlyFiring;
         private int ammunition;
+
+        public void decrementAmmunition() {
+            ammunition--;
+        }
 
         /**
          * @return the currentlyFiring
@@ -372,11 +605,18 @@ public class DwarfMultiCannon {
         }
 
         /**
-         * @param player
-         *        the player to set
+         * @return the direction
          */
-        public void setPlayer(Player player) {
-            this.player = player;
+        public FireDirection getDirection() {
+            return direction;
+        }
+
+        /**
+         * @param direction
+         *        the direction to set
+         */
+        public void setDirection(FireDirection direction) {
+            this.direction = direction;
         }
     }
 }

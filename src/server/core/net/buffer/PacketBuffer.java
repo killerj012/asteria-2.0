@@ -78,7 +78,7 @@ public abstract class PacketBuffer {
      *        the size
      * @return a new OutBuffer
      */
-    public static final WriteBuffer newOutBuffer(int size) {
+    public static final WriteBuffer newWriteBuffer(int size) {
         return new WriteBuffer(size);
     }
 
@@ -647,8 +647,6 @@ public abstract class PacketBuffer {
         /**
          * Writes a packet header.
          * 
-         * @param cipher
-         *        the encryptor
          * @param value
          *        the value
          */
@@ -662,8 +660,6 @@ public abstract class PacketBuffer {
          * corresponding "finishVariablePacketHeader" must be called to finish
          * the packet.
          * 
-         * @param cipher
-         *        the ISAACCipher encryptor
          * @param value
          *        the value
          */
@@ -679,8 +675,6 @@ public abstract class PacketBuffer {
          * is written as a short instead of a byte. Note that the corresponding
          * "finishVariableShortPacketHeader must be called to finish the packet.
          * 
-         * @param cipher
-         *        the ISAACCipher encryptor
          * @param value
          *        the value
          */

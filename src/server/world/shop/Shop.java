@@ -103,7 +103,7 @@ public class Shop {
      *        the player to update the images of the items for.
      */
     protected void updateShopItems(Player player) {
-        PacketBuffer.WriteBuffer out = PacketBuffer.newOutBuffer(2048);
+        PacketBuffer.WriteBuffer out = PacketBuffer.newWriteBuffer(2048);
         out.writeVariableShortPacketHeader(53);
         out.writeShort(3900);
         out.writeShort(getShopItemAmount());

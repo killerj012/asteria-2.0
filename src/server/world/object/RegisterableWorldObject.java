@@ -49,6 +49,15 @@ public class RegisterableWorldObject implements RegisterableContainer<WorldObjec
             WorldObject object = iter.next();
 
             if (object.getPosition().equals(position)) {
+
+                for (Player player : Rs2Engine.getWorld().getPlayers()) {
+                    if (player == null) {
+                        continue;
+                    }
+
+                    player.getPacketBuilder().removeObject(object);
+                }
+
                 iter.remove();
             }
         }

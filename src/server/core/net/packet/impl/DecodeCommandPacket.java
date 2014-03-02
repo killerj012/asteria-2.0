@@ -156,7 +156,7 @@ public class DecodeCommandPacket extends PacketDecoder {
                     if (player.getInventory().getContainer().hasRoomFor(new Item(i.getItemId(), amount))) {
                         player.getInventory().addItem(new Item(i.getItemId(), amount));
                     } else {
-                        player.getBank().deposit(new Item(i.getItemId(), amount));
+                        player.getBank().addItem(new Item(i.getItemId(), amount));
                         addedToBank = true;
                         bankCount++;
                     }

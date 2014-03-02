@@ -154,6 +154,52 @@ public final class PacketEncoder {
         }
 
         /**
+         * Plays an animation for this object.
+         * 
+         * @param position
+         *        the position of the object.
+         * @param animation
+         *        the animation to play.
+         * @param type
+         *        the type of object.
+         * @param orientation
+         *        the orientation of this object.
+         */
+        public void sendObjectAnimation(Position position, int animation, int type, int orientation) {
+            sendCoordinates(position);
+            WriteBuffer out = PacketBuffer.newWriteBuffer(5);
+            out.writeHeader(160);
+            out.writeByte(((0 & 7) << 4) + (0 & 7), ValueType.S);
+            out.writeByte((type << 2) + (orientation & 3), ValueType.S);
+            out.writeShort(animation, ValueType.A);
+            Rs2Engine.getEncoder().encode(out, player.getSession());
+        }
+
+        /**
+         * Plays an animation for this object visible to everyone.
+         * 
+         * @param position
+         *        the position of the object.
+         * @param animation
+         *        the animation to play.
+         * @param type
+         *        the type of object.
+         * @param orientation
+         *        the orientation of this object.
+         */
+        public void sendGlobalObjectAnimation(Position position, int animation, int type, int orientation) {
+            for (Player player : Rs2Engine.getWorld().getPlayers()) {
+                if (player == null) {
+                    continue;
+                }
+
+                if (player.getPosition().isViewableFrom(position)) {
+                    player.getPacketBuilder().sendObjectAnimation(position, animation, type, orientation);
+                }
+            }
+        }
+
+        /**
          * Creates a graphic for a single player.
          * 
          * @param id
@@ -166,7 +212,7 @@ public final class PacketEncoder {
          */
         public PacketBuilder sendGraphic(int id, Position position, int level) {
             sendCoordinates(position);
-            PacketBuffer.WriteBuffer out = PacketBuffer.newOutBuffer(7);
+            PacketBuffer.WriteBuffer out = PacketBuffer.newWriteBuffer(7);
             out.writeHeader(4).writeByte(0).writeShort(id).writeByte(level).writeShort(0);
             Rs2Engine.getEncoder().encode(out, player.getSession());
             return this;
@@ -208,7 +254,7 @@ public final class PacketEncoder {
          * @return this packet builder.
          */
         public PacketBuilder sendSound(int id, int type, int duration) {
-            PacketBuffer.WriteBuffer out = PacketBuffer.newOutBuffer(8);
+            PacketBuffer.WriteBuffer out = PacketBuffer.newWriteBuffer(8);
             out.writeHeader(174).writeShort(id).writeByte(type).writeShort(duration);
             Rs2Engine.getEncoder().encode(out, player.getSession());
             return this;
@@ -230,7 +276,7 @@ public final class PacketEncoder {
          * @return this packet builder.
          */
         public PacketBuilder sendWelcomeInterface(int recoveryChange, boolean memberWarning, int messages, int lastLoginIP, int lastLogin) {
-            PacketBuffer.WriteBuffer out = PacketBuffer.newOutBuffer(20);
+            PacketBuffer.WriteBuffer out = PacketBuffer.newWriteBuffer(20);
             out.writeHeader(176).writeByte(recoveryChange, ValueType.C).writeShort(messages, ValueType.A).writeByte(memberWarning ? 1 : 0).writeInt(lastLoginIP, ByteOrder.INVERSE_MIDDLE).writeShort(lastLogin);
             Rs2Engine.getEncoder().encode(out, player.getSession());
             return this;
@@ -246,7 +292,7 @@ public final class PacketEncoder {
          * @return this packet builder.
          */
         public PacketBuilder interfaceAnimation(int interfaceId, int animation) {
-            PacketBuffer.WriteBuffer out = PacketBuffer.newOutBuffer(5);
+            PacketBuffer.WriteBuffer out = PacketBuffer.newWriteBuffer(5);
             out.writeHeader(200).writeShort(interfaceId).writeShort(animation);
             Rs2Engine.getEncoder().encode(out, player.getSession());
             return this;
@@ -260,7 +306,7 @@ public final class PacketEncoder {
          * @return this packet builder.
          */
         public PacketBuilder sendMultiCombatInterface(int state) {
-            PacketBuffer.WriteBuffer out = PacketBuffer.newOutBuffer(2);
+            PacketBuffer.WriteBuffer out = PacketBuffer.newWriteBuffer(2);
             out.writeHeader(61).writeByte(state);
             Rs2Engine.getEncoder().encode(out, player.getSession());
             return this;
@@ -278,7 +324,7 @@ public final class PacketEncoder {
          * @return this packet builder.
          */
         public PacketBuilder sendItemOnInterfaceSlot(int frame, Item item, int slot) {
-            PacketBuffer.WriteBuffer out = PacketBuffer.newOutBuffer(32);
+            PacketBuffer.WriteBuffer out = PacketBuffer.newWriteBuffer(32);
             out.writeVariableShortPacketHeader(34).writeShort(frame).writeByte(slot).writeShort(item.getId() + 1);
 
             if (item.getAmount() > 254) {
@@ -302,7 +348,7 @@ public final class PacketEncoder {
          * @return this packet builder.
          */
         public PacketBuilder sendMobHeadModel(int id, int size) {
-            PacketBuffer.WriteBuffer out = PacketBuffer.newOutBuffer(5);
+            PacketBuffer.WriteBuffer out = PacketBuffer.newWriteBuffer(5);
             out.writeHeader(75).writeShort(id, ValueType.A, ByteOrder.LITTLE).writeShort(size, ValueType.A, ByteOrder.LITTLE);
             Rs2Engine.getEncoder().encode(out, player.getSession());
             return this;
@@ -318,7 +364,7 @@ public final class PacketEncoder {
         public PacketBuilder sendCustomMapRegion(MapRegion region) {
             this.sendMapRegion();
 
-            PacketBuffer.WriteBuffer out = PacketBuffer.newOutBuffer(50);
+            PacketBuffer.WriteBuffer out = PacketBuffer.newWriteBuffer(50);
             out.writeVariableShortPacketHeader(241).writeShort(player.getPosition().getRegionY() + 6, ValueType.A).setAccessType(AccessType.BIT_ACCESS);
             for (int z = 0; z < MapRegion.SIZE_LENGTH_Z; z++) {
                 for (int x = 0; x < MapRegion.SIZE_LENGTH_X; x++) {
@@ -347,7 +393,7 @@ public final class PacketEncoder {
          * @return this packet builder.
          */
         public PacketBuilder sendPlayerHeadModel(int size) {
-            PacketBuffer.WriteBuffer out = PacketBuffer.newOutBuffer(3);
+            PacketBuffer.WriteBuffer out = PacketBuffer.newWriteBuffer(3);
             out.writeHeader(185).writeShort(size, ValueType.A, ByteOrder.LITTLE);
             Rs2Engine.getEncoder().encode(out, player.getSession());
             return this;
@@ -363,7 +409,7 @@ public final class PacketEncoder {
         public PacketBuilder flashSelectedSidebar(int id) {
             // XXX: does not work, you have to fix the packet client sided.
 
-            PacketBuffer.WriteBuffer out = PacketBuffer.newOutBuffer(2);
+            PacketBuffer.WriteBuffer out = PacketBuffer.newWriteBuffer(2);
             out.writeHeader(24).writeByte(id, ValueType.A);
             Rs2Engine.getEncoder().encode(out, player.getSession());
             return this;
@@ -375,7 +421,7 @@ public final class PacketEncoder {
          * @return this packet builder.
          */
         public PacketBuilder enterName() {
-            PacketBuffer.WriteBuffer out = PacketBuffer.newOutBuffer(1);
+            PacketBuffer.WriteBuffer out = PacketBuffer.newWriteBuffer(1);
             out.writeHeader(187);
             Rs2Engine.getEncoder().encode(out, player.getSession());
             return this;
@@ -393,7 +439,7 @@ public final class PacketEncoder {
             // 0 - Active: Clickable and viewable
             // 1 - Locked: viewable but not clickable
             // 2 - Blacked-out: Minimap is replaced with black background
-            PacketBuffer.WriteBuffer out = PacketBuffer.newOutBuffer(2);
+            PacketBuffer.WriteBuffer out = PacketBuffer.newWriteBuffer(2);
             out.writeHeader(99).writeByte(state);
             Rs2Engine.getEncoder().encode(out, player.getSession());
             return this;
@@ -407,7 +453,7 @@ public final class PacketEncoder {
         public PacketBuilder sendResetCameraRotation() {
             // XXX: disconnects the player when used?
 
-            PacketBuffer.WriteBuffer out = PacketBuffer.newOutBuffer(1);
+            PacketBuffer.WriteBuffer out = PacketBuffer.newWriteBuffer(1);
             out.writeHeader(108);
             Rs2Engine.getEncoder().encode(out, player.getSession());
             return this;
@@ -429,7 +475,7 @@ public final class PacketEncoder {
          * @return this packet builder.
          */
         public PacketBuilder sendCameraSpin(int x, int y, int height, int speed, int angle) {
-            PacketBuffer.WriteBuffer out = PacketBuffer.newOutBuffer(7);
+            PacketBuffer.WriteBuffer out = PacketBuffer.newWriteBuffer(7);
             out.writeHeader(177).writeByte(x / 64).writeByte(y / 64).writeShort(height).writeByte(speed).writeByte(angle);
             Rs2Engine.getEncoder().encode(out, player.getSession());
             return this;
@@ -451,7 +497,7 @@ public final class PacketEncoder {
          * @return this packet builder.
          */
         public PacketBuilder sendCameraMovement(int x, int y, int height, int speed, int angle) {
-            PacketBuffer.WriteBuffer out = PacketBuffer.newOutBuffer(7);
+            PacketBuffer.WriteBuffer out = PacketBuffer.newWriteBuffer(7);
             out.writeHeader(166).writeByte(x / 64).writeByte(y / 64).writeShort(height).writeByte(speed).writeByte(angle);
             Rs2Engine.getEncoder().encode(out, player.getSession());
             return this;
@@ -469,7 +515,7 @@ public final class PacketEncoder {
                 throw new IllegalArgumentException("Intensity must be below 5!");
             }
 
-            PacketBuffer.WriteBuffer out = PacketBuffer.newOutBuffer(5);
+            PacketBuffer.WriteBuffer out = PacketBuffer.newWriteBuffer(5);
             out.writeHeader(35).writeByte(intensity).writeByte(intensity).writeByte(intensity).writeByte(intensity);
             Rs2Engine.getEncoder().encode(out, player.getSession());
             return this;
@@ -481,7 +527,7 @@ public final class PacketEncoder {
          * @return this packet builder.
          */
         public PacketBuilder sendResetCamera() {
-            PacketBuffer.WriteBuffer out = PacketBuffer.newOutBuffer(7);
+            PacketBuffer.WriteBuffer out = PacketBuffer.newWriteBuffer(7);
             out.writeHeader(107);
             Rs2Engine.getEncoder().encode(out, player.getSession());
             return this;
@@ -495,7 +541,7 @@ public final class PacketEncoder {
          * @return this packet builder.
          */
         public PacketBuilder sendMusic(int id) {
-            PacketBuffer.WriteBuffer out = PacketBuffer.newOutBuffer(3);
+            PacketBuffer.WriteBuffer out = PacketBuffer.newWriteBuffer(3);
             out.writeHeader(74).writeShort(id, ByteOrder.LITTLE);
             Rs2Engine.getEncoder().encode(out, player.getSession());
             return this;
@@ -510,7 +556,7 @@ public final class PacketEncoder {
          */
         public PacketBuilder systemUpdate(int time) {
             // XXX: 101 = 1:00? 201 = 2:00? 50 = 0:29? Figure it out.
-            PacketBuffer.WriteBuffer out = PacketBuffer.newOutBuffer(3);
+            PacketBuffer.WriteBuffer out = PacketBuffer.newWriteBuffer(3);
             out.writeHeader(114).writeShort(time, ByteOrder.LITTLE);
             Rs2Engine.getEncoder().encode(out, player.getSession());
             return this;
@@ -530,7 +576,7 @@ public final class PacketEncoder {
             // for
             // and I might have been trying to use it wrong.
 
-            PacketBuffer.WriteBuffer out = PacketBuffer.newOutBuffer(5);
+            PacketBuffer.WriteBuffer out = PacketBuffer.newWriteBuffer(5);
             out.writeHeader(122).writeShort(interfaceId, ValueType.A, ByteOrder.LITTLE).writeShort(color, ValueType.A, ByteOrder.LITTLE);
             Rs2Engine.getEncoder().encode(out, player.getSession());
             return this;
@@ -548,7 +594,7 @@ public final class PacketEncoder {
          * @return this packet builder.
          */
         public PacketBuilder sendItemOnInterface(int id, int zoom, int model) {
-            PacketBuffer.WriteBuffer out = PacketBuffer.newOutBuffer(7);
+            PacketBuffer.WriteBuffer out = PacketBuffer.newWriteBuffer(7);
             out.writeHeader(246).writeShort(id, PacketBuffer.ByteOrder.LITTLE).writeShort(zoom).writeShort(model);
             Rs2Engine.getEncoder().encode(out, player.getSession());
             return this;
@@ -580,7 +626,7 @@ public final class PacketEncoder {
          */
         public PacketBuilder createProjectile(Position position, Position offset, int angle, int speed, int gfxMoving, int startHeight, int endHeight, int lockon, int time) {
             this.sendCoordinates(position);
-            PacketBuffer.WriteBuffer out = PacketBuffer.newOutBuffer(16);
+            PacketBuffer.WriteBuffer out = PacketBuffer.newWriteBuffer(16);
             out.writeHeader(117).writeByte(angle).writeByte(offset.getY()).writeByte(offset.getX()).writeShort(lockon).writeShort(gfxMoving).writeByte(startHeight).writeByte(endHeight).writeShort(time).writeShort(speed).writeByte(16).writeByte(64);
             Rs2Engine.getEncoder().encode(out, player.getSession());
             return this;
@@ -596,7 +642,7 @@ public final class PacketEncoder {
          * @return this packet builder.
          */
         public PacketBuilder sendConfig(int id, int state) {
-            PacketBuffer.WriteBuffer out = PacketBuffer.newOutBuffer(4);
+            PacketBuffer.WriteBuffer out = PacketBuffer.newWriteBuffer(4);
             out.writeHeader(36);
             out.writeShort(id, ByteOrder.LITTLE).writeByte(state);
             Rs2Engine.getEncoder().encode(out, player.getSession());
@@ -612,7 +658,7 @@ public final class PacketEncoder {
          */
         public PacketBuilder sendObject(WorldObject object) {
             sendCoordinates(object.getPosition());
-            PacketBuffer.WriteBuffer out = PacketBuffer.newOutBuffer(5);
+            PacketBuffer.WriteBuffer out = PacketBuffer.newWriteBuffer(5);
             out.writeHeader(151).writeByte(0, ValueType.S).writeShort(object.getId(), ByteOrder.LITTLE).writeByte((object.getType() << 2) + (object.getRotation().getFaceId() & 3), ValueType.S);
             Rs2Engine.getEncoder().encode(out, player.getSession());
             return this;
@@ -627,7 +673,7 @@ public final class PacketEncoder {
          */
         public PacketBuilder removeObject(WorldObject object) {
             sendCoordinates(object.getPosition());
-            PacketBuffer.WriteBuffer out = PacketBuffer.newOutBuffer(3);
+            PacketBuffer.WriteBuffer out = PacketBuffer.newWriteBuffer(3);
             out.writeHeader(101).writeByte((object.getType() << 2) + (object.getRotation().getFaceId() & 3), ValueType.C).writeByte(0);
             Rs2Engine.getEncoder().encode(out, player.getSession());
             return this;
@@ -660,7 +706,7 @@ public final class PacketEncoder {
          * @return this packet builder.
          */
         public PacketBuilder sendSkill(int skillID, int level, int exp) {
-            PacketBuffer.WriteBuffer out = PacketBuffer.newOutBuffer(8);
+            PacketBuffer.WriteBuffer out = PacketBuffer.newWriteBuffer(8);
             out.writeHeader(134).writeByte(skillID).writeInt(exp, ByteOrder.MIDDLE).writeByte(level);
             Rs2Engine.getEncoder().encode(out, player.getSession());
             return this;
@@ -672,7 +718,7 @@ public final class PacketEncoder {
          * @return this packet builder.
          */
         public PacketBuilder closeWindows() {
-            PacketBuffer.WriteBuffer out = PacketBuffer.newOutBuffer(1);
+            PacketBuffer.WriteBuffer out = PacketBuffer.newWriteBuffer(1);
             out.writeHeader(219);
             Rs2Engine.getEncoder().encode(out, player.getSession());
             return this;
@@ -686,7 +732,7 @@ public final class PacketEncoder {
          * @return this packet builder.
          */
         public PacketBuilder sendPrivateMessagingList(int i) {
-            PacketBuffer.WriteBuffer out = PacketBuffer.newOutBuffer(2);
+            PacketBuffer.WriteBuffer out = PacketBuffer.newWriteBuffer(2);
             out.writeHeader(221).writeByte(i);
             Rs2Engine.getEncoder().encode(out, player.getSession());
             return this;
@@ -704,7 +750,7 @@ public final class PacketEncoder {
          * @return this packet builder.
          */
         public PacketBuilder sendChatOptions(int publicChat, int privateChat, int tradeBlock) {
-            PacketBuffer.WriteBuffer out = PacketBuffer.newOutBuffer(4);
+            PacketBuffer.WriteBuffer out = PacketBuffer.newWriteBuffer(4);
             out.writeHeader(206).writeByte(publicChat).writeByte(privateChat).writeByte(tradeBlock);
             Rs2Engine.getEncoder().encode(out, player.getSession());
             return this;
@@ -724,7 +770,7 @@ public final class PacketEncoder {
                 world += 9;
             }
 
-            PacketBuffer.WriteBuffer out = PacketBuffer.newOutBuffer(10);
+            PacketBuffer.WriteBuffer out = PacketBuffer.newWriteBuffer(10);
             out.writeHeader(50).writeLong(playerName).writeByte(world);
             Rs2Engine.getEncoder().encode(out, player.getSession());
             return this;
@@ -740,7 +786,7 @@ public final class PacketEncoder {
          * @return this packet builder.
          */
         public PacketBuilder sendPositionHintArrow(Position coordinates, int position) {
-            PacketBuffer.WriteBuffer out = PacketBuffer.newOutBuffer(7);
+            PacketBuffer.WriteBuffer out = PacketBuffer.newWriteBuffer(7);
             out.writeHeader(254).writeByte(position).writeShort(coordinates.getX()).writeShort(coordinates.getY()).writeByte(coordinates.getZ());
             Rs2Engine.getEncoder().encode(out, player.getSession());
             return this;
@@ -760,7 +806,7 @@ public final class PacketEncoder {
          * @return this packet builder.
          */
         public PacketBuilder sendPrivateMessage(long name, int rights, byte[] chatMessage, int messageSize) {
-            PacketBuffer.WriteBuffer out = PacketBuffer.newOutBuffer(messageSize + 15);
+            PacketBuffer.WriteBuffer out = PacketBuffer.newWriteBuffer(messageSize + 15);
             out.writeVariablePacketHeader(196).writeLong(name).writeInt(player.getPrivateMessage().getLastPrivateMessageId()).writeByte(rights).writeBytes(chatMessage, messageSize).finishVariablePacketHeader();
             Rs2Engine.getEncoder().encode(out, player.getSession());
             return this;
@@ -776,7 +822,7 @@ public final class PacketEncoder {
          * @return this packet builder.
          */
         public PacketBuilder sendEntityHintArrow(int type, int id) {
-            PacketBuffer.WriteBuffer out = PacketBuffer.newOutBuffer(5);
+            PacketBuffer.WriteBuffer out = PacketBuffer.newWriteBuffer(5);
             out.writeHeader(254).writeByte(type).writeShort(id).writeByte(0);
             Rs2Engine.getEncoder().encode(out, player.getSession());
             return this;
@@ -790,7 +836,7 @@ public final class PacketEncoder {
          * @return this packet builder.
          */
         public PacketBuilder sendCoordinates(Position position) {
-            PacketBuffer.WriteBuffer out = PacketBuffer.newOutBuffer(3);
+            PacketBuffer.WriteBuffer out = PacketBuffer.newWriteBuffer(3);
             out.writeHeader(85).writeByte(position.getY() - (player.getCurrentRegion().getRegionY() * 8), ValueType.C).writeByte(position.getX() - (player.getCurrentRegion().getRegionX() * 8), ValueType.C);
             Rs2Engine.getEncoder().encode(out, player.getSession());
             return this;
@@ -804,7 +850,7 @@ public final class PacketEncoder {
          * @return this packet builder.
          */
         public PacketBuilder walkableInterface(int id) {
-            PacketBuffer.WriteBuffer out = PacketBuffer.newOutBuffer(3);
+            PacketBuffer.WriteBuffer out = PacketBuffer.newWriteBuffer(3);
             out.writeHeader(208).writeShort(id, ByteOrder.LITTLE);
             Rs2Engine.getEncoder().encode(out, player.getSession());
             return this;
@@ -819,7 +865,7 @@ public final class PacketEncoder {
          */
         public PacketBuilder sendGroundItem(GroundItem item) {
             sendCoordinates(item.getPosition());
-            PacketBuffer.WriteBuffer out = PacketBuffer.newOutBuffer(6);
+            PacketBuffer.WriteBuffer out = PacketBuffer.newWriteBuffer(6);
             out.writeHeader(44).writeShort(item.getItem().getId(), ValueType.A, ByteOrder.LITTLE).writeShort(item.getItem().getAmount()).writeByte(0);
             Rs2Engine.getEncoder().encode(out, player.getSession());
             return this;
@@ -834,7 +880,7 @@ public final class PacketEncoder {
          */
         public PacketBuilder removeGroundItem(GroundItem item) {
             sendCoordinates(item.getPosition());
-            PacketBuffer.WriteBuffer out = PacketBuffer.newOutBuffer(4);
+            PacketBuffer.WriteBuffer out = PacketBuffer.newWriteBuffer(4);
             out.writeHeader(156).writeByte(0, ValueType.S).writeShort(item.getItem().getId());
             Rs2Engine.getEncoder().encode(out, player.getSession());
             return this;
@@ -850,7 +896,7 @@ public final class PacketEncoder {
          * @return this packet builder.
          */
         public PacketBuilder sendPlayerMenu(String option, int slot) {
-            PacketBuffer.WriteBuffer out = PacketBuffer.newOutBuffer(option.length() + 6);
+            PacketBuffer.WriteBuffer out = PacketBuffer.newWriteBuffer(option.length() + 6);
             out.writeVariablePacketHeader(104).writeByte(slot, PacketBuffer.ValueType.C).writeByte(0, PacketBuffer.ValueType.A).writeString(option).finishVariablePacketHeader();
             Rs2Engine.getEncoder().encode(out, player.getSession());
             return this;
@@ -866,7 +912,7 @@ public final class PacketEncoder {
          * @return this packet builder.
          */
         public PacketBuilder sendString(String text, int id) {
-            PacketBuffer.WriteBuffer out = PacketBuffer.newOutBuffer(text.length() + 6);
+            PacketBuffer.WriteBuffer out = PacketBuffer.newWriteBuffer(text.length() + 6);
             out.writeVariableShortPacketHeader(126).writeString(text).writeShort(id, ValueType.A).finishVariableShortPacketHeader();
             Rs2Engine.getEncoder().encode(out, player.getSession());
             return this;
@@ -884,7 +930,7 @@ public final class PacketEncoder {
          * @return this packet builder.
          */
         public PacketBuilder sendEquipment(int slot, int itemID, int itemAmount) {
-            PacketBuffer.WriteBuffer out = PacketBuffer.newOutBuffer(32);
+            PacketBuffer.WriteBuffer out = PacketBuffer.newWriteBuffer(32);
             out.writeVariableShortPacketHeader(34).writeShort(1688).writeByte(slot).writeShort(itemID + 1);
 
             if (itemAmount > 254) {
@@ -908,7 +954,7 @@ public final class PacketEncoder {
          * @return this packet builder.
          */
         public PacketBuilder sendUpdateItems(int interfaceId, Item[] items) {
-            PacketBuffer.WriteBuffer out = PacketBuffer.newOutBuffer(2048);
+            PacketBuffer.WriteBuffer out = PacketBuffer.newWriteBuffer(2048);
             out.writeVariableShortPacketHeader(53).writeShort(interfaceId);
             if (items == null) {
                 out.writeShort(0).writeByte(0).writeShort(0, PacketBuffer.ValueType.A, PacketBuffer.ByteOrder.LITTLE).finishVariableShortPacketHeader();
@@ -945,7 +991,7 @@ public final class PacketEncoder {
          * @return this packet builder.
          */
         public PacketBuilder sendInventoryInterface(int interfaceId, int inventoryId) {
-            PacketBuffer.WriteBuffer out = PacketBuffer.newOutBuffer(5);
+            PacketBuffer.WriteBuffer out = PacketBuffer.newWriteBuffer(5);
             out.writeHeader(248);
             out.writeShort(interfaceId, PacketBuffer.ValueType.A);
             out.writeShort(inventoryId);
@@ -961,7 +1007,7 @@ public final class PacketEncoder {
          * @return this packet builder.
          */
         public PacketBuilder sendInterface(int interfaceId) {
-            PacketBuffer.WriteBuffer out = PacketBuffer.newOutBuffer(3);
+            PacketBuffer.WriteBuffer out = PacketBuffer.newWriteBuffer(3);
             out.writeHeader(97);
             out.writeShort(interfaceId);
             Rs2Engine.getEncoder().encode(out, player.getSession());
@@ -976,7 +1022,7 @@ public final class PacketEncoder {
          * @return this packet builder.
          */
         public PacketBuilder sendMessage(String message) {
-            PacketBuffer.WriteBuffer out = PacketBuffer.newOutBuffer(message.length() + 3);
+            PacketBuffer.WriteBuffer out = PacketBuffer.newWriteBuffer(message.length() + 3);
             out.writeVariablePacketHeader(253);
             out.writeString(message);
             out.finishVariablePacketHeader();
@@ -994,7 +1040,7 @@ public final class PacketEncoder {
          * @return this packet builder.
          */
         public PacketBuilder sendSidebarInterface(int menuId, int form) {
-            PacketBuffer.WriteBuffer out = PacketBuffer.newOutBuffer(4);
+            PacketBuffer.WriteBuffer out = PacketBuffer.newWriteBuffer(4);
             out.writeHeader(71);
             out.writeShort(form);
             out.writeByte(menuId, PacketBuffer.ValueType.A);
@@ -1010,7 +1056,7 @@ public final class PacketEncoder {
         public PacketBuilder sendMapRegion() {
             player.getCurrentRegion().setAs(player.getPosition());
             player.setNeedsPlacement(true);
-            PacketBuffer.WriteBuffer out = PacketBuffer.newOutBuffer(5);
+            PacketBuffer.WriteBuffer out = PacketBuffer.newWriteBuffer(5);
             out.writeHeader(73);
             out.writeShort(player.getPosition().getRegionX() + 6, PacketBuffer.ValueType.A);
             out.writeShort(player.getPosition().getRegionY() + 6);
@@ -1024,7 +1070,7 @@ public final class PacketEncoder {
          * @return this packet builder.
          */
         public PacketBuilder sendLogout() {
-            PacketBuffer.WriteBuffer out = PacketBuffer.newOutBuffer(1);
+            PacketBuffer.WriteBuffer out = PacketBuffer.newWriteBuffer(1);
             out.writeHeader(109);
             Rs2Engine.getEncoder().encode(out, player.getSession());
             return this;
@@ -1038,7 +1084,7 @@ public final class PacketEncoder {
          * @return this packet builder.
          */
         public PacketBuilder sendChatInterface(int frame) {
-            PacketBuffer.WriteBuffer out = PacketBuffer.newOutBuffer(3);
+            PacketBuffer.WriteBuffer out = PacketBuffer.newWriteBuffer(3);
             out.writeHeader(164);
             out.writeShort(frame, ByteOrder.LITTLE);
             Rs2Engine.getEncoder().encode(out, player.getSession());
@@ -1051,7 +1097,7 @@ public final class PacketEncoder {
          * @return this packet builder.
          */
         public PacketBuilder resetAnimation() {
-            PacketBuffer.WriteBuffer out = PacketBuffer.newOutBuffer(1);
+            PacketBuffer.WriteBuffer out = PacketBuffer.newWriteBuffer(1);
             out.writeHeader(1);
             Rs2Engine.getEncoder().encode(out, player.getSession());
             return this;

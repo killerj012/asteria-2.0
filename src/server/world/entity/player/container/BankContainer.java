@@ -119,7 +119,7 @@ public class BankContainer {
      * @param item
      *        the item to deposit into your bank.
      */
-    public void deposit(Item item) {
+    public void addItem(Item item) {
 
         /** Gets a free banking slot. */
         int freeBankingSlots = container.freeSlot();

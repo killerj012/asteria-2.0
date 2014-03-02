@@ -380,7 +380,7 @@ public class TradeSession {
      * Updates the trading interface with the items from this player.
      */
     public void updateThisTrade() {
-        PacketBuffer.WriteBuffer out = PacketBuffer.newOutBuffer(2048);
+        PacketBuffer.WriteBuffer out = PacketBuffer.newWriteBuffer(2048);
         out.writeVariableShortPacketHeader(53);
         out.writeShort(3415);
         out.writeShort(this.getThisTradeAmount());
@@ -410,7 +410,7 @@ public class TradeSession {
      * Updates the trading interface with the items from the trading partner.
      */
     public void updateOtherTrade() {
-        PacketBuffer.WriteBuffer out = PacketBuffer.newOutBuffer(2048);
+        PacketBuffer.WriteBuffer out = PacketBuffer.newWriteBuffer(2048);
         out.writeVariableShortPacketHeader(53);
         out.writeShort(3416);
         out.writeShort(this.getOtherTradeAmount());

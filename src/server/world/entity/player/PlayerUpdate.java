@@ -29,8 +29,8 @@ public final class PlayerUpdate {
      */
     public static void update(Player player) {
         // XXX: The buffer sizes may need to be tuned.
-        PacketBuffer.WriteBuffer out = PacketBuffer.newOutBuffer(16384); // 8192
-        PacketBuffer.WriteBuffer block = PacketBuffer.newOutBuffer(8192); // 4096
+        PacketBuffer.WriteBuffer out = PacketBuffer.newWriteBuffer(16384); // 8192
+        PacketBuffer.WriteBuffer block = PacketBuffer.newWriteBuffer(8192); // 4096
 
         /** Initialize the update packet. */
         out.writeVariableShortPacketHeader(81);
@@ -118,7 +118,7 @@ public final class PlayerUpdate {
      *        the buffer.
      */
     public static void appendAppearance(Player player, PacketBuffer.WriteBuffer out) {
-        PacketBuffer.WriteBuffer block = PacketBuffer.newOutBuffer(128);
+        PacketBuffer.WriteBuffer block = PacketBuffer.newWriteBuffer(128);
 
         /** Gender. */
         block.writeByte(player.getGender()); // Gender
