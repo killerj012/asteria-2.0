@@ -2,16 +2,19 @@ package server.core.net.packet.impl;
 
 import server.core.net.buffer.PacketBuffer;
 import server.core.net.packet.PacketDecoder;
+import server.core.net.packet.PacketOpcodeHeader;
 import server.world.entity.npc.NpcDialogue;
 import server.world.entity.player.Player;
 import server.world.entity.player.skill.SkillEvent;
 import server.world.map.Position;
+import server.world.music.MusicSet;
 
 /**
  * Sent whenever the makes a yellow-x click, red-x click, or clicks the minimap.
  * 
  * @author lare96
  */
+@PacketOpcodeHeader( { 248, 164, 98 })
 public class DecodeMovementPacket extends PacketDecoder {
 
     @Override
@@ -68,11 +71,7 @@ public class DecodeMovementPacket extends PacketDecoder {
             player.getMovementQueue().addToPath(new Position(path[i][0], path[i][1]));
         }
         player.getMovementQueue().finish();
-
-    }
-
-    @Override
-    public int[] opcode() {
-        return new int[] { 248, 164, 98 };
+        player.getPacketBuilder().sendMessage(player.getPosition().getRegionId() + " - walking");
+        MusicSet.loadMusicRegion(player);
     }
 }

@@ -1,9 +1,11 @@
 package server.world.entity.player.skill.impl;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
-import server.core.Rs2Engine;
+import server.core.worker.TaskFactory;
 import server.core.worker.Worker;
 import server.util.Misc;
 import server.util.Misc.Chance;
@@ -104,6 +106,7 @@ public class Smithing extends SkillEvent {
          * The map that allows us to retrieve a constant by its id.
          */
         private static Map<Integer, Smelt> smelt = new HashMap<Integer, Smelt>();
+        private static Set<Integer> smeltset = new HashSet<Integer>();
 
         /**
          * Begins loading the data for this enum.
@@ -111,6 +114,10 @@ public class Smithing extends SkillEvent {
         static {
             for (Smelt s : Smelt.values()) {
                 smelt.put(s.getBar(), s);
+
+                for (Item item : s.getItemsNeeded()) {
+                    smeltset.add(item.getId());
+                }
             }
         }
 
@@ -123,6 +130,10 @@ public class Smithing extends SkillEvent {
          */
         public static Smelt forId(int id) {
             return smelt.get(id);
+        }
+
+        public static boolean containSmeltItem(int item) {
+            return smeltset.contains(item);
         }
 
         /**
@@ -418,7 +429,7 @@ public class Smithing extends SkillEvent {
         /** Reset the smithing amount. */
         player.setSmithAmount(0);
 
-        Rs2Engine.getWorld().submit(new Worker(5, true) {
+        TaskFactory.getFactory().submit(new Worker(5, true) {
             @Override
             public void fire() {
 
@@ -519,7 +530,7 @@ public class Smithing extends SkillEvent {
         /** Reset the smelting amount. */
         player.setSmeltAmount(0);
 
-        Rs2Engine.getWorld().submit(new Worker(4, true) {
+        TaskFactory.getFactory().submit(new Worker(4, true) {
             @Override
             public void fire() {
 

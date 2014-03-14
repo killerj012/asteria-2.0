@@ -1,4 +1,4 @@
-package server.core.net.security;
+package server.util;
 
 import java.io.BufferedWriter;
 import java.io.FileWriter;

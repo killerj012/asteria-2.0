@@ -1,9 +1,10 @@
 package server.core.net.packet.impl;
 
-import server.core.Rs2Engine;
 import server.core.net.buffer.PacketBuffer.ByteOrder;
 import server.core.net.buffer.PacketBuffer.ReadBuffer;
 import server.core.net.packet.PacketDecoder;
+import server.core.net.packet.PacketOpcodeHeader;
+import server.world.World;
 import server.world.entity.combat.Combat;
 import server.world.entity.player.Player;
 import server.world.map.Location;
@@ -13,12 +14,13 @@ import server.world.map.Location;
  * 
  * @author lare96
  */
+@PacketOpcodeHeader( { 73 })
 public class DecodeAttackPlayerPacket extends PacketDecoder {
 
     @Override
     public void decode(Player player, ReadBuffer in) {
         int index = in.readShort(true, ByteOrder.LITTLE);
-        Player attacked = Rs2Engine.getWorld().getPlayers()[index];
+        Player attacked = World.getPlayers().get(index);
 
         if (attacked == null) {
             return;
@@ -41,10 +43,5 @@ public class DecodeAttackPlayerPacket extends PacketDecoder {
 
         /** Start combat. */
         Combat.fight(player, attacked);
-    }
-
-    @Override
-    public int[] opcode() {
-        return new int[] { 73 };
     }
 }

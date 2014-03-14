@@ -5,16 +5,16 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import server.core.Rs2Engine;
+import server.core.worker.TaskFactory;
 import server.core.worker.WorkRate;
 import server.core.worker.Worker;
 import server.util.Misc;
+import server.world.World;
 import server.world.entity.Animation;
 import server.world.entity.player.Player;
 import server.world.entity.player.skill.SkillEvent;
 import server.world.entity.player.skill.SkillManager.SkillConstant;
 import server.world.item.Item;
-import server.world.item.ground.GroundItem;
 import server.world.item.ground.StaticGroundItem;
 import server.world.map.Position;
 import server.world.object.WorldObject;
@@ -30,7 +30,9 @@ import server.world.object.WorldObject.Rotation;
 public class Firemaking extends SkillEvent {
 
     // TODO: Almost perfect firemaking with fires and proper ashes. The lighting
-    // speed formula needs work though.
+    // speed formula needs work though. Needs clipping too. Also, make sure the
+    // player drops the logs before lighting them! Make sure they appear on the
+    // ground!
 
     /**
      * The {@link Firemaking} singleton instance.
@@ -188,7 +190,7 @@ public class Firemaking extends SkillEvent {
         }
 
         /** Block if an item or fire is on this position. */
-        if (GroundItem.getRegisterable().searchDatabasePosition(player.getPosition()) || fireDatabase.contains(player.getPosition())) {
+        if (fireDatabase.contains(player.getPosition())) {
             player.getPacketBuilder().sendMessage("You cannot light a fire here!");
             return;
         }
@@ -198,7 +200,7 @@ public class Firemaking extends SkillEvent {
         player.getSkillEvent()[eventFireIndex()] = true;
 
         /** Start firemaking. */
-        Rs2Engine.getWorld().submit(new Worker(Misc.getRandom().nextInt(getLightTime(player, log)) + 1, false, WorkRate.APPROXIMATE_SECOND) {
+        TaskFactory.getFactory().submit(new Worker(Misc.getRandom().nextInt(getLightTime(player, log)) + 1, false, WorkRate.APPROXIMATE_SECOND) {
             @Override
             public void fire() {
 
@@ -224,7 +226,7 @@ public class Firemaking extends SkillEvent {
          * A separate task that plays the animation because it runs on a strict
          * time of 3 ticks.
          */
-        Rs2Engine.getWorld().submit(new Worker(3, true) {
+        TaskFactory.getFactory().submit(new Worker(3, true) {
             @Override
             public void fire() {
 
@@ -255,15 +257,15 @@ public class Firemaking extends SkillEvent {
 
         /** Make and register the fire. */
         fireDatabase.add(logPosition);
-        WorldObject.getRegisterable().register(fire);
+        World.getObjects().register(fire);
 
         /** Unregister the fire and replace it with ashes after the delay */
-        Rs2Engine.getWorld().submit(new Worker(log.getBurnTime(), false, WorkRate.APPROXIMATE_SECOND) {
+        TaskFactory.getFactory().submit(new Worker(log.getBurnTime(), false, WorkRate.APPROXIMATE_SECOND) {
             @Override
             public void fire() {
                 fireDatabase.remove(logPosition);
-                WorldObject.getRegisterable().unregister(fire);
-                GroundItem.getRegisterable().register(new StaticGroundItem(new Item(592, 1), logPosition, true, false));
+                World.getObjects().unregister(fire);
+                World.getGroundItems().register(new StaticGroundItem(new Item(592, 1), logPosition, true, false));
                 this.cancel();
             }
         });

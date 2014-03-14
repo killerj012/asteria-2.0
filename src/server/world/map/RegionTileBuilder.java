@@ -6,7 +6,7 @@ package server.world.map;
  * @author lare96
  * @author Graham
  */
-public class MapRegionTile {
+public class RegionTileBuilder {
 
     /**
      * The id's of all of the possible directions of a tile on the palette.
@@ -42,7 +42,7 @@ public class MapRegionTile {
      * @param y
      *            the y coordinate.
      */
-    public MapRegionTile(int x, int y) {
+    public RegionTileBuilder(int x, int y) {
         this(x, y, 0);
     }
 
@@ -56,7 +56,7 @@ public class MapRegionTile {
      * @param z
      *            the z coordinate.
      */
-    public MapRegionTile(int x, int y, int z) {
+    public RegionTileBuilder(int x, int y, int z) {
         this(x, y, z, DIRECTION_NORMAL);
     }
 
@@ -72,7 +72,7 @@ public class MapRegionTile {
      * @param rot
      *            the direction this tile is facing.
      */
-    public MapRegionTile(int x, int y, int z, int rot) {
+    public RegionTileBuilder(int x, int y, int z, int rot) {
         this.x = x;
         this.y = y;
         this.z = z;

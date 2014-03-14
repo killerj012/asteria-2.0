@@ -2,6 +2,7 @@ package server.core.net.packet.impl;
 
 import server.core.net.buffer.PacketBuffer;
 import server.core.net.packet.PacketDecoder;
+import server.core.net.packet.PacketOpcodeHeader;
 import server.world.entity.player.Player;
 import server.world.entity.player.skill.SkillEvent;
 import server.world.entity.player.skill.impl.Smithing;
@@ -17,6 +18,7 @@ import server.world.shop.Shop;
  * 
  * @author lare96
  */
+@PacketOpcodeHeader( { 145, 41, 117, 43, 129, 214 })
 public class DecodeItemInterfacePacket extends PacketDecoder {
 
     @Override
@@ -52,11 +54,11 @@ public class DecodeItemInterfacePacket extends PacketDecoder {
                         break;
 
                     case 5064:
-                        player.getBank().deposit(slot, new Item(itemId, 1));
+                        player.getBank().addItem(slot, new Item(itemId, 1));
                         break;
 
                     case 5382:
-                        player.getBank().withdraw(slot, new Item(itemId, 1));
+                        player.getBank().deleteItem(slot, new Item(itemId, 1));
                         break;
                     case 3900:
                         Shop.getShop(player.getOpenShopId()).sendItemBuyingPrice(player, new Item(itemId));
@@ -94,11 +96,11 @@ public class DecodeItemInterfacePacket extends PacketDecoder {
                         Smithing.getSingleton().smith(player, index, table, 5);
                         break;
                     case 5064:
-                        player.getBank().deposit(slot, new Item(itemId, 5));
+                        player.getBank().addItem(slot, new Item(itemId, 5));
                         break;
 
                     case 5382:
-                        player.getBank().withdraw(slot, new Item(itemId, 5));
+                        player.getBank().deleteItem(slot, new Item(itemId, 5));
                         break;
                     case 3900:
                         Shop.getShop(player.getOpenShopId()).purchaseItem(player, new Item(itemId, 1));
@@ -136,11 +138,11 @@ public class DecodeItemInterfacePacket extends PacketDecoder {
                         Smithing.getSingleton().smith(player, index, table, 10);
                         break;
                     case 5064:
-                        player.getBank().deposit(slot, new Item(itemId, 10));
+                        player.getBank().addItem(slot, new Item(itemId, 10));
                         break;
 
                     case 5382:
-                        player.getBank().withdraw(slot, new Item(itemId, 10));
+                        player.getBank().deleteItem(slot, new Item(itemId, 10));
                         break;
                     case 3900:
                         Shop.getShop(player.getOpenShopId()).purchaseItem(player, new Item(itemId, 5));
@@ -166,7 +168,7 @@ public class DecodeItemInterfacePacket extends PacketDecoder {
                 switch (interfaceId) {
 
                     case 5064:
-                        player.getBank().deposit(slot, new Item(itemId, player.getInventory().getContainer().getCount(itemId)));
+                        player.getBank().addItem(slot, new Item(itemId, player.getInventory().getContainer().getCount(itemId)));
                         break;
 
                     case 5382:
@@ -178,7 +180,7 @@ public class DecodeItemInterfacePacket extends PacketDecoder {
                             withdrawAmount = ItemDefinition.getDefinitions()[itemWithdrew.getId()].isStackable() ? player.getBank().getContainer().getCount(itemId) : 28;
                         }
 
-                        player.getBank().withdraw(slot, new Item(itemId, withdrawAmount));
+                        player.getBank().deleteItem(slot, new Item(itemId, withdrawAmount));
                         break;
                     case 3900:
                         Shop.getShop(player.getOpenShopId()).purchaseItem(player, new Item(itemId, 10));
@@ -233,10 +235,5 @@ public class DecodeItemInterfacePacket extends PacketDecoder {
 
                 break;
         }
-    }
-
-    @Override
-    public int[] opcode() {
-        return new int[] { 145, 41, 117, 43, 129, 214 };
     }
 }

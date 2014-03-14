@@ -1,6 +1,6 @@
 package server.world.entity.player.skill.impl;
 
-import server.core.Rs2Engine;
+import server.core.worker.TaskFactory;
 import server.core.worker.Worker;
 import server.util.Misc;
 import server.world.entity.Animation;
@@ -274,7 +274,7 @@ public class Runecrafting extends SkillEvent {
          */
         final String[] spell = { "Flipendo! scherriko, alast... Gah!", "Leto... Ona... Dupa... Gah!", "Genta... Gah!", "Megatele... Gah!" };
 
-        Rs2Engine.getWorld().submit(new Worker(1, false) {
+        TaskFactory.getFactory().submit(new Worker(1, false) {
             @Override
             public void fire() {
 
@@ -291,7 +291,7 @@ public class Runecrafting extends SkillEvent {
             }
         }.attach(player));
 
-        Rs2Engine.getWorld().submit(new Worker(3, false) {
+        TaskFactory.getFactory().submit(new Worker(3, false) {
             @Override
             public void fire() {
 

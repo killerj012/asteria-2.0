@@ -37,9 +37,11 @@ public class UpdateFlags {
      * @return true if an update is required.
      */
     public boolean isUpdateRequired() {
-        for (int i = 0; i < flags.length; i++)
-            if (flags[i])
+        for (int i = 0; i < flags.length; i++) {
+            if (flags[i]) {
                 return true;
+            }
+        }
         return false;
     }
 
@@ -59,54 +61,34 @@ public class UpdateFlags {
      */
     public enum Flag {
 
-        /**
-         * Appearance update.
-         */
+        /** Appearance update. */
         APPEARANCE,
 
-        /**
-         * Chat update.
-         */
+        /** Chat update. */
         CHAT,
 
-        /**
-         * Graphics update.
-         */
+        /** Graphics update. */
         GRAPHICS,
 
-        /**
-         * Animation update.
-         */
+        /** Animation update. */
         ANIMATION,
 
-        /**
-         * Forced chat update.
-         */
+        /** Forced chat update. */
         FORCED_CHAT,
 
-        /**
-         * Interacting entity update.
-         */
+        /** Interacting entity update. */
         FACE_ENTITY,
 
-        /**
-         * Face coordinate entity update.
-         */
+        /** Face coordinate entity update. */
         FACE_COORDINATE,
 
-        /**
-         * Hit update.
-         */
+        /** Hit update. */
         HIT,
 
-        /**
-         * Hit 2 update.
-         */
+        /** Hit 2 update. */
         HIT_2,
 
-        /**
-         * Update flag used to transform npc to another.
-         */
+        /** Update flag used to transform npc to another. */
         TRANSFORM
     }
 }

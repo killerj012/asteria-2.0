@@ -4,7 +4,7 @@ import java.util.Iterator;
 
 import javax.tools.Tool;
 
-import server.core.Rs2Engine;
+import server.core.worker.TaskFactory;
 import server.core.worker.Worker;
 import server.util.Misc;
 import server.util.Misc.Chance;
@@ -291,7 +291,7 @@ public class Fishing extends SkillEvent {
         player.getMovementQueue().reset();
 
         /** Start the fishing process. */
-        Rs2Engine.getWorld().submit(new Worker(tool.getSpeed() + addFishingTime(player), false) {
+        TaskFactory.getFactory().submit(new Worker(tool.getSpeed() + addFishingTime(player), false) {
             @Override
             public void fire() {
 
@@ -391,7 +391,7 @@ public class Fishing extends SkillEvent {
          * Because the fishing animation is based on a strict cycle of 4 ticks
          * we use a separate task for the animation.
          */
-        Rs2Engine.getWorld().submit(new Worker(4, true) {
+        TaskFactory.getFactory().submit(new Worker(4, true) {
             @Override
             public void fire() {
 

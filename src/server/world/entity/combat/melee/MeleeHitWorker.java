@@ -40,7 +40,7 @@ public class MeleeHitWorker extends Worker {
 
         victim.facePosition(attacker.getPosition());
         victim.animation(new Animation(404));
-        victim.primaryHit(hit);
+        victim.dealDamage(hit);
         victim.getCombatSession().getParticipants().add(attacker);
         victim.getCombatSession().addToDamage(attacker, hit.getDamage());
         victim.getCombatSession().setLastHitBy(attacker);

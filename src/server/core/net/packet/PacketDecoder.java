@@ -28,13 +28,6 @@ public abstract class PacketDecoder {
     public abstract void decode(Player player, PacketBuffer.ReadBuffer in);
 
     /**
-     * An array of packet opcodes that this decoder is able to decode.
-     * 
-     * @return the array of packet opcodes.
-     */
-    public abstract int[] opcode();
-
-    /**
      * Add a new decoder that will be able to read packets under a certain
      * opcode.
      * 
@@ -42,9 +35,14 @@ public abstract class PacketDecoder {
      *        the decoder to add to the array.
      */
     public static void addDecoder(PacketDecoder packet) {
+        if (packet.getClass().getAnnotation(PacketOpcodeHeader.class) == null) {
+            throw new PacketHeaderException(packet);
+        }
+
+        int packetOpcodes[] = packet.getClass().getAnnotation(PacketOpcodeHeader.class).value();
 
         /** Add the decoder for all of the opcodes. */
-        for (int opcode : packet.opcode()) {
+        for (int opcode : packetOpcodes) {
             packets[opcode] = packet;
         }
     }

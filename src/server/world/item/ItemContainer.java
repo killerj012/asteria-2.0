@@ -481,14 +481,16 @@ public class ItemContainer {
      * @return the amount removed.
      */
     public int remove(Item item, int preferredSlot, boolean allowZero) {
-        if (item == null)
+        if (item == null) {
             return -1;
+        }
         int removed = 0;
         if ((item.getDefinition().isStackable() || policy.equals(ContainerPolicy.STACKABLE_POLICY)) && !policy.equals(ContainerPolicy.STANDALONE_POLICY)) {
             int slot = getSlotById(item.getId());
             Item stack = getItem(slot);
-            if (stack == null)
+            if (stack == null) {
                 return -1;
+            }
             if (stack.getAmount() > item.getAmount()) {
                 removed = item.getAmount();
                 set(slot, new Item(stack.getId(), stack.getAmount() - item.getAmount()));

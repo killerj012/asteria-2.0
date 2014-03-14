@@ -3,7 +3,7 @@ package server.world.entity;
 import java.util.Deque;
 import java.util.LinkedList;
 
-import server.core.Rs2Engine;
+import server.core.worker.TaskFactory;
 import server.core.worker.WorkRate;
 import server.core.worker.Worker;
 import server.util.Misc;
@@ -223,7 +223,7 @@ public class MovementQueue {
     public void lockMovementFor(int delay, WorkRate workRate) {
         this.setLockMovement(true);
 
-        Rs2Engine.getWorld().submit(new Worker(delay, false, workRate) {
+        TaskFactory.getFactory().submit(new Worker(delay, false, workRate) {
             @Override
             public void fire() {
                 if (entity.isUnregistered()) {

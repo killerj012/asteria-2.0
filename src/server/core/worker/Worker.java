@@ -6,7 +6,7 @@ package server.core.worker;
  * 
  * @author lare96
  */
-public abstract class Worker implements Logic {
+public abstract class Worker {
 
     /** The delay for this worker (in ticks). */
     private int delay;
@@ -58,6 +58,9 @@ public abstract class Worker implements Logic {
         this.workRate = workRate;
         this.running = true;
     }
+
+    /** The logic fired when the worker is ran. */
+    public abstract void fire();
 
     /**
      * Method called when this task is stopped. Implementation is optional.

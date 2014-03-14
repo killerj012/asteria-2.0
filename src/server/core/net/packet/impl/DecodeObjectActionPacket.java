@@ -4,9 +4,11 @@ import server.core.net.buffer.PacketBuffer.ByteOrder;
 import server.core.net.buffer.PacketBuffer.ReadBuffer;
 import server.core.net.buffer.PacketBuffer.ValueType;
 import server.core.net.packet.PacketDecoder;
+import server.core.net.packet.PacketOpcodeHeader;
 import server.util.Misc;
 import server.world.entity.Animation;
 import server.world.entity.player.Player;
+import server.world.entity.player.content.DwarfMultiCannon;
 import server.world.entity.player.content.Spellbook;
 import server.world.entity.player.skill.SkillManager;
 import server.world.entity.player.skill.SkillManager.SkillConstant;
@@ -15,9 +17,8 @@ import server.world.entity.player.skill.impl.Runecrafting;
 import server.world.entity.player.skill.impl.Smithing;
 import server.world.entity.player.skill.impl.Thieving;
 import server.world.entity.player.skill.impl.Woodcutting;
-import server.world.entity.player.skill.impl.Mining.Ore;
-import server.world.entity.player.skill.impl.Mining.OreObject;
 import server.world.entity.player.skill.impl.Mining.Pickaxe;
+import server.world.entity.player.skill.impl.Mining.Rock;
 import server.world.entity.player.skill.impl.Runecrafting.Altar;
 import server.world.entity.player.skill.impl.Thieving.TheftObject;
 import server.world.entity.player.skill.impl.Woodcutting.Axe;
@@ -30,6 +31,7 @@ import server.world.object.WildernessObeliskSet;
  * 
  * @author lare96
  */
+@PacketOpcodeHeader( { 132, 252, 70 })
 public class DecodeObjectActionPacket extends PacketDecoder {
 
     /** The various packet opcodes. */
@@ -61,6 +63,9 @@ public class DecodeObjectActionPacket extends PacketDecoder {
                             }
 
                             switch (objectId) {
+                                case 6:
+                                    DwarfMultiCannon.fireCannon(player, new Position(objectX, objectY, player.getPosition().getZ()));
+                                    break;
                                 case 14829:
                                     WildernessObeliskSet.activateObelisk(player, 0);
                                     break;
@@ -127,25 +132,19 @@ public class DecodeObjectActionPacket extends PacketDecoder {
                                 case 2106:
                                 case 2107:
                                 case 2491:
-                                    for (Ore o : Ore.values()) {
-                                        if (o == null) {
-                                            continue;
-                                        }
+                                    Rock rock = Rock.getRock(objectId);
 
-                                        for (OreObject ore : o.getObjectOre()) {
-                                            if (ore == null) {
-                                                continue;
-                                            }
-
-                                            if (objectId == ore.getOre()) {
-                                                Pickaxe pick = Mining.getSingleton().getPickaxe(player);
-
-                                                if (pick != null) {
-                                                    Mining.getSingleton().mine(player, o, pick, new Position(objectX, objectY, player.getPosition().getZ()), objectId);
-                                                }
-                                            }
-                                        }
+                                    if (rock == null) {
+                                        return;
                                     }
+
+                                    Pickaxe pick = Mining.getSingleton().getPickaxe(player);
+
+                                    if (pick == null) {
+                                        return;
+                                    }
+
+                                    Mining.getSingleton().startRockMine(player, rock, pick, new Position(objectX, objectY, player.getPosition().getZ()), objectId);
                                     break;
                                 case 2478:
                                 case 2479:
@@ -198,8 +197,10 @@ public class DecodeObjectActionPacket extends PacketDecoder {
                     public void run() {
                         if (Misc.canClickObject(player.getPosition(), new Position(objX, objY, player.getPosition().getZ()), size)) {
                             switch (objId) {
+                                case 6:
+                                    DwarfMultiCannon.retrieveCannon(player, new Position(objX, objY, player.getPosition().getZ()));
+                                    break;
                                 case 635:
-                                    player.getPacketBuilder().sendMessage("lol");
                                     Thieving.getSingleton().stealFromObject(player, TheftObject.TEA_STALL);
                                     break;
                                 case 2108:
@@ -223,21 +224,13 @@ public class DecodeObjectActionPacket extends PacketDecoder {
                                 case 2106:
                                 case 2107:
                                 case 2491:
-                                    for (Ore o : Ore.values()) {
-                                        if (o == null) {
-                                            continue;
-                                        }
+                                    Rock rock = Rock.getRock(objId);
 
-                                        for (OreObject ore : o.getObjectOre()) {
-                                            if (ore == null) {
-                                                continue;
-                                            }
-
-                                            if (objId == ore.getOre()) {
-                                                Mining.getSingleton().prospect(player, o);
-                                            }
-                                        }
+                                    if (rock == null) {
+                                        return;
                                     }
+
+                                    Mining.getSingleton().prospect(player, rock);
                                     break;
                             }
                         }
@@ -270,10 +263,5 @@ public class DecodeObjectActionPacket extends PacketDecoder {
                 });
                 break;
         }
-    }
-
-    @Override
-    public int[] opcode() {
-        return new int[] { 132, 252, 70 };
     }
 }

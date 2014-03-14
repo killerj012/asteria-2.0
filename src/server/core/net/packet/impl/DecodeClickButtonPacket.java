@@ -4,6 +4,7 @@ import java.util.logging.Logger;
 
 import server.core.net.buffer.PacketBuffer;
 import server.core.net.packet.PacketDecoder;
+import server.core.net.packet.PacketOpcodeHeader;
 import server.util.Misc;
 import server.world.entity.Gfx;
 import server.world.entity.npc.NpcDialogue;
@@ -19,6 +20,7 @@ import server.world.map.Position;
  * 
  * @author lare96
  */
+@PacketOpcodeHeader( { 185 })
 public class DecodeClickButtonPacket extends PacketDecoder {
 
     /** A {@link Logger} for printing debugging info. */
@@ -369,10 +371,5 @@ public class DecodeClickButtonPacket extends PacketDecoder {
                 logger.info("Unhandled button: " + buttonId);
                 break;
         }
-    }
-
-    @Override
-    public int[] opcode() {
-        return new int[] { 185 };
     }
 }

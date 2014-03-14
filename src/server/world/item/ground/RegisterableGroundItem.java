@@ -3,7 +3,6 @@ package server.world.item.ground;
 import java.util.ArrayList;
 import java.util.List;
 
-import server.world.RegisterableContainer;
 import server.world.entity.player.Player;
 import server.world.item.Item;
 import server.world.item.ground.GroundItem.ItemState;
@@ -15,35 +14,10 @@ import server.world.map.Position;
  * 
  * @author lare96
  */
-public class RegisterableGroundItem implements RegisterableContainer<GroundItem> {
+public class RegisterableGroundItem {
 
     /** A database that holds every single registered {@link GroundItem}. */
     private static List<GroundItem> itemList = new ArrayList<GroundItem>();
-
-    /**
-     * Checks if the specified item exists.
-     * 
-     * @param searchItem
-     *        the item to check exists.
-     * @return the instance of the item in the database (if it exists).
-     */
-    public GroundItem searchDatabase(GroundItem searchItem) {
-
-        /**
-         * Iterate through all of the global items and check if any of them
-         * match the parameter.
-         */
-        for (GroundItem databaseItem : itemList) {
-            if (databaseItem == null) {
-                continue;
-            }
-
-            if (databaseItem.getItem().getId() == searchItem.getItem().getId() && databaseItem.getPosition().getX() == searchItem.getPosition().getX() && databaseItem.getPosition().getY() == searchItem.getPosition().getY() && databaseItem.getPosition().getZ() == searchItem.getPosition().getZ()) {
-                return databaseItem;
-            }
-        }
-        return null;
-    }
 
     /**
      * Fires the pickup event for a {@link GroundItem}.
@@ -57,6 +31,19 @@ public class RegisterableGroundItem implements RegisterableContainer<GroundItem>
 
         /** Fire the pickup event. */
         item.fireOnPickup(player);
+    }
+
+    /**
+     * Searches the database for an item and returns it if found.
+     * 
+     * @param item
+     *        the item to search for.
+     */
+    public GroundItem searchDatabase(GroundItem item) {
+        if (itemList.contains(item)) {
+            return item;
+        }
+        return null;
     }
 
     /**
@@ -123,7 +110,6 @@ public class RegisterableGroundItem implements RegisterableContainer<GroundItem>
         }
     }
 
-    @Override
     public void register(GroundItem registerable) {
 
         /** Fire the item's registration event. */
@@ -133,7 +119,6 @@ public class RegisterableGroundItem implements RegisterableContainer<GroundItem>
         itemList.add(registerable);
     }
 
-    @Override
     public void unregister(GroundItem registerable) {
 
         /** Fire the item's unregistration event. */
@@ -143,7 +128,6 @@ public class RegisterableGroundItem implements RegisterableContainer<GroundItem>
         itemList.remove(registerable);
     }
 
-    @Override
     public void loadNewRegion(Player player) {
 
         /** First remove all items. */

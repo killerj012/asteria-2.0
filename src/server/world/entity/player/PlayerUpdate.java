@@ -2,12 +2,13 @@ package server.world.entity.player;
 
 import java.util.Iterator;
 
-import server.core.Rs2Engine;
 import server.core.net.Session;
 import server.core.net.buffer.PacketBuffer;
 import server.core.net.buffer.PacketBuffer.ByteOrder;
 import server.core.net.buffer.PacketBuffer.ValueType;
+import server.core.worker.TaskFactory;
 import server.util.Misc;
+import server.world.World;
 import server.world.entity.UpdateFlags.Flag;
 import server.world.entity.player.skill.SkillManager;
 import server.world.entity.player.skill.SkillManager.SkillConstant;
@@ -62,13 +63,13 @@ public final class PlayerUpdate {
         int added = 0;
 
         /** Update the local player list. */
-        for (int i = 0; i < Rs2Engine.getWorld().getPlayers().length; i++) {
+        for (int i = 0; i < World.getPlayers().getCapacity(); i++) {
             if (added == 15 || player.getPlayers().size() >= 220) {
 
                 /** Player limit has been reached. */
                 break;
             }
-            Player other = Rs2Engine.getWorld().getPlayers()[i];
+            Player other = World.getPlayers().get(i);
             if (other == null || other == player || other.getSession().getStage() != Session.Stage.LOGGED_IN || !other.isVisible()) {
                 continue;
             }
@@ -91,7 +92,7 @@ public final class PlayerUpdate {
 
         /** Finish the packet and send it. */
         out.finishVariableShortPacketHeader();
-        Rs2Engine.getEncoder().encode(out, player.getSession());
+        player.getSession().encode(out);
     }
 
     /**
@@ -490,14 +491,14 @@ public final class PlayerUpdate {
      */
     private static void appendPrimaryHit(Player player, PacketBuffer.WriteBuffer out) {
         out.writeByte(player.getPrimaryHit().getDamage());
-        out.writeByte(player.getPrimaryHit().getDamageType().ordinal(), ValueType.A);
+        out.writeByte(player.getPrimaryHit().getType().getId(), ValueType.A);
 
         if (player.getSkills()[Misc.HITPOINTS].getLevel() <= 0) {
             player.getSkills()[Misc.HITPOINTS].setLevel(0);
 
             try {
                 player.setHasDied(true);
-                Rs2Engine.getWorld().submit(player.death());
+                TaskFactory.getFactory().submit(player.death());
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -519,14 +520,14 @@ public final class PlayerUpdate {
         player.getSkills()[Misc.HITPOINTS].decreaseLevel(player.getSecondaryHit().getDamage());
 
         out.writeByte(player.getSecondaryHit().getDamage());
-        out.writeByte(player.getSecondaryHit().getDamageType().ordinal(), ValueType.S);
+        out.writeByte(player.getSecondaryHit().getType().getId(), ValueType.S);
 
         if (player.getSkills()[Misc.HITPOINTS].getLevel() <= 0) {
             player.getSkills()[Misc.HITPOINTS].setLevel(0);
 
             try {
                 player.setHasDied(true);
-                Rs2Engine.getWorld().submit(player.death());
+                TaskFactory.getFactory().submit(player.death());
             } catch (Exception e) {
                 e.printStackTrace();
             }

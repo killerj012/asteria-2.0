@@ -1,220 +1,60 @@
 package server.world;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Queue;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.concurrent.Phaser;
+import java.util.logging.Logger;
 
-import server.core.worker.Worker;
+import server.core.Rs2Engine;
+import server.core.Service;
 import server.util.Misc;
 import server.util.Misc.Stopwatch;
-import server.world.entity.Entity;
+import server.world.entity.EntityContainer;
 import server.world.entity.npc.Npc;
 import server.world.entity.player.Player;
+import server.world.entity.player.PlayerParallelUpdateService;
 import server.world.entity.player.content.AssignWeaponAnimation;
 import server.world.entity.player.content.AssignWeaponInterface;
 import server.world.entity.player.file.WritePlayerFileEvent;
+import server.world.item.ground.RegisterableGroundItem;
+import server.world.object.RegisterableWorldObject;
 
 /**
- * Manages in-game entities and fires workers.
+ * Manages in-game entities in the game world.
  * 
  * @author lare96
  * @author blakeman8192
  */
 public final class World {
 
-    /** A queue of {@link Worker}s waiting to be registered. */
-    private static Queue<Worker> workQueue;
-
-    /**
-     * A list of already registered {@link Worker}s waiting to have their logic
-     * fired.
-     */
-    private static List<Worker> registeredWorkers;
+    /** A logger for printing information. */
+    private static Logger logger = Logger.getLogger(World.class.getSimpleName());
 
     /** All registered players. */
-    private static Player[] players;
+    private static EntityContainer<Player> players = new EntityContainer<Player>(2000);
 
     /** All registered NPCs. */
-    private static Npc[] npcs;
+    private static EntityContainer<Npc> npcs = new EntityContainer<Npc>(4000);
 
-    /** Total time this server has been online. */
-    private static Stopwatch totalOnlineTime;
+    /** A map of cached player credentials. */
+    private static Map<String, Player> cachedPlayers = new HashMap<String, Player>();
 
-    /**
-     * Submits queued workers for execution and fires logic from previously
-     * workers when needed.
-     */
-    public void fireWorkers() {
-        Worker worker;
+    /** A stopwatch to track the total time this server has been online. */
+    private static Stopwatch totalOnlineTime = new Stopwatch().reset();
 
-        /** Register the queued workers! */
-        while ((worker = workQueue.poll()) != null) {
-            registeredWorkers.add(worker);
-        }
+    /** The registerable container for ground item management. */
+    private static RegisterableGroundItem registerableGroundItems;
 
-        /** Fire any workers that need firing. */
-        for (Iterator<Worker> iterator = registeredWorkers.iterator(); iterator.hasNext();) {
-
-            /** Retrieve the next worker. */
-            worker = iterator.next();
-
-            /** Block if this worker is malformed. */
-            if (worker == null) {
-                continue;
-            }
-
-            /** Unregister the worker if it is no longer running. */
-            if (!worker.isRunning()) {
-                iterator.remove();
-                continue;
-            }
-
-            /** Increment the delay for this worker. */
-            worker.incrementCurrentDelay();
-
-            /** Check if this worker is ready to fire! */
-            if (worker.getDelay() == worker.getCurrentDelay() && worker.isRunning()) {
-
-                /**
-                 * Fire the logic within the worker! ... and handle any errors
-                 * that might occur during execution.
-                 */
-                try {
-                    worker.fire();
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-
-                /** Reset the delay for the worker. */
-                worker.resetCurrentDelay();
-            }
-        }
-    }
+    /** The registerable container for objects. */
+    private static RegisterableWorldObject registerableObjects;
 
     /**
-     * Submit a new {@link Worker} for registration.
+     * Initialize the utilities of the {@link World}.
      * 
-     * @param worker
-     *        the new worker to submit.
+     * @throws Exception
+     *         if any errors occur during initialization.
      */
-    public void submit(Worker worker) {
-        if (worker.isInitialRun()) {
-            worker.fire();
-        }
-
-        workQueue.add(worker);
-    }
-
-    /**
-     * Submit an array of new {@link Worker}s.
-     * 
-     * @param workers
-     *        the workers to submit.
-     */
-    public void submitAll(Worker... workers) {
-        if (workers.length < 1) {
-            throw new IllegalArgumentException("No workers specified!");
-        }
-
-        for (Worker worker : workers) {
-            if (worker == null) {
-                continue;
-            }
-
-            submit(worker);
-        }
-    }
-
-    /**
-     * Cancels all of the currently registered workers.
-     */
-    public void cancelAllWorkers() {
-        for (Worker c : registeredWorkers) {
-            if (c == null) {
-                continue;
-            }
-
-            c.cancel();
-        }
-    }
-
-    /**
-     * Stops all {@link Worker}s with this key attachment.
-     * 
-     * @param key
-     *        the key to stop all workers with.
-     */
-    public void cancelWorkers(Object key) {
-        for (Worker c : registeredWorkers) {
-            if (c == null || c.getKey() == null) {
-                continue;
-            }
-
-            if (c.getKey() == key) {
-                c.cancel();
-            }
-        }
-    }
-
-    /**
-     * Retrieves a list of {@link Worker}s with this key attachment.
-     * 
-     * @param key
-     *        the workers with this key that will be added to the list.
-     * @return a list of workers with this key attachment.
-     */
-    public List<Worker> retrieveWorkers(Object key) {
-        List<Worker> tasks = new ArrayList<Worker>();
-
-        for (Worker c : registeredWorkers) {
-            if (c == null || c.getKey() == null) {
-                continue;
-            }
-
-            if (c.getKey() == key) {
-                tasks.add(c);
-            }
-        }
-
-        return tasks;
-    }
-
-    /**
-     * Gets an unmodifiable list of all of the registered {@link Worker}s.
-     * 
-     * @return an unmodifiable list of all of the registered workers.
-     */
-    public List<Worker> retrieveRegisteredWorkers() {
-        return Collections.unmodifiableList(registeredWorkers);
-    }
-
-    /**
-     * Gets an unmodifiable queue of all of the {@link Worker}s awaiting
-     * registration.
-     * 
-     * @return an unmodifiable queue of all of the workers awaiting
-     *         registration.
-     */
-    public Queue<Worker> retrieveAwaitingWorkers() {
-        return (Queue<Worker>) Collections.unmodifiableCollection(workQueue);
-    }
-
-    /**
-     * Configures the world by loading miscellaneous things.
-     */
-    public void init() {
-
-        /** Create world objects. */
-        npcs = new Npc[500];
-        players = new Player[1000];
-        workQueue = new LinkedList<Worker>();
-        registeredWorkers = new ArrayList<Worker>();
-        totalOnlineTime = new Stopwatch().reset();
-
-        /** Begin loading miscellaneous things. */
+    public static void init() {
         try {
             Misc.codeFiles();
             Misc.codeHosts();
@@ -235,44 +75,110 @@ public final class World {
     }
 
     /**
-     * Safely terminates the {@link World}.
-     * 
-     * @throws Exception
-     *         if any errors occur during the termination of the world.
+     * Ticks logic for the actual game - general logic sequentially and updating
+     * logic in parallel.
      */
-    public void terminate() throws Exception {
-        for (Player player : getPlayers()) {
+    public static void tick() {
+        try {
+
+            /** Perform any general logic processing for entities. */
+            for (Player player : players) {
+                if (player == null) {
+                    continue;
+                }
+
+                try {
+                    player.pulse();
+                } catch (Exception ex) {
+                    ex.printStackTrace();
+                    logger.warning(player + " error while firing game logic!");
+                    player.getSession().disconnect();
+                }
+            }
+
+            for (Npc npc : npcs) {
+                if (npc == null) {
+                    continue;
+                }
+
+                try {
+                    npc.pulse();
+                } catch (Exception ex) {
+                    ex.printStackTrace();
+                    logger.warning(npc + " error while firing game logic!");
+                    npcs.remove(npc);
+                }
+            }
+
+            /** Perform updating for entities in parallel. */
+            final Phaser phaser = new Phaser(1);
+
+            phaser.bulkRegister(players.getSize());
+
+            for (Player player : players) {
+                if (player == null) {
+                    continue;
+                }
+
+                Rs2Engine.getUpdatePool().execute(new PlayerParallelUpdateService(player, phaser));
+            }
+
+            phaser.arriveAndAwaitAdvance();
+
+            /**
+             * Reset all of the entities after updating and prepare for a new
+             * cycle.
+             */
+            for (Player player : players) {
+                if (player == null) {
+                    continue;
+                }
+
+                try {
+                    player.reset();
+                } catch (Exception ex) {
+                    ex.printStackTrace();
+                    logger.warning(player + " error while resetting for the next game tick!");
+                    player.getSession().disconnect();
+                }
+            }
+
+            for (Npc npc : npcs) {
+                if (npc == null) {
+                    continue;
+                }
+
+                try {
+                    npc.reset();
+                } catch (Exception ex) {
+                    ex.printStackTrace();
+                    logger.warning(npc + " error while resetting for the next game tick!");
+                    World.getNpcs().remove(npc);
+                }
+            }
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+    }
+
+    /**
+     * Gets the instance of a player by their online name.
+     * 
+     * @param username
+     *        the username to get the player instance of.
+     * @return the instance of the player with the specified username.
+     */
+    public static Player getPlayer(String username) {
+        for (Player player : players) {
             if (player == null) {
                 continue;
             }
 
-            player.getTradeSession().resetTrade(false);
-            player.logout();
+            if (player.getUsername().equals(username)) {
+                return player;
+            }
         }
-
-        cancelAllWorkers();
-        workQueue.clear();
-        registeredWorkers.clear();
-    }
-
-    /**
-     * Registers an entity for processing.
-     * 
-     * @param entity
-     *        the entity to register.
-     */
-    public void register(Entity entity) {
-        entity.register();
-    }
-
-    /**
-     * Unregisters an entity from processing.
-     * 
-     * @param entity
-     *        the entity to unregister.
-     */
-    public void unregister(Entity entity) {
-        entity.unregister();
+        return null;
     }
 
     /**
@@ -292,94 +198,45 @@ public final class World {
     }
 
     /**
-     * Saves the game for all players that are currently online.
+     * Saves the game for all players that are currently registered.
      */
-    public void savePlayers() {
-        for (Player player : getPlayers()) {
+    public static void savePlayers() {
+        for (Player player : players) {
             if (player == null) {
                 continue;
             }
 
-            WritePlayerFileEvent write = new WritePlayerFileEvent(player);
-            write.run();
+            savePlayer(player);
         }
     }
 
     /**
      * Saves the game for a single player.
-     */
-    public void savePlayer(Player player) {
-        WritePlayerFileEvent write = new WritePlayerFileEvent(player);
-        write.run();
-    }
-
-    /**
-     * Gets an instance of a player by their name.
      * 
      * @param player
-     *        the name of the player you are trying to get the instance of.
-     * @return the instance of the player, null if no player with that name was
-     *         found.
+     *        the player to save the game for.
      */
-    public Player getPlayer(String player) {
-        for (Player p : players) {
-            if (p == null) {
-                continue;
+    public static void savePlayer(final Player player) {
+
+        /** We cache the player first. */
+        cachedPlayers.put(player.getUsername(), player);
+
+        /** Save the actual file whenever the thread is available to. */
+        Rs2Engine.getDiskPool().execute(new Service() {
+            @Override
+            public void run() {
+                synchronized (player) {
+                    WritePlayerFileEvent save = new WritePlayerFileEvent(player);
+                    save.run();
+                    logger.info(player + " game successfully saved by the disk pool!");
+                }
             }
 
-            if (p.getUsername().equals(player)) {
-                return p;
+            @Override
+            public String name() {
+                return "Saving file for " + player;
             }
-        }
-        return null;
-    }
-
-    /**
-     * Gets the amount of players that are online.
-     * 
-     * @return the amount of online players.
-     */
-    public int playerAmount() {
-        int amount = 0;
-        for (int i = 1; i < players.length; i++) {
-            if (players[i] != null) {
-                amount++;
-            }
-        }
-        return amount;
-    }
-
-    /**
-     * Gets the amount of NPCs that are online.
-     * 
-     * @return the amount of online NPCs.
-     */
-    public int npcAmount() {
-        int amount = 0;
-        for (int i = 1; i < npcs.length; i++) {
-            if (npcs[i] != null) {
-                amount++;
-            }
-        }
-        return amount;
-    }
-
-    /**
-     * Gets all registered players.
-     * 
-     * @return the players.
-     */
-    public Player[] getPlayers() {
-        return players;
-    }
-
-    /**
-     * Gets all registered NPCs.
-     * 
-     * @return the npcs.
-     */
-    public Npc[] getNpcs() {
-        return npcs;
+        });
     }
 
     /**
@@ -387,7 +244,60 @@ public final class World {
      * 
      * @return the time that this server has online for.
      */
-    public long getTimeOnline() {
+    public static long getTimeOnline() {
         return totalOnlineTime.elapsed();
+    }
+
+    /**
+     * Gets the container of players.
+     * 
+     * @return the container of players.
+     */
+    public static EntityContainer<Player> getPlayers() {
+        return players;
+    }
+
+    /**
+     * Gets the container of npcs.
+     * 
+     * @return the container of npcs.
+     */
+    public static EntityContainer<Npc> getNpcs() {
+        return npcs;
+    }
+
+    /**
+     * Gets the map of cached players.
+     * 
+     * @return the cached players.
+     */
+    public static Map<String, Player> getCachedPlayers() {
+        return cachedPlayers;
+    }
+
+    /**
+     * Gets the registerable container for ground items.
+     * 
+     * @return the registerable container for ground items.
+     */
+    public static RegisterableGroundItem getGroundItems() {
+        if (registerableGroundItems == null) {
+            registerableGroundItems = new RegisterableGroundItem();
+        }
+
+        return registerableGroundItems;
+    }
+
+    /**
+     * Gets the registerable container for objects.
+     * 
+     * @return the registerable container for objects.
+     */
+    public static RegisterableWorldObject getObjects() {
+        if (registerableObjects == null) {
+            registerableObjects = new RegisterableWorldObject();
+        }
+
+        return registerableObjects;
     }
 }

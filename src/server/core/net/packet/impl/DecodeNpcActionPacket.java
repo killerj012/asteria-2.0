@@ -1,10 +1,11 @@
 package server.core.net.packet.impl;
 
-import server.core.Rs2Engine;
 import server.core.net.buffer.PacketBuffer.ByteOrder;
 import server.core.net.buffer.PacketBuffer.ReadBuffer;
 import server.core.net.buffer.PacketBuffer.ValueType;
 import server.core.net.packet.PacketDecoder;
+import server.core.net.packet.PacketOpcodeHeader;
+import server.world.World;
 import server.world.entity.combat.Combat;
 import server.world.entity.npc.Npc;
 import server.world.entity.npc.NpcDefinition;
@@ -22,6 +23,7 @@ import server.world.shop.Shop;
  * 
  * @author lare96
  */
+@PacketOpcodeHeader( { 72, 131, 155, 17 })
 public class DecodeNpcActionPacket extends PacketDecoder {
 
     /** The various packet opcodes. */
@@ -34,7 +36,7 @@ public class DecodeNpcActionPacket extends PacketDecoder {
         switch (player.getSession().getPacketOpcode()) {
             case ATTACK_NPC:
                 int index = in.readShort(false, ValueType.A);
-                final Npc attackMelee = Rs2Engine.getWorld().getNpcs()[index];
+                final Npc attackMelee = World.getNpcs().get(index);
 
                 if (attackMelee == null) {
                     return;
@@ -49,7 +51,7 @@ public class DecodeNpcActionPacket extends PacketDecoder {
                 break;
             case MAGE_NPC:
                 index = in.readShort(true, ValueType.A, ByteOrder.LITTLE);
-                final Npc attackMagic = Rs2Engine.getWorld().getNpcs()[index];
+                final Npc attackMagic = World.getNpcs().get(index);
 
                 if (attackMagic == null) {
                     return;
@@ -64,7 +66,7 @@ public class DecodeNpcActionPacket extends PacketDecoder {
                 break;
             case FIRST_CLICK:
                 index = in.readShort(true, ByteOrder.LITTLE);
-                final Npc firstClickMob = Rs2Engine.getWorld().getNpcs()[index];
+                final Npc firstClickMob = World.getNpcs().get(index);
 
                 if (firstClickMob == null) {
                     return;
@@ -114,7 +116,7 @@ public class DecodeNpcActionPacket extends PacketDecoder {
 
             case SECOND_CLICK:
                 index = in.readShort(false, ValueType.A, ByteOrder.LITTLE);
-                final Npc secondClickNpc = Rs2Engine.getWorld().getNpcs()[index];
+                final Npc secondClickNpc = World.getNpcs().get(index);
 
                 if (secondClickNpc == null) {
                     return;
@@ -231,10 +233,5 @@ public class DecodeNpcActionPacket extends PacketDecoder {
                 });
                 break;
         }
-    }
-
-    @Override
-    public int[] opcode() {
-        return new int[] { 72, 131, 155, 17 };
     }
 }

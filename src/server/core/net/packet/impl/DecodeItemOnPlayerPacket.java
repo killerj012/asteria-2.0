@@ -1,10 +1,11 @@
 package server.core.net.packet.impl;
 
-import server.core.Rs2Engine;
 import server.core.net.buffer.PacketBuffer.ByteOrder;
 import server.core.net.buffer.PacketBuffer.ReadBuffer;
 import server.core.net.buffer.PacketBuffer.ValueType;
 import server.core.net.packet.PacketDecoder;
+import server.core.net.packet.PacketOpcodeHeader;
+import server.world.World;
 import server.world.entity.player.Player;
 
 /**
@@ -12,6 +13,7 @@ import server.world.entity.player.Player;
  * 
  * @author lare96
  */
+@PacketOpcodeHeader( { 14 })
 public class DecodeItemOnPlayerPacket extends PacketDecoder {
 
     @Override
@@ -20,7 +22,7 @@ public class DecodeItemOnPlayerPacket extends PacketDecoder {
         int playerId = in.readShort();
         final int itemUsed = in.readShort();
         int something4 = in.readShort(false, ValueType.A, ByteOrder.LITTLE);
-        final Player usedOn = Rs2Engine.getWorld().getPlayers()[playerId];
+        final Player usedOn = World.getPlayers().get(playerId);
 
         if (usedOn == null || !player.getInventory().getContainer().contains(itemUsed)) {
             return;
@@ -36,10 +38,5 @@ public class DecodeItemOnPlayerPacket extends PacketDecoder {
                 }
             }
         });
-    }
-
-    @Override
-    public int[] opcode() {
-        return new int[] { 14 };
     }
 }

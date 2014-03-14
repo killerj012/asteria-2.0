@@ -1,9 +1,7 @@
 package server.world.entity.npc;
 
-import java.util.List;
-
-import server.core.Rs2Engine;
 import server.core.worker.Worker;
+import server.world.World;
 import server.world.entity.Animation;
 import server.world.entity.Entity;
 import server.world.entity.UpdateFlags.Flag;
@@ -35,7 +33,7 @@ public class Npc extends Entity {
     private int currentHealth;
 
     /** If this npc respawns or not. */
-    private boolean respawn = true;
+    private boolean respawn;
 
     /** The movement coordinator for this npc. */
     private NpcMovementCoordinator movementCoordinator = new NpcMovementCoordinator(this);
@@ -51,6 +49,9 @@ public class Npc extends Entity {
 
     /** The respawn ticks. */
     private int respawnTicks;
+
+    /** This npc itself. */
+    private Npc thisNpc = this;
 
     /**
      * Creates a new {@link Npc}.
@@ -105,7 +106,7 @@ public class Npc extends Entity {
                     /** Respawn the npc when a set amount of time has elapsed. */
                     if (respawnTicks == getRespawnTime()) {
                         getPosition().setAs(getOriginalPosition());
-                        register();
+                        World.getNpcs().add(thisNpc);
                         this.cancel();
                     } else {
                         respawnTicks++;
@@ -123,29 +124,7 @@ public class Npc extends Entity {
         getMovementQueue().reset();
         getPosition().setAs(position);
         getFlags().flag(Flag.APPEARANCE);
-        unregister();
-    }
-
-    @Override
-    public void register() {
-        for (int i = 1; i < Rs2Engine.getWorld().getNpcs().length; i++) {
-            if (Rs2Engine.getWorld().getNpcs()[i] == null) {
-                Rs2Engine.getWorld().getNpcs()[i] = this;
-                this.setSlot(i);
-                return;
-            }
-        }
-        throw new IllegalStateException("Server is full!");
-    }
-
-    @Override
-    public void unregister() {
-        if (this.getSlot() == -1) {
-            return;
-        }
-
-        Rs2Engine.getWorld().getNpcs()[this.getSlot()] = null;
-        this.setUnregistered(true);
+        World.getNpcs().remove(this);
     }
 
     @Override
@@ -169,20 +148,24 @@ public class Npc extends Entity {
     public void dropDeathItems(Entity killer) {
 
         /** Get the drops for this npc. */
-        List<DeathDrop> dropItems = NpcDeathDrop.calculateDeathDrop(this);
+        DeathDrop[] dropItems = NpcDeathDrop.calculateDeathDrop(this).clone();
 
         /** Block if there are no drops. */
-        if (dropItems.size() == 0) {
+        if (dropItems.length == 0) {
             return;
         }
 
         /**
-         * If the killer is an npc register static ground items that will vanish
-         * within a minute.
+         * If the killer is an npc or an unknown entity register static ground
+         * items that will vanish within a minute.
          */
         if (killer == null || killer instanceof Npc) {
             for (DeathDrop drop : dropItems) {
-                GroundItem.getRegisterable().register(new StaticGroundItem(drop.getItem(), getPosition(), true, false));
+                if (drop == null) {
+                    continue;
+                }
+
+                World.getGroundItems().register(new StaticGroundItem(drop.getItem(), getPosition(), true, false));
             }
 
             /**
@@ -193,7 +176,11 @@ public class Npc extends Entity {
             Player player = (Player) killer;
 
             for (DeathDrop drop : dropItems) {
-                GroundItem.getRegisterable().register(new GroundItem(drop.getItem(), new Position(getPosition().getX(), getPosition().getY(), getPosition().getZ()), player));
+                if (drop == null) {
+                    continue;
+                }
+
+                World.getGroundItems().register(new GroundItem(drop.getItem(), new Position(getPosition().getX(), getPosition().getY(), getPosition().getZ()), player));
             }
         }
     }

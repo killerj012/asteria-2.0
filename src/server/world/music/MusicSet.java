@@ -12,11 +12,13 @@ import server.world.entity.player.Player;
  */
 public class MusicSet {
 
+    // XXX: Still a work in progress..
+
     /**
      * An array of music id's that are automatically unlocked upon character
      * creation.
      */
-    public static final int[] AUTOMATICALLY_UNLOCKED = {};
+    public static final int[] AUTOMATICALLY_UNLOCKED = { 5, }; // 0,
 
     /**
      * An instance of this player.
@@ -58,7 +60,7 @@ public class MusicSet {
      */
     public void loginMusicTabUpdate() {
         for (int i : unlocked) {
-            Music music = Music.getMusic().get(i);
+            Music music = Music.getMusic()[i];
 
             player.getPacketBuilder().sendString("", 4439);
             player.getPacketBuilder().sendString("@gre@" + music.getName(), music.getMusicTabLineId());
@@ -73,10 +75,33 @@ public class MusicSet {
      */
     public void unlock(int songId) {
         if (!unlocked.contains(songId)) {
-            Music music = Music.getMusic().get(songId);
-            player.getPacketBuilder().sendMessage("@red@You have unlocked " + music.getName() + "!");
+            Music music = Music.getMusic()[songId];
+            player.getPacketBuilder().sendMessage("@red@You have unlocked a new music track: " + music.getName());
             player.getPacketBuilder().sendString("@gre@" + music.getName(), music.getMusicTabLineId());
             unlocked.add(songId);
+        }
+    }
+
+    /**
+     * Loads a new song every time you enter a region.
+     * 
+     * @param player
+     *        the player to load a new song for.
+     */
+    public static void loadMusicRegion(Player player) {
+        /** Check if we are using the music player manually. */
+
+        /** If not check if there is any new music to be played. */
+        player.getMusicSet().setNextSong(Music.getMusicRegion()[player.getPosition().getRegionId()] == null ? 0 : Music.getMusicRegion()[player.getPosition().getRegionId()].getSongId());
+
+        /** And play the new music! */
+        if (player.getMusicSet().getNextSong() != 0 && player.getMusicSet().getCurrentlyPlaying() != player.getMusicSet().getNextSong()) {
+            Music music = Music.getMusic()[player.getMusicSet().getNextSong()];
+
+            player.getPacketBuilder().sendMusic(music.getSongId());
+            player.getMusicSet().setCurrentlyPlaying(music.getSongId());
+            player.getMusicSet().unlock(music.getSongId());
+            player.getPacketBuilder().sendString(music.getName(), 4439);
         }
     }
 

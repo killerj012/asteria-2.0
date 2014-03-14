@@ -3,9 +3,10 @@ package server.world.entity.player.content;
 import java.util.HashSet;
 import java.util.Set;
 
-import server.core.Rs2Engine;
+import server.core.worker.TaskFactory;
 import server.core.worker.Worker;
 import server.util.Misc.Interval;
+import server.world.World;
 import server.world.entity.Animation;
 import server.world.entity.combat.Combat;
 import server.world.entity.combat.Hit;
@@ -30,10 +31,10 @@ public class DwarfMultiCannon {
     private static final Interval DAMAGE_INTERVAL = new Interval().inclusiveInterval(0, 25);
 
     /** The radius of this cannon's attack. */
-    private static final int RADIUS = 7;
+    private static final int FIRE_RADIUS = 7;
 
     /** How far you can build from another cannon. */
-    private static final int BUILD_RADIUS = 15;
+    private static final int BUILD_RADIUS = 10;
 
     /**
      * A {@link HashSet} of the positions of cannons set up by every single
@@ -75,7 +76,7 @@ public class DwarfMultiCannon {
     public enum FireDirection {
 
         /** Turns <code>NORTH_EAST</code> next. */
-        NORTH(FireDirection.NORTH_EAST, 516, new TargetSequence() {
+        NORTH(516, new TargetSequence() {
             @Override
             public boolean canTarget(Position cannonPosition, Position targetPosition) {
                 return (targetPosition.getY() > cannonPosition.getY() && targetPosition.getX() >= cannonPosition.getX() - 1 && targetPosition.getX() <= cannonPosition.getX() + 1);
@@ -83,7 +84,7 @@ public class DwarfMultiCannon {
         }),
 
         /** Turns <code>EAST</code> next. */
-        NORTH_EAST(FireDirection.EAST, 517, new TargetSequence() {
+        NORTH_EAST(517, new TargetSequence() {
             @Override
             public boolean canTarget(Position cannonPosition, Position targetPosition) {
                 return (targetPosition.getX() >= cannonPosition.getX() + 1 && targetPosition.getY() >= cannonPosition.getY() + 1);
@@ -91,7 +92,7 @@ public class DwarfMultiCannon {
         }),
 
         /** Turns <code>SOUTH_EAST</code> next. */
-        EAST(FireDirection.SOUTH_EAST, 518, new TargetSequence() {
+        EAST(518, new TargetSequence() {
             @Override
             public boolean canTarget(Position cannonPosition, Position targetPosition) {
                 return (targetPosition.getX() > cannonPosition.getX() && targetPosition.getY() >= cannonPosition.getY() - 1 && targetPosition.getY() <= cannonPosition.getY() + 1);
@@ -99,7 +100,7 @@ public class DwarfMultiCannon {
         }),
 
         /** Turns <code>SOUTH</code> next. */
-        SOUTH_EAST(FireDirection.SOUTH, 519, new TargetSequence() {
+        SOUTH_EAST(519, new TargetSequence() {
             @Override
             public boolean canTarget(Position cannonPosition, Position targetPosition) {
                 return (targetPosition.getY() <= cannonPosition.getY() - 1 && targetPosition.getX() >= cannonPosition.getX() + 1);
@@ -107,7 +108,7 @@ public class DwarfMultiCannon {
         }),
 
         /** Turns <code>SOUTH_WEST</code> next. */
-        SOUTH(FireDirection.SOUTH_WEST, 520, new TargetSequence() {
+        SOUTH(520, new TargetSequence() {
             @Override
             public boolean canTarget(Position cannonPosition, Position targetPosition) {
                 return (targetPosition.getY() < cannonPosition.getY() && targetPosition.getX() >= cannonPosition.getX() - 1 && targetPosition.getX() <= cannonPosition.getX() + 1);
@@ -115,7 +116,7 @@ public class DwarfMultiCannon {
         }),
 
         /** Turns <code>WEST</code> next. */
-        SOUTH_WEST(FireDirection.WEST, 521, new TargetSequence() {
+        SOUTH_WEST(521, new TargetSequence() {
             @Override
             public boolean canTarget(Position cannonPosition, Position targetPosition) {
                 return (targetPosition.getX() <= cannonPosition.getX() - 1 && targetPosition.getY() <= cannonPosition.getY() - 1);
@@ -123,7 +124,7 @@ public class DwarfMultiCannon {
         }),
 
         /** Turns <code>NORTH_WEST</code> next. */
-        WEST(FireDirection.NORTH_WEST, 514, new TargetSequence() {
+        WEST(514, new TargetSequence() {
             @Override
             public boolean canTarget(Position cannonPosition, Position targetPosition) {
                 return (targetPosition.getX() < cannonPosition.getX() && targetPosition.getY() >= cannonPosition.getY() - 1 && targetPosition.getY() <= cannonPosition.getY() + 1);
@@ -131,15 +132,12 @@ public class DwarfMultiCannon {
         }),
 
         /** Turns <code>NORTH</code> next. */
-        NORTH_WEST(FireDirection.NORTH, 515, new TargetSequence() {
+        NORTH_WEST(515, new TargetSequence() {
             @Override
             public boolean canTarget(Position cannonPosition, Position targetPosition) {
                 return (targetPosition.getX() <= cannonPosition.getX() - 1 && targetPosition.getY() >= cannonPosition.getY() + 1);
             }
         });
-
-        /** The next direction in the rotation sequence. */
-        private FireDirection nextDirection;
 
         /** The object animation for this direction. */
         private int objectAnimation;
@@ -150,26 +148,14 @@ public class DwarfMultiCannon {
         /**
          * Create a new {@link FireDirection}.
          * 
-         * @param nextDirection
-         *        the next direction in the rotation sequence.
          * @param objectAnimation
          *        the object animation for this direction.
          * @param sequence
          *        the target sequence for this direction.
          */
-        private FireDirection(FireDirection nextDirection, int objectAnimation, TargetSequence sequence) {
-            this.nextDirection = nextDirection;
+        private FireDirection(int objectAnimation, TargetSequence sequence) {
             this.objectAnimation = objectAnimation;
             this.sequence = sequence;
-        }
-
-        /**
-         * Gets the next direction in the rotation sequence.
-         * 
-         * @return the next direction.
-         */
-        public FireDirection getNextDirection() {
-            return nextDirection;
         }
 
         /**
@@ -230,7 +216,7 @@ public class DwarfMultiCannon {
         player.getMovementQueue().setLockMovement(true);
 
         /** Now we setup the cannon. */
-        Rs2Engine.getWorld().submit(new Worker(3, true) {
+        TaskFactory.getFactory().submit(new Worker(3, true) {
             @SuppressWarnings("fallthrough")
             @Override
             public void fire() {
@@ -241,20 +227,20 @@ public class DwarfMultiCannon {
                     case BASE:
                         player.animation(new Animation(827));
                         player.getInventory().deleteItem(new Item(6));
-                        WorldObject.getRegisterable().register(new WorldObject(7, player.getPosition().clone(), Rotation.SOUTH, 10));
+                        World.getObjects().register(new WorldObject(7, player.getPosition().clone(), Rotation.SOUTH, 10));
                         player.getCannonCredentials().setSetupStage(CannonSetup.STAND);
                         break;
                     case STAND:
                         player.animation(new Animation(827));
                         player.getInventory().deleteItem(new Item(8));
-                        WorldObject.getRegisterable().register(new WorldObject(8, player.getPosition().clone(), Rotation.SOUTH, 10));
+                        World.getObjects().register(new WorldObject(8, player.getPosition().clone(), Rotation.SOUTH, 10));
                         player.getCannonCredentials().setSetupStage(CannonSetup.BARRELS);
                         player.getPacketBuilder().sendMessage("You attach the stand to the base...");
                         break;
                     case BARRELS:
                         player.animation(new Animation(827));
                         player.getInventory().deleteItem(new Item(10));
-                        WorldObject.getRegisterable().register(new WorldObject(9, player.getPosition().clone(), Rotation.SOUTH, 10));
+                        World.getObjects().register(new WorldObject(9, player.getPosition().clone(), Rotation.SOUTH, 10));
                         player.getCannonCredentials().setSetupStage(CannonSetup.FURNACE);
                         player.getPacketBuilder().sendMessage("You attach the barrels to the stand...");
                         break;
@@ -264,7 +250,7 @@ public class DwarfMultiCannon {
                         player.getCannonCredentials().setCannon(new Cannon(player));
                         player.getCannonCredentials().setSetupStage(CannonSetup.CANNON);
                     case CANNON:
-                        WorldObject.getRegisterable().register(player.getCannonCredentials().getCannon());
+                        World.getObjects().register(player.getCannonCredentials().getCannon());
                         positionSet.add(player.getPosition().clone());
                         player.getMovementQueue().setLockMovement(false);
                         player.getPacketBuilder().sendMessage("You attach the furnace to the barrels and finish putting your cannon together!");
@@ -289,7 +275,7 @@ public class DwarfMultiCannon {
          * Check if we own this cannon by comparing the position of your cannon
          * and the cannon trying to be picked up.
          */
-        if (!player.getCannonCredentials().hasCannon() || !player.getCannonCredentials().getCannon().equals(cannonPosition)) {
+        if (!player.getCannonCredentials().hasCannon() || !player.getCannonCredentials().getCannon().getPosition().equals(cannonPosition)) {
             player.getPacketBuilder().sendMessage("This is not your cannon to pick up!");
             return;
         }
@@ -297,50 +283,27 @@ public class DwarfMultiCannon {
         /** Remove the cannon from the world. */
         player.animation(new Animation(827));
         positionSet.remove(cannonPosition);
-        WorldObject.getRegisterable().removeOnPosition(cannonPosition);
+        World.getObjects().removeOnPosition(cannonPosition);
         player.getCannonCredentials().getCannon().setCurrentlyFiring(false);
+        player.getCannonCredentials().setCannon(null);
         player.getCannonCredentials().setSetupStage(CannonSetup.NOTHING);
 
         /** Return the items to your inventory, bank or the ground. */
-        if (player.getInventory().getContainer().freeSlots() > 4) {
-            player.getInventory().addItem(new Item(6));
-            player.getInventory().addItem(new Item(8));
-            player.getInventory().addItem(new Item(10));
-            player.getInventory().addItem(new Item(12));
-            player.getPacketBuilder().sendMessage("The cannon parts were returned to your inventory.");
+        Item[] returnItems = { new Item(6), new Item(8), new Item(10), new Item(12), new Item(2, player.getCannonCredentials().getCannon().getAmmunition()) };
 
-            if (player.getCannonCredentials().getCannon().getAmmunition() > 0) {
-                player.getInventory().addItem(new Item(2, player.getCannonCredentials().getCannon().getAmmunition()));
-                player.getCannonCredentials().getCannon().setAmmunition(0);
-                player.getPacketBuilder().sendMessage("The leftover ammunition was returned to your inventory.");
-            }
-        } else if (player.getInventory().getContainer().freeSlots() < 5) {
-
-            if (player.getBank().getContainer().freeSlots() < 5) {
-                GroundItem.getRegisterable().register(new GroundItem(new Item(6), player.getPosition().clone(), player));
-                GroundItem.getRegisterable().register(new GroundItem(new Item(8), player.getPosition().clone(), player));
-                GroundItem.getRegisterable().register(new GroundItem(new Item(10), player.getPosition().clone(), player));
-                GroundItem.getRegisterable().register(new GroundItem(new Item(12), player.getPosition().clone(), player));
-                player.getPacketBuilder().sendMessage("The cannon parts were placed on the ground.");
-
-                if (player.getCannonCredentials().getCannon().getAmmunition() > 0) {
-                    GroundItem.getRegisterable().register(new GroundItem(new Item(2, player.getCannonCredentials().getCannon().getAmmunition()), player.getPosition().clone(), player));
-                    player.getCannonCredentials().getCannon().setAmmunition(0);
-                    player.getPacketBuilder().sendMessage("The leftover ammunition was placed on the ground.");
-                }
-                return;
+        for (Item item : returnItems) {
+            if (item.getAmount() < 1) {
+                continue;
             }
 
-            player.getBank().addItem(new Item(6));
-            player.getBank().addItem(new Item(8));
-            player.getBank().addItem(new Item(10));
-            player.getBank().addItem(new Item(12));
-            player.getPacketBuilder().sendMessage("The cannon parts were returned to your bank.");
-
-            if (player.getCannonCredentials().getCannon().getAmmunition() > 0) {
-                player.getBank().addItem(new Item(2, player.getCannonCredentials().getCannon().getAmmunition()));
-                player.getCannonCredentials().getCannon().setAmmunition(0);
-                player.getPacketBuilder().sendMessage("The leftover ammunition was returned to your bank.");
+            if (player.getInventory().getContainer().hasRoomFor(item)) {
+                player.getInventory().addItem(item);
+            } else if (player.getBank().getContainer().hasRoomFor(item)) {
+                player.getBank().addItem(item);
+                player.getPacketBuilder().sendMessage("Some parts were added to your bank because your inventory is full.");
+            } else {
+                World.getGroundItems().register(new GroundItem(item, player.getPosition().clone(), player));
+                player.getPacketBuilder().sendMessage("Some parts were placed on the ground because both your bank and inventory are full.");
             }
         }
     }
@@ -350,6 +313,8 @@ public class DwarfMultiCannon {
      * 
      * @param player
      *        the player who fired this cannon.
+     * @param cannonPosition
+     *        the position of the cannon being fired.
      */
     public static void fireCannon(final Player player, Position cannonPosition) {
 
@@ -357,7 +322,7 @@ public class DwarfMultiCannon {
          * Check if we own this cannon by comparing the position of your cannon
          * and the cannon trying to be fired.
          */
-        if (!player.getCannonCredentials().hasCannon() || !player.getCannonCredentials().getCannon().equals(cannonPosition)) {
+        if (!player.getCannonCredentials().hasCannon() || !player.getCannonCredentials().getCannon().getPosition().equals(cannonPosition)) {
             player.getPacketBuilder().sendMessage("This is not your cannon to fire!");
             return;
         }
@@ -391,16 +356,17 @@ public class DwarfMultiCannon {
         final Cannon cannon = player.getCannonCredentials().getCannon();
 
         /** Start firing the cannon. */
-        Rs2Engine.getWorld().submit(new Worker((Location.inMultiCombat(player) ? 2 : 4), false) {
+        TaskFactory.getFactory().submit(new Worker((Location.inMultiCombat(player) ? 2 : 4), false) {
             @Override
             public void fire() {
-                if (player.isUnregistered() || !cannon.isCurrentlyFiring()) {
+                if (!cannon.isCurrentlyFiring()) {
                     this.cancel();
                     return;
                 }
 
                 if (cannon.getAmmunition() == 0) {
                     player.getPacketBuilder().sendMessage("Your cannon has run out of ammo.");
+                    player.getCannonCredentials().getCannon().setCurrentlyFiring(false);
                     this.cancel();
                     return;
                 }
@@ -409,8 +375,8 @@ public class DwarfMultiCannon {
                 player.getPacketBuilder().sendGlobalObjectAnimation(cannon.getPosition(), cannon.getDirection().getObjectAnimation(), 10, -1);
 
                 /** Target based on the direction. */
-                for (Npc npc : Rs2Engine.getWorld().getNpcs()) {
-                    if (npc == null || npc.isHasDied() || !npc.getPosition().withinDistance(cannon.getPosition(), RADIUS)) {
+                for (Npc npc : World.getNpcs()) {
+                    if (npc == null || !npc.getDefinition().isAttackable() || npc.isHasDied() || !npc.getPosition().withinDistance(cannon.getPosition(), FIRE_RADIUS)) {
                         continue;
                     }
 
@@ -419,16 +385,16 @@ public class DwarfMultiCannon {
                             continue;
                         }
 
-                        // TODO: fire cannonball projectile...
-                        Rs2Engine.getWorld().submit(new FireWorker(npc, player));
+                        cannon.fireProjectile(npc);
+                        TaskFactory.getFactory().submit(new FireWorker(npc, player));
                         cannon.decrementAmmunition();
                     }
                 }
 
                 /** Rotate the cannon. */
-                cannon.setDirection(cannon.getDirection().getNextDirection());
+                cannon.fireRotation();
             }
-        });
+        }.attach(player));
     }
 
     /**
@@ -466,9 +432,9 @@ public class DwarfMultiCannon {
 
         @Override
         public void fire() {
-            npc.primaryHit(hit);
-            Combat.fight(npc, player);
+            npc.dealDamage(hit);
             npc.faceEntity(player.getSlot());
+            Combat.fight(npc, player);
             this.cancel();
         }
     }
@@ -479,7 +445,7 @@ public class DwarfMultiCannon {
      * 
      * @author lare96
      */
-    public static interface TargetSequence {
+    private static interface TargetSequence {
 
         /**
          * Determines if the position can be targeted based on the cannon's
@@ -562,6 +528,51 @@ public class DwarfMultiCannon {
         private FireDirection direction = FireDirection.NORTH;
         private boolean currentlyFiring;
         private int ammunition;
+
+        /**
+         * Handles the firing of the cannonball projectile.
+         * 
+         * @param player
+         *        the player firing this cannon.
+         * @param cannon
+         *        the cannon being fired.
+         * @param npc
+         *        the target being fired at.
+         */
+        public void fireProjectile(Npc npc) {
+            Position offset = new Position(((getPosition().getX() - npc.getPosition().getX()) * -1), ((getPosition().getY() - npc.getPosition().getY()) * -1));
+
+            player.getPacketBuilder().sendGlobalProjectile(getPosition(), offset, 50, 100, 53, 20, 20, npc.getSlot() + 1, 30);
+        }
+
+        public void fireRotation() {
+            switch (direction) {
+                case NORTH:
+                    direction = FireDirection.NORTH_EAST;
+                    break;
+                case NORTH_EAST:
+                    direction = FireDirection.EAST;
+                    break;
+                case EAST:
+                    direction = FireDirection.SOUTH_EAST;
+                    break;
+                case SOUTH_EAST:
+                    direction = FireDirection.SOUTH;
+                    break;
+                case SOUTH:
+                    direction = FireDirection.SOUTH_WEST;
+                    break;
+                case SOUTH_WEST:
+                    direction = FireDirection.WEST;
+                    break;
+                case WEST:
+                    direction = FireDirection.NORTH_WEST;
+                    break;
+                case NORTH_WEST:
+                    direction = FireDirection.NORTH;
+                    break;
+            }
+        }
 
         public void decrementAmmunition() {
             ammunition--;

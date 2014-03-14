@@ -10,19 +10,13 @@ import server.util.Misc;
  */
 public class Position {
 
-    /**
-     * The x coordinate.
-     */
+    /** The x coordinate. */
     private int x;
 
-    /**
-     * The y coordinate.
-     */
+    /** The y coordinate. */
     private int y;
 
-    /**
-     * The z coordinate.
-     */
+    /** The z coordinate. */
     private int z;
 
     /**
@@ -263,6 +257,33 @@ public class Position {
      */
     public int getLocalY() {
         return getLocalY(this);
+    }
+
+    /**
+     * Gets the X map region chunk relative to this position.
+     * 
+     * @return the X region chunk.
+     */
+    public int getChunkX() {
+        return (x >> 6);
+    }
+
+    /**
+     * Gets the Y map region chunk relative to this position.
+     * 
+     * @return the Y region chunk.
+     */
+    public int getChunkY() {
+        return (y >> 6);
+    }
+
+    /**
+     * Gets the region id relative to this position.
+     * 
+     * @return the region id.
+     */
+    public int getRegionId() {
+        return ((getChunkX() << 8) + getChunkY());
     }
 
     /**

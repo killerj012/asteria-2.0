@@ -67,6 +67,14 @@ public class Herblore extends SkillEvent {
 
     }
 
+    public void cleanHerb(Player player, Herb herb) {
+
+    }
+
+    public void makePotion(Player player, Potion potion) {
+
+    }
+
     @Override
     public void fireResetEvent(Player player) {
 

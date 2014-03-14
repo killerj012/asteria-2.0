@@ -1,13 +1,12 @@
 package server.world.entity.player.skill.impl;
 
-import server.core.Rs2Engine;
 import server.core.worker.WorkRate;
 import server.util.Misc;
+import server.world.World;
 import server.world.entity.Animation;
 import server.world.entity.Gfx;
 import server.world.entity.combat.Combat;
 import server.world.entity.combat.Hit;
-import server.world.entity.combat.Hit.DamageType;
 import server.world.entity.npc.Npc;
 import server.world.entity.npc.NpcDefinition;
 import server.world.entity.player.Player;
@@ -329,7 +328,7 @@ public class Thieving extends SkillEvent {
                 mob.facePosition(player.getPosition());
                 mob.forceChat("What do you think you're doing?!?");
                 mob.animation(new Animation(NpcDefinition.getNpcDefinition()[mob.getNpcId()].getAttackAnimation()));
-                player.primaryHit(new Hit(Misc.getRandom().nextInt(5), DamageType.NORMAL));
+                player.dealDamage(new Hit(Misc.getRandom().nextInt(5)));
                 player.gfx(new Gfx(426));
                 player.getMovementQueue().lockMovementFor(theftMob.getStunDelay(), WorkRate.APPROXIMATE_SECOND);
                 player.getPacketBuilder().sendMessage("You fail to pickpocket the " + NpcDefinition.getNpcDefinition()[mob.getNpcId()].getName() + ".");
@@ -390,7 +389,7 @@ public class Thieving extends SkillEvent {
      */
     private void checkSurroundingArea(Player player) {
         if (Misc.getRandom().nextInt(14) == 0) {
-            for (Npc mob : Rs2Engine.getWorld().getNpcs()) {
+            for (Npc mob : World.getNpcs()) {
                 if (mob == null) {
                     continue;
                 }

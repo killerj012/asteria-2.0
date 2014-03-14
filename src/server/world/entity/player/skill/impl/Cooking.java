@@ -3,7 +3,7 @@ package server.world.entity.player.skill.impl;
 import java.util.HashMap;
 import java.util.Map;
 
-import server.core.Rs2Engine;
+import server.core.worker.TaskFactory;
 import server.core.worker.Worker;
 import server.util.Misc;
 import server.world.entity.Animation;
@@ -238,7 +238,7 @@ public class Cooking extends SkillEvent {
         player.setCookAmount(0);
 
         /** And start cooking :) */
-        Rs2Engine.getWorld().submit(new Worker(4, true) {
+        TaskFactory.getFactory().submit(new Worker(4, true) {
             @Override
             public void fire() {
 

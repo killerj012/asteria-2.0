@@ -2,6 +2,7 @@ package server.core.net.packet.impl;
 
 import server.core.net.buffer.PacketBuffer;
 import server.core.net.packet.PacketDecoder;
+import server.core.net.packet.PacketOpcodeHeader;
 import server.world.entity.UpdateFlags.Flag;
 import server.world.entity.player.Player;
 
@@ -10,6 +11,7 @@ import server.world.entity.player.Player;
  * 
  * @author lare96
  */
+@PacketOpcodeHeader( { 4 })
 public class DecodeChatPacket extends PacketDecoder {
 
     @Override
@@ -23,10 +25,5 @@ public class DecodeChatPacket extends PacketDecoder {
         player.setChatColor(color);
         player.setChatText(text);
         player.getFlags().flag(Flag.CHAT);
-    }
-
-    @Override
-    public int[] opcode() {
-        return new int[] { 4 };
     }
 }

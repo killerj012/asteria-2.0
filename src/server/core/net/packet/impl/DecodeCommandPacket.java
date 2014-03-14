@@ -10,12 +10,14 @@ import java.io.File;
 
 import javax.imageio.ImageIO;
 
-import server.core.Rs2Engine;
 import server.core.net.buffer.PacketBuffer;
 import server.core.net.packet.PacketDecoder;
+import server.core.net.packet.PacketOpcodeHeader;
+import server.core.worker.TaskFactory;
 import server.core.worker.WorkRate;
 import server.core.worker.Worker;
 import server.util.Misc;
+import server.world.World;
 import server.world.entity.Animation;
 import server.world.entity.Gfx;
 import server.world.entity.combat.magic.TeleportSpell;
@@ -23,17 +25,18 @@ import server.world.entity.npc.Npc;
 import server.world.entity.player.Player;
 import server.world.item.Item;
 import server.world.item.ItemDefinition;
-import server.world.map.MapRegion;
-import server.world.map.MapRegionTile;
 import server.world.map.Position;
+import server.world.map.RegionBuilder;
+import server.world.map.RegionTileBuilder;
 import server.world.object.WorldObject;
 import server.world.object.WorldObject.Rotation;
 
 /**
- * A custom client packet that is sent when the player types a '::' command.
+ * A custom packet that is sent when the player types a '::' command.
  * 
  * @author lare96
  */
+@PacketOpcodeHeader( { 103 })
 public class DecodeCommandPacket extends PacketDecoder {
 
     @Override
@@ -41,16 +44,17 @@ public class DecodeCommandPacket extends PacketDecoder {
         String command = in.readString();
         final String[] cmd = command.toLowerCase().split(" ");
 
-        if (cmd[0].equals("coders")) {
+        if (cmd[0].equals("reload")) {
             try {
                 Misc.codeFiles();
                 Misc.codeHosts();
                 Misc.codeEquipment();
+                Misc.loadMusic();
             } catch (Exception e) {
                 e.printStackTrace();
             }
 
-            player.getPacketBuilder().sendMessage("Sucessfully refreshed the coders!");
+            player.getPacketBuilder().sendMessage("Sucessfully reloaded data!");
         } else if (cmd[0].equals("tele")) {
             final int x = Integer.parseInt(cmd[1]);
             final int y = Integer.parseInt(cmd[2]);
@@ -103,7 +107,7 @@ public class DecodeCommandPacket extends PacketDecoder {
                 e.printStackTrace();
             }
 
-            Rs2Engine.getWorld().submit(new Worker(time, false, WorkRate.APPROXIMATE_SECOND) {
+            TaskFactory.getFactory().submit(new Worker(time, false, WorkRate.APPROXIMATE_SECOND) {
                 @Override
                 public void fire() {
                     try {
@@ -122,18 +126,17 @@ public class DecodeCommandPacket extends PacketDecoder {
             int npc = Integer.parseInt(cmd[1]);
 
             final Npc mob = new Npc(npc, player.getPosition());
-            Rs2Engine.getWorld().register(mob);
-            mob.follow(player);
+            World.getNpcs().add(mob);
         } else if (cmd[0].equals("music")) {
             final int id = Integer.parseInt(cmd[1]);
             player.getPacketBuilder().sendMusic(id);
         } else if (cmd[0].equals("region")) {
-            MapRegion map = new MapRegion();
+            RegionBuilder map = new RegionBuilder();
 
             for (int z = 0; z < 4; z++) {
                 for (int x = 0; x < 13; x++) {
                     for (int y = 0; y < 13; y++) {
-                        map.setTile(x, y, z, new MapRegionTile(player.getPosition().getX(), player.getPosition().getY()));
+                        map.setTile(x, y, z, new RegionTileBuilder(player.getPosition().getX(), player.getPosition().getY()));
                     }
                 }
             }
@@ -179,7 +182,8 @@ public class DecodeCommandPacket extends PacketDecoder {
             player.getPacketBuilder().sendInterface(x);
         } else if (cmd[0].equals("s")) {
             int x = Integer.parseInt(cmd[1]);
-            player.getPacketBuilder().sendSound(x, x, 1);
+            int delay = Integer.parseInt(cmd[2]);
+            player.getPacketBuilder().sendSound(x, 0, delay);
         } else if (cmd[0].equals("mypos")) {
             player.getPacketBuilder().sendMessage("You are at: " + player.getPosition());
         } else if (cmd[0].equals("pickup")) {
@@ -194,19 +198,15 @@ public class DecodeCommandPacket extends PacketDecoder {
 
             player.animation(new Animation(emote));
         } else if (cmd[0].equals("players")) {
-            player.getPacketBuilder().sendMessage(Rs2Engine.getWorld().playerAmount() == 1 ? "There is currently 1 player online!" : "There are currently " + Rs2Engine.getWorld().playerAmount() + " players online!");
+            int size = World.getPlayers().getSize();
+            player.getPacketBuilder().sendMessage(size == 1 ? "There is currently 1 player online!" : "There are currently " + size + " players online!");
         } else if (cmd[0].equals("gfx")) {
             int gfx = Integer.parseInt(cmd[1]);
 
             player.gfx(new Gfx(gfx));
         } else if (cmd[0].equals("object")) {
             int id = Integer.parseInt(cmd[1]);
-            WorldObject.getRegisterable().register(new WorldObject(id, player.getPosition(), Rotation.SOUTH, 10));
+            World.getObjects().register(new WorldObject(id, player.getPosition(), Rotation.SOUTH, 10));
         }
-    }
-
-    @Override
-    public int[] opcode() {
-        return new int[] { 103 };
     }
 }

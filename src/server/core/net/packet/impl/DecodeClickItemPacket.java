@@ -4,8 +4,10 @@ import server.core.net.buffer.PacketBuffer.ByteOrder;
 import server.core.net.buffer.PacketBuffer.ReadBuffer;
 import server.core.net.buffer.PacketBuffer.ValueType;
 import server.core.net.packet.PacketDecoder;
+import server.core.net.packet.PacketOpcodeHeader;
 import server.world.entity.player.Player;
 import server.world.entity.player.content.ConsumeFood;
+import server.world.entity.player.content.DwarfMultiCannon;
 import server.world.entity.player.content.ConsumeFood.Food;
 import server.world.entity.player.skill.SkillEvent;
 import server.world.entity.player.skill.impl.Prayer;
@@ -16,6 +18,7 @@ import server.world.entity.player.skill.impl.Prayer.PrayerItem;
  * 
  * @author lare96
  */
+@PacketOpcodeHeader( { 122 })
 public class DecodeClickItemPacket extends PacketDecoder {
 
     @Override
@@ -37,12 +40,9 @@ public class DecodeClickItemPacket extends PacketDecoder {
         Prayer.getSingleton().buryItem(player, PrayerItem.getPrayerItem(id), slot);
 
         switch (id) {
-        /** ... */
+            case 6:
+                DwarfMultiCannon.makeCannon(player);
+                break;
         }
-    }
-
-    @Override
-    public int[] opcode() {
-        return new int[] { 122 };
     }
 }

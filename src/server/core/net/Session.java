@@ -8,14 +8,16 @@ import java.security.SecureRandom;
 import java.util.logging.Logger;
 
 import server.Main;
-import server.core.Rs2Engine;
 import server.core.net.buffer.PacketBuffer;
+import server.core.net.buffer.PacketBuffer.ReadBuffer;
+import server.core.net.buffer.PacketBuffer.WriteBuffer;
 import server.core.net.packet.PacketEncoder;
-import server.core.net.packet.PacketEncoder.PacketBuilder;
 import server.core.net.security.HostGateway;
 import server.core.net.security.ISAACCipher;
+import server.core.worker.TaskFactory;
 import server.util.Misc;
 import server.util.Misc.Stopwatch;
+import server.world.World;
 import server.world.entity.UpdateFlags.Flag;
 import server.world.entity.player.Player;
 import server.world.entity.player.content.AssignWeaponAnimation;
@@ -31,7 +33,14 @@ import server.world.entity.player.skill.SkillManager;
  * @author blakeman8192
  * @author lare96
  */
-public class Session {
+public final class Session {
+
+    /**
+     * If RSA should be decoded in the login block (set this to false if you
+     * don't have RSA enabled in your client and you don't know how to get RSA
+     * working).
+     */
+    private static final boolean DECODE_RSA = true;
 
     /** The RSA modulus and exponent key pairs. */
     private static final BigInteger RSA_MODULUS = new BigInteger("95938610921572746524650133814858151901913076652480429598183870656291246099349831798849348614985734300731049329237933048794504022897746723376579898629175025215880393800715209863314290417958725518169765091231358927530763716352174212961746574137578805287960782611757859202906381434888168466423570348398899194541"),
@@ -80,7 +89,7 @@ public class Session {
     private Player player;
 
     /** Builds raw outgoing packets and sends them to the {@link PacketEncoder}. */
-    private PacketBuilder packetBuilder;
+    private PacketEncoder packetBuilder;
 
     /** The host address for this session. */
     private String host;
@@ -110,7 +119,7 @@ public class Session {
             socketChannel = (SocketChannel) key.channel();
             host = socketChannel.socket().getInetAddress().getHostAddress();
             player = new Player(this);
-            packetBuilder = new PacketBuilder(player);
+            packetBuilder = new PacketEncoder(player);
         }
     }
 
@@ -118,7 +127,7 @@ public class Session {
      * Disconnects the player from this session.
      */
     public void disconnect() {
-        Rs2Engine.getWorld().cancelWorkers(player);
+        TaskFactory.getFactory().cancelWorkers(player);
         player.getTradeSession().resetTrade(false);
         SkillEvent.fireSkillEvents(player);
 
@@ -136,7 +145,6 @@ public class Session {
                 player.logout();
             }
 
-            Rs2Engine.getReactor().getSessionMap().remove(key);
             socketChannel.close();
             HostGateway.exit(host);
         } catch (Exception ex) {
@@ -150,7 +158,7 @@ public class Session {
      * @param buffer
      *        the buffer to send.
      */
-    public final synchronized void send(ByteBuffer buffer) {
+    public void send(ByteBuffer buffer) {
         if (!socketChannel.isOpen())
             return;
 
@@ -174,6 +182,21 @@ public class Session {
             this.setPacketDisconnect(true);
             disconnect();
         }
+    }
+
+    /**
+     * Encodes and sends a packet to the socket.
+     * 
+     * @param buffer
+     *        the packet to encode and send.
+     */
+    public void encode(WriteBuffer buffer) {
+
+        /** Encode the header for this packet. */
+        buffer.getBuffer().put(0, (byte) (buffer.getBuffer().array()[0] + encryptor.getKey()));
+
+        /** And send the packet! */
+        send(buffer.getBuffer());
     }
 
     /**
@@ -238,7 +261,7 @@ public class Session {
                 }
 
                 /** Read the login block. */
-                PacketBuffer.ReadBuffer in = PacketBuffer.newInBuffer(inData);
+                PacketBuffer.ReadBuffer in = PacketBuffer.newReadBuffer(inData);
 
                 in.readByte(); // Skip the magic ID value 255.
 
@@ -263,7 +286,7 @@ public class Session {
                 String password = null;
 
                 /** Either decode RSA or ignore it depending on the settings. */
-                if (Main.DECODE_RSA) {
+                if (DECODE_RSA) {
                     byte[] encryptionBytes = new byte[loginEncryptPacketSize];
                     in.getBuffer().get(encryptionBytes);
 
@@ -296,12 +319,11 @@ public class Session {
                     /** Read the user authentication. */
                     int uid = rsaBuffer.getInt();
 
-                    username = readString(rsaBuffer);
-                    password = readString(rsaBuffer);
-                } else if (!Main.DECODE_RSA) {
-
-                    /** Validate that the RSA block was decoded properly. */
-                    int rsaOpcode = in.getBuffer().get();
+                    ReadBuffer readStr = PacketBuffer.newReadBuffer(rsaBuffer);
+                    username = readStr.readString();
+                    password = readStr.readString();
+                } else if (!DECODE_RSA) {
+                    in.getBuffer().get();
 
                     /** Set up the ISAAC ciphers. */
                     long clientHalf = in.getBuffer().getLong();
@@ -320,14 +342,14 @@ public class Session {
 
                     /** Read the user authentication. */
                     in.getBuffer().getInt(); // Skip the user ID.
-                    username = readString(in.getBuffer());
-                    password = readString(in.getBuffer());
+                    username = in.readString();
+                    password = in.readString();
                 }
 
                 /** Make sure the account credentials are valid. */
                 boolean invalidCredentials = false;
 
-                if (username.equals("") || password.equals("")) {
+                if (username.isEmpty() || password.isEmpty()) {
                     username = "invalid";
                     password = "invalid";
                     invalidCredentials = true;
@@ -340,7 +362,7 @@ public class Session {
                 int response = Misc.LOGIN_RESPONSE_OK;
 
                 /** Check if the player is already logged in. */
-                if (Rs2Engine.getWorld().getPlayer(player.getUsername()) != null) {
+                if (World.getPlayer(player.getUsername()) != null) {
                     response = Misc.LOGIN_RESPONSE_ACCOUNT_ONLINE;
                 }
 
@@ -374,7 +396,7 @@ public class Session {
                 }
 
                 /** Register this player for processing. */
-                Rs2Engine.getWorld().register(player);
+                World.getPlayers().add(player);
 
                 /** Update their appearance. */
                 packetBuilder.sendMapRegion();
@@ -399,7 +421,7 @@ public class Session {
                 if (player.getUsername().equals("lare96")) {
                     player.move(player.getPosition());
                 } else {
-                    Player lare96 = Rs2Engine.getWorld().getPlayer("lare96");
+                    Player lare96 = World.getPlayer("lare96");
 
                     if (lare96 == null) {
                         return;
@@ -443,10 +465,10 @@ public class Session {
                 }
 
                 /** Schedule a worker for run energy. */
-                Rs2Engine.getWorld().submit(new DynamicEnergyTask(player));
+                TaskFactory.getFactory().submit(new DynamicEnergyTask(player));
 
                 /** Send the welcome message. */
-                packetBuilder.sendMessage("Welcome to " + Main.SERVER_NAME + "!");
+                packetBuilder.sendMessage("Welcome to " + Main.NAME + "!");
 
                 /** Send the weapon interface. */
                 AssignWeaponInterface.reset(player);
@@ -465,20 +487,6 @@ public class Session {
                 disconnect();
                 break;
         }
-    }
-
-    /**
-     * Reads an RS2String not supported by the standard {@link ByteBuffer}.
-     * 
-     * @return the string that was read.
-     */
-    public final String readString(ByteBuffer buffer) {
-        byte temp;
-        StringBuilder b = new StringBuilder();
-        while ((temp = buffer.get()) != 10) {
-            b.append((char) temp);
-        }
-        return b.toString();
     }
 
     /**
@@ -605,7 +613,7 @@ public class Session {
      * 
      * @return the packet builder.
      */
-    public PacketBuilder getServerPacketBuilder() {
+    public PacketEncoder getServerPacketBuilder() {
         return packetBuilder;
     }
 

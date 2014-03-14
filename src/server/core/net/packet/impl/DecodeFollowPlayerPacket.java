@@ -1,9 +1,10 @@
 package server.core.net.packet.impl;
 
-import server.core.Rs2Engine;
 import server.core.net.buffer.PacketBuffer.ByteOrder;
 import server.core.net.buffer.PacketBuffer.ReadBuffer;
 import server.core.net.packet.PacketDecoder;
+import server.core.net.packet.PacketOpcodeHeader;
+import server.world.World;
 import server.world.entity.player.Player;
 import server.world.entity.player.skill.SkillEvent;
 
@@ -12,12 +13,13 @@ import server.world.entity.player.skill.SkillEvent;
  * 
  * @author lare96
  */
+@PacketOpcodeHeader( { 39 })
 public class DecodeFollowPlayerPacket extends PacketDecoder {
 
     @Override
     public void decode(Player player, ReadBuffer in) {
         int followId = in.readShort(false, ByteOrder.LITTLE);
-        Player follow = Rs2Engine.getWorld().getPlayers()[followId];
+        Player follow = World.getPlayers().get(followId);
 
         if (follow == null) {
             return;
@@ -25,10 +27,5 @@ public class DecodeFollowPlayerPacket extends PacketDecoder {
 
         SkillEvent.fireSkillEvents(player);
         player.follow(follow);
-    }
-
-    @Override
-    public int[] opcode() {
-        return new int[] { 39 };
     }
 }

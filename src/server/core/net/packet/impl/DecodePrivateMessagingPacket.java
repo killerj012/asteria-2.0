@@ -2,6 +2,7 @@ package server.core.net.packet.impl;
 
 import server.core.net.buffer.PacketBuffer.ReadBuffer;
 import server.core.net.packet.PacketDecoder;
+import server.core.net.packet.PacketOpcodeHeader;
 import server.world.entity.player.Player;
 
 /**
@@ -10,6 +11,7 @@ import server.world.entity.player.Player;
  * 
  * @author lare96
  */
+@PacketOpcodeHeader( { 188, 215, 133, 74, 126 })
 public class DecodePrivateMessagingPacket extends PacketDecoder {
 
     @Override
@@ -39,10 +41,5 @@ public class DecodePrivateMessagingPacket extends PacketDecoder {
                 player.getPrivateMessage().sendPrivateMessage(player, to, message, size);
                 break;
         }
-    }
-
-    @Override
-    public int[] opcode() {
-        return new int[] { 188, 215, 133, 74, 126 };
     }
 }

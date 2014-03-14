@@ -1,70 +1,98 @@
 package server.world.entity.combat;
 
 /**
- * A hit that can be inflicted on an entity.
+ * A class that represents a hit inflicted on an entity.
  * 
  * @author lare96
  */
 public class Hit {
 
-    /**
-     * The amount of damage inflicted.
-     */
+    /** The amount of damage inflicted in this hit. */
     private int damage;
 
-    /**
-     * The damage type.
-     */
-    private DamageType damageType;
+    /** The hit type of this hit. */
+    private HitType type;
 
     /**
-     * Create a new hit.
+     * The different types of hits that can be inflicted.
      * 
-     * @param damage
-     *            the amount of damage.
-     * @param damageType
-     *            the type of damage.
+     * @author lare96
      */
-    public Hit(int damage, DamageType damageType) {
-        this.setDamage(damage);
-        this.setDamageType(damageType);
+    public enum HitType {
+        BLOCKED(0), NORMAL(1), POISON(2), DIESEASE(3);
 
-        if (this.getDamage() == 0) {
-            this.setDamageType(DamageType.BLOCKED);
-        } else if (this.getDamageType() == DamageType.BLOCKED) {
-            this.setDamage(0);
+        /** The id of this hit type. */
+        private int id;
+
+        /**
+         * Create a new {@link HitType}.
+         * 
+         * @param id
+         *        the id of this hit type.
+         */
+        private HitType(int id) {
+            this.id = id;
+        }
+
+        /**
+         * Gets the id of this hit type.
+         * 
+         * @return the id.
+         */
+        public int getId() {
+            return id;
         }
     }
 
     /**
-     * Create a new hit.
+     * Create a new {@link Hit} with a {@link HitType} of <code>NORMAL</code>.
      * 
      * @param damage
-     *            the amount of damage.
+     *        the amount of damage in this hit.
      */
     public Hit(int damage) {
-        this.setDamage(damage);
-        this.setDamageType(DamageType.NORMAL);
+        this(damage, HitType.NORMAL);
+    }
 
-        if (this.getDamage() == 0) {
-            this.setDamageType(DamageType.BLOCKED);
+    /**
+     * Create a new {@link Hit}.
+     * 
+     * @param damage
+     *        the amount of damage in this hit.
+     * @param type
+     *        the type of hit this is.
+     */
+    public Hit(int damage, HitType type) {
+        this.damage = damage;
+        this.type = type;
+
+        if (this.damage == 0 && this.type == HitType.NORMAL) {
+            this.type = HitType.BLOCKED;
+        } else if (this.damage > 0 && this.type == HitType.BLOCKED) {
+            this.damage = 0;
+        } else if (this.damage < 0) {
+            this.damage = 0;
         }
     }
 
-    /**
-     * The different types of damages.
-     */
-    public enum DamageType {
-        BLOCKED, // 0 - BLUE
+    @Override
+    public Hit clone() {
+        return new Hit(damage, type);
+    }
 
-        NORMAL, // 1 - RED
+    @Override
+    public boolean equals(Object o) {
+        if (!(o instanceof Hit)) {
+            return false;
+        }
 
-        POISON, // 2 - GREEN
-
-        DISEASE, // 3 - ORANGE
+        Hit hit = (Hit) o;
+        return (hit.damage == damage && hit.type == type);
     }
 
     /**
+     * Gets the amount of damage in this hit.
+     * 
      * @return the damage.
      */
     public int getDamage() {
@@ -72,25 +100,11 @@ public class Hit {
     }
 
     /**
-     * @param damage
-     *            the damage to set.
+     * Gets the type of hit.
+     * 
+     * @return the type.
      */
-    private void setDamage(int damage) {
-        this.damage = damage;
-    }
-
-    /**
-     * @return the damageType.
-     */
-    public DamageType getDamageType() {
-        return damageType;
-    }
-
-    /**
-     * @param damageType
-     *            the damageType to set.
-     */
-    private void setDamageType(DamageType damageType) {
-        this.damageType = damageType;
+    public HitType getType() {
+        return type;
     }
 }

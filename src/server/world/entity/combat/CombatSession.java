@@ -5,7 +5,7 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-import server.core.Rs2Engine;
+import server.core.worker.TaskFactory;
 import server.world.entity.Entity;
 import server.world.entity.combat.melee.MeleeHitWorker;
 
@@ -45,9 +45,9 @@ public class CombatSession {
         // case MELEE:
 
         if (!isAttacking()) {
-            Rs2Engine.getWorld().submit(new MeleeHitWorker(thisEntity));
+            TaskFactory.getFactory().submit(new MeleeHitWorker(thisEntity));
         } else {
-            Rs2Engine.getWorld().submit(new MeleeHitWorker(4, thisEntity));
+            TaskFactory.getFactory().submit(new MeleeHitWorker(4, thisEntity));
         }
         // break;
         // case RANGE:

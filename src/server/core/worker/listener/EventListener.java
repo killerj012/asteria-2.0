@@ -9,9 +9,7 @@ import server.core.worker.Worker;
  */
 public abstract class EventListener extends Worker {
 
-    /**
-     * Determines if the listener should be shut down once the logic has fired.
-     */
+    /** Determines if the listener should be shut down once the logic has fired. */
     private boolean shutdownOnFire = true;
 
     /**

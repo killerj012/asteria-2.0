@@ -6,7 +6,7 @@ package server.world.map;
  * @author lare96
  * @author Graham
  */
-public class MapRegion {
+public class RegionBuilder {
 
     // XXX: I've tried and tried and tried again to get this to work but I am
     // completely unsure whether it is the client or this code that's wrong.
@@ -23,7 +23,7 @@ public class MapRegion {
     /**
      * A chunk of tiles that make up this map region.
      */
-    private MapRegionTile[][][] region;
+    private RegionTileBuilder[][][] region;
 
     /**
      * The constant x length of this map region.
@@ -43,8 +43,8 @@ public class MapRegion {
     /**
      * Creates a new custom map region.
      */
-    public MapRegion() {
-        this.setRegion(new MapRegionTile[SIZE_LENGTH_X][SIZE_LENGTH_Y][SIZE_LENGTH_Z]);
+    public RegionBuilder() {
+        this.setRegion(new RegionTileBuilder[SIZE_LENGTH_X][SIZE_LENGTH_Y][SIZE_LENGTH_Z]);
     }
 
     /**
@@ -58,7 +58,7 @@ public class MapRegion {
      *            the z coordinate in the region.
      * @return the map tile on this coordinate.
      */
-    public MapRegionTile getTile(int x, int y, int z) {
+    public RegionTileBuilder getTile(int x, int y, int z) {
         return region[x][y][z];
     }
 
@@ -75,7 +75,7 @@ public class MapRegion {
      *            the map tile to set.
      * @return this map region.
      */
-    public MapRegion setTile(int x, int y, int z, MapRegionTile tile) {
+    public RegionBuilder setTile(int x, int y, int z, RegionTileBuilder tile) {
         region[x][y][z] = tile;
         return this;
     }
@@ -85,7 +85,7 @@ public class MapRegion {
      * 
      * @return this map region.
      */
-    public MapRegionTile[][][] getRegion() {
+    public RegionTileBuilder[][][] getRegion() {
         return region;
     }
 
@@ -96,7 +96,7 @@ public class MapRegion {
      *            the new region set.
      * @return the new map region.
      */
-    public MapRegion setRegion(MapRegionTile[][][] region) {
+    public RegionBuilder setRegion(RegionTileBuilder[][][] region) {
         this.region = region;
         return this;
     }

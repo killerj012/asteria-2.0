@@ -4,8 +4,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 
-import server.core.Rs2Engine;
-import server.world.RegisterableContainer;
+import server.world.World;
 import server.world.entity.player.Player;
 import server.world.map.Position;
 
@@ -15,7 +14,7 @@ import server.world.map.Position;
  * 
  * @author lare96
  */
-public class RegisterableWorldObject implements RegisterableContainer<WorldObject> {
+public class RegisterableWorldObject {
 
     /**
      * A {@link HashSet} to keep track of all of the {@link WorldObject}s in
@@ -50,7 +49,7 @@ public class RegisterableWorldObject implements RegisterableContainer<WorldObjec
 
             if (object.getPosition().equals(position)) {
 
-                for (Player player : Rs2Engine.getWorld().getPlayers()) {
+                for (Player player : World.getPlayers()) {
                     if (player == null) {
                         continue;
                     }
@@ -63,7 +62,6 @@ public class RegisterableWorldObject implements RegisterableContainer<WorldObjec
         }
     }
 
-    @Override
     public void register(WorldObject registerable) {
 
         /**
@@ -82,7 +80,7 @@ public class RegisterableWorldObject implements RegisterableContainer<WorldObjec
         objectSet.add(registerable);
 
         /** Add object for existing players in the region. */
-        for (Player player : Rs2Engine.getWorld().getPlayers()) {
+        for (Player player : World.getPlayers()) {
             if (player == null) {
                 continue;
             }
@@ -93,7 +91,6 @@ public class RegisterableWorldObject implements RegisterableContainer<WorldObjec
         }
     }
 
-    @Override
     public void unregister(WorldObject registerable) {
 
         /** Can't remove an object that isn't there. */
@@ -111,7 +108,7 @@ public class RegisterableWorldObject implements RegisterableContainer<WorldObjec
         }
 
         /** Remove object for all existing players. */
-        for (Player player : Rs2Engine.getWorld().getPlayers()) {
+        for (Player player : World.getPlayers()) {
             if (player == null) {
                 continue;
             }
@@ -120,7 +117,6 @@ public class RegisterableWorldObject implements RegisterableContainer<WorldObjec
         }
     }
 
-    @Override
     public void loadNewRegion(Player player) {
 
         /** Update existing objects for player in region. */
@@ -140,7 +136,7 @@ public class RegisterableWorldObject implements RegisterableContainer<WorldObjec
      * 
      * @return the set of objects.
      */
-    public Set<WorldObject> getObjects() {
+    public Set<WorldObject> getObjectSet() {
         return objectSet;
     }
 }

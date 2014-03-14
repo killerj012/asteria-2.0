@@ -1,7 +1,8 @@
 package server.world.item.ground;
 
-import server.core.Rs2Engine;
+import server.core.worker.TaskFactory;
 import server.core.worker.Worker;
+import server.world.World;
 import server.world.entity.player.Player;
 import server.world.item.Item;
 import server.world.map.Position;
@@ -60,7 +61,7 @@ public class StaticGroundItem extends GroundItem {
     protected void fireOnRegister() {
 
         /** Send the item image for everyone. */
-        for (Player p : Rs2Engine.getWorld().getPlayers()) {
+        for (Player p : World.getPlayers()) {
             if (p == null) {
                 continue;
             }
@@ -70,7 +71,7 @@ public class StaticGroundItem extends GroundItem {
 
         /** Start the <code>processor</code> if needed. */
         if (removeOnProcess) {
-            Rs2Engine.getWorld().submit(getProcessor());
+            TaskFactory.getFactory().submit(getProcessor());
         }
     }
 
@@ -81,7 +82,7 @@ public class StaticGroundItem extends GroundItem {
         getProcessor().cancel();
 
         /** Remove the item image for everyone. */
-        for (Player p : Rs2Engine.getWorld().getPlayers()) {
+        for (Player p : World.getPlayers()) {
             if (p == null) {
                 continue;
             }
@@ -95,7 +96,7 @@ public class StaticGroundItem extends GroundItem {
 
         /** If this item was set to be removed after a delay do so now. */
         if (removeOnProcess) {
-            getRegisterable().unregister(this);
+            World.getGroundItems().unregister(this);
             return;
         }
 
@@ -103,7 +104,7 @@ public class StaticGroundItem extends GroundItem {
          * If this item needs respawning do that now.
          */
         if (isItemPicked() && respawnOnPickup && needsRespawn) {
-            for (Player p : Rs2Engine.getWorld().getPlayers()) {
+            for (Player p : World.getPlayers()) {
                 if (p == null) {
                     continue;
                 }
@@ -111,7 +112,7 @@ public class StaticGroundItem extends GroundItem {
                 p.getPacketBuilder().sendGroundItem(this);
             }
 
-            getRegisterable().getItemList().add(this);
+            World.getGroundItems().getItemList().add(this);
             needsRespawn = false;
             setItemPicked(false);
             getProcessor().cancel();
@@ -124,7 +125,7 @@ public class StaticGroundItem extends GroundItem {
             setItemPicked(true);
 
             /** Remove the item image for everyone. */
-            for (Player p : Rs2Engine.getWorld().getPlayers()) {
+            for (Player p : World.getPlayers()) {
                 if (p == null) {
                     continue;
                 }
@@ -133,7 +134,7 @@ public class StaticGroundItem extends GroundItem {
             }
 
             /** Remove the item from the database. */
-            getRegisterable().getItemList().remove(this);
+            World.getGroundItems().getItemList().remove(this);
 
             /** Add the item in the player's inventory. */
             player.getInventory().addItem(getItem());
@@ -149,7 +150,7 @@ public class StaticGroundItem extends GroundItem {
             /** Submit a new worker to respawn the item if needed. */
             if (respawnOnPickup) {
                 setProcessor(new GroundItemWorker(this));
-                Rs2Engine.getWorld().submit(getProcessor());
+                TaskFactory.getFactory().submit(getProcessor());
                 needsRespawn = true;
             }
         }

@@ -1,5 +1,7 @@
 package server.world.entity.player.skill.impl;
 
+import server.core.worker.TaskFactory;
+import server.core.worker.Worker;
 import server.world.entity.Animation;
 import server.world.entity.player.Player;
 import server.world.entity.player.skill.SkillEvent;
@@ -243,9 +245,9 @@ public class Fletching extends SkillEvent {
      * @param amount
      *        the amount of headless arrows being fletched.
      */
-    public void fletchHeadlessArrow(Player player, int amount) {
+    public void fletchHeadlessArrow(final Player player) {
 
-        /** Checks if we even have the required materials. */
+        /** Check if we have the required materials. */
         if (!player.getInventory().getContainer().contains(52)) {
             player.getPacketBuilder().sendMessage("You cannot fletch headless arrows without arrow shafts!");
             return;
@@ -254,25 +256,36 @@ public class Fletching extends SkillEvent {
             return;
         }
 
-        /**
-         * Checks if any of the materials we have are lower than the amount we
-         * are fletching.
-         */
-        if (player.getInventory().getContainer().getCount(52) < amount || (player.getInventory().getContainer().getCount(314) < amount)) {
+        TaskFactory.getFactory().submit(new Worker(3, true) {
+            private int amount = 15;
 
-            /**
-             * If so it sets the amount we are fletching to the lowest amount of
-             * the two materials.
-             */
-            amount = Math.min(player.getInventory().getContainer().getCount(52), player.getInventory().getContainer().getCount(314));
-        }
+            @Override
+            public void fire() {
 
-        /** Make the headless arrows and give the experience. */
-        player.getInventory().deleteItem(new Item(52, amount));
-        player.getInventory().deleteItem(new Item(314, amount));
-        player.getInventory().addItem(new Item(53, amount));
-        player.animation(new Animation(6782));
-        exp(player, 1 * amount);
+                /** Check if we have the required materials. */
+                if (!player.getInventory().getContainer().contains(52)) {
+                    player.getPacketBuilder().sendMessage("You cannot fletch headless arrows without arrow shafts!");
+                    this.cancel();
+                    return;
+                } else if (!player.getInventory().getContainer().contains(314)) {
+                    player.getPacketBuilder().sendMessage("You cannot fletch headless arrows without feathers!");
+                    this.cancel();
+                    return;
+                }
+
+                /** Set the amount to what we have if needed. */
+                if (player.getInventory().getContainer().getCount(52) < amount || (player.getInventory().getContainer().getCount(314) < amount)) {
+                    amount = Math.min(player.getInventory().getContainer().getCount(52), player.getInventory().getContainer().getCount(314));
+                }
+
+                /** Make the headless arrows and give the experience. */
+                player.getInventory().deleteItem(new Item(52, amount));
+                player.getInventory().deleteItem(new Item(314, amount));
+                player.getInventory().addItem(new Item(53, amount));
+                player.animation(new Animation(6782));
+                exp(player, 1 * amount);
+            }
+        }.attach(player));
     }
 
     // use headless arrow with arrow tips

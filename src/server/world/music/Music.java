@@ -1,10 +1,5 @@
 package server.world.music;
 
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 import server.world.map.Location;
 
 /**
@@ -15,11 +10,20 @@ import server.world.map.Location;
  */
 public class Music {
 
+    // XXX: Still a work in progress..
+
     /**
      * A map containing data for every single piece of regional music that can
      * be played in the 317 cache.
      */
-    private static Map<Integer, Music> music = new HashMap<Integer, Music>();
+    private static Music[] music = new Music[400];
+
+    private static Music[] musicRegion = new Music[20000];
+
+    // private static Map<Integer, Music> music = new HashMap<Integer, Music>();
+    //
+    // private static Map<Integer, Music> musicLocation = new HashMap<Integer,
+    // Music>();
 
     /**
      * The name of this music.
@@ -41,10 +45,12 @@ public class Music {
      */
     private int musicTabButtonId;
 
+    private String unlockDescription;
+
     /**
      * The locations that this music is played in.
      */
-    private Location[] playedIn;
+    private int[] playedIn;
 
     /**
      * Create a new {@link Music} instance.
@@ -60,49 +66,13 @@ public class Music {
      * @param playedIn
      *        the locations that this music is played in.
      */
-    public Music(String name, int songId, int musicTabLineId, int musicTabButtonId, Location[] playedIn) {
+    public Music(String name, int songId, int musicTabLineId, int musicTabButtonId, String unlockDescription, int[] playedIn) {
         this.name = name;
         this.songId = songId;
         this.musicTabLineId = musicTabLineId;
         this.musicTabButtonId = musicTabButtonId;
         this.playedIn = playedIn;
-    }
-
-    /**
-     * Gets a modifiable list of locations that this song is played in.
-     * 
-     * @param name
-     *        the name of this song.
-     * @return a modifiable list of locations that this song is played in.
-     */
-    public static List<Location> getLocationPlayedIn(String name) {
-
-        /** Get the music instance by name. */
-        Music music = getMusic(name);
-
-        /** Check if this is a valid song. */
-        if (music == null) {
-            throw new IllegalArgumentException("Invalid song requested!");
-        }
-
-        /** Return the array of areas as a list. */
-        return music.getLocationList();
-    }
-
-    /**
-     * Gets a music instance by its name (case sensitive).
-     * 
-     * @param name
-     *        the name of the music you want to retrieve an instance of.
-     * @return the instance of the music.
-     */
-    public static Music getMusic(String name) {
-        for (Music m : music.values()) {
-            if (m.getName().equalsIgnoreCase(name)) {
-                return m;
-            }
-        }
-        return null;
+        this.unlockDescription = unlockDescription;
     }
 
     /**
@@ -110,19 +80,8 @@ public class Music {
      * 
      * @return an unmodifiable view of this map.
      */
-    public static Map<Integer, Music> getMusic() {
+    public static Music[] getMusic() {
         return music;
-    }
-
-    /**
-     * Gets a modifiable list of locations that this song is played in.
-     * 
-     * @return a modifiable list of locations that this song is played in.
-     */
-    public List<Location> getLocationList() {
-
-        /** Return the array of areas as a list. */
-        return Arrays.asList(playedIn);
     }
 
     /**
@@ -166,7 +125,22 @@ public class Music {
      * 
      * @return the played in.
      */
-    public Location[] getPlayedIn() {
+    public int[] getPlayedIn() {
         return playedIn;
     }
+
+    /**
+     * @return the musicLocation
+     */
+    public static Music[] getMusicRegion() {
+        return musicRegion;
+    }
+
+    /**
+     * @return the unlockDescription
+     */
+    public String getUnlockDescription() {
+        return unlockDescription;
+    }
+
 }

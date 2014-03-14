@@ -1,8 +1,9 @@
 package server.world.item.ground;
 
-import server.core.Rs2Engine;
+import server.core.worker.TaskFactory;
+import server.core.worker.WorkRate;
 import server.core.worker.Worker;
-import server.world.Registerable;
+import server.world.World;
 import server.world.entity.player.Player;
 import server.world.item.Item;
 import server.world.map.Position;
@@ -12,15 +13,12 @@ import server.world.map.Position;
  * 
  * @author lare96
  */
-public class GroundItem implements Registerable {
+public class GroundItem {
 
     // XXX: afaik I've fixed all of the issues with this, its still a work in
     // progress though so I'm wondering if there were any bugs I missed. Design
     // is a ton better than it was in my previous release, and written in less
     // code as well :)
-
-    /** The registerable container for item management. */
-    private static RegisterableGroundItem registerable;
 
     /** The actual {@link Item} on the ground. */
     private Item item;
@@ -84,7 +82,7 @@ public class GroundItem implements Registerable {
         player.getPacketBuilder().sendGroundItem(this);
 
         /** Start processing for this item. */
-        Rs2Engine.getWorld().submit(processor);
+        TaskFactory.getFactory().submit(processor);
     }
 
     /**
@@ -99,7 +97,7 @@ public class GroundItem implements Registerable {
         /** Removes the ground item image depending on the state of the item. */
         switch (state) {
             case SEEN_BY_NO_ONE:
-                for (Player p : Rs2Engine.getWorld().getPlayers()) {
+                for (Player p : World.getPlayers()) {
                     if (p == null) {
                         continue;
                     }
@@ -108,7 +106,7 @@ public class GroundItem implements Registerable {
                 }
                 break;
             case SEEN_BY_OWNER:
-                Rs2Engine.getWorld().getPlayer(player.getUsername()).getPacketBuilder().removeGroundItem(this);
+                World.getPlayer(player.getUsername()).getPacketBuilder().removeGroundItem(this);
                 break;
         }
     }
@@ -131,7 +129,7 @@ public class GroundItem implements Registerable {
                     break;
                 }
 
-                for (Player p : Rs2Engine.getWorld().getPlayers()) {
+                for (Player p : World.getPlayers()) {
                     if (p == null || p.getUsername().equals(player.getUsername())) {
                         continue;
                     }
@@ -149,7 +147,7 @@ public class GroundItem implements Registerable {
                     break;
                 }
 
-                registerable.unregister(this);
+                World.getGroundItems().unregister(this);
                 break;
         }
     }
@@ -164,7 +162,7 @@ public class GroundItem implements Registerable {
     protected void fireOnPickup(Player player) {
         if (!itemPicked) {
             itemPicked = true;
-            registerable.unregister(this);
+            World.getGroundItems().unregister(this);
             player.getInventory().addItem(item);
         }
     }
@@ -265,15 +263,36 @@ public class GroundItem implements Registerable {
     }
 
     /**
-     * Gets the registerable container.
+     * A {@link Worker} implementation that fires processing events for its
+     * designated {@link GroundItem} at 1-minute intervals. This takes away the
+     * need for iterating through a database of items every tick.
      * 
-     * @return the registerable container.
+     * @author lare96
      */
-    public static RegisterableGroundItem getRegisterable() {
-        if (registerable == null) {
-            registerable = new RegisterableGroundItem();
+    public static class GroundItemWorker extends Worker {
+
+        /**
+         * The {@link GroundItem} this worker has been assigned to fire events
+         * for.
+         */
+        private GroundItem item;
+
+        /**
+         * Create a new {@link GroundItemWorker}.
+         * 
+         * @param item
+         *        the item this worker has been assigned to fire events for.
+         */
+        public GroundItemWorker(GroundItem item) {
+            super(1, false, WorkRate.EXACT_MINUTE);
+            this.item = item;
         }
 
-        return registerable;
+        @Override
+        public void fire() {
+
+            /** Fire the processing event for this item. */
+            item.fireOnProcess();
+        }
     }
 }

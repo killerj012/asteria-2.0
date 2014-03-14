@@ -4,6 +4,7 @@ import server.core.net.buffer.PacketBuffer.ByteOrder;
 import server.core.net.buffer.PacketBuffer.ReadBuffer;
 import server.core.net.buffer.PacketBuffer.ValueType;
 import server.core.net.packet.PacketDecoder;
+import server.core.net.packet.PacketOpcodeHeader;
 import server.util.Misc;
 import server.world.entity.player.Player;
 import server.world.entity.player.skill.impl.Cooking;
@@ -13,7 +14,6 @@ import server.world.entity.player.skill.impl.Cooking.CookFish;
 import server.world.entity.player.skill.impl.Prayer.PrayerItem;
 import server.world.entity.player.skill.impl.Smithing.Smelt;
 import server.world.entity.player.skill.impl.Smithing.Smith;
-import server.world.item.Item;
 import server.world.map.Position;
 
 /**
@@ -21,6 +21,7 @@ import server.world.map.Position;
  * 
  * @author lare96
  */
+@PacketOpcodeHeader( { 192 })
 public class DecodeItemOnObjectPacket extends PacketDecoder {
 
     @Override
@@ -74,12 +75,8 @@ public class DecodeItemOnObjectPacket extends PacketDecoder {
                         case 3044:
                         case 3294:
                         case 4304:
-                            for (Smelt smelt : Smelt.values()) {
-                                for (Item item : smelt.getItemsNeeded()) {
-                                    if (item.getId() == itemId) {
-                                        Smithing.getSingleton().smeltInterface(player);
-                                    }
-                                }
+                            if (Smelt.containSmeltItem(itemId)) {
+                                Smithing.getSingleton().smeltInterface(player);
                             }
                             break;
                         case 2783:
@@ -115,10 +112,5 @@ public class DecodeItemOnObjectPacket extends PacketDecoder {
                 }
             }
         });
-    }
-
-    @Override
-    public int[] opcode() {
-        return new int[] { 192 };
     }
 }

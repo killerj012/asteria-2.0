@@ -3,9 +3,10 @@ package server.world.object;
 import java.util.ArrayList;
 import java.util.List;
 
-import server.core.Rs2Engine;
+import server.core.worker.TaskFactory;
 import server.core.worker.Worker;
 import server.util.Misc;
+import server.world.World;
 import server.world.entity.Animation;
 import server.world.entity.Gfx;
 import server.world.entity.player.Player;
@@ -56,12 +57,12 @@ public class WildernessObeliskSet {
         final WildernessObelisk chosen = getRandomObelisk(obelisk.getIndex());
 
         /** A little delay. */
-        Rs2Engine.getWorld().submit(new Worker(7, false) {
+        TaskFactory.getFactory().submit(new Worker(7, false) {
             @Override
             public void fire() {
 
                 /** Start teleporting the players. */
-                for (Player all : Rs2Engine.getWorld().getPlayers()) {
+                for (Player all : World.getPlayers()) {
                     if (all == null) {
                         continue;
                     }
@@ -78,12 +79,12 @@ public class WildernessObeliskSet {
         });
 
         /** Six second delay. */
-        Rs2Engine.getWorld().submit(new Worker(10, false) {
+        TaskFactory.getFactory().submit(new Worker(10, false) {
             @Override
             public void fire() {
 
                 /** Actually move the players. */
-                for (Player all : Rs2Engine.getWorld().getPlayers()) {
+                for (Player all : World.getPlayers()) {
                     if (all == null) {
                         continue;
                     }

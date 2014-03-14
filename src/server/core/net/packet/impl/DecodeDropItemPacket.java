@@ -3,6 +3,8 @@ package server.core.net.packet.impl;
 import server.core.net.buffer.PacketBuffer.ReadBuffer;
 import server.core.net.buffer.PacketBuffer.ValueType;
 import server.core.net.packet.PacketDecoder;
+import server.core.net.packet.PacketOpcodeHeader;
+import server.world.World;
 import server.world.entity.player.Player;
 import server.world.entity.player.skill.SkillEvent;
 import server.world.item.Item;
@@ -15,6 +17,7 @@ import server.world.map.Position;
  * 
  * @author lare96
  */
+@PacketOpcodeHeader( { 87 })
 public class DecodeDropItemPacket extends PacketDecoder {
 
     @Override
@@ -31,12 +34,7 @@ public class DecodeDropItemPacket extends PacketDecoder {
         if (player.getInventory().getContainer().contains(item)) {
             player.getInventory().deleteItemSlot(new Item(item, amount), slot);
             final Position itemLocation = new Position(player.getPosition().getX(), player.getPosition().getY(), player.getPosition().getZ());
-            GroundItem.getRegisterable().register(new GroundItem(new Item(item, amount), itemLocation, player));
+            World.getGroundItems().register(new GroundItem(new Item(item, amount), itemLocation, player));
         }
-    }
-
-    @Override
-    public int[] opcode() {
-        return new int[] { 87 };
     }
 }

@@ -13,6 +13,7 @@ import server.world.item.ItemContainer.ContainerPolicy;
  * Uses an {@link ItemContainer} to manage a player's equipped items.
  * 
  * @author lare96
+ * @author Vix
  */
 public class EquipmentContainer {
 

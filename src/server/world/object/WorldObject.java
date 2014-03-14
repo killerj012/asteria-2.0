@@ -1,6 +1,5 @@
 package server.world.object;
 
-import server.world.Registerable;
 import server.world.map.Position;
 
 /**
@@ -8,10 +7,7 @@ import server.world.map.Position;
  * 
  * @author lare96
  */
-public class WorldObject implements Registerable {
-
-    /** The registerable container. */
-    private static RegisterableWorldObject registerable;
+public class WorldObject {
 
     /** The id of the object. */
     private int id;
@@ -131,18 +127,5 @@ public class WorldObject implements Registerable {
      */
     public int getType() {
         return type;
-    }
-
-    /**
-     * Gets the registerable container.
-     * 
-     * @return the registerable container.
-     */
-    public static RegisterableWorldObject getRegisterable() {
-        if (registerable == null) {
-            registerable = new RegisterableWorldObject();
-        }
-
-        return registerable;
     }
 }

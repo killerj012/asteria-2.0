@@ -1,7 +1,7 @@
 package server.world.entity.player.content;
 
-import server.core.Rs2Engine;
 import server.util.Misc;
+import server.world.World;
 import server.world.entity.player.Player;
 
 /**
@@ -43,7 +43,7 @@ public class PrivateMessage {
                 continue;
             }
 
-            Player load = Rs2Engine.getWorld().getPlayer(Misc.longToName(l));
+            Player load = World.getPlayer(Misc.longToName(l));
 
             if (load != null) {
                 player.getPacketBuilder().loadPrivateMessage(l, 1);
@@ -55,7 +55,7 @@ public class PrivateMessage {
         /** Updates the list for all your friends. */
         long name = Misc.nameToLong(player.getUsername());
 
-        for (Player players : Rs2Engine.getWorld().getPlayers()) {
+        for (Player players : World.getPlayers()) {
             if (players == null)
                 continue;
 
@@ -73,7 +73,7 @@ public class PrivateMessage {
         /** Updates the list for all your friends. */
         long name = Misc.nameToLong(player.getUsername());
 
-        for (Player players : Rs2Engine.getWorld().getPlayers()) {
+        for (Player players : World.getPlayers()) {
             if (players == null)
                 continue;
 
@@ -112,7 +112,7 @@ public class PrivateMessage {
 
         long playerName = Misc.nameToLong(player.getUsername());
 
-        for (Player players : Rs2Engine.getWorld().getPlayers()) {
+        for (Player players : World.getPlayers()) {
             if (players == null)
                 continue;
 

@@ -2,11 +2,12 @@ package server.world.entity.npc;
 
 import java.util.Iterator;
 
-import server.core.Rs2Engine;
 import server.core.net.buffer.PacketBuffer;
 import server.core.net.buffer.PacketBuffer.ByteOrder;
 import server.core.net.buffer.PacketBuffer.ValueType;
+import server.core.worker.TaskFactory;
 import server.util.Misc;
+import server.world.World;
 import server.world.entity.UpdateFlags.Flag;
 import server.world.entity.player.Player;
 import server.world.map.Position;
@@ -52,8 +53,8 @@ public class NpcUpdate {
         }
 
         /** Update the local NPC list itself. */
-        for (int i = 0; i < Rs2Engine.getWorld().getNpcs().length; i++) {
-            Npc npc = Rs2Engine.getWorld().getNpcs()[i];
+        for (int i = 0; i < World.getNpcs().getCapacity(); i++) {
+            Npc npc = World.getNpcs().get(i);
 
             if (npc == null || player.getNpcs().contains(npc) || !npc.isVisible()) {
                 continue;
@@ -84,7 +85,7 @@ public class NpcUpdate {
 
         /** Ship the packet out to the client. */
         out.finishVariableShortPacketHeader();
-        Rs2Engine.getEncoder().encode(out, player.getSession());
+        player.getSession().encode(out);
     }
 
     /**
@@ -232,14 +233,14 @@ public class NpcUpdate {
 
             try {
                 npc.setHasDied(true);
-                Rs2Engine.getWorld().submit(npc.death());
+                TaskFactory.getFactory().submit(npc.death());
             } catch (Exception e) {
                 e.printStackTrace();
             }
         }
 
         out.writeByte(npc.getSecondaryHit().getDamage(), ValueType.A);
-        out.writeByte(npc.getSecondaryHit().getDamageType().ordinal(), ValueType.C);
+        out.writeByte(npc.getSecondaryHit().getType().getId(), ValueType.C);
         out.writeByte(npc.getCurrentHealth(), ValueType.A);
         out.writeByte(npc.getMaxHealth());
     }
@@ -284,14 +285,14 @@ public class NpcUpdate {
 
             try {
                 npc.setHasDied(true);
-                Rs2Engine.getWorld().submit(npc.death());
+                TaskFactory.getFactory().submit(npc.death());
             } catch (Exception e) {
                 e.printStackTrace();
             }
         }
 
         out.writeByte(npc.getPrimaryHit().getDamage(), ValueType.C);
-        out.writeByte(npc.getPrimaryHit().getDamageType().ordinal(), ValueType.S);
+        out.writeByte(npc.getPrimaryHit().getType().getId(), ValueType.S);
         out.writeByte(npc.getCurrentHealth(), ValueType.S);
         out.writeByte(npc.getMaxHealth(), ValueType.C);
     }

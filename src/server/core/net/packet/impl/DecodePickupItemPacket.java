@@ -3,6 +3,8 @@ package server.core.net.packet.impl;
 import server.core.net.buffer.PacketBuffer.ByteOrder;
 import server.core.net.buffer.PacketBuffer.ReadBuffer;
 import server.core.net.packet.PacketDecoder;
+import server.core.net.packet.PacketOpcodeHeader;
+import server.world.World;
 import server.world.entity.player.Player;
 import server.world.entity.player.skill.SkillEvent;
 import server.world.item.Item;
@@ -14,6 +16,7 @@ import server.world.map.Position;
  * 
  * @author lare96
  */
+@PacketOpcodeHeader( { 236 })
 public class DecodePickupItemPacket extends PacketDecoder {
 
     @Override
@@ -28,10 +31,13 @@ public class DecodePickupItemPacket extends PacketDecoder {
             @Override
             public void run() {
                 if (player.getPosition().equals(new Position(itemX, itemY, player.getPosition().getZ()))) {
-                    GroundItem worldItem = GroundItem.getRegisterable().searchDatabase(new GroundItem(new Item(itemId, 1), new Position(itemX, itemY, player.getPosition().getZ()), player));
+
+                    // XXX: vv is always null
+                    GroundItem worldItem = World.getGroundItems().searchDatabase(new GroundItem(new Item(itemId, 1), new Position(itemX, itemY, player.getPosition().getZ()), player));
 
                     if (worldItem == null) {
-                        player.getPacketBuilder().sendMessage("The item you are trying to pickup is not in the item database.");
+                        player.getPacketBuilder().sendMessage("Nothing interesting happens.");
+                        player.getPacketBuilder().removeGroundItem(World.getGroundItems().searchDatabase(new GroundItem(new Item(itemId, 1), new Position(itemX, itemY, player.getPosition().getZ()), player)));
                         return;
                     }
 
@@ -40,14 +46,9 @@ public class DecodePickupItemPacket extends PacketDecoder {
                         return;
                     }
 
-                    GroundItem.getRegisterable().firePickupEvent(worldItem, player);
+                    World.getGroundItems().firePickupEvent(worldItem, player);
                 }
             }
         });
-    }
-
-    @Override
-    public int[] opcode() {
-        return new int[] { 236 };
     }
 }

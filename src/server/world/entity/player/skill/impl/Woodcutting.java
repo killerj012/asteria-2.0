@@ -5,10 +5,11 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-import server.core.Rs2Engine;
+import server.core.worker.TaskFactory;
 import server.core.worker.WorkRate;
 import server.core.worker.Worker;
 import server.util.Misc;
+import server.world.World;
 import server.world.entity.Animation;
 import server.world.entity.player.Player;
 import server.world.entity.player.skill.SkillEvent;
@@ -37,7 +38,7 @@ public class Woodcutting extends SkillEvent {
      * A {@link HashSet} of the positions of {@link TreeStump}s currently
      * placed throughout the game.
      */
-    private static Set<Position> stumps = new HashSet<Position>();
+    private static Set<Position> treeSet = new HashSet<Position>();
 
     /**
      * All of the possible types of trees that can be cut.
@@ -359,7 +360,7 @@ public class Woodcutting extends SkillEvent {
         player.getMovementQueue().reset();
 
         /** Submit the woodcutting worker. */
-        Rs2Engine.getWorld().submit(new Worker(Misc.getRandom().nextInt(getWoodcuttingTime(player, tree, axe)) + 1, false, WorkRate.APPROXIMATE_SECOND) {
+        TaskFactory.getFactory().submit(new Worker(Misc.getRandom().nextInt(getWoodcuttingTime(player, tree, axe)) + 1, false, WorkRate.APPROXIMATE_SECOND) {
             @Override
             public void fire() {
 
@@ -367,7 +368,7 @@ public class Woodcutting extends SkillEvent {
                  * Block and cancel this worker if there is a stump where you
                  * are cutting (someone cut the tree faster than you).
                  */
-                if (isStumpOnPosition(position)) {
+                if (isTreeStump(position)) {
                     fireResetEvent(player);
                     this.cancel();
                     return;
@@ -424,7 +425,7 @@ public class Woodcutting extends SkillEvent {
          * Because the woodcutting animation is based on a strict time we use a
          * separate worker for the animation.
          */
-        Rs2Engine.getWorld().submit(new Worker(5, true) {
+        TaskFactory.getFactory().submit(new Worker(5, true) {
             @Override
             public void fire() {
 
@@ -459,15 +460,15 @@ public class Woodcutting extends SkillEvent {
         final TreeStump treeStump = tree.getStumpObject(objectId);
 
         /** Place the stump object. */
-        WorldObject.getRegisterable().register(new WorldObject(treeStump.getStumpId(), position, Rotation.SOUTH, 10));
-        stumps.add(position);
+        World.getObjects().register(new WorldObject(treeStump.getStumpId(), position, Rotation.SOUTH, 10));
+        treeSet.add(position);
 
         /** Submit a worker to respawn the tree in place of the stump. */
-        Rs2Engine.getWorld().submit(new Worker(tree.getRespawnTime(), false, WorkRate.APPROXIMATE_SECOND) {
+        TaskFactory.getFactory().submit(new Worker(tree.getRespawnTime(), false, WorkRate.APPROXIMATE_SECOND) {
             @Override
             public void fire() {
-                WorldObject.getRegisterable().register(new WorldObject(treeStump.getTreeId(), position, Rotation.SOUTH, 10));
-                stumps.remove(position);
+                World.getObjects().register(new WorldObject(treeStump.getTreeId(), position, Rotation.SOUTH, 10));
+                treeSet.remove(position);
                 this.cancel();
             }
         });
@@ -481,13 +482,8 @@ public class Woodcutting extends SkillEvent {
      *        the position to check for a stump.
      * @return true if there is on stump on the position.
      */
-    private boolean isStumpOnPosition(Position position) {
-        for (Position p : stumps) {
-            if (p.equals(position)) {
-                return true;
-            }
-        }
-        return false;
+    private boolean isTreeStump(Position position) {
+        return treeSet.contains(position);
     }
 
     /**

@@ -1,6 +1,5 @@
 package server.world.entity.player.content;
 
-import server.core.Rs2Engine;
 import server.core.net.buffer.PacketBuffer;
 import server.util.Misc;
 import server.world.entity.player.Player;
@@ -403,7 +402,7 @@ public class TradeSession {
         }
 
         out.finishVariableShortPacketHeader();
-        Rs2Engine.getEncoder().encode(out, player.getSession());
+        player.getSession().encode(out);
     }
 
     /**
@@ -433,7 +432,7 @@ public class TradeSession {
         }
 
         out.finishVariableShortPacketHeader();
-        Rs2Engine.getEncoder().encode(out, player.getSession());
+        player.getSession().encode(out);
     }
 
     /**

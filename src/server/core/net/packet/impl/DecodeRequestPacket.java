@@ -1,9 +1,10 @@
 package server.core.net.packet.impl;
 
-import server.core.Rs2Engine;
 import server.core.net.buffer.PacketBuffer.ByteOrder;
 import server.core.net.buffer.PacketBuffer.ReadBuffer;
 import server.core.net.packet.PacketDecoder;
+import server.core.net.packet.PacketOpcodeHeader;
+import server.world.World;
 import server.world.entity.player.Player;
 import server.world.entity.player.skill.SkillEvent;
 
@@ -13,12 +14,13 @@ import server.world.entity.player.skill.SkillEvent;
  * 
  * @author lare96
  */
+@PacketOpcodeHeader( { 139 })
 public class DecodeRequestPacket extends PacketDecoder {
 
     @Override
     public void decode(Player player, ReadBuffer in) {
         int requestId = in.readShort(true, ByteOrder.LITTLE);
-        Player request = Rs2Engine.getWorld().getPlayers()[requestId];
+        Player request = World.getPlayers().get(requestId);
 
         if (request == null) {
             return;
@@ -32,10 +34,5 @@ public class DecodeRequestPacket extends PacketDecoder {
                 break;
 
         }
-    }
-
-    @Override
-    public int[] opcode() {
-        return new int[] { 139 };
     }
 }

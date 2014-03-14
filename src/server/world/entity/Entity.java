@@ -2,7 +2,6 @@ package server.world.entity;
 
 import server.core.worker.Worker;
 import server.util.Misc;
-import server.world.Registerable;
 import server.world.entity.UpdateFlags.Flag;
 import server.world.entity.combat.CombatSession;
 import server.world.entity.combat.Hit;
@@ -17,7 +16,7 @@ import server.world.map.Position;
  * 
  * @author lare96
  */
-public abstract class Entity implements Registerable {
+public abstract class Entity {
 
     /** The index of the entity. */
     private int slot = -1;
@@ -113,16 +112,6 @@ public abstract class Entity implements Registerable {
     public abstract void move(Position position);
 
     /**
-     * Registers this entity for processing.
-     */
-    public abstract void register();
-
-    /**
-     * Unregisters this entity from processing.
-     */
-    public abstract void unregister();
-
-    /**
      * Prompts this entity to start following another entity.
      * 
      * @param entity
@@ -166,22 +155,22 @@ public abstract class Entity implements Registerable {
     /**
      * Force chat for this entity.
      * 
-     * @param text
+     * @param forcedText
      *        the text to force.
      */
-    public void forceChat(String text) {
-        this.setForcedText(text);
+    public void forceChat(String forcedText) {
+        this.forcedText = forcedText;
         this.getFlags().flag(Flag.FORCED_CHAT);
     }
 
     /**
      * Make this entity face another entity.
      * 
-     * @param index
+     * @param faceIndex
      *        the index of the entity to face.
      */
-    public void faceEntity(int index) {
-        this.setFaceIndex(index);
+    public void faceEntity(int faceIndex) {
+        this.faceIndex = faceIndex;
         this.getFlags().flag(Flag.FACE_ENTITY);
     }
 
@@ -200,11 +189,11 @@ public abstract class Entity implements Registerable {
     /**
      * Deal primary damage to this entity.
      * 
-     * @param hit
+     * @param primaryHit
      *        the damage and hit-type.
      */
-    public void primaryHit(Hit hit) {
-        this.setPrimaryHit(hit);
+    public void dealDamage(Hit primaryHit) {
+        this.primaryHit = primaryHit.clone();
         this.getFlags().flag(Flag.HIT);
 
         if (this instanceof Player) {
@@ -218,11 +207,11 @@ public abstract class Entity implements Registerable {
     /**
      * Deal secondary damage to this entity.
      * 
-     * @param hit
+     * @param secondaryHit
      *        the damage and hit-type.
      */
-    public void secondaryHit(Hit hit) {
-        this.setSecondaryHit(hit);
+    public void dealSecondaryDamage(Hit secondaryHit) {
+        this.secondaryHit = secondaryHit.clone();
         this.getFlags().flag(Flag.HIT_2);
 
         if (this instanceof Player) {
@@ -253,6 +242,8 @@ public abstract class Entity implements Registerable {
     }
 
     /**
+     * Gets this entity's position.
+     * 
      * @return the position.
      */
     public Position getPosition() {
@@ -260,80 +251,102 @@ public abstract class Entity implements Registerable {
     }
 
     /**
-     * @return the primaryDirection.
+     * Gets the primary direction for this entity.
+     * 
+     * @return the primary direction.
      */
     public int getPrimaryDirection() {
         return primaryDirection;
     }
 
     /**
+     * Sets the primary direction for this entity.
+     * 
      * @param primaryDirection
-     *        the primaryDirection to set.
+     *        the primary direction to set.
      */
     public void setPrimaryDirection(int primaryDirection) {
         this.primaryDirection = primaryDirection;
     }
 
     /**
-     * @return the secondaryDirection.
+     * Gets the secondary direction for this entity.
+     * 
+     * @return the secondary direction.
      */
     public int getSecondaryDirection() {
         return secondaryDirection;
     }
 
     /**
+     * Sets the secondary direction for this entity.
+     * 
      * @param secondaryDirection
-     *        the secondaryDirection to set.
+     *        the secondary direction to set.
      */
     public void setSecondaryDirection(int secondaryDirection) {
         this.secondaryDirection = secondaryDirection;
     }
 
     /**
-     * @return the needsPlacement.
+     * Gets if this entity needs placement.
+     * 
+     * @return true if this entity needs placement.
      */
     public boolean isNeedsPlacement() {
         return needsPlacement;
     }
 
     /**
+     * Sets if this entity needs placement.
+     * 
      * @param needsPlacement
-     *        the needsPlacement to set.
+     *        true if this entity needs placement.
      */
     public void setNeedsPlacement(boolean needsPlacement) {
         this.needsPlacement = needsPlacement;
     }
 
     /**
-     * @return the resetMovementQueue.
+     * Gets if this entity is reset movement queue.
+     * 
+     * @return true if the entity is reset movement queue.
      */
     public boolean isResetMovementQueue() {
         return resetMovementQueue;
     }
 
     /**
+     * Sets if this entity is reset movement queue.
+     * 
      * @param resetMovementQueue
-     *        the resetMovementQueue to set.
+     *        true if the entity is reset movement queue.
      */
     public void setResetMovementQueue(boolean resetMovementQueue) {
         this.resetMovementQueue = resetMovementQueue;
     }
 
     /**
-     * @return the movementHandler.
+     * Gets the movement queue.
+     * 
+     * @return the movement queue.
      */
     public MovementQueue getMovementQueue() {
         return movementQueue;
     }
 
     /**
-     * @return the currentRegion.
+     * Gets the current region.
+     * 
+     * @return the current region.
      */
     public Position getCurrentRegion() {
         return currentRegion;
     }
 
     /**
+     * Gets the update flags.
+     * 
      * @return the flags.
      */
     public UpdateFlags getFlags() {
@@ -341,36 +354,26 @@ public abstract class Entity implements Registerable {
     }
 
     /**
-     * @return the forcedText.
+     * Gets the forced text.
+     * 
+     * @return the forced text.
      */
     public String getForcedText() {
         return forcedText;
     }
 
     /**
-     * @param forcedText
-     *        the forcedText to set.
-     */
-    private void setForcedText(String forcedText) {
-        this.forcedText = forcedText;
-    }
-
-    /**
-     * @return the faceIndex.
+     * Gets the face index.
+     * 
+     * @return the face index.
      */
     public int getFaceIndex() {
         return faceIndex;
     }
 
     /**
-     * @param faceIndex
-     *        the faceIndex to set.
-     */
-    private void setFaceIndex(int faceIndex) {
-        this.faceIndex = faceIndex;
-    }
-
-    /**
+     * Get the face coordinates for this entity.
+     * 
      * @return the faceCoordinates.
      */
     public Position getFaceCoordinates() {
@@ -378,6 +381,8 @@ public abstract class Entity implements Registerable {
     }
 
     /**
+     * Get the primary hit for this entity.
+     * 
      * @return the primaryHit.
      */
     public Hit getPrimaryHit() {
@@ -385,14 +390,8 @@ public abstract class Entity implements Registerable {
     }
 
     /**
-     * @param primaryHit
-     *        the primaryHit to set.
-     */
-    private void setPrimaryHit(Hit primaryHit) {
-        this.primaryHit = primaryHit;
-    }
-
-    /**
+     * Get the secondary hit for this entity.
+     * 
      * @return the secondaryHit.
      */
     public Hit getSecondaryHit() {
@@ -400,14 +399,8 @@ public abstract class Entity implements Registerable {
     }
 
     /**
-     * @param secondaryHit
-     *        the secondaryHit to set.
-     */
-    private void setSecondaryHit(Hit secondaryHit) {
-        this.secondaryHit = secondaryHit;
-    }
-
-    /**
+     * Get if this entity has died.
+     * 
      * @return the hasDied.
      */
     public boolean isHasDied() {
@@ -415,6 +408,8 @@ public abstract class Entity implements Registerable {
     }
 
     /**
+     * Set if this entity has died.
+     * 
      * @param hasDied
      *        the hasDied to set.
      */
@@ -423,6 +418,8 @@ public abstract class Entity implements Registerable {
     }
 
     /**
+     * Gets the death ticks.
+     * 
      * @return the deathTicks.
      */
     public int getDeathTicks() {
@@ -430,6 +427,8 @@ public abstract class Entity implements Registerable {
     }
 
     /**
+     * Sets the death ticks.
+     * 
      * @param deathTicks
      *        the deathTicks to set.
      */
@@ -445,6 +444,8 @@ public abstract class Entity implements Registerable {
     }
 
     /**
+     * Gets the animation.
+     * 
      * @return the animation.
      */
     public Animation getAnimation() {
@@ -452,6 +453,8 @@ public abstract class Entity implements Registerable {
     }
 
     /**
+     * Gets the gfx.
+     * 
      * @return the gfx.
      */
     public Gfx getGfx() {
@@ -459,6 +462,8 @@ public abstract class Entity implements Registerable {
     }
 
     /**
+     * Gets if this entity is in retaliate mode.
+     * 
      * @return the isAutoRetaliate.
      */
     public boolean isAutoRetaliate() {
@@ -466,6 +471,8 @@ public abstract class Entity implements Registerable {
     }
 
     /**
+     * Sets if this entity is in retaliate mode.
+     * 
      * @param isAutoRetaliate
      *        the isAutoRetaliate to set.
      */
@@ -483,6 +490,8 @@ public abstract class Entity implements Registerable {
     }
 
     /**
+     * Gets if this entity is registered.
+     * 
      * @return the unregistered.
      */
     public boolean isUnregistered() {
@@ -490,6 +499,8 @@ public abstract class Entity implements Registerable {
     }
 
     /**
+     * Sets if this entity is registered,
+     * 
      * @param unregistered
      *        the unregistered to set.
      */
@@ -498,6 +509,8 @@ public abstract class Entity implements Registerable {
     }
 
     /**
+     * Gets the wilderness interface.
+     * 
      * @return the wildernessInterface.
      */
     public boolean isWildernessInterface() {
@@ -505,6 +518,8 @@ public abstract class Entity implements Registerable {
     }
 
     /**
+     * Sets the wilderness interface.
+     * 
      * @param wildernessInterface
      *        the wildernessInterface to set.
      */
@@ -513,6 +528,8 @@ public abstract class Entity implements Registerable {
     }
 
     /**
+     * Gets the multicombat interface.
+     * 
      * @return the multiCombatInterface.
      */
     public boolean isMultiCombatInterface() {
@@ -520,6 +537,8 @@ public abstract class Entity implements Registerable {
     }
 
     /**
+     * Sets the multicombat interface.
+     * 
      * @param multiCombatInterface
      *        the multiCombatInterface to set.
      */
@@ -528,22 +547,28 @@ public abstract class Entity implements Registerable {
     }
 
     /**
-     * @return the type
+     * Gets the combat type.
+     * 
+     * @return the type.
      */
     public CombatType getType() {
         return type;
     }
 
     /**
+     * Sets the combat type.
+     * 
      * @param type
-     *        the type to set
+     *        the type to set.
      */
     public void setType(CombatType type) {
         this.type = type;
     }
 
     /**
-     * @return the combatSession
+     * Gets the combat session.
+     * 
+     * @return the combat session.
      */
     public CombatSession getCombatSession() {
         return combatSession;

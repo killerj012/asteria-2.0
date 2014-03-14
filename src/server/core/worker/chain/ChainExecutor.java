@@ -4,7 +4,7 @@ import java.util.Collection;
 import java.util.LinkedList;
 import java.util.Queue;
 
-import server.core.Rs2Engine;
+import server.core.worker.TaskFactory;
 import server.core.worker.WorkRate;
 import server.core.worker.Worker;
 
@@ -64,39 +64,25 @@ import server.core.worker.Worker;
  */
 public class ChainExecutor {
 
-    /**
-     * Queue of internal workers in this factory executor.
-     */
+    /** Queue of internal workers in this factory executor. */
     private Queue<ChainWorker> internalWorkers = new LinkedList<ChainWorker>();
 
-    /**
-     * A temporary queue of workers that will be use for polling operations.
-     */
-    private Queue<ChainWorker> workers = new LinkedList<ChainWorker>();
+    /** A temporary queue of workers that will be use for polling operations. */
+    private Queue<ChainWorker> operationWorkers = new LinkedList<ChainWorker>();
 
-    /**
-     * The name of this factory executor.
-     */
+    /** The name of this factory executor. */
     private String name = "factory-executor";
 
-    /**
-     * If this factory executor is running.
-     */
+    /** If this factory executor is running. */
     private boolean runningExecutor;
 
-    /**
-     * If the internal queue should be emptied on shutdown.
-     */
+    /** If the internal queue should be emptied on shutdown. */
     private boolean shouldEmpty;
 
-    /**
-     * The amount of delays passed.
-     */
+    /** The amount of delays passed. */
     private int delayPassed;
 
-    /**
-     * The rate to fire tasks at.
-     */
+    /** The rate to fire tasks at. */
     private WorkRate fireRate = WorkRate.DEFAULT;
 
     /**
@@ -137,9 +123,6 @@ public class ChainExecutor {
      */
     public ChainExecutor() {
 
-        /**
-         * Nothing in here so the default settings will remain the same.
-         */
     }
 
     /**
@@ -159,10 +142,10 @@ public class ChainExecutor {
         runningExecutor = true;
 
         /** Sets the temporary workers to the internal queue. */
-        workers.addAll(internalWorkers);
+        operationWorkers.addAll(internalWorkers);
 
         /** Schedules all of the temporary workers in chronological order. */
-        Rs2Engine.getWorld().submit(new Worker(1, false, fireRate) {
+        TaskFactory.getFactory().submit(new Worker(1, false, fireRate) {
             @Override
             public void fire() {
 
@@ -173,7 +156,7 @@ public class ChainExecutor {
                 }
 
                 /** Retrieves the next worker in this chain without removing it. */
-                ChainWorker e = workers.peek();
+                ChainWorker e = operationWorkers.peek();
 
                 /**
                  * If a worker exists check if it is ready for execution. If the
@@ -185,7 +168,7 @@ public class ChainExecutor {
 
                     if (delayPassed == e.delay() && isRunningExecutor()) {
                         e.fire();
-                        workers.remove();
+                        operationWorkers.remove();
                         delayPassed = 0;
                     }
 
@@ -243,7 +226,7 @@ public class ChainExecutor {
         }
 
         /** Clears the temporary workers. */
-        workers.clear();
+        operationWorkers.clear();
     }
 
     /**
@@ -352,8 +335,8 @@ public class ChainExecutor {
     }
 
     /**
-     * Gets if this {@link ChainExecutor} should be emptied when it is
-     * canceled and/or shutdown.
+     * Gets if this {@link ChainExecutor} should be emptied when it is canceled
+     * and/or shutdown.
      * 
      * @return true if it should be emptied.
      */
@@ -362,8 +345,8 @@ public class ChainExecutor {
     }
 
     /**
-     * Determine whether this {@link ChainExecutor} should be emptied when it
-     * is shutdown.
+     * Determine whether this {@link ChainExecutor} should be emptied when it is
+     * shutdown.
      * 
      * @param shouldEmpty
      *        if this {@link ChainExecutor} should be emptied when it is

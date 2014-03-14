@@ -38,13 +38,10 @@ public class Gfx {
     }
 
     /**
-     * Creates a new graphic with the default values.
+     * Create a new {@link Gfx}.
      */
     public Gfx() {
 
-        /**
-         * Nothing in here so the default values remain unchanged.
-         */
     }
 
     /**

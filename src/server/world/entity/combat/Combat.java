@@ -1,6 +1,6 @@
 package server.world.entity.combat;
 
-import server.core.Rs2Engine;
+import server.core.worker.TaskFactory;
 import server.core.worker.listener.EventListener;
 import server.util.Misc;
 import server.world.entity.Entity;
@@ -130,7 +130,7 @@ public class Combat {
          * A new listener that will start combat for us when/if certain
          * conditions are met.
          */
-        Rs2Engine.getWorld().submit(new EventListener() {
+        TaskFactory.getFactory().submit(new EventListener() {
             @Override
             public boolean listenForEvent() {
 

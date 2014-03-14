@@ -9,6 +9,7 @@ import server.world.item.ItemContainer.ContainerPolicy;
  * Uses an {@link ItemContainer} to manage items stored in a player's bank.
  * 
  * @author lare96
+ * @author Vix
  */
 public class BankContainer {
 
@@ -52,7 +53,7 @@ public class BankContainer {
      * @param item
      *        the item to deposit into your bank.
      */
-    public void deposit(int slot, Item item) {
+    public void addItem(int slot, Item item) {
 
         /** The item you are depositing. */
         Item inventoryItem = player.getInventory().getContainer().getItem(slot);
@@ -158,7 +159,7 @@ public class BankContainer {
      * @param item
      *        the item to withdraw from your bank.
      */
-    public void withdraw(int slot, Item item) {
+    public void deleteItem(int slot, Item item) {
 
         /** Gets if the requested item is noted. */
         boolean withdrawItemNoted = item.getDefinition().isNoteable();
@@ -233,7 +234,7 @@ public class BankContainer {
      * @param item
      *        the item to withdraw from your bank.
      */
-    public void withdraw(Item item) {
+    public void deleteItem(Item item) {
 
         /** Gets how many of the requested item is already in the bank. */
         int withdrawAmount = container.getCount(item.getId());

@@ -17,7 +17,7 @@ public class HostGateway {
     private static Logger logger = Logger.getLogger(HostGateway.class.getSimpleName());
 
     /** The maximum amount of connections per host. */
-    public static final int MAX_CONNECTIONS_PER_HOST = 2;
+    public static final int MAX_CONNECTIONS_PER_HOST = 1;
 
     /** Used to keep track of hosts and their amount of connections. */
     private static ConcurrentHashMap<String, Integer> hostMap = new ConcurrentHashMap<String, Integer>();
@@ -54,7 +54,7 @@ public class HostGateway {
             return false;
         }
 
-        Integer amount = hostMap.put(host, 1);
+        Integer amount = hostMap.putIfAbsent(host, 1);
 
         /** If the host was not in the map, they're clear to go. */
         if (amount == null) {
@@ -69,7 +69,7 @@ public class HostGateway {
         }
 
         /** Otherwise, replace the key with the next value if it was present. */
-        hostMap.put(host, amount + 1);
+        hostMap.putIfAbsent(host, amount + 1);
         logger.info("Session request from " + host + "(" + hostMap.get(host) + ") accepted.");
         return true;
     }
@@ -107,7 +107,7 @@ public class HostGateway {
 
         /** Or decrement the amount of connections stored. */
         if (amount > 1) {
-            hostMap.put(host, amount - 1);
+            hostMap.putIfAbsent(host, amount - 1);
         }
     }
 

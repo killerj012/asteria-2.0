@@ -10,10 +10,10 @@ import java.lang.reflect.Modifier;
 import java.util.List;
 import java.util.Random;
 import java.util.Scanner;
-import java.util.logging.Logger;
 
 import server.core.net.packet.PacketDecoder;
 import server.core.net.security.HostGateway;
+import server.world.World;
 import server.world.entity.npc.Npc;
 import server.world.entity.npc.NpcDeathDrop;
 import server.world.entity.npc.NpcDefinition;
@@ -24,9 +24,7 @@ import server.world.entity.player.skill.SkillEvent;
 import server.world.entity.player.skill.impl.Fishing.Fish;
 import server.world.item.Item;
 import server.world.item.ItemDefinition;
-import server.world.item.ground.GroundItem;
 import server.world.item.ground.StaticGroundItem;
-import server.world.map.Location;
 import server.world.map.Position;
 import server.world.music.Music;
 import server.world.object.WorldObject;
@@ -50,9 +48,6 @@ import com.google.gson.JsonSyntaxException;
  * @author lare96
  */
 public final class Misc {
-
-    /** A {@link Logger} for printing debugging info. */
-    private static Logger logger = Logger.getLogger(Misc.class.getSimpleName());
 
     /** An instance of the random class for arithmetic operations. */
     private static Random random = new Random();
@@ -261,26 +256,31 @@ public final class Misc {
                 if (keyword.equals("#dialogue")) {
                     Class<?> file = Class.forName(path);
 
-                    if (file.getSuperclass() == NpcDialogue.class) {
-                        NpcDialogue dialogue = (NpcDialogue) file.newInstance();
-
-                        NpcDialogue.getDialogueMap().put(dialogue.dialogueId(), dialogue);
-                        parsed++;
+                    if (!(file.getSuperclass() == NpcDialogue.class)) {
+                        throw new IllegalStateException("Illegal dialogue! Not an instance of NpcDialogue: " + path);
                     }
+
+                    NpcDialogue dialogue = (NpcDialogue) file.newInstance();
+                    NpcDialogue.getDialogueMap().put(dialogue.dialogueId(), dialogue);
+                    parsed++;
                 } else if (keyword.equals("#skill")) {
                     Class<?> file = Class.forName(path);
 
-                    if (file.getSuperclass() == SkillEvent.class) {
-                        SkillEvent.getSkillEvents().add((SkillEvent) file.newInstance());
-                        parsed++;
+                    if (!(file.getSuperclass() == SkillEvent.class)) {
+                        throw new IllegalStateException("Illegal skill! Not an instance of SkillEvent: " + path);
                     }
+
+                    SkillEvent.getSkillEvents().add((SkillEvent) file.newInstance());
+                    parsed++;
                 } else if (keyword.equals("#packet")) {
                     Class<?> file = Class.forName(path);
 
-                    if (file.getSuperclass() == PacketDecoder.class) {
-                        PacketDecoder.addDecoder((PacketDecoder) file.newInstance());
-                        parsed++;
+                    if (!(file.getSuperclass() == PacketDecoder.class)) {
+                        throw new IllegalStateException("Illegal packet decoder! Not an instance of PacketDecoder: " + path);
                     }
+
+                    PacketDecoder.addDecoder((PacketDecoder) file.newInstance());
+                    parsed++;
                 }
                 // TODO: commands and minigames
             }
@@ -288,7 +288,7 @@ public final class Misc {
             scanner.close();
         }
 
-        logger.info("Coded " + parsed + " file utilities!");
+        // logger.info("Coded " + parsed + " file utilities!");
     }
 
     /**
@@ -317,7 +317,7 @@ public final class Misc {
 
             Npc npc = new Npc(id, position);
             npc.getMovementCoordinator().setCoordinator(coordinator);
-            npc.register();
+            World.getNpcs().add(npc);
         }
     }
 
@@ -339,10 +339,15 @@ public final class Misc {
             int id = reader.get("song-id").getAsInt();
             int tabId = reader.get("music-tab-id").getAsInt();
             int buttonId = reader.get("music-button-id").getAsInt();
-            Location[] playedIn = builder.fromJson(reader.get("location").getAsJsonArray(), Location[].class);
+            String unlock = reader.get("unlock-description").getAsString();
+            int[] regions = builder.fromJson(reader.get("regions").getAsJsonArray(), int[].class);
 
-            Music music = new Music(name, id, tabId, buttonId, playedIn);
-            Music.getMusic().put(music.getSongId(), music);
+            Music music = new Music(name, id, tabId, buttonId, unlock, regions);
+            Music.getMusic()[music.getSongId()] = music;
+
+            for (int region : regions) {
+                Music.getMusicRegion()[region] = music;
+            }
         }
     }
 
@@ -500,7 +505,7 @@ public final class Misc {
 
             int type = reader.get("type").getAsInt();
 
-            WorldObject.getRegisterable().getObjects().add(new WorldObject(id, new Position(x, y, z), face, type));
+            World.getObjects().getObjectSet().add(new WorldObject(id, new Position(x, y, z), face, type));
             parsed++;
         }
     }
@@ -519,7 +524,7 @@ public final class Misc {
             JsonObject reader = (JsonObject) array.get(i);
 
             StaticGroundItem item = new StaticGroundItem(new Item(reader.get("id").getAsInt(), reader.get("amount").getAsInt()), new Position(reader.get("x").getAsInt(), reader.get("y").getAsInt(), reader.get("z").getAsInt()), false, reader.get("respawns").getAsBoolean());
-            GroundItem.getRegisterable().register(item);
+            World.getGroundItems().register(item);
         }
     }
 
@@ -595,7 +600,7 @@ public final class Misc {
             scanner.close();
         }
 
-        logger.info("Coded " + parsed + " equipment utilities!");
+        // logger.info("Coded " + parsed + " equipment utilities!");
     }
 
     /**
@@ -944,6 +949,25 @@ public final class Misc {
         public int getEnd() {
             return end;
         }
+    }
+
+    /**
+     * A container that contains a single runnable method which can take any
+     * type as its parameter.
+     * 
+     * @author lare96
+     * @param <T>
+     *        the type to use as the parameter.
+     */
+    public static interface GenericAction<T> {
+
+        /**
+         * The action that will be executed.
+         * 
+         * @param type
+         *        the type that will be used as the parameter.
+         */
+        public void fireAction(final T type);
     }
 
     /**

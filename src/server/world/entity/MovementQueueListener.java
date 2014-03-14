@@ -1,6 +1,6 @@
 package server.world.entity;
 
-import server.core.Rs2Engine;
+import server.core.worker.TaskFactory;
 import server.core.worker.listener.EventListener;
 
 /**
@@ -77,6 +77,6 @@ public class MovementQueueListener {
         };
 
         /** Schedule the listener. */
-        Rs2Engine.getWorld().submit(listener);
+        TaskFactory.getFactory().submit(listener);
     }
 }

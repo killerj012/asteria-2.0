@@ -1,6 +1,5 @@
 package server.world.entity.player.minigame;
 
-import server.core.worker.Logic;
 import server.core.worker.Worker;
 
 /**

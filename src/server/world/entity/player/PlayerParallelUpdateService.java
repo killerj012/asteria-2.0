@@ -1,43 +1,42 @@
-package server.core.task;
+package server.world.entity.player;
 
-import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.Phaser;
 import java.util.logging.Logger;
 
+import server.core.Service;
 import server.world.entity.npc.NpcUpdate;
-import server.world.entity.player.Player;
-import server.world.entity.player.PlayerUpdate;
 
 /**
  * A concurrent task that performs updating on a single {@link Player}.
  * 
  * @author lare96
  */
-public class ParallelPlayerUpdateTask implements Runnable {
+public class PlayerParallelUpdateService implements Service {
 
     /** A {@link Logger} for printing debugging info. */
-    private static Logger logger = Logger.getLogger(ParallelPlayerUpdateTask.class.getSimpleName());
+    private static Logger logger = Logger.getLogger(PlayerParallelUpdateService.class.getSimpleName());
 
     /** The {@link Player} to perform updating on. */
     private Player player;
 
     /**
-     * The {@link CountDownLatch} being used to keep the main game thread in
-     * sync with updating.
+     * The {@link Phaser} being used to allow the main game thread to wait for
+     * updating to complete.
      */
-    private CountDownLatch updateLatch;
+    private Phaser phaser;
 
     /**
-     * Create a new {@link ParallelPlayerUpdateTask}.
+     * Create a new {@link PlayerParallelUpdateService}.
      * 
      * @param player
-     *        the {@link Player} to perform updating on.
-     * @param updateLatch
-     *        the {@link CountDownLatch} being used to keep the main game thread
-     *        in sync with updating.
+     *        the player to perform updating on.
+     * @param phaser
+     *        the phaser being used to keep the main game thread in sync with
+     *        updating.
      */
-    public ParallelPlayerUpdateTask(Player player, CountDownLatch updateLatch) {
+    public PlayerParallelUpdateService(Player player, Phaser phaser) {
         this.player = player;
-        this.updateLatch = updateLatch;
+        this.phaser = phaser;
     }
 
     @Override
@@ -60,10 +59,15 @@ public class ParallelPlayerUpdateTask implements Runnable {
                 logger.warning(player + " error while updating concurrently!");
                 player.getSession().disconnect();
 
-                /** Count down the latch regardless if there was an error or not. */
+                /** Arrive at the phaser regardless if there was an error or not. */
             } finally {
-                updateLatch.countDown();
+                phaser.arrive();
             }
         }
+    }
+
+    @Override
+    public String name() {
+        return PlayerParallelUpdateService.class.getSimpleName();
     }
 }

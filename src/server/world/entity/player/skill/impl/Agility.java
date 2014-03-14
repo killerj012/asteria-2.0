@@ -3,7 +3,7 @@ package server.world.entity.player.skill.impl;
 import java.util.HashMap;
 import java.util.Map;
 
-import server.world.GenericAction;
+import server.util.Misc.GenericAction;
 import server.world.entity.player.Player;
 import server.world.entity.player.skill.SkillEvent;
 import server.world.entity.player.skill.SkillManager.SkillConstant;

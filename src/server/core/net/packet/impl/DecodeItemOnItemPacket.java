@@ -3,6 +3,7 @@ package server.core.net.packet.impl;
 import server.core.net.buffer.PacketBuffer;
 import server.core.net.buffer.PacketBuffer.ReadBuffer;
 import server.core.net.packet.PacketDecoder;
+import server.core.net.packet.PacketOpcodeHeader;
 import server.world.entity.player.Player;
 import server.world.entity.player.skill.impl.Firemaking;
 import server.world.entity.player.skill.impl.Firemaking.Log;
@@ -13,6 +14,7 @@ import server.world.item.Item;
  * 
  * @author lare96
  */
+@PacketOpcodeHeader( { 53 })
 public class DecodeItemOnItemPacket extends PacketDecoder {
 
     @Override
@@ -42,10 +44,5 @@ public class DecodeItemOnItemPacket extends PacketDecoder {
                 Firemaking.getSingleton().lightLog(player, l);
                 break;
         }
-    }
-
-    @Override
-    public int[] opcode() {
-        return new int[] { 53 };
     }
 }

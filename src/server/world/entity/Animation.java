@@ -27,7 +27,7 @@ public class Animation {
     }
 
     /**
-     * Create a new animation with a delay of 0.
+     * Create a new {@link Animation}.
      * 
      * @param id
      *        the id of the animation.
@@ -37,13 +37,10 @@ public class Animation {
     }
 
     /**
-     * Create a new animation with the default values.
+     * Create a new {@link Animation}.
      */
     public Animation() {
 
-        /**
-         * Nothing in here so the default values remain unchanged.
-         */
     }
 
     /**

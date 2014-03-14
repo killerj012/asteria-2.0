@@ -2,14 +2,10 @@ package server.core.net.buffer;
 
 import java.nio.ByteBuffer;
 
-import server.core.net.packet.PacketEncoder;
-
 /**
  * An abstract parent class for two buffer type objects, one for reading data
  * and one for writing data. Provides static factory methods for initializing
- * these child buffers. This buffer has been edited to write raw packet headers
- * with no cipher keys attached so the {@link PacketEncoder} can encode them
- * right before they're sent out.
+ * these child buffers. This buffer has been edited to write raw packet headers.
  * 
  * @author blakeman8192
  * @author lare96
@@ -67,7 +63,7 @@ public abstract class PacketBuffer {
      *        the data
      * @return a new InBuffer
      */
-    public static final ReadBuffer newInBuffer(ByteBuffer data) {
+    public static final ReadBuffer newReadBuffer(ByteBuffer data) {
         return new ReadBuffer(data);
     }
 
@@ -649,6 +645,7 @@ public abstract class PacketBuffer {
          * 
          * @param value
          *        the value
+         * @param cipher
          */
         public WriteBuffer writeHeader(int value) {
             writeByte(value);

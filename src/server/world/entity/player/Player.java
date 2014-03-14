@@ -5,12 +5,13 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.logging.Logger;
 
-import server.core.Rs2Engine;
 import server.core.net.Session;
-import server.core.net.packet.PacketEncoder.PacketBuilder;
+import server.core.net.packet.PacketEncoder;
+import server.core.worker.TaskFactory;
 import server.core.worker.Worker;
 import server.util.Misc;
 import server.util.Misc.Stopwatch;
+import server.world.World;
 import server.world.entity.Animation;
 import server.world.entity.Entity;
 import server.world.entity.Gfx;
@@ -35,11 +36,9 @@ import server.world.entity.player.skill.impl.Cooking.CookFish;
 import server.world.entity.player.skill.impl.Fishing.Fish;
 import server.world.entity.player.skill.impl.Smithing.Smelt;
 import server.world.item.Item;
-import server.world.item.ground.GroundItem;
 import server.world.map.Location;
 import server.world.map.Position;
 import server.world.music.MusicSet;
-import server.world.object.WorldObject;
 
 /**
  * Represents a logged-in player that is able to receive and send packets and
@@ -50,6 +49,9 @@ import server.world.object.WorldObject;
  */
 @SuppressWarnings("all")
 public class Player extends Entity {
+
+    /** How long this player has been in the cache for. */
+    private int cacheTicks;
 
     /** The credentials for this player's cannon. */
     private CannonCredentials cannonCredentials = new CannonCredentials(this);
@@ -344,7 +346,7 @@ public class Player extends Entity {
             case NORMAL_SPELLBOOK_TELEPORT:
                 animation(new Animation(714));
 
-                Rs2Engine.getWorld().submit(new Worker(1, false) {
+                TaskFactory.getFactory().submit(new Worker(1, false) {
                     @Override
                     public void fire() {
                         if (teleportStage == 1) {
@@ -364,7 +366,7 @@ public class Player extends Entity {
             case ANCIENTS_SPELLBOOK_TELEPORT:
                 animation(new Animation(1979));
 
-                Rs2Engine.getWorld().submit(new Worker(1, false) {
+                TaskFactory.getFactory().submit(new Worker(1, false) {
                     @Override
                     public void fire() {
                         if (teleportStage == 1) {
@@ -431,31 +433,9 @@ public class Player extends Entity {
         getPacketBuilder().sendMapRegion();
 
         if (position.getZ() != 0) {
-            GroundItem.getRegisterable().searchDatabaseHeightChange(this);
-            WorldObject.getRegisterable().removeOnHeight(this);
+            World.getGroundItems().searchDatabaseHeightChange(this);
+            World.getObjects().removeOnHeight(this);
         }
-    }
-
-    @Override
-    public void register() {
-        for (int i = 1; i < Rs2Engine.getWorld().getPlayers().length; i++) {
-            if (Rs2Engine.getWorld().getPlayers()[i] == null) {
-                Rs2Engine.getWorld().getPlayers()[i] = this;
-                this.setSlot(i);
-                return;
-            }
-        }
-        throw new IllegalStateException("Server is full!");
-    }
-
-    @Override
-    public void unregister() {
-        if (this.getSlot() == -1) {
-            return;
-        }
-
-        Rs2Engine.getWorld().getPlayers()[this.getSlot()] = null;
-        this.setUnregistered(true);
     }
 
     @Override
@@ -472,14 +452,14 @@ public class Player extends Entity {
      * Logs the player out.
      */
     public void logout() throws Exception {
-        if (username != null) {
-            Rs2Engine.getWorld().savePlayer(this);
-        }
-
-        Rs2Engine.getWorld().unregister(this);
+        World.getPlayers().remove(this);
 
         if (!session.isPacketDisconnect()) {
             getPacketBuilder().sendLogout();
+        }
+
+        if (username != null) {
+            World.savePlayer(this);
         }
 
         logger.info(this + " has logged out.");
@@ -930,7 +910,7 @@ public class Player extends Entity {
         this.fish = fish;
     }
 
-    public PacketBuilder getPacketBuilder() {
+    public PacketEncoder getPacketBuilder() {
         return session.getServerPacketBuilder();
     }
 
@@ -1394,5 +1374,17 @@ public class Player extends Entity {
      */
     public CannonCredentials getCannonCredentials() {
         return cannonCredentials;
+    }
+
+    public int getCacheTicks() {
+        return cacheTicks;
+    }
+
+    public void incrementCacheTicks() {
+        this.cacheTicks += 2;
+    }
+
+    public void clearCacheTicks() {
+        this.cacheTicks = 0;
     }
 }

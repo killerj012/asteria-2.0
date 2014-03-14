@@ -9,6 +9,7 @@ import server.world.item.ItemContainer.ContainerPolicy;
  * Uses an {@link ItemContainer} to manage items in a player's inventory.
  * 
  * @author lare96
+ * @author Vix
  */
 public class InventoryContainer {
 
@@ -136,9 +137,9 @@ public class InventoryContainer {
 
         /** Remove the item. */
         if (item.getDefinition().isStackable()) {
-            container.remove(item, item.getAmount());
+            container.remove(item);
         } else {
-            container.remove(item, 1);
+            container.remove(item);
         }
 
         /** Refresh this container. */
