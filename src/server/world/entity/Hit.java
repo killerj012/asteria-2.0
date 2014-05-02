@@ -1,4 +1,4 @@
-package server.world.entity.combat;
+package server.world.entity;
 
 /**
  * A class that represents a hit inflicted on an entity.

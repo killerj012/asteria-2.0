@@ -1,11 +1,10 @@
 package server.world.entity;
 
+import server.core.worker.TaskFactory;
 import server.core.worker.Worker;
 import server.util.Misc;
 import server.world.entity.UpdateFlags.Flag;
-import server.world.entity.combat.CombatSession;
-import server.world.entity.combat.Hit;
-import server.world.entity.combat.Combat.CombatType;
+import server.world.entity.combat.CombatBuilder;
 import server.world.entity.player.Player;
 import server.world.entity.player.skill.SkillManager;
 import server.world.entity.player.skill.SkillManager.SkillConstant;
@@ -20,9 +19,6 @@ public abstract class Entity {
 
     /** The index of the entity. */
     private int slot = -1;
-
-    /** The combat type this entity is using. */
-    private CombatType type;
 
     /** If this entity retaliates automatically. */
     private boolean isAutoRetaliate;
@@ -42,8 +38,8 @@ public abstract class Entity {
     /** If the multicombat interface has been updated. */
     private boolean multiCombatInterface;
 
-    /** The combat session. */
-    private CombatSession combatSession = new CombatSession(this);
+    /** The combat builder. */
+    private CombatBuilder combatBuilder = new CombatBuilder(this);
 
     /** Used for placing actions at the end of the walking queue. */
     private MovementQueueListener movementListener = new MovementQueueListener(this);
@@ -102,6 +98,11 @@ public abstract class Entity {
      * Handles death for this entity.
      */
     public abstract Worker death() throws Exception;
+
+    /**
+     * Gets the attack speed for the entity.
+     */
+    public abstract int getAttackSpeed();
 
     /**
      * Moves this entity to another position.
@@ -187,13 +188,13 @@ public abstract class Entity {
     }
 
     /**
-     * Deal primary damage to this entity.
+     * Deals one damage splat to this entity.
      * 
-     * @param primaryHit
-     *        the damage and hit-type.
+     * @param hit
+     *        the damage to be dealt.
      */
-    public void dealDamage(Hit primaryHit) {
-        this.primaryHit = primaryHit.clone();
+    public void dealDamage(Hit hit) {
+        this.primaryHit = hit.clone();
         this.getFlags().flag(Flag.HIT);
 
         if (this instanceof Player) {
@@ -205,12 +206,71 @@ public abstract class Entity {
     }
 
     /**
+     * Deals two damage splats to this entity.
+     * 
+     * @param hit
+     *        the first hit.
+     * @param secondHit
+     *        the second hit.
+     */
+    public void dealDoubleDamage(Hit hit, Hit secondHit) {
+        dealDamage(hit);
+        dealSecondaryDamage(secondHit);
+    }
+
+    /**
+     * Deals three damage splats to this entity.
+     * 
+     * @param hit
+     *        the first hit.
+     * @param secondHit
+     *        the second hit.
+     * @param thirdHit
+     *        the third hit.
+     */
+    public void dealTripleDamage(Hit hit, Hit secondHit, final Hit thirdHit) {
+        dealDoubleDamage(hit, secondHit);
+
+        TaskFactory.getFactory().submit(new Worker(1, false) {
+            @Override
+            public void fire() {
+                dealDamage(thirdHit);
+                this.cancel();
+            }
+        });
+    }
+
+    /**
+     * Deals two damage splats to this entity.
+     * 
+     * @param hit
+     *        the first hit.
+     * @param secondHit
+     *        the second hit.
+     * @param thirdHit
+     *        the third hit.
+     * @param fourthHit
+     *        the fourth hit.
+     */
+    public void dealQuadrupleDamage(Hit hit, Hit secondHit, final Hit thirdHit, final Hit fourthHit) {
+        dealDoubleDamage(hit, secondHit);
+
+        TaskFactory.getFactory().submit(new Worker(1, false) {
+            @Override
+            public void fire() {
+                dealDoubleDamage(thirdHit, fourthHit);
+                this.cancel();
+            }
+        });
+    }
+
+    /**
      * Deal secondary damage to this entity.
      * 
      * @param secondaryHit
      *        the damage and hit-type.
      */
-    public void dealSecondaryDamage(Hit secondaryHit) {
+    private void dealSecondaryDamage(Hit secondaryHit) {
         this.secondaryHit = secondaryHit.clone();
         this.getFlags().flag(Flag.HIT_2);
 
@@ -547,30 +607,11 @@ public abstract class Entity {
     }
 
     /**
-     * Gets the combat type.
-     * 
-     * @return the type.
-     */
-    public CombatType getType() {
-        return type;
-    }
-
-    /**
-     * Sets the combat type.
-     * 
-     * @param type
-     *        the type to set.
-     */
-    public void setType(CombatType type) {
-        this.type = type;
-    }
-
-    /**
      * Gets the combat session.
      * 
      * @return the combat session.
      */
-    public CombatSession getCombatSession() {
-        return combatSession;
+    public CombatBuilder getCombatBuilder() {
+        return combatBuilder;
     }
 }

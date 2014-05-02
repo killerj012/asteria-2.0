@@ -13,16 +13,6 @@ import server.world.map.Position;
  */
 public abstract class Minigame {
 
-    // TODO: Integrate this and the cycled minigame.
-
-    /**
-     * Fired when an {@link Player} enters the minigame (or waiting room).
-     * 
-     * @param player
-     *        the player entering the minigame (or waiting room).
-     */
-    public abstract void fireOnEnter(Player player);
-
     /**
      * Fired when an {@link Player} logs in while in the minigame boundary.
      * 
@@ -32,7 +22,8 @@ public abstract class Minigame {
     public abstract void fireOnLogin(Player player);
 
     /**
-     * Fired when an {@link Player} gets forcibly logged out.
+     * Fired when an {@link Player} gets forcibly logged out (or logs out
+     * normally).
      * 
      * @param player
      *        the player who got forcibly logged out.
@@ -54,6 +45,26 @@ public abstract class Minigame {
      * @return the name of this minigame.
      */
     public abstract String name();
+
+    /**
+     * Fired when an {@link Player} enters the minigame (or waiting room).
+     * 
+     * @param player
+     *        the player entering the minigame (or waiting room).
+     */
+    public void fireOnEnter(Player player) {
+
+    }
+
+    /**
+     * Fired when an {@link Player} exits the minigame (or waiting room).
+     * 
+     * @param player
+     *        the player entering the minigame (or waiting room).
+     */
+    public void fireOnExit(Player player) {
+
+    }
 
     /**
      * Fired when a {@link Player} dies within the minigame.

@@ -7,7 +7,6 @@ import server.world.entity.npc.NpcDialogue;
 import server.world.entity.player.Player;
 import server.world.entity.player.skill.SkillEvent;
 import server.world.map.Position;
-import server.world.music.MusicSet;
 
 /**
  * Sent whenever the makes a yellow-x click, red-x click, or clicks the minimap.
@@ -72,6 +71,5 @@ public class DecodeMovementPacket extends PacketDecoder {
         }
         player.getMovementQueue().finish();
         player.getPacketBuilder().sendMessage(player.getPosition().getRegionId() + " - walking");
-        MusicSet.loadMusicRegion(player);
     }
 }

@@ -15,30 +15,27 @@ import server.world.World;
 import server.world.entity.Animation;
 import server.world.entity.Entity;
 import server.world.entity.Gfx;
-import server.world.entity.combat.magic.TeleportSpell;
 import server.world.entity.npc.Npc;
 import server.world.entity.npc.NpcDialogue;
 import server.world.entity.player.container.BankContainer;
 import server.world.entity.player.container.EquipmentContainer;
 import server.world.entity.player.container.InventoryContainer;
-import server.world.entity.player.content.CatFighter;
 import server.world.entity.player.content.PrivateMessage;
 import server.world.entity.player.content.Spellbook;
+import server.world.entity.player.content.TeleportSpell;
 import server.world.entity.player.content.TradeSession;
 import server.world.entity.player.content.AssignWeaponAnimation.WeaponAnimationIndex;
+import server.world.entity.player.content.AssignWeaponInterface.FightType;
 import server.world.entity.player.content.AssignWeaponInterface.WeaponInterface;
-import server.world.entity.player.content.DwarfMultiCannon.CannonCredentials;
+import server.world.entity.player.minigame.Minigame;
+import server.world.entity.player.minigame.MinigameFactory;
 import server.world.entity.player.skill.Skill;
 import server.world.entity.player.skill.SkillEvent;
 import server.world.entity.player.skill.SkillManager;
 import server.world.entity.player.skill.SkillManager.SkillConstant;
-import server.world.entity.player.skill.impl.Cooking.CookFish;
-import server.world.entity.player.skill.impl.Fishing.Fish;
-import server.world.entity.player.skill.impl.Smithing.Smelt;
 import server.world.item.Item;
 import server.world.map.Location;
 import server.world.map.Position;
-import server.world.music.MusicSet;
 
 /**
  * Represents a logged-in player that is able to receive and send packets and
@@ -50,17 +47,17 @@ import server.world.music.MusicSet;
 @SuppressWarnings("all")
 public class Player extends Entity {
 
-    /** How long this player has been in the cache for. */
-    private int cacheTicks;
-
-    /** The credentials for this player's cannon. */
-    private CannonCredentials cannonCredentials = new CannonCredentials(this);
+    /** The items recieved when the player logs in for the first time. */
+    public static final Item[] STARTER_PACKAGE = { new Item(995, 10000) };
 
     /** A {@link Logger} for printing debugging info. */
     private static Logger logger = Logger.getLogger(Player.class.getSimpleName());
 
     /** The network for this player. */
     private final Session session;
+
+    /** The current fight type selected. */
+    private FightType fightType = FightType.UNARMED_PUNCH;
 
     /** If this player has magic selected or is autocasting. */
     private boolean autocastMagic, usingMagic;
@@ -71,17 +68,11 @@ public class Player extends Entity {
     /** An array of all the trainable skills. */
     private Skill[] trainable = new Skill[21];
 
-    /** This player's cat. */
-    private CatFighter cat;
-
     /** The current players combat level. */
     private double combatLevel;
 
     /** The wilderness level for this player. */
     private int wildernessLevel;
-
-    /** A music set for this player. */
-    private MusicSet musicSet = new MusicSet(this);
 
     /** The weapon interface the player currently has open. */
     private WeaponInterface weapon;
@@ -98,18 +89,6 @@ public class Player extends Entity {
     /** If this player is visible. */
     private boolean isVisible = true;
 
-    /** The food you are cooking. */
-    private CookFish cook;
-
-    /** The bar you are currently smelting. */
-    private Smelt smelt;
-
-    /** The amount of bars you are currently smelting. */
-    private int smeltAmount;
-
-    /** The amount of sets you are currently smithing. */
-    private int smithAmount;
-
     /** The shop you currently have open. */
     private int openShopId;
 
@@ -118,9 +97,6 @@ public class Player extends Entity {
 
     /** Amount of logs the tree you're cutting holds. */
     private int woodcuttingLogAmount;
-
-    /** All possible fish you are able to catch. */
-    private List<Fish> fish = new ArrayList<Fish>();
 
     /** Skill event firing flags. */
     private boolean[] skillEvent = new boolean[15];
@@ -271,25 +247,39 @@ public class Player extends Entity {
             @Override
             public void fire() {
                 if (getDeathTicks() == 0) {
+                    // and stop combat
                     getMovementQueue().reset();
                 } else if (getDeathTicks() == 1) {
                     animation(DEATH);
                     SkillEvent.fireSkillEvents(player);
                     player.getTradeSession().resetTrade(false);
+
                     // duel, whatever
+
+                } else if (getDeathTicks() == 5) {
                     // send message to whoever killed this player and do
                     // whatever
-                } else if (getDeathTicks() == 5) {
                     // decide what items/equipment to keep, drop all other
                     // items/equipment, take into account the protect item
-                    // prayer,
-                    // and
-                    // if the player is skulled
+                    // prayer
 
-                    // unskull the player, and stop combat
+                    Entity killer = null;
+                    Minigame minigame = MinigameFactory.getMinigame(player);
 
-                    move(new Position(3093, 3244));
+                    if (minigame != null) {
+                        minigame.fireOnDeath(player);
+
+                        if (killer instanceof Player) {
+                            minigame.fireOnKill((Player) killer, player);
+                        }
+
+                        move(minigame.getDeathPosition(player));
+                    } else {
+                        move(new Position(3093, 3244));
+                    }
                 } else if (getDeathTicks() == 6) {
+                    // if the player is skulled
+                    // unskull the player,
                     getPacketBuilder().resetAnimation();
                     getPacketBuilder().sendMessage("Oh dear, you're dead!");
                     getPacketBuilder().walkableInterface(65535);
@@ -316,6 +306,14 @@ public class Player extends Entity {
     public void teleport(final TeleportSpell spell) {
         if (teleportStage > 0) {
             return;
+        }
+
+        for (Minigame minigame : MinigameFactory.getMinigames().values()) {
+            if (minigame.inMinigame(player)) {
+                if (!minigame.canTeleport(player)) {
+                    return;
+                }
+            }
         }
 
         if (spell.itemsRequired() != null) {
@@ -444,6 +442,17 @@ public class Player extends Entity {
     }
 
     @Override
+    public int getAttackSpeed() {
+        int speed = weapon.getSpeed();
+
+        if (fightType == FightType.CROSSBOW_RAPID || fightType == FightType.SHORTBOW_RAPID || fightType == FightType.LONGBOW_RAPID || fightType == FightType.DART_RAPID || fightType == FightType.KNIFE_RAPID || fightType == FightType.THROWNAXE_RAPID || fightType == FightType.JAVELIN_RAPID) {
+            speed--;
+        }
+
+        return speed;
+    }
+
+    @Override
     public String toString() {
         return getUsername() == null ? "SESSION(" + session.getHost() + ")" : "PLAYER(" + getUsername() + ":" + session.getHost() + ")";
     }
@@ -499,6 +508,7 @@ public class Player extends Entity {
     public void loadConfigs() {
         getPacketBuilder().sendConfig(173, getMovementQueue().isRunToggled() ? 1 : 0);
         getPacketBuilder().sendConfig(172, isAutoRetaliate() ? 1 : 0);
+        getPacketBuilder().sendConfig(fightType.getParentId(), fightType.getChildId());
     }
 
     /**
@@ -614,7 +624,6 @@ public class Player extends Entity {
      * Loads interface text on login.
      */
     public void loadText() {
-        getMusicSet().loginMusicTabUpdate();
         getPacketBuilder().sendString("Teleport Home", 1300);
         getPacketBuilder().sendString("Teleports you to Draynor Village.", 1301);
         getPacketBuilder().sendString("Teleport Home", 13037);
@@ -826,21 +835,6 @@ public class Player extends Entity {
     }
 
     /**
-     * @return the cook
-     */
-    public CookFish getCook() {
-        return cook;
-    }
-
-    /**
-     * @param cook
-     *        the cook to set
-     */
-    public void setCook(CookFish cook) {
-        this.cook = cook;
-    }
-
-    /**
      * @return the trading
      */
     public TradeSession getTradeSession() {
@@ -893,21 +887,6 @@ public class Player extends Entity {
      */
     public void setEatingTimer(Stopwatch eatingTimer) {
         this.eatingTimer = eatingTimer;
-    }
-
-    /**
-     * @return the fish
-     */
-    public List<Fish> getFish() {
-        return fish;
-    }
-
-    /**
-     * @param fish
-     *        the fish to set
-     */
-    public void setFish(List<Fish> fish) {
-        this.fish = fish;
     }
 
     public PacketEncoder getPacketBuilder() {
@@ -1072,40 +1051,6 @@ public class Player extends Entity {
     }
 
     /**
-     * @return the smelt
-     */
-    public Smelt getSmelt() {
-        return smelt;
-    }
-
-    /**
-     * @param smelt
-     *        the smelt to set
-     */
-    public void setSmelt(Smelt smelt) {
-        this.smelt = smelt;
-    }
-
-    /**
-     * @return the smeltAmount
-     */
-    public int getSmeltAmount() {
-        return smeltAmount;
-    }
-
-    /**
-     * @param smeltAmount
-     *        the smeltAmount to set
-     */
-    public void setSmeltAmount(int smeltAmount) {
-        this.smeltAmount = smeltAmount;
-    }
-
-    public void addSmeltAmount() {
-        smeltAmount++;
-    }
-
-    /**
      * @return the playerBonus
      */
     public int[] getPlayerBonus() {
@@ -1255,25 +1200,6 @@ public class Player extends Entity {
     }
 
     /**
-     * @return the smeltAmount
-     */
-    public int getSmithAmount() {
-        return smithAmount;
-    }
-
-    /**
-     * @param smeltAmount
-     *        the smeltAmount to set
-     */
-    public void setSmithAmount(int smithAmount) {
-        this.smithAmount = smithAmount;
-    }
-
-    public void addSmithAmount() {
-        smithAmount++;
-    }
-
-    /**
      * @return the weapon.
      */
     public WeaponInterface getWeapon() {
@@ -1296,13 +1222,6 @@ public class Player extends Entity {
     }
 
     /**
-     * @return the musicSet
-     */
-    public MusicSet getMusicSet() {
-        return musicSet;
-    }
-
-    /**
      * @return the trainable skills.
      */
     public Skill[] getSkills() {
@@ -1322,21 +1241,6 @@ public class Player extends Entity {
      */
     public WeaponAnimationIndex getUpdateAnimation() {
         return equipmentAnimation;
-    }
-
-    /**
-     * @return the cat
-     */
-    public CatFighter getCat() {
-        return cat;
-    }
-
-    /**
-     * @param cat
-     *        the cat to set
-     */
-    public void setCat(CatFighter cat) {
-        this.cat = cat;
     }
 
     /**
@@ -1370,21 +1274,17 @@ public class Player extends Entity {
     }
 
     /**
-     * @return the cannonCredentials
+     * @return the fightType
      */
-    public CannonCredentials getCannonCredentials() {
-        return cannonCredentials;
+    public FightType getFightType() {
+        return fightType;
     }
 
-    public int getCacheTicks() {
-        return cacheTicks;
-    }
-
-    public void incrementCacheTicks() {
-        this.cacheTicks += 2;
-    }
-
-    public void clearCacheTicks() {
-        this.cacheTicks = 0;
+    /**
+     * @param fightType
+     *        the fightType to set
+     */
+    public void setFightType(FightType fightType) {
+        this.fightType = fightType;
     }
 }

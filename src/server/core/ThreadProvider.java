@@ -17,7 +17,7 @@ public class ThreadProvider implements ThreadFactory {
      */
     private volatile AtomicInteger threadCount;
 
-    /** The name of the prepared thread in the group. */
+    /** The name of the prepared thread. */
     private volatile String threadName;
 
     /** The priority of the prepared thread. */

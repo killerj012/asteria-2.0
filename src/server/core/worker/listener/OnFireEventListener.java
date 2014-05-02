@@ -17,14 +17,14 @@ public abstract class OnFireEventListener extends Worker {
      *        fired in ticks.
      */
     public OnFireEventListener(int rateOfFire) {
-        super(rateOfFire, false);
+        super(rateOfFire, true);
     }
 
     /**
      * Create a new {@link OnFireEventListener}.
      */
     public OnFireEventListener() {
-        super(1, false);
+        super(1, true);
     }
 
     /**

@@ -6,6 +6,8 @@ import server.core.net.packet.PacketDecoder;
 import server.core.net.packet.PacketOpcodeHeader;
 import server.world.World;
 import server.world.entity.player.Player;
+import server.world.entity.player.minigame.Minigame;
+import server.world.entity.player.minigame.MinigameFactory;
 import server.world.entity.player.skill.SkillEvent;
 
 /**
@@ -30,6 +32,16 @@ public class DecodeRequestPacket extends PacketDecoder {
 
         switch (player.getSession().getPacketOpcode()) {
             case 139:
+
+                /** Check if we can trade based on the minigame we're in. */
+                for (Minigame minigame : MinigameFactory.getMinigames().values()) {
+                    if (minigame.inMinigame(player)) {
+                        if (!minigame.canTrade(player, request)) {
+                            return;
+                        }
+                    }
+                }
+
                 player.getTradeSession().request(request);
                 break;
 

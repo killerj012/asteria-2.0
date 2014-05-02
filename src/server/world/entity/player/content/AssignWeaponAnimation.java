@@ -40,13 +40,13 @@ public class AssignWeaponAnimation {
                 weaponAnimation[def.getItemId()] = new WeaponAnimationIndex(2316, 2317, 2322);
             } else if (def.getItemName().endsWith("halberd") || def.getItemName().contains("guthan")) {
                 weaponAnimation[def.getItemId()] = new WeaponAnimationIndex(809, 1146, 1210);
-            } else if (def.getItemName().startsWith("dharoks")) {
+            } else if (def.getItemName().startsWith("Dharoks")) {
                 weaponAnimation[def.getItemId()] = new WeaponAnimationIndex(2065, 1663, 1664);
-            } else if (def.getItemName().startsWith("ahrims")) {
+            } else if (def.getItemName().startsWith("Ahrims")) {
                 weaponAnimation[def.getItemId()] = new WeaponAnimationIndex(809, 1146, 1210);
-            } else if (def.getItemName().startsWith("veracs")) {
+            } else if (def.getItemName().startsWith("Veracs")) {
                 weaponAnimation[def.getItemId()] = new WeaponAnimationIndex(1832, 1830, 1831);
-            } else if (def.getItemName().startsWith("karils")) {
+            } else if (def.getItemName().startsWith("Karils")) {
                 weaponAnimation[def.getItemId()] = new WeaponAnimationIndex(2074, 2076, 2077);
             } else if (def.getItemName().endsWith("shortbow") || def.getItemName().endsWith("longbow")) {
                 weaponAnimation[def.getItemId()] = new WeaponAnimationIndex(808, 819, 824);
@@ -66,8 +66,8 @@ public class AssignWeaponAnimation {
      */
     public static void assignAnimation(Player player, Item item) {
 
-        /** Block if this item isn't a weapon. */
-        if (item == null || item.getDefinition().getEquipmentSlot() != Misc.EQUIPMENT_SLOT_WEAPON) {
+        /** Check if the item is valid. */
+        if (item == null) {
             return;
         }
 

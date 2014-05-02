@@ -31,13 +31,11 @@ public class DecodePickupItemPacket extends PacketDecoder {
             @Override
             public void run() {
                 if (player.getPosition().equals(new Position(itemX, itemY, player.getPosition().getZ()))) {
-
-                    // XXX: vv is always null
-                    GroundItem worldItem = World.getGroundItems().searchDatabase(new GroundItem(new Item(itemId, 1), new Position(itemX, itemY, player.getPosition().getZ()), player));
+                    GroundItem worldItem = World.getGroundItems().searchDatabase(itemId, new Position(itemX, itemY, player.getPosition().getZ()));
 
                     if (worldItem == null) {
                         player.getPacketBuilder().sendMessage("Nothing interesting happens.");
-                        player.getPacketBuilder().removeGroundItem(World.getGroundItems().searchDatabase(new GroundItem(new Item(itemId, 1), new Position(itemX, itemY, player.getPosition().getZ()), player)));
+                        player.getPacketBuilder().removeGroundItem(World.getGroundItems().searchDatabase(itemId, new Position(itemX, itemY, player.getPosition().getZ())));
                         return;
                     }
 

@@ -297,7 +297,7 @@ public final class PacketEncoder {
      * @return this packet encoder.
      */
     public PacketEncoder flashSelectedSidebar(int id) {
-        // XXX: does not work, you have to fix the packet client sided.
+        // XXX: try negative values
 
         PacketBuffer.WriteBuffer out = PacketBuffer.newWriteBuffer(2);
         out.writeHeader(24).writeByte(id, ValueType.A);
@@ -462,10 +462,6 @@ public final class PacketEncoder {
      * @return this packer builder.
      */
     public PacketEncoder changeColorOnInterface(int interfaceId, int color) {
-        // XXX: afaik, doesn't work but I have no clue what this packet is
-        // for
-        // and I might have been trying to use it wrong.
-
         PacketBuffer.WriteBuffer out = PacketBuffer.newWriteBuffer(5);
         out.writeHeader(122).writeShort(interfaceId, ValueType.A, ByteOrder.LITTLE).writeShort(color, ValueType.A, ByteOrder.LITTLE);
         player.getSession().encode(out);

@@ -52,7 +52,6 @@ public final class Main {
             logger.info("The engine is now running...");
             logger.info(Rs2Engine.INITIALLY_IDLE ? NAME + " is now IDLE! [took " + timer.elapsed() + " ms]" : NAME + " is now ACTIVE! [took " + timer.elapsed() + " ms]");
         } catch (Exception e) {
-            logger.warning("Error during initialization of " + NAME + "! Exiting...");
             e.printStackTrace();
             System.exit(1);
         }

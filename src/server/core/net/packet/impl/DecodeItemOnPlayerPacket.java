@@ -17,6 +17,7 @@ import server.world.entity.player.Player;
 public class DecodeItemOnPlayerPacket extends PacketDecoder {
 
     @Override
+    @SuppressWarnings("unused")
     public void decode(final Player player, ReadBuffer in) {
         int something = in.readShort(ValueType.A, ByteOrder.BIG);
         int playerId = in.readShort();

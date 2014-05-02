@@ -24,6 +24,8 @@ import server.world.entity.player.content.AssignWeaponAnimation;
 import server.world.entity.player.content.AssignWeaponInterface;
 import server.world.entity.player.content.DynamicEnergyTask;
 import server.world.entity.player.file.ReadPlayerFileEvent;
+import server.world.entity.player.minigame.Minigame;
+import server.world.entity.player.minigame.MinigameFactory;
 import server.world.entity.player.skill.SkillEvent;
 import server.world.entity.player.skill.SkillManager;
 
@@ -127,6 +129,12 @@ public final class Session {
      * Disconnects the player from this session.
      */
     public void disconnect() {
+        for (Minigame minigame : MinigameFactory.getMinigames().values()) {
+            if (minigame.inMinigame(player)) {
+                minigame.fireOnForcedLogout(player);
+            }
+        }
+
         TaskFactory.getFactory().cancelWorkers(player);
         player.getTradeSession().resetTrade(false);
         SkillEvent.fireSkillEvents(player);
@@ -317,7 +325,8 @@ public final class Session {
                     encryptor = new ISAACCipher(isaacSeed);
 
                     /** Read the user authentication. */
-                    int uid = rsaBuffer.getInt();
+                    // int uid = rsaBuffer.getInt();
+                    rsaBuffer.getInt();
 
                     ReadBuffer readStr = PacketBuffer.newReadBuffer(rsaBuffer);
                     username = readStr.readString();
@@ -418,6 +427,7 @@ public final class Session {
                 packetBuilder.sendSidebarInterface(0, 2423);
 
                 /** Teleport the player to the saved position. */
+                // XXX: remove
                 if (player.getUsername().equals("lare96")) {
                     player.move(player.getPosition());
                 } else {
@@ -459,8 +469,8 @@ public final class Session {
 
                 /** Starter package and makeover mage. */
                 if (player.isNewPlayer()) {
-                    // FIXME: Starter package & Makeover Mage.
-
+                    player.getInventory().addItemSet(Player.STARTER_PACKAGE);
+                    // XXX: makeover mage
                     player.setNewPlayer(false);
                 }
 
@@ -470,12 +480,22 @@ public final class Session {
                 /** Send the welcome message. */
                 packetBuilder.sendMessage("Welcome to " + Main.NAME + "!");
 
+                /** Do minigame stuff. */
+                for (Minigame minigame : MinigameFactory.getMinigames().values()) {
+                    if (minigame.inMinigame(player)) {
+                        minigame.fireOnLogin(player);
+                    }
+                }
+
                 /** Send the weapon interface. */
                 AssignWeaponInterface.reset(player);
                 AssignWeaponInterface.assignInterface(player, player.getEquipment().getContainer().getItem(Misc.EQUIPMENT_SLOT_WEAPON));
 
                 /** Assign the new animation based on the weapon. */
                 AssignWeaponAnimation.assignAnimation(player, player.getEquipment().getContainer().getItem(Misc.EQUIPMENT_SLOT_WEAPON));
+
+                /** Load the configs. */
+                player.loadConfigs();
 
                 logger.info(player + " has logged in.");
                 stage = Stage.LOGGED_IN;

@@ -7,11 +7,8 @@ import server.core.net.packet.PacketDecoder;
 import server.core.net.packet.PacketOpcodeHeader;
 import server.world.entity.player.Player;
 import server.world.entity.player.content.ConsumeFood;
-import server.world.entity.player.content.DwarfMultiCannon;
 import server.world.entity.player.content.ConsumeFood.Food;
 import server.world.entity.player.skill.SkillEvent;
-import server.world.entity.player.skill.impl.Prayer;
-import server.world.entity.player.skill.impl.Prayer.PrayerItem;
 
 /**
  * Sent when the player uses the first click item option.
@@ -27,7 +24,7 @@ public class DecodeClickItemPacket extends PacketDecoder {
         int slot = in.readShort(false, ValueType.A);
         int id = in.readShort(false, ByteOrder.LITTLE);
         SkillEvent.fireSkillEvents(player);
-
+        player.getCombatBuilder().resetAttackTimer();
         if (player.getInventory().getContainer().isSlotFree(slot)) {
             return;
         }
@@ -37,12 +34,9 @@ public class DecodeClickItemPacket extends PacketDecoder {
         }
 
         ConsumeFood.consume(player, Food.forId(id), slot);
-        Prayer.getSingleton().buryItem(player, PrayerItem.getPrayerItem(id), slot);
 
         switch (id) {
-            case 6:
-                DwarfMultiCannon.makeCannon(player);
-                break;
+
         }
     }
 }

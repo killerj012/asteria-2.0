@@ -5,7 +5,6 @@ import server.core.net.packet.PacketDecoder;
 import server.core.net.packet.PacketOpcodeHeader;
 import server.world.World;
 import server.world.entity.player.Player;
-import server.world.music.MusicSet;
 
 /**
  * Sent when the player loads a new map region
@@ -19,7 +18,6 @@ public class DecodeUpdateRegionPacket extends PacketDecoder {
     public void decode(Player player, ReadBuffer in) {
         World.getObjects().loadNewRegion(player);
         World.getGroundItems().loadNewRegion(player);
-        MusicSet.loadMusicRegion(player);
         player.displayInterfaces();
 
         if (!player.isFirstPacket()) {

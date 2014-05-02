@@ -1,8 +1,8 @@
 package server.core.net.packet;
 
 /**
- * An exception thrown when a packet has no {@link PacketOpcodeHeader}
- * annotation.
+ * An exception thrown when a {@link PacketDecoder} has no
+ * {@link PacketOpcodeHeader} annotation.
  * 
  * @author lare96
  */

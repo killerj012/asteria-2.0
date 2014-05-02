@@ -5,8 +5,6 @@ import server.core.net.buffer.PacketBuffer.ReadBuffer;
 import server.core.net.packet.PacketDecoder;
 import server.core.net.packet.PacketOpcodeHeader;
 import server.world.entity.player.Player;
-import server.world.entity.player.skill.impl.Firemaking;
-import server.world.entity.player.skill.impl.Firemaking.Log;
 import server.world.item.Item;
 
 /**
@@ -32,17 +30,11 @@ public class DecodeItemOnItemPacket extends PacketDecoder {
         }
 
         switch (itemOn.getId()) {
-            case 7156:
-                Log l = Log.getLog(itemUsed.getId());
-                Firemaking.getSingleton().lightLog(player, l);
-                break;
+
         }
 
         switch (itemUsed.getId()) {
-            case 7156:
-                Log l = Log.getLog(itemOn.getId());
-                Firemaking.getSingleton().lightLog(player, l);
-                break;
+
         }
     }
 }

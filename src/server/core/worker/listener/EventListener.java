@@ -22,7 +22,7 @@ public abstract class EventListener extends Worker {
      *        fired in ticks.
      */
     public EventListener(boolean shutdownOnFire, int rateOfFire) {
-        super(rateOfFire, false);
+        super(rateOfFire, true);
         this.shutdownOnFire = shutdownOnFire;
     }
 
@@ -33,7 +33,7 @@ public abstract class EventListener extends Worker {
      *        if the listener should be shut down once the logic has fired.
      */
     public EventListener(boolean shutdownOnFire) {
-        super(1, false);
+        super(1, true);
         this.shutdownOnFire = shutdownOnFire;
     }
 
@@ -45,18 +45,18 @@ public abstract class EventListener extends Worker {
      *        fired in ticks.
      */
     public EventListener(int rateOfFire) {
-        super(rateOfFire, false);
+        super(rateOfFire, true);
     }
 
     /**
      * Create a new {@link EventListener} with the default settings.
      */
     public EventListener() {
-        super(1, false);
+        super(1, true);
     }
 
     /**
-     * Will block from firing the logic until this condition is unflagged.
+     * Will block from firing the logic until this condition is flagged false.
      * 
      * @return true if this listener should keep listening, false if the event
      *         has occurred and the listener should fire the logic.

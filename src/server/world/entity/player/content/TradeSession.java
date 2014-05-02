@@ -264,7 +264,7 @@ public class TradeSession {
      *        the inventory slot it's coming from.
      */
     public void offer(Item item, int slot) {
-        if (item.getId() < 1 || item.getAmount() < 1 || item == null) {
+        if (item == null || item.getId() < 1 || item.getAmount() < 1) {
             return;
         }
 

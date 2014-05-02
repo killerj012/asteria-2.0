@@ -1,7 +1,7 @@
 package server.world.entity.player.content;
 
-import server.world.entity.combat.magic.TeleportSpell.Teleport;
 import server.world.entity.player.Player;
+import server.world.entity.player.content.TeleportSpell.Teleport;
 
 /**
  * All of the possible spellbooks that can be used.

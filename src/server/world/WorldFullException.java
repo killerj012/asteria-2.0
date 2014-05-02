@@ -3,7 +3,8 @@ package server.world;
 import server.world.entity.Entity;
 
 /**
- * An exception thrown when the {@link World} is full of a certain entity.
+ * An exception thrown when the {@link World} is full of a certain type of
+ * entity.
  * 
  * @author lare96
  */
@@ -16,7 +17,7 @@ public class WorldFullException extends RuntimeException {
      *        the entity trying to be added to the world.
      */
     public WorldFullException(Entity entity) {
-        super(entity + " Cannot be added because the world is full!");
+        super(entity + " cannot be added to the game because the world is full!");
     }
 
     /** The generated serial version UID. */

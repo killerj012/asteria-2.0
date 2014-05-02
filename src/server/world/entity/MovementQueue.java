@@ -71,18 +71,21 @@ public class MovementQueue {
             entity.setPrimaryDirection(walkPoint.getDirection());
 
             if (entity instanceof Player) {
-                ((Player) entity).displayInterfaces();
+                Player player = (Player) entity;
+                player.displayInterfaces();
             }
         }
 
         /** Run if this is a run point. */
         if (runPoint != null && runPoint.getDirection() != -1) {
             if (entity instanceof Player) {
-                if (((Player) entity).getRunEnergy() > 0) {
-                    ((Player) entity).decrementRunEnergy();
-                    ((Player) entity).displayInterfaces();
+                Player player = (Player) entity;
+                if (player.getRunEnergy() > 0) {
+                    player.decrementRunEnergy();
+                    player.displayInterfaces();
                 } else {
                     setRunToggled(false);
+                    player.getPacketBuilder().sendConfig(173, 0);
                 }
             }
 

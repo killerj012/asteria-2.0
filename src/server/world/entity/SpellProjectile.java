@@ -1,6 +1,6 @@
-package server.world.entity.combat.magic;
+package server.world.entity;
 
-import server.world.entity.combat.Projectile;
+
 
 /**
  * Represents a spell projectile.

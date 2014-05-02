@@ -6,13 +6,13 @@ import server.core.net.buffer.PacketBuffer;
 import server.core.net.packet.PacketDecoder;
 import server.core.net.packet.PacketOpcodeHeader;
 import server.util.Misc;
-import server.world.entity.Gfx;
 import server.world.entity.npc.NpcDialogue;
 import server.world.entity.player.Player;
+import server.world.entity.player.content.AssignWeaponInterface.FightType;
+import server.world.entity.player.content.AssignWeaponInterface.WeaponInterface;
 import server.world.entity.player.content.TradeSession.TradeStage;
-import server.world.entity.player.skill.impl.Cooking;
-import server.world.entity.player.skill.impl.Runecrafting;
-import server.world.entity.player.skill.impl.Runecrafting.Altar;
+import server.world.entity.player.minigame.Minigame;
+import server.world.entity.player.minigame.MinigameFactory;
 import server.world.map.Position;
 
 /**
@@ -36,10 +36,6 @@ public class DecodeClickButtonPacket extends PacketDecoder {
             case 50235:
             case 4140:
                 player.teleport(new Position(3094, 3243));
-                break;
-            case 50245:
-            case 4143:
-                NpcDialogue.fiveOptions(player, "Cat Pits", "Barrows", "Fight Pits", "Pest Control", "More");
                 break;
             // case 4146: // falador
             // player.teleport(new Position(2964, 3378));
@@ -162,129 +158,54 @@ public class DecodeClickButtonPacket extends PacketDecoder {
                 break;
             case 56109:
                 switch (player.getOption()) {
-                    case 1:
-                        Runecrafting.getSingleton().teleport(player, player.getRunecraftingNpc(), Runecrafting.RUNE_ESSENCE_MINE);
-                        player.getPacketBuilder().closeWindows();
-                        break;
-                    case 6:
-                        player.getPacketBuilder().closeWindows();
-                        player.heal(99);
-                        player.getPacketBuilder().sendMessage("You feel a magical aura pass through your body.");
-                        player.gfx(new Gfx(436));
-                        break;
-                    case 7:
-                        // start security tapes
-                        break;
+
                 }
                 break;
             case 56110:
                 switch (player.getOption()) {
-                    case 1:
-                        NpcDialogue.fiveOptions(player, "Air", "Mind", "Water", "Earth", "Next");
-                        player.setOption(2);
-                        break;
-                    case 6:
-                    case 7:
-                        player.getPacketBuilder().closeWindows();
-                        break;
+
                 }
                 break;
 
             case 32017:
                 switch (player.getOption()) {
-                    case 5:
-                        Runecrafting.getSingleton().teleport(player, player.getRunecraftingNpc(), Altar.DEATH.getTeleport());
-                        player.getPacketBuilder().closeWindows();
-                        break;
+
                 }
                 break;
             case 32018:
                 switch (player.getOption()) {
-                    case 5:
-                        Runecrafting.getSingleton().teleport(player, player.getRunecraftingNpc(), Altar.BLOOD.getTeleport());
-                        player.getPacketBuilder().closeWindows();
-                        break;
+
                 }
                 break;
             case 32019:
                 switch (player.getOption()) {
-                    case 5:
-                        Runecrafting.getSingleton().teleport(player, player.getRunecraftingNpc(), Altar.SOUL.getTeleport());
-                        player.getPacketBuilder().closeWindows();
-                        break;
+
                 }
                 break;
             case 32020:
                 switch (player.getOption()) {
-                    case 5:
-                        NpcDialogue.fiveOptions(player, "Chaos", "Nature", "Law", "Next", "Previous");
-                        player.setOption(4);
-                        break;
+
                 }
                 break;
 
             case 32029:
                 switch (player.getOption()) {
-                    case 2:
-                        Runecrafting.getSingleton().teleport(player, player.getRunecraftingNpc(), Altar.AIR.getTeleport());
-                        player.getPacketBuilder().closeWindows();
-                        break;
-                    case 3:
-                        Runecrafting.getSingleton().teleport(player, player.getRunecraftingNpc(), Altar.FIRE.getTeleport());
-                        player.getPacketBuilder().closeWindows();
-                        break;
-                    case 4:
-                        Runecrafting.getSingleton().teleport(player, player.getRunecraftingNpc(), Altar.CHAOS.getTeleport());
-                        player.getPacketBuilder().closeWindows();
-                        break;
+
                 }
                 break;
             case 32030:
                 switch (player.getOption()) {
-                    case 2:
-                        Runecrafting.getSingleton().teleport(player, player.getRunecraftingNpc(), Altar.MIND.getTeleport());
-                        player.getPacketBuilder().closeWindows();
-                        break;
-                    case 3:
-                        Runecrafting.getSingleton().teleport(player, player.getRunecraftingNpc(), Altar.BODY.getTeleport());
-                        player.getPacketBuilder().closeWindows();
-                        break;
-                    case 4:
-                        Runecrafting.getSingleton().teleport(player, player.getRunecraftingNpc(), Altar.NATURE.getTeleport());
-                        player.getPacketBuilder().closeWindows();
-                        break;
+
                 }
                 break;
             case 32031:
                 switch (player.getOption()) {
-                    case 2:
-                        Runecrafting.getSingleton().teleport(player, player.getRunecraftingNpc(), Altar.WATER.getTeleport());
-                        player.getPacketBuilder().closeWindows();
-                        break;
-                    case 3:
-                        Runecrafting.getSingleton().teleport(player, player.getRunecraftingNpc(), Altar.COSMIC.getTeleport());
-                        player.getPacketBuilder().closeWindows();
-                        break;
-                    case 4:
-                        Runecrafting.getSingleton().teleport(player, player.getRunecraftingNpc(), Altar.LAW.getTeleport());
-                        player.getPacketBuilder().closeWindows();
-                        break;
+
                 }
                 break;
             case 32032:
                 switch (player.getOption()) {
-                    case 2:
-                        Runecrafting.getSingleton().teleport(player, player.getRunecraftingNpc(), Altar.EARTH.getTeleport());
-                        player.getPacketBuilder().closeWindows();
-                        break;
-                    case 3:
-                        NpcDialogue.fiveOptions(player, "Chaos", "Nature", "Law", "Next", "Previous");
-                        player.setOption(4);
-                        break;
-                    case 4:
-                        NpcDialogue.fourOptions(player, "Death", "Blood", "Soul", "Previous");
-                        player.setOption(5);
-                        break;
+
                 }
                 break;
             case 32033:
@@ -305,13 +226,27 @@ public class DecodeClickButtonPacket extends PacketDecoder {
                 break;
 
             case 9154:
+                for (Minigame minigame : MinigameFactory.getMinigames().values()) {
+                    if (minigame.inMinigame(player)) {
+                        if (!minigame.canFormalLogout(player)) {
+                            return;
+                        }
+                    }
+                }
+
                 player.getSession().disconnect();
                 break;
             case 153:
+                if (player.getRunEnergy() == 0) {
+                    return;
+                }
+
                 player.getMovementQueue().setRunToggled(true);
+                player.getPacketBuilder().sendConfig(173, 1);
                 break;
             case 152:
                 player.getMovementQueue().setRunToggled(false);
+                player.getPacketBuilder().sendConfig(173, 0);
                 break;
             case 21011:
                 player.setWithdrawAsNote(false);
@@ -324,17 +259,6 @@ public class DecodeClickButtonPacket extends PacketDecoder {
                 break;
             case 31194:
                 player.setInsertItem(false);
-                break;
-            case 53152:
-                Cooking.getSingleton().cookFish(player, player.getCook(), 1);
-                break;
-            case 53151:
-                Cooking.getSingleton().cookFish(player, player.getCook(), 5);
-                break;
-            case 53149:
-                int i = player.getInventory().getContainer().getCount(player.getCook().getRawFishId());
-
-                Cooking.getSingleton().cookFish(player, player.getCook(), i);
                 break;
             case 13092:
                 Player partner = player.getTradeSession().getPartner();
@@ -367,6 +291,257 @@ public class DecodeClickButtonPacket extends PacketDecoder {
                     player.getTradeSession().finishTrade();
                 }
                 break;
+
+            /** Lots of fight types! */
+            case 1080: // staff
+                player.setFightType(FightType.STAFF_BASH);
+                break;
+            case 1079:
+                player.setFightType(FightType.STAFF_POUND);
+                break;
+            case 1078:
+                player.setFightType(FightType.STAFF_FOCUS);
+                break;
+            case 1177: // warhammer
+                player.setFightType(FightType.WARHAMMER_POUND);
+                break;
+            case 1176:
+                player.setFightType(FightType.WARHAMMER_PUMMEL);
+                break;
+            case 1175:
+                player.setFightType(FightType.WARHAMMER_BLOCK);
+                break;
+            case 3014: // scythe
+                player.setFightType(FightType.SCYTHE_REAP);
+                break;
+            case 3017:
+                player.setFightType(FightType.SCYTHE_CHOP);
+                break;
+            case 3016:
+                player.setFightType(FightType.SCYTHE_JAB);
+                break;
+            case 3015:
+                player.setFightType(FightType.SCYTHE_BLOCK);
+                break;
+            case 6168: // battle axe
+                player.setFightType(FightType.BATTLEAXE_CHOP);
+                break;
+            case 6171:
+                player.setFightType(FightType.BATTLEAXE_HACK);
+                break;
+            case 6170:
+                player.setFightType(FightType.BATTLEAXE_SMASH);
+                break;
+            case 6169:
+                player.setFightType(FightType.BATTLEAXE_BLOCK);
+                break;
+            case 6221: // crossbow
+                player.setFightType(FightType.CROSSBOW_ACCURATE);
+                break;
+            case 6220:
+                player.setFightType(FightType.CROSSBOW_RAPID);
+                break;
+            case 6219:
+                player.setFightType(FightType.CROSSBOW_LONGRANGE);
+                break;
+            case 6236: // shortbow & longbow
+                if (player.getWeapon() == WeaponInterface.SHORTBOW) {
+                    player.setFightType(FightType.SHORTBOW_ACCURATE);
+                } else if (player.getWeapon() == WeaponInterface.LONGBOW) {
+                    player.setFightType(FightType.LONGBOW_ACCURATE);
+                }
+                break;
+            case 6235:
+                if (player.getWeapon() == WeaponInterface.SHORTBOW) {
+                    player.setFightType(FightType.SHORTBOW_RAPID);
+                } else if (player.getWeapon() == WeaponInterface.LONGBOW) {
+                    player.setFightType(FightType.LONGBOW_RAPID);
+                }
+                break;
+            case 6234:
+                if (player.getWeapon() == WeaponInterface.SHORTBOW) {
+                    player.setFightType(FightType.SHORTBOW_LONGRANGE);
+                } else if (player.getWeapon() == WeaponInterface.LONGBOW) {
+                    player.setFightType(FightType.LONGBOW_LONGRANGE);
+                }
+                break;
+            case 8234: // dagger & sword
+                if (player.getWeapon() == WeaponInterface.DAGGER) {
+                    player.setFightType(FightType.DAGGER_STAB);
+                } else if (player.getWeapon() == WeaponInterface.SWORD) {
+                    player.setFightType(FightType.SWORD_STAB);
+                }
+                break;
+            case 8237:
+                if (player.getWeapon() == WeaponInterface.DAGGER) {
+                    player.setFightType(FightType.DAGGER_LUNGE);
+                } else if (player.getWeapon() == WeaponInterface.SWORD) {
+                    player.setFightType(FightType.SWORD_LUNGE);
+                }
+                break;
+            case 8236:
+                if (player.getWeapon() == WeaponInterface.DAGGER) {
+                    player.setFightType(FightType.DAGGER_SLASH);
+                } else if (player.getWeapon() == WeaponInterface.SWORD) {
+                    player.setFightType(FightType.SWORD_SLASH);
+                }
+                break;
+            case 8235:
+                if (player.getWeapon() == WeaponInterface.DAGGER) {
+                    player.setFightType(FightType.DAGGER_BLOCK);
+                } else if (player.getWeapon() == WeaponInterface.SWORD) {
+                    player.setFightType(FightType.SWORD_BLOCK);
+                }
+                break;
+            case 9125: // scimitar & longsword
+                if (player.getWeapon() == WeaponInterface.SCIMITAR) {
+                    player.setFightType(FightType.SCIMITAR_CHOP);
+                } else if (player.getWeapon() == WeaponInterface.LONGSWORD) {
+                    player.setFightType(FightType.LONGSWORD_CHOP);
+                }
+                break;
+            case 9128:
+                if (player.getWeapon() == WeaponInterface.SCIMITAR) {
+                    player.setFightType(FightType.SCIMITAR_SLASH);
+                } else if (player.getWeapon() == WeaponInterface.LONGSWORD) {
+                    player.setFightType(FightType.LONGSWORD_SLASH);
+                }
+                break;
+            case 9127:
+                if (player.getWeapon() == WeaponInterface.SCIMITAR) {
+                    player.setFightType(FightType.SCIMITAR_LUNGE);
+                } else if (player.getWeapon() == WeaponInterface.LONGSWORD) {
+                    player.setFightType(FightType.LONGSWORD_LUNGE);
+                }
+                break;
+            case 9126:
+                if (player.getWeapon() == WeaponInterface.SCIMITAR) {
+                    player.setFightType(FightType.SCIMITAR_BLOCK);
+                } else if (player.getWeapon() == WeaponInterface.LONGSWORD) {
+                    player.setFightType(FightType.LONGSWORD_BLOCK);
+                }
+                break;
+            case 14218: // mace
+                player.setFightType(FightType.MACE_POUND);
+                break;
+            case 14221:
+                player.setFightType(FightType.MACE_PUMMEL);
+                break;
+            case 14220:
+                player.setFightType(FightType.MACE_SPIKE);
+                break;
+            case 14219:
+                player.setFightType(FightType.MACE_BLOCK);
+                break;
+            case 17102: // knife, thrownaxe, dart & javelin
+                if (player.getWeapon() == WeaponInterface.KNIFE) {
+                    player.setFightType(FightType.KNIFE_ACCURATE);
+                } else if (player.getWeapon() == WeaponInterface.THROWNAXE) {
+                    player.setFightType(FightType.THROWNAXE_ACCURATE);
+                } else if (player.getWeapon() == WeaponInterface.DART) {
+                    player.setFightType(FightType.DART_ACCURATE);
+                } else if (player.getWeapon() == WeaponInterface.JAVELIN) {
+                    player.setFightType(FightType.JAVELIN_ACCURATE);
+                }
+                break;
+            case 17101:
+                if (player.getWeapon() == WeaponInterface.KNIFE) {
+                    player.setFightType(FightType.KNIFE_RAPID);
+                } else if (player.getWeapon() == WeaponInterface.THROWNAXE) {
+                    player.setFightType(FightType.THROWNAXE_RAPID);
+                } else if (player.getWeapon() == WeaponInterface.DART) {
+                    player.setFightType(FightType.DART_RAPID);
+                } else if (player.getWeapon() == WeaponInterface.JAVELIN) {
+                    player.setFightType(FightType.JAVELIN_RAPID);
+                }
+                break;
+            case 17100:
+                if (player.getWeapon() == WeaponInterface.KNIFE) {
+                    player.setFightType(FightType.KNIFE_LONGRANGE);
+                } else if (player.getWeapon() == WeaponInterface.THROWNAXE) {
+                    player.setFightType(FightType.THROWNAXE_LONGRANGE);
+                } else if (player.getWeapon() == WeaponInterface.DART) {
+                    player.setFightType(FightType.DART_LONGRANGE);
+                } else if (player.getWeapon() == WeaponInterface.JAVELIN) {
+                    player.setFightType(FightType.JAVELIN_LONGRANGE);
+                }
+                break;
+            case 18077: // spear
+                player.setFightType(FightType.SPEAR_LUNGE);
+                break;
+            case 18080:
+                player.setFightType(FightType.SPEAR_SWIPE);
+                break;
+            case 18079:
+                player.setFightType(FightType.SPEAR_POUND);
+                break;
+            case 18078:
+                player.setFightType(FightType.SPEAR_BLOCK);
+                break;
+            case 18103: // 2h sword
+                player.setFightType(FightType.TWOHANDEDSWORD_CHOP);
+                break;
+            case 15106:
+                player.setFightType(FightType.TWOHANDEDSWORD_SLASH);
+                break;
+            case 18105:
+                player.setFightType(FightType.TWOHANDEDSWORD_SMASH);
+                break;
+            case 18104:
+                player.setFightType(FightType.TWOHANDEDSWORD_BLOCK);
+                break;
+            case 21200: // pickaxe
+                player.setFightType(FightType.PICKAXE_SPIKE);
+                break;
+            case 21203:
+                player.setFightType(FightType.PICKAXE_IMPALE);
+                break;
+            case 21202:
+                player.setFightType(FightType.PICKAXE_SMASH);
+                break;
+            case 21201:
+                player.setFightType(FightType.PICKAXE_BLOCK);
+                break;
+            case 30088: // claws
+                player.setFightType(FightType.CLAWS_CHOP);
+                break;
+            case 30091:
+                player.setFightType(FightType.CLAWS_SLASH);
+                break;
+            case 30090:
+                player.setFightType(FightType.CLAWS_LUNGE);
+                break;
+            case 30089:
+                player.setFightType(FightType.CLAWS_BLOCK);
+                break;
+            case 33018: // halberd
+                player.setFightType(FightType.HALBERD_JAB);
+                break;
+            case 33017:
+                player.setFightType(FightType.HALBERD_SWIPE);
+                break;
+            case 33016:
+                player.setFightType(FightType.HALBERD_FEND);
+                break;
+            case 22228: // unarmed
+                player.setFightType(FightType.UNARMED_PUNCH);
+                break;
+            case 22227:
+                player.setFightType(FightType.UNARMED_KICK);
+                break;
+            case 22226:
+                player.setFightType(FightType.UNARMED_BLOCK);
+                break;
+            case 48010: // whip
+                player.setFightType(FightType.WHIP_FLICK);
+                break;
+            case 48009:
+                player.setFightType(FightType.WHIP_LASH);
+                break;
+            case 48008:
+                player.setFightType(FightType.WHIP_DEFLECT);
+                break;
+
             default:
                 logger.info("Unhandled button: " + buttonId);
                 break;

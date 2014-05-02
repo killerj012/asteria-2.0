@@ -18,7 +18,7 @@ import java.security.spec.RSAPublicKeySpec;
  * @author Nikki
  * @author lare96
  */
-public final class RSAKeyGen {
+public final class RSAKeyPair {
 
     /**
      * Generates the 1024 bit RSA pair.

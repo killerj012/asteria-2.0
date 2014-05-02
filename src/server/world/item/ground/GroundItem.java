@@ -269,7 +269,7 @@ public class GroundItem {
      * 
      * @author lare96
      */
-    public static class GroundItemWorker extends Worker {
+    protected static class GroundItemWorker extends Worker {
 
         /**
          * The {@link GroundItem} this worker has been assigned to fire events

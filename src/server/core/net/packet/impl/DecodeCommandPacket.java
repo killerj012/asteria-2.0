@@ -10,6 +10,7 @@ import java.io.File;
 
 import javax.imageio.ImageIO;
 
+import server.core.Rs2Engine;
 import server.core.net.buffer.PacketBuffer;
 import server.core.net.packet.PacketDecoder;
 import server.core.net.packet.PacketOpcodeHeader;
@@ -20,9 +21,9 @@ import server.util.Misc;
 import server.world.World;
 import server.world.entity.Animation;
 import server.world.entity.Gfx;
-import server.world.entity.combat.magic.TeleportSpell;
 import server.world.entity.npc.Npc;
 import server.world.entity.player.Player;
+import server.world.entity.player.content.TeleportSpell;
 import server.world.item.Item;
 import server.world.item.ItemDefinition;
 import server.world.map.Position;
@@ -44,12 +45,16 @@ public class DecodeCommandPacket extends PacketDecoder {
         String command = in.readString();
         final String[] cmd = command.toLowerCase().split(" ");
 
-        if (cmd[0].equals("reload")) {
+        if (cmd[0].equals("config")) {
+            int parent = Integer.parseInt(cmd[1]);
+            int child = Integer.parseInt(cmd[2]);
+
+            player.getPacketBuilder().sendConfig(parent, child);
+        } else if (cmd[0].equals("reload")) {
             try {
                 Misc.codeFiles();
                 Misc.codeHosts();
                 Misc.codeEquipment();
-                Misc.loadMusic();
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -96,32 +101,44 @@ public class DecodeCommandPacket extends PacketDecoder {
 
             int time = Integer.parseInt(cmd[1]);
 
-            try {
-                Robot robot = new Robot();
-
-                robot.keyPress(KeyEvent.VK_ALT);
-                robot.keyPress(KeyEvent.VK_PRINTSCREEN);
-                robot.keyRelease(KeyEvent.VK_PRINTSCREEN);
-                robot.keyRelease(KeyEvent.VK_ALT);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-
-            TaskFactory.getFactory().submit(new Worker(time, false, WorkRate.APPROXIMATE_SECOND) {
+            Rs2Engine.getDiskPool().execute(new Runnable() {
                 @Override
-                public void fire() {
+                public void run() {
                     try {
-                        Transferable t = Toolkit.getDefaultToolkit().getSystemClipboard().getContents(null);
-                        RenderedImage image = (RenderedImage) t.getTransferData(DataFlavor.imageFlavor);
-                        File file = new File("./data/coordinates/" + player.getPosition() + ".png");
-                        ImageIO.write(image, "png", file);
-                        player.getPacketBuilder().sendMessage("Created picture [" + file.getPath() + "]");
-                        this.cancel();
+                        Robot robot = new Robot();
+
+                        robot.keyPress(KeyEvent.VK_ALT);
+                        robot.keyPress(KeyEvent.VK_PRINTSCREEN);
+                        robot.keyRelease(KeyEvent.VK_PRINTSCREEN);
+                        robot.keyRelease(KeyEvent.VK_ALT);
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
                 }
+            });
+
+            final File file = new File("./data/coordinates/" + player.getPosition() + ".png");
+            TaskFactory.getFactory().submit(new Worker(time, false, WorkRate.APPROXIMATE_SECOND) {
+                @Override
+                public void fire() {
+                    Rs2Engine.getDiskPool().execute(new Runnable() {
+                        @Override
+                        public void run() {
+                            try {
+                                Transferable t = Toolkit.getDefaultToolkit().getSystemClipboard().getContents(null);
+                                RenderedImage image = (RenderedImage) t.getTransferData(DataFlavor.imageFlavor);
+                                ImageIO.write(image, "png", file);
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
+                        }
+                    });
+
+                    this.cancel();
+                }
             }.attach(player));
+
+            player.getPacketBuilder().sendMessage("Created picture [" + file.getPath() + "]");
         } else if (cmd[0].equals("npc")) {
             int npc = Integer.parseInt(cmd[1]);
 

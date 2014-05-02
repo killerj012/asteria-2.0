@@ -1,6 +1,7 @@
-package server.world.entity.combat.magic;
+package server.world.entity.player.content;
 
 import server.world.entity.Entity;
+import server.world.entity.Spell;
 import server.world.map.Position;
 
 /**

@@ -5,15 +5,14 @@ import server.core.net.buffer.PacketBuffer.ReadBuffer;
 import server.core.net.buffer.PacketBuffer.ValueType;
 import server.core.net.packet.PacketDecoder;
 import server.core.net.packet.PacketOpcodeHeader;
+import server.util.Misc;
 import server.world.World;
-import server.world.entity.combat.Combat;
+import server.world.entity.combat.CombatFactory;
 import server.world.entity.npc.Npc;
 import server.world.entity.npc.NpcDefinition;
 import server.world.entity.player.Player;
-import server.world.entity.player.skill.impl.Fishing;
-import server.world.entity.player.skill.impl.Thieving;
-import server.world.entity.player.skill.impl.Fishing.FishingTool;
-import server.world.entity.player.skill.impl.Thieving.TheftNpc;
+import server.world.entity.player.minigame.Minigame;
+import server.world.entity.player.minigame.MinigameFactory;
 import server.world.map.Position;
 import server.world.shop.Shop;
 
@@ -47,7 +46,21 @@ public class DecodeNpcActionPacket extends PacketDecoder {
                     return;
                 }
 
-                Combat.fight(player, attackMelee);
+                for (Minigame minigame : MinigameFactory.getMinigames().values()) {
+                    if (minigame.inMinigame(player)) {
+                        if (!minigame.canHit(player, attackMelee)) {
+                            return;
+                        }
+                    }
+                }
+
+                if (CombatFactory.RANGE_WEAPONS.contains(player.getEquipment().getContainer().getItemId(Misc.EQUIPMENT_SLOT_WEAPON))) {
+                    player.getCombatBuilder().attack(attackMelee, CombatFactory.newDefaultRangedStrategy());
+                } else if (player.isAutocastMagic()) {
+                    player.getCombatBuilder().attack(attackMelee, CombatFactory.newDefaultMagicStrategy());
+                } else {
+                    player.getCombatBuilder().attack(attackMelee, CombatFactory.newDefaultMeleeStrategy());
+                }
                 break;
             case MAGE_NPC:
                 index = in.readShort(true, ValueType.A, ByteOrder.LITTLE);
@@ -57,12 +70,20 @@ public class DecodeNpcActionPacket extends PacketDecoder {
                     return;
                 }
 
+                for (Minigame minigame : MinigameFactory.getMinigames().values()) {
+                    if (minigame.inMinigame(player)) {
+                        if (!minigame.canHit(player, attackMagic)) {
+                            return;
+                        }
+                    }
+                }
+
                 /** Check if this npc is attackable. */
                 if (!NpcDefinition.getNpcDefinition()[attackMagic.getNpcId()].isAttackable()) {
                     return;
                 }
 
-                Combat.fight(player, attackMagic);
+                player.getCombatBuilder().attack(attackMagic, CombatFactory.newDefaultMagicStrategy());
                 break;
             case FIRST_CLICK:
                 index = in.readShort(true, ByteOrder.LITTLE);
@@ -80,30 +101,7 @@ public class DecodeNpcActionPacket extends PacketDecoder {
 
                             switch (firstClickMob.getNpcId()) {
                                 case 460:
-                                    player.setRunecraftingNpc(firstClickMob);
                                     player.dialogue(2);
-                                    break;
-                                case 956:
-                                    player.dialogue(1);
-                                    break;
-                                case 249:
-                                    player.dialogue(3);
-                                    break;
-                                case 605:
-                                    player.dialogue(4);
-                                    break;
-                                case 319:
-                                    if (player.getInventory().getContainer().contains(FishingTool.NET.getId())) {
-                                        Fishing.getSingleton().startFish(player, FishingTool.NET);
-                                    } else {
-                                        Fishing.getSingleton().startFish(player, FishingTool.BIG_NET);
-                                    }
-                                    break;
-                                case 324:
-                                    Fishing.getSingleton().startFish(player, FishingTool.LOBSTER_POT);
-                                    break;
-                                case 328:
-                                    Fishing.getSingleton().startFish(player, FishingTool.FLY_FISHING_ROD);
                                     break;
                                 case 520:
                                     Shop.getShop(0).openShop(player);
@@ -129,104 +127,7 @@ public class DecodeNpcActionPacket extends PacketDecoder {
                             player.facePosition(secondClickNpc.getPosition());
 
                             switch (secondClickNpc.getNpcId()) {
-                                case 1:
-                                case 2:
-                                case 3:
-                                case 4:
-                                case 5:
-                                case 6:
-                                    Thieving.getSingleton().stealNpc(player, TheftNpc.MAN_AND_WOMAN, secondClickNpc);
-                                    break;
-                                case 7:
-                                    Thieving.getSingleton().stealNpc(player, TheftNpc.FARMER, secondClickNpc);
-                                    break;
-                                case 1714:
-                                    Thieving.getSingleton().stealNpc(player, TheftNpc.MALE_HAM, secondClickNpc);
-                                    break;
-                                case 1715:
-                                    Thieving.getSingleton().stealNpc(player, TheftNpc.FEMALE_HAM, secondClickNpc);
-                                    break;
-                                case 15:
-                                    Thieving.getSingleton().stealNpc(player, TheftNpc.WARRIOR_WOMAN, secondClickNpc);
-                                    break;
-                                case 187:
-                                    Thieving.getSingleton().stealNpc(player, TheftNpc.ROGUE, secondClickNpc);
-                                    break;
-                                case 2234:
-                                    Thieving.getSingleton().stealNpc(player, TheftNpc.MASTER_FARMER, secondClickNpc);
-                                    break;
-                                case 9:
-                                case 32:
-                                case 2699:
-                                case 2700:
-                                case 2701:
-                                case 2702:
-                                case 2703:
-                                case 3228:
-                                case 3229:
-                                case 3230:
-                                case 3231:
-                                case 3232:
-                                case 3233:
-                                case 3241:
-                                    Thieving.getSingleton().stealNpc(player, TheftNpc.GUARD, secondClickNpc);
-                                    break;
-                                case 1305:
-                                case 1306:
-                                case 1307:
-                                case 1308:
-                                case 1309:
-                                case 1310:
-                                case 1311:
-                                case 1312:
-                                case 1313:
-                                    Thieving.getSingleton().stealNpc(player, TheftNpc.RELLEKKA_CITIZEN, secondClickNpc);
-                                    break;
-                                case 23:
-                                case 26:
-                                    Thieving.getSingleton().stealNpc(player, TheftNpc.KNIGHT_OF_ARDOUGNE, secondClickNpc);
-                                    break;
-                                case 34:
-                                    Thieving.getSingleton().stealNpc(player, TheftNpc.WATCHMAN, secondClickNpc);
-                                    break;
-                                case 1904:
-                                case 1905:
-                                    Thieving.getSingleton().stealNpc(player, TheftNpc.MENAPHITE_THUG, secondClickNpc);
-                                    break;
-                                case 20:
-                                case 365:
-                                case 2256:
-                                    Thieving.getSingleton().stealNpc(player, TheftNpc.PALADIN, secondClickNpc);
-                                    break;
-                                case 66:
-                                case 67:
-                                case 68:
-                                    Thieving.getSingleton().stealNpc(player, TheftNpc.GNOME, secondClickNpc);
-                                    break;
-                                case 21:
-                                    Thieving.getSingleton().stealNpc(player, TheftNpc.HERO, secondClickNpc);
-                                    break;
-                                case 1183:
-                                case 1184:
-                                    Thieving.getSingleton().stealNpc(player, TheftNpc.ELF, secondClickNpc);
-                                    break;
-                                case 319:
-                                    if (player.getInventory().getContainer().contains(FishingTool.FISHING_ROD.getId())) {
-                                        Fishing.getSingleton().startFish(player, FishingTool.FISHING_ROD);
-                                    } else {
-                                        Fishing.getSingleton().startFish(player, FishingTool.OILY_FISHING_ROD);
-                                    }
-                                    break;
-                                case 324:
-                                    Fishing.getSingleton().startFish(player, FishingTool.HARPOON);
-                                    break;
-                                case 328:
-                                    if (player.getInventory().getContainer().contains(FishingTool.FISHING_ROD.getId())) {
-                                        Fishing.getSingleton().startFish(player, FishingTool.FISHING_ROD);
-                                    } else {
-                                        Fishing.getSingleton().startFish(player, FishingTool.OILY_FISHING_ROD);
-                                    }
-                                    break;
+
                             }
                         }
                     }

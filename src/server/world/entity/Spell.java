@@ -1,6 +1,5 @@
-package server.world.entity.combat.magic;
+package server.world.entity;
 
-import server.world.entity.Entity;
 import server.world.item.Item;
 
 /**

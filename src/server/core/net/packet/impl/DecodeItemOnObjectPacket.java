@@ -7,13 +7,6 @@ import server.core.net.packet.PacketDecoder;
 import server.core.net.packet.PacketOpcodeHeader;
 import server.util.Misc;
 import server.world.entity.player.Player;
-import server.world.entity.player.skill.impl.Cooking;
-import server.world.entity.player.skill.impl.Prayer;
-import server.world.entity.player.skill.impl.Smithing;
-import server.world.entity.player.skill.impl.Cooking.CookFish;
-import server.world.entity.player.skill.impl.Prayer.PrayerItem;
-import server.world.entity.player.skill.impl.Smithing.Smelt;
-import server.world.entity.player.skill.impl.Smithing.Smith;
 import server.world.map.Position;
 
 /**
@@ -25,6 +18,7 @@ import server.world.map.Position;
 public class DecodeItemOnObjectPacket extends PacketDecoder {
 
     @Override
+    @SuppressWarnings("unused")
     public void decode(final Player player, ReadBuffer in) {
         in.readShort(false);
         final int objectId = in.readShort(true, ByteOrder.LITTLE);
@@ -45,68 +39,10 @@ public class DecodeItemOnObjectPacket extends PacketDecoder {
             public void run() {
                 if (Misc.canClickObject(player.getPosition(), new Position(objectX, objectY), size)) {
                     switch (objectId) {
-                        case 409:
-                            PrayerItem b = PrayerItem.getPrayerItem(itemId);
-                            Prayer.getSingleton().altarItem(player, b, slot);
-                            break;
-                        case 2732:
-                            CookFish fish = CookFish.getFish(itemId);
 
-                            if (fish != null) {
-                                player.setUsingStove(false);
-                                player.setCook(fish);
-                                Cooking.getSingleton().openCookingSelection(player, fish.getRawFishId());
-                            }
-                            break;
-                        case 114:
-                        case 2728:
-                            fish = CookFish.getFish(itemId);
+                    }
 
-                            if (fish != null) {
-                                player.setUsingStove(true);
-                                player.setCook(fish);
-                                Cooking.getSingleton().openCookingSelection(player, fish.getRawFishId());
-                            }
-                            break;
-                        case 2781:
-                        case 2785:
-                        case 2966:
-                        case 6189:
-                        case 3044:
-                        case 3294:
-                        case 4304:
-                            if (Smelt.containSmeltItem(itemId)) {
-                                Smithing.getSingleton().smeltInterface(player);
-                            }
-                            break;
-                        case 2783:
-                            if (!player.getInventory().getContainer().contains(2347)) {
-                                player.getPacketBuilder().sendMessage("You'll need a hammer if you want to make armor and weapons!");
-                                player.getPacketBuilder().closeWindows();
-                                return;
-                            }
-
-                            switch (itemId) {
-                                case 2349:
-                                    Smithing.getSingleton().smithInterface(player, Smith.BRONZE);
-                                    break;
-                                case 2351:
-                                    Smithing.getSingleton().smithInterface(player, Smith.IRON);
-                                    break;
-                                case 2353:
-                                    Smithing.getSingleton().smithInterface(player, Smith.STEEL);
-                                    break;
-                                case 2359:
-                                    Smithing.getSingleton().smithInterface(player, Smith.MITHRIL);
-                                    break;
-                                case 2361:
-                                    Smithing.getSingleton().smithInterface(player, Smith.ADAMANT);
-                                    break;
-                                case 2363:
-                                    Smithing.getSingleton().smithInterface(player, Smith.RUNE);
-                                    break;
-                            }
-                            break;
+                    switch (itemId) {
 
                     }
                 }

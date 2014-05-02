@@ -7,14 +7,16 @@ import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
 /**
- * A {@link Executor} implementation that is meant to carry out prioritized
- * services throughout the application.
+ * An {@link Executor} implementation that is used to carry out prioritized
+ * services throughout the application. When these pools are not in use for a
+ * certain period of time they will automatically go 'idle' therefore consuming
+ * less resources.
  * 
  * @author lare96
  */
 public final class PriorityServicePool implements Executor {
 
-    /** The {@link ThreadPoolExecutor} that will hold our service threads. */
+    /** The backing executor that will hold our pool of service threads. */
     private ThreadPoolExecutor servicePool;
 
     /**
@@ -54,8 +56,7 @@ public final class PriorityServicePool implements Executor {
     }
 
     /**
-     * A {@link RejectedExecutionHandler} implementation that will handle
-     * services that have been rejected by the {@link PriorityServicePool}.
+     * Handles services that have been rejected by the underlying priority pool.
      * 
      * @author lare96
      */
@@ -63,13 +64,17 @@ public final class PriorityServicePool implements Executor {
 
         @Override
         public void rejectedExecution(Runnable r, ThreadPoolExecutor executor) {
+            if (r instanceof Service) {
+                String reason = "unknown!";
 
-            // XXX: Maybe redirect the task elsewhere?
-            if (!(r instanceof Service)) {
-                throw new RuntimeException("[REJECTED TASK]: Unknown task!");
+                if (executor.getQueue().remainingCapacity() == 0) {
+                    reason = "no more space in the work queue!";
+                } else if (executor.isShutdown()) {
+                    reason = "the pool is not running!";
+                }
+
+                throw new ServiceDeniedException((Service) r, reason);
             }
-
-            throw new RuntimeException("[REJECTED TASK]: " + ((Service) r).name());
         }
     }
 }

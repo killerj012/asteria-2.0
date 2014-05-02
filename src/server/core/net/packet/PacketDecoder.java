@@ -35,10 +35,13 @@ public abstract class PacketDecoder {
      *        the decoder to add to the array.
      */
     public static void addDecoder(PacketDecoder packet) {
+
+        /** Throw an exception if no header is found for the decoder. */
         if (packet.getClass().getAnnotation(PacketOpcodeHeader.class) == null) {
             throw new PacketHeaderException(packet);
         }
 
+        /** Gets all of the data from the header. */
         int packetOpcodes[] = packet.getClass().getAnnotation(PacketOpcodeHeader.class).value();
 
         /** Add the decoder for all of the opcodes. */

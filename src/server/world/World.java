@@ -1,7 +1,6 @@
 package server.world;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.Phaser;
 import java.util.logging.Logger;
 
@@ -16,6 +15,7 @@ import server.world.entity.player.PlayerParallelUpdateService;
 import server.world.entity.player.content.AssignWeaponAnimation;
 import server.world.entity.player.content.AssignWeaponInterface;
 import server.world.entity.player.file.WritePlayerFileEvent;
+import server.world.entity.player.minigame.MinigameFactory;
 import server.world.item.ground.RegisterableGroundItem;
 import server.world.object.RegisterableWorldObject;
 
@@ -36,8 +36,8 @@ public final class World {
     /** All registered NPCs. */
     private static EntityContainer<Npc> npcs = new EntityContainer<Npc>(4000);
 
-    /** A map of cached player credentials. */
-    private static Map<String, Player> cachedPlayers = new HashMap<String, Player>();
+    /** A list of players that are currently being saved. */
+    private static CopyOnWriteArrayList<String> cachedPlayers = new CopyOnWriteArrayList<String>();
 
     /** A stopwatch to track the total time this server has been online. */
     private static Stopwatch totalOnlineTime = new Stopwatch().reset();
@@ -68,7 +68,7 @@ public final class World {
             AssignWeaponAnimation.class.newInstance();
             AssignWeaponInterface.class.newInstance();
             Misc.loadNpcDrops();
-            Misc.loadMusic();
+            MinigameFactory.fireDynamicTasks();
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -218,8 +218,8 @@ public final class World {
      */
     public static void savePlayer(final Player player) {
 
-        /** We cache the player first. */
-        cachedPlayers.put(player.getUsername(), player);
+        /** Cache the player until the saving is done. */
+        cachedPlayers.add(player.getUsername());
 
         /** Save the actual file whenever the thread is available to. */
         Rs2Engine.getDiskPool().execute(new Service() {
@@ -228,6 +228,7 @@ public final class World {
                 synchronized (player) {
                     WritePlayerFileEvent save = new WritePlayerFileEvent(player);
                     save.run();
+                    cachedPlayers.remove(player.getUsername());
                     logger.info(player + " game successfully saved by the disk pool!");
                 }
             }
@@ -271,7 +272,7 @@ public final class World {
      * 
      * @return the cached players.
      */
-    public static Map<String, Player> getCachedPlayers() {
+    public static CopyOnWriteArrayList<String> getCachedPlayers() {
         return cachedPlayers;
     }
 

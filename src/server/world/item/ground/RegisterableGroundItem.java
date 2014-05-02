@@ -36,12 +36,21 @@ public class RegisterableGroundItem {
     /**
      * Searches the database for an item and returns it if found.
      * 
-     * @param item
-     *        the item to search for.
+     * @param itemId
+     *        the id of the item to search for.
+     * @param position
+     *        the position of the item to search for.
      */
-    public GroundItem searchDatabase(GroundItem item) {
-        if (itemList.contains(item)) {
-            return item;
+    public GroundItem searchDatabase(int itemId, Position position) {
+        for (GroundItem item : itemList) {
+            if (item == null) {
+                continue;
+
+            }
+
+            if (item.getItem().getId() == itemId && item.getPosition().equals(position)) {
+                return item;
+            }
         }
         return null;
     }

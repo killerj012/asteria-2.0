@@ -54,7 +54,7 @@ public class NpcMovementCoordinator {
          * Block if this coordinator isn't set to coordinate or if the npc is in
          * combat.
          */
-        if (!coordinator.isCoordinate() || npc.getCombatSession().isAttacking() || npc.getCombatSession().isBeingAttacked()) {
+        if (!coordinator.isCoordinate() || npc.getCombatBuilder().isAttacking() || npc.getCombatBuilder().isBeingAttacked()) {
             return;
         }
 

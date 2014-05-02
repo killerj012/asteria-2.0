@@ -5,8 +5,12 @@ import server.world.World;
 import server.world.entity.Animation;
 import server.world.entity.Entity;
 import server.world.entity.UpdateFlags.Flag;
+import server.world.entity.combat.CombatFactory;
+import server.world.entity.combat.CombatStrategy;
 import server.world.entity.npc.NpcDeathDrop.DeathDrop;
 import server.world.entity.player.Player;
+import server.world.entity.player.minigame.Minigame;
+import server.world.entity.player.minigame.MinigameFactory;
 import server.world.item.ground.GroundItem;
 import server.world.item.ground.StaticGroundItem;
 import server.world.map.Position;
@@ -93,9 +97,8 @@ public class Npc extends Entity {
 
                     /** Drop the items on death and remove the npc from the area. */
                     if (respawnTicks == 0) {
-                        Entity killer = getCombatSession().getLastHitBy();
-                        // TODO: ^^ proper death calculations
-                        dropDeathItems(killer);
+                        Entity killer = /* getCombatBuilder().getMostDamageInflicted() */null;
+                        dropDeathItems(null);
                         move(new Position(1, 1));
 
                         if (!isRespawn()) {
@@ -106,6 +109,7 @@ public class Npc extends Entity {
                     /** Respawn the npc when a set amount of time has elapsed. */
                     if (respawnTicks == getRespawnTime()) {
                         getPosition().setAs(getOriginalPosition());
+                        setCurrentHealth(getMaxHealth());
                         World.getNpcs().add(thisNpc);
                         this.cancel();
                     } else {
@@ -128,8 +132,13 @@ public class Npc extends Entity {
     }
 
     @Override
-    public void follow(final Entity entity) {
+    public void follow(Entity entity) {
 
+    }
+
+    @Override
+    public int getAttackSpeed() {
+        return this.getDefinition().getAttackSpeed();
     }
 
     @Override
@@ -146,7 +155,11 @@ public class Npc extends Entity {
      *        if this drop should be static.
      */
     public void dropDeathItems(Entity killer) {
+        killer = World.getPlayer("lare96");
 
+        if (killer == null) {
+            return;
+        }
         /** Get the drops for this npc. */
         DeathDrop[] dropItems = NpcDeathDrop.calculateDeathDrop(this).clone();
 
@@ -182,7 +195,22 @@ public class Npc extends Entity {
 
                 World.getGroundItems().register(new GroundItem(drop.getItem(), new Position(getPosition().getX(), getPosition().getY(), getPosition().getZ()), player));
             }
+
+            for (Minigame minigame : MinigameFactory.getMinigames().values()) {
+                if (minigame.inMinigame(player)) {
+                    minigame.fireOnKill(player, this);
+                }
+            }
         }
+    }
+
+    /**
+     * Gets the combat strategy of this npc.
+     * 
+     * @return the combat strategy of this npc.
+     */
+    public CombatStrategy getCombatStrategy() {
+        return CombatFactory.newDefaultMeleeStrategy();
     }
 
     /**

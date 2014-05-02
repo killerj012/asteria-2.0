@@ -1,7 +1,7 @@
 package server.core;
 
 /**
- * A service that is carried out by a {@link PriorityServicePool}.
+ * A task that can be carried out by a {@link PriorityServicePool}.
  * 
  * @author lare96
  */

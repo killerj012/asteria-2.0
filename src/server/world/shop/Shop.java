@@ -548,7 +548,7 @@ public class Shop {
      * 
      * @author lare96
      */
-    public class ShopWorker extends Worker {
+    private static class ShopWorker extends Worker {
 
         /** The shop we are restocking. */
         private Shop shop;

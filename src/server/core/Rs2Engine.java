@@ -8,7 +8,6 @@ import java.util.logging.Logger;
 import server.core.net.EventSelector;
 import server.core.worker.TaskFactory;
 import server.world.World;
-import server.world.entity.player.PlayerUncacheWorker;
 
 /**
  * The 'heart' of the the server that fires tickable game logic at 600ms
@@ -91,7 +90,7 @@ public final class Rs2Engine implements Runnable {
         gameExecutor.scheduleAtFixedRate(new Rs2Engine(), 0, 600, TimeUnit.MILLISECONDS);
 
         /** Start miscellaneous tasks. */
-        TaskFactory.getFactory().submit(new PlayerUncacheWorker());
+        // ...
     }
 
     @Override

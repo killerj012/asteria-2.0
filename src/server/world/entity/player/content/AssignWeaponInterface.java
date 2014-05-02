@@ -1,10 +1,7 @@
 package server.world.entity.player.content;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import server.util.Misc;
-import server.world.entity.combat.Combat.CombatType;
+import server.world.entity.combat.CombatType;
 import server.world.entity.player.Player;
 import server.world.item.Item;
 import server.world.item.ItemDefinition;
@@ -17,11 +14,13 @@ import server.world.item.ItemDefinition;
  */
 public class AssignWeaponInterface {
 
+    // XXX: BARROWS, MAULS
+
     /**
      * A map of every weapon in the game and the corresponding data for the
      * interface that will be displayed when the weapon is equipped.
      */
-    private static Map<Integer, WeaponInterface> weaponInterface = new HashMap<Integer, WeaponInterface>();
+    private static WeaponInterface[] weaponInterface = new WeaponInterface[7956];
 
     /**
      * Whenever the singleton instance is created, every weapon in the game and
@@ -39,51 +38,53 @@ public class AssignWeaponInterface {
 
             /** Add the weapons and the appropriate interfaces into the map. */
             if (def.getItemName().startsWith("Staff") || def.getItemName().endsWith("staff")) {
-                weaponInterface.put(def.getItemId(), WeaponInterface.STAFF);
+                weaponInterface[def.getItemId()] = WeaponInterface.STAFF;
             } else if (def.getItemName().startsWith("Scythe")) {
-                weaponInterface.put(def.getItemId(), WeaponInterface.SCYTHE);
-            } else if (def.getItemName().endsWith("warhammer")) {
-                weaponInterface.put(def.getItemId(), WeaponInterface.WARHAMMER);
+                weaponInterface[def.getItemId()] = WeaponInterface.SCYTHE;
+            } else if (def.getItemName().endsWith("warhammer") || def.getItemName().endsWith("maul")) {
+                weaponInterface[def.getItemId()] = WeaponInterface.WARHAMMER;
             } else if (def.getItemName().endsWith("battleaxe")) {
-                weaponInterface.put(def.getItemId(), WeaponInterface.BATTLE_AXE);
+                weaponInterface[def.getItemId()] = WeaponInterface.BATTLEAXE;
             } else if (def.getItemName().equals("Crossbow") || def.getItemName().endsWith("crossbow")) {
-                weaponInterface.put(def.getItemId(), WeaponInterface.CROSSBOW);
+                weaponInterface[def.getItemId()] = WeaponInterface.CROSSBOW;
             } else if (def.getItemName().endsWith("shortbow")) {
-                weaponInterface.put(def.getItemId(), WeaponInterface.SHORT_BOW);
+                weaponInterface[def.getItemId()] = WeaponInterface.SHORTBOW;
             } else if (def.getItemName().endsWith("longbow")) {
-                weaponInterface.put(def.getItemId(), WeaponInterface.LONG_BOW);
+                weaponInterface[def.getItemId()] = WeaponInterface.LONGBOW;
             } else if (def.getItemName().endsWith("dagger")) {
-                weaponInterface.put(def.getItemId(), WeaponInterface.DAGGER);
+                weaponInterface[def.getItemId()] = WeaponInterface.DAGGER;
             } else if (def.getItemName().endsWith("longsword")) {
-                weaponInterface.put(def.getItemId(), WeaponInterface.LONG_SWORD);
+                weaponInterface[def.getItemId()] = WeaponInterface.LONGSWORD;
             } else if (def.getItemName().endsWith(" sword") && !def.getItemName().endsWith("2h sword")) {
-                weaponInterface.put(def.getItemId(), WeaponInterface.SWORD);
+                weaponInterface[def.getItemId()] = WeaponInterface.SWORD;
             } else if (def.getItemName().endsWith("scimitar")) {
-                weaponInterface.put(def.getItemId(), WeaponInterface.SCIMITAR);
+                weaponInterface[def.getItemId()] = WeaponInterface.SCIMITAR;
             } else if (def.getItemName().endsWith("2h sword")) {
-                weaponInterface.put(def.getItemId(), WeaponInterface.TWO_HANDED_SWORD);
+                weaponInterface[def.getItemId()] = WeaponInterface.TWO_HANDED_SWORD;
             } else if (def.getItemName().endsWith("mace")) {
-                weaponInterface.put(def.getItemId(), WeaponInterface.MACE);
+                weaponInterface[def.getItemId()] = WeaponInterface.MACE;
             } else if (def.getItemName().endsWith("knife")) {
-                weaponInterface.put(def.getItemId(), WeaponInterface.KNIFE);
+                weaponInterface[def.getItemId()] = WeaponInterface.KNIFE;
             } else if (def.getItemName().endsWith("spear")) {
-                weaponInterface.put(def.getItemId(), WeaponInterface.SPEAR);
+                weaponInterface[def.getItemId()] = WeaponInterface.SPEAR;
             } else if (def.getItemName().endsWith("pickaxe")) {
-                weaponInterface.put(def.getItemId(), WeaponInterface.PICKAXE);
+                weaponInterface[def.getItemId()] = WeaponInterface.PICKAXE;
             } else if (def.getItemName().endsWith("claws")) {
-                weaponInterface.put(def.getItemId(), WeaponInterface.CLAWS);
+                weaponInterface[def.getItemId()] = WeaponInterface.CLAWS;
             } else if (def.getItemName().endsWith("halberd")) {
-                weaponInterface.put(def.getItemId(), WeaponInterface.HALBERD);
+                weaponInterface[def.getItemId()] = WeaponInterface.HALBERD;
             } else if (def.getItemName().endsWith("whip")) {
-                weaponInterface.put(def.getItemId(), WeaponInterface.WHIP);
+                weaponInterface[def.getItemId()] = WeaponInterface.WHIP;
             } else if (def.getItemName().endsWith("thrownaxe")) {
-                weaponInterface.put(def.getItemId(), WeaponInterface.THROWNAXE);
+                weaponInterface[def.getItemId()] = WeaponInterface.THROWNAXE;
             } else if (def.getItemName().endsWith("javelin")) {
-                weaponInterface.put(def.getItemId(), WeaponInterface.JAVELIN);
+                weaponInterface[def.getItemId()] = WeaponInterface.JAVELIN;
             } else if (def.getItemName().endsWith("dart")) {
-                weaponInterface.put(def.getItemId(), WeaponInterface.DART);
+                weaponInterface[def.getItemId()] = WeaponInterface.DART;
+            } else if (def.getItemName().endsWith("axe") && !def.getItemName().endsWith("pickaxe")) {
+                weaponInterface[def.getItemId()] = WeaponInterface.BATTLEAXE;
             } else {
-                weaponInterface.put(def.getItemId(), WeaponInterface.UNARMED);
+                weaponInterface[def.getItemId()] = WeaponInterface.UNARMED;
             }
         }
     }
@@ -95,29 +96,29 @@ public class AssignWeaponInterface {
      * @author lare96
      */
     public enum WeaponInterface {
-        STAFF(328, 331, FightType.STAFF_BASH, CombatType.MELEE),
-        WARHAMMER(425, 428, FightType.WARHAMMER_POUND, CombatType.MELEE),
-        SCYTHE(776, 779, FightType.SCYTHE_REAP, CombatType.MELEE),
-        BATTLE_AXE(1698, 1701, FightType.BATTLEAXE_CHOP, CombatType.MELEE),
-        CROSSBOW(1749, 1752, FightType.CROSSBOW_ACCURATE, CombatType.RANGE),
-        SHORT_BOW(1764, 1767, FightType.SHORTBOW_ACCURATE, CombatType.RANGE),
-        LONG_BOW(1764, 1767, FightType.LONGBOW_ACCURATE, CombatType.RANGE),
-        DAGGER(2276, 2279, FightType.DAGGER_STAB, CombatType.MELEE),
-        SWORD(2276, 2279, FightType.SWORD_STAB, CombatType.MELEE),
-        SCIMITAR(2423, 2426, FightType.SCIMITAR_CHOP, CombatType.MELEE),
-        LONG_SWORD(2423, 2426, FightType.LONGSWORD_CHOP, CombatType.MELEE),
-        MACE(3796, 3799, FightType.MACE_POUND, CombatType.MELEE),
-        KNIFE(4446, 4449, FightType.KNIFE_ACCURATE, CombatType.RANGE),
-        SPEAR(4679, 4682, FightType.SPEAR_POUND, CombatType.MELEE),
-        TWO_HANDED_SWORD(4705, 4708, FightType.TWOHANDEDSWORD_CHOP, CombatType.MELEE),
-        PICKAXE(5570, 5573, FightType.PICKAXE_IMPALE, CombatType.MELEE),
-        CLAWS(7762, 7765, FightType.CLAWS_CHOP, CombatType.MELEE),
-        HALBERD(8460, 8463, FightType.HALBERD_FEND, CombatType.MELEE),
-        UNARMED(5855, 5857, FightType.UNARMED_PUNCH, CombatType.MELEE),
-        WHIP(12290, 12293, FightType.WHIP_FLICK, CombatType.MELEE),
-        THROWNAXE(4446, 4449, FightType.THROWNAXE_ACCURATE, CombatType.RANGE),
-        DART(4446, 4449, FightType.DART_ACCURATE, CombatType.RANGE),
-        JAVELIN(4446, 4449, FightType.JAVELIN_ACCURATE, CombatType.RANGE);
+        STAFF(328, 331, CombatType.MELEE, 6, new FightType[] { FightType.STAFF_BASH, FightType.STAFF_FOCUS, FightType.STAFF_POUND }),
+        WARHAMMER(425, 428, CombatType.MELEE, 6, new FightType[] { FightType.WARHAMMER_BLOCK, FightType.WARHAMMER_POUND, FightType.WARHAMMER_PUMMEL }),
+        SCYTHE(776, 779, CombatType.MELEE, 6, new FightType[] { FightType.SCYTHE_BLOCK, FightType.SCYTHE_CHOP, FightType.SCYTHE_JAB, FightType.SCYTHE_REAP }),
+        BATTLEAXE(1698, 1701, CombatType.MELEE, 6, new FightType[] { FightType.BATTLEAXE_BLOCK, FightType.BATTLEAXE_CHOP, FightType.BATTLEAXE_HACK, FightType.BATTLEAXE_SMASH }),
+        CROSSBOW(1749, 1752, CombatType.RANGE, 5, new FightType[] { FightType.CROSSBOW_RAPID, FightType.CROSSBOW_ACCURATE, FightType.CROSSBOW_LONGRANGE }),
+        SHORTBOW(1764, 1767, CombatType.RANGE, 5, new FightType[] { FightType.SHORTBOW_RAPID, FightType.SHORTBOW_ACCURATE, FightType.SHORTBOW_LONGRANGE }),
+        LONGBOW(1764, 1767, CombatType.RANGE, 6, new FightType[] { FightType.LONGBOW_RAPID, FightType.LONGBOW_ACCURATE, FightType.LONGBOW_LONGRANGE }),
+        DAGGER(2276, 2279, CombatType.MELEE, 4, new FightType[] { FightType.DAGGER_BLOCK, FightType.DAGGER_LUNGE, FightType.DAGGER_SLASH, FightType.DAGGER_STAB }),
+        SWORD(2276, 2279, CombatType.MELEE, 5, new FightType[] { FightType.SWORD_BLOCK, FightType.SWORD_LUNGE, FightType.SWORD_SLASH, FightType.SWORD_STAB }),
+        SCIMITAR(2423, 2426, CombatType.MELEE, 4, new FightType[] { FightType.SCIMITAR_BLOCK, FightType.SCIMITAR_CHOP, FightType.SCIMITAR_LUNGE, FightType.SCIMITAR_SLASH }),
+        LONGSWORD(2423, 2426, CombatType.MELEE, 5, new FightType[] { FightType.LONGSWORD_BLOCK, FightType.LONGSWORD_CHOP, FightType.LONGSWORD_LUNGE, FightType.LONGSWORD_SLASH }),
+        MACE(3796, 3799, CombatType.MELEE, 4, new FightType[] { FightType.MACE_BLOCK, FightType.MACE_POUND, FightType.MACE_PUMMEL, FightType.MACE_SPIKE }),
+        KNIFE(4446, 4449, CombatType.RANGE, 4, new FightType[] { FightType.KNIFE_RAPID, FightType.KNIFE_ACCURATE, FightType.KNIFE_LONGRANGE }),
+        SPEAR(4679, 4682, CombatType.MELEE, 6, new FightType[] { FightType.SPEAR_BLOCK, FightType.SPEAR_LUNGE, FightType.SPEAR_POUND, FightType.SPEAR_SWIPE }),
+        TWO_HANDED_SWORD(4705, 4708, CombatType.MELEE, 6, new FightType[] { FightType.TWOHANDEDSWORD_BLOCK, FightType.TWOHANDEDSWORD_CHOP, FightType.TWOHANDEDSWORD_SLASH, FightType.TWOHANDEDSWORD_SMASH }),
+        PICKAXE(5570, 5573, CombatType.MELEE, 6, new FightType[] { FightType.PICKAXE_BLOCK, FightType.PICKAXE_IMPALE, FightType.PICKAXE_SMASH, FightType.PICKAXE_SPIKE }),
+        CLAWS(7762, 7765, CombatType.MELEE, 4, new FightType[] { FightType.CLAWS_BLOCK, FightType.CLAWS_CHOP, FightType.CLAWS_LUNGE, FightType.CLAWS_SLASH }),
+        HALBERD(8460, 8463, CombatType.MELEE, 6, new FightType[] { FightType.HALBERD_FEND, FightType.HALBERD_JAB, FightType.HALBERD_SWIPE }),
+        UNARMED(5855, 5857, CombatType.MELEE, 6, new FightType[] { FightType.UNARMED_BLOCK, FightType.UNARMED_KICK, FightType.UNARMED_PUNCH }),
+        WHIP(12290, 12293, CombatType.MELEE, 4, new FightType[] { FightType.WHIP_FLICK, FightType.WHIP_LASH, FightType.WHIP_DEFLECT }),
+        THROWNAXE(4446, 4449, CombatType.RANGE, 6, new FightType[] { FightType.THROWNAXE_RAPID, FightType.THROWNAXE_ACCURATE, FightType.THROWNAXE_LONGRANGE }),
+        DART(4446, 4449, CombatType.RANGE, 3, new FightType[] { FightType.DART_RAPID, FightType.DART_ACCURATE, FightType.DART_LONGRANGE }),
+        JAVELIN(4446, 4449, CombatType.RANGE, 6, new FightType[] { FightType.JAVELIN_RAPID, FightType.JAVELIN_ACCURATE, FightType.JAVELIN_LONGRANGE });
 
         /** The interface that will be displayed on the sidebar. */
         private int interfaceId;
@@ -125,11 +126,14 @@ public class AssignWeaponInterface {
         /** The line that the name of the item will be printed to. */
         private int nameLineId;
 
-        /** The default fight type for this interface. */
-        private FightType defaultFightType;
-
         /** The combat type of the interface. */
         private CombatType combatType;
+
+        /** The attack speed of weapons using this interface. */
+        private int speed;
+
+        /** The fight types that correspond with this interface. */
+        private FightType[] fightType;
 
         /**
          * Creates a new weapon interface.
@@ -138,16 +142,19 @@ public class AssignWeaponInterface {
          *        the interface that will be displayed on the sidebar.
          * @param nameLineId
          *        the line that the name of the item will be printed to.
-         * @param defaultFightType
-         *        the default fight type for this interface.
          * @param combatType
          *        the combat type of the interface.
+         * @param speed
+         *        the attack speed of weapons using this interface.
+         * @param fightType
+         *        the fight types that correspond with this interface.
          */
-        WeaponInterface(int interfaceId, int nameLineId, FightType defaultFightType, CombatType combatType) {
+        WeaponInterface(int interfaceId, int nameLineId, CombatType combatType, int speed, FightType[] fightType) {
             this.interfaceId = interfaceId;
             this.nameLineId = nameLineId;
-            this.defaultFightType = defaultFightType;
             this.combatType = combatType;
+            this.speed = speed;
+            this.fightType = fightType;
         }
 
         /**
@@ -169,21 +176,68 @@ public class AssignWeaponInterface {
         }
 
         /**
-         * Gets the default fight type for this interface.
-         * 
-         * @return the default fight type.
-         */
-        public FightType getDefaultFightType() {
-            return defaultFightType;
-        }
-
-        /**
          * Gets the combat type of the interface.
          * 
          * @return the combat type.
          */
         public CombatType getCombatType() {
             return combatType;
+        }
+
+        /**
+         * Gets the attack speed of weapons using this interface.
+         * 
+         * @return the attack speed of weapons using this interface.
+         */
+        public int getSpeed() {
+            return speed;
+        }
+
+        /**
+         * Gets the fight types that correspond with this interface.
+         * 
+         * @return the fight types that correspond with this interface.
+         */
+        public FightType[] getFightType() {
+            return fightType;
+        }
+    }
+
+    /**
+     * The different train types.
+     * 
+     * @author lare96
+     */
+    public enum TrainType {
+        ATTACK(Misc.ATTACK),
+        STRENGTH(Misc.STRENGTH),
+        DEFENCE(Misc.DEFENCE),
+        RANGED(Misc.RANGED),
+        MAGIC(Misc.MAGIC),
+        ATTACK_STRENGTH_DEFENCE(Misc.ATTACK, Misc.STRENGTH, Misc.DEFENCE),
+        RANGE_DEFENCE(Misc.RANGED, Misc.DEFENCE),
+        MAGIC_DEFENCE(Misc.MAGIC, Misc.DEFENCE);
+
+        /** The skills this train type trains. */
+        private int[] trainSkills;
+
+        /**
+         * Create a new {@link TrainType}.
+         * 
+         * @param trainSkills
+         *        the skills this train type trains.
+         */
+        private TrainType(int... trainSkills) {
+            this.trainSkills = trainSkills;
+        }
+
+        /**
+         * Gets the skills this train type trains.
+         * 
+         * @return the train skills.
+         */
+        public int[] getTrainSkills() {
+            return trainSkills;
         }
     }
 
@@ -193,86 +247,168 @@ public class AssignWeaponInterface {
      * @author lare96
      */
     public enum FightType {
-        STAFF_BASH,
-        STAFF_POUND,
-        STAFF_FOCUS,
-        WARHAMMER_POUND,
-        WARHAMMER_PUMMEL,
-        WARHAMMER_BLOCK,
-        SCYTHE_REAP,
-        SCYTHE_CHOP,
-        SCYTHE_JAB,
-        SCYTHE_BLOCK,
-        BATTLEAXE_CHOP,
-        BATTLEAXE_HACK,
-        BATTLEAXE_SMASH,
-        BATTLEAXE_BLOCK,
-        CROSSBOW_ACCURATE,
-        CROSSBOW_RAPID,
-        CROSSBOW_LONGRANGE,
-        SHORTBOW_ACCURATE,
-        SHORTBOW_RAPID,
-        SHORTBOW_LONGRANGE,
-        LONGBOW_ACCURATE,
-        LONGBOW_RAPID,
-        LONGBOW_LONGRANGE,
-        DAGGER_STAB,
-        DAGGER_LUNGE,
-        DAGGER_SLASH,
-        DAGGER_BLOCK,
-        SWORD_STAB,
-        SWORD_LUNGE,
-        SWORD_SLASH,
-        SWORD_BLOCK,
-        SCIMITAR_CHOP,
-        SCIMITAR_SLASH,
-        SCIMITAR_LUNGE,
-        SCIMITAR_BLOCK,
-        LONGSWORD_CHOP,
-        LONGSWORD_SLASH,
-        LONGSWORD_LUNGE,
-        LONGSWORD_BLOCK,
-        MACE_POUND,
-        MACE_PUMMEL,
-        MACE_SPIKE,
-        MACE_BLOCK,
-        KNIFE_ACCURATE,
-        KNIFE_RAPID,
-        KNIFE_LONGRANGE,
-        SPEAR_LUNGE,
-        SPEAR_SWIPE,
-        SPEAR_POUND,
-        SPEAR_BLOCK,
-        TWOHANDEDSWORD_CHOP,
-        TWOHANDEDSWORD_SLASH,
-        TWOHANDEDSWORD_SMASH,
-        TWOHANDEDSWORD_BLOCK,
-        PICKAXE_SPIKE,
-        PICKAXE_IMPALE,
-        PICKAXE_SMASH,
-        PICKAXE_BLOCK,
-        CLAWS_CHOP,
-        CLAWS_SLASH,
-        CLAWS_LUNGE,
-        CLAWS_BLOCK,
-        HALBERD_JAB,
-        HALBERD_SWIPE,
-        HALBERD_FEND,
-        UNARMED_PUNCH,
-        UNARMED_KICK,
-        UNARMED_BLOCK,
-        WHIP_FLICK,
-        WHIP_LASH,
-        WHIP_DEFLECT,
-        THROWNAXE_ACCURATE,
-        THROWNAXE_RAPID,
-        THROWNAXE_LONGRANGE,
-        DART_ACCURATE,
-        DART_RAPID,
-        DART_LONGRANGE,
-        JAVELIN_ACCURATE,
-        JAVELIN_RAPID,
-        JAVELIN_LONGRANGE
+        STAFF_BASH(406, TrainType.ATTACK, 43, 0, Misc.ATTACK_CRUSH),
+        STAFF_POUND(406, TrainType.STRENGTH, 43, 1, Misc.ATTACK_CRUSH),
+        STAFF_FOCUS(406, TrainType.DEFENCE, 43, 2, Misc.ATTACK_CRUSH),
+        WARHAMMER_POUND(401, TrainType.ATTACK, 43, 0, Misc.ATTACK_CRUSH),
+        WARHAMMER_PUMMEL(401, TrainType.STRENGTH, 43, 1, Misc.ATTACK_CRUSH),
+        WARHAMMER_BLOCK(401, TrainType.DEFENCE, 43, 2, Misc.ATTACK_CRUSH),
+        SCYTHE_REAP(408, TrainType.ATTACK, 43, 0, Misc.ATTACK_SLASH),
+        SCYTHE_CHOP(451, TrainType.STRENGTH, 43, 1, Misc.ATTACK_STAB),
+        SCYTHE_JAB(412, TrainType.STRENGTH, 43, 2, Misc.ATTACK_CRUSH),
+        SCYTHE_BLOCK(408, TrainType.DEFENCE, 43, 3, Misc.ATTACK_SLASH),
+        BATTLEAXE_CHOP(1833, TrainType.ATTACK, 43, 0, Misc.ATTACK_SLASH),
+        BATTLEAXE_HACK(1833, TrainType.STRENGTH, 43, 1, Misc.ATTACK_SLASH),
+        BATTLEAXE_SMASH(401, TrainType.STRENGTH, 43, 2, Misc.ATTACK_CRUSH),
+        BATTLEAXE_BLOCK(1833, TrainType.DEFENCE, 43, 3, Misc.ATTACK_SLASH),
+        CROSSBOW_ACCURATE(427, TrainType.RANGED, 43, 0, Misc.ATTACK_RANGE),
+        CROSSBOW_RAPID(427, TrainType.RANGED, 43, 1, Misc.ATTACK_RANGE),
+        CROSSBOW_LONGRANGE(427, TrainType.RANGE_DEFENCE, 43, 2, Misc.ATTACK_RANGE),
+        SHORTBOW_ACCURATE(426, TrainType.RANGED, 43, 0, Misc.ATTACK_RANGE),
+        SHORTBOW_RAPID(426, TrainType.RANGED, 43, 1, Misc.ATTACK_RANGE),
+        SHORTBOW_LONGRANGE(426, TrainType.RANGE_DEFENCE, 43, 2, Misc.ATTACK_RANGE),
+        LONGBOW_ACCURATE(426, TrainType.RANGED, 43, 0, Misc.ATTACK_RANGE),
+        LONGBOW_RAPID(426, TrainType.RANGED, 43, 1, Misc.ATTACK_RANGE),
+        LONGBOW_LONGRANGE(426, TrainType.RANGE_DEFENCE, 43, 2, Misc.ATTACK_RANGE),
+        DAGGER_STAB(402, TrainType.ATTACK, 43, 0, Misc.ATTACK_STAB),
+        DAGGER_LUNGE(402, TrainType.STRENGTH, 43, 1, Misc.ATTACK_STAB),
+        DAGGER_SLASH(451, TrainType.STRENGTH, 43, 2, Misc.ATTACK_STAB),
+        DAGGER_BLOCK(402, TrainType.DEFENCE, 43, 3, Misc.ATTACK_STAB),
+        SWORD_STAB(412, TrainType.ATTACK, 43, 0, Misc.ATTACK_STAB),
+        SWORD_LUNGE(412, TrainType.STRENGTH, 43, 1, Misc.ATTACK_STAB),
+        SWORD_SLASH(451, TrainType.STRENGTH, 43, 2, Misc.ATTACK_SLASH),
+        SWORD_BLOCK(412, TrainType.DEFENCE, 43, 3, Misc.ATTACK_STAB),
+        SCIMITAR_CHOP(451, TrainType.ATTACK, 43, 0, Misc.ATTACK_SLASH),
+        SCIMITAR_SLASH(451, TrainType.STRENGTH, 43, 1, Misc.ATTACK_SLASH),
+        SCIMITAR_LUNGE(412, TrainType.ATTACK_STRENGTH_DEFENCE, 43, 2, Misc.ATTACK_STAB),
+        SCIMITAR_BLOCK(451, TrainType.DEFENCE, 43, 3, Misc.ATTACK_SLASH),
+        LONGSWORD_CHOP(451, TrainType.ATTACK, 43, 0, Misc.ATTACK_SLASH),
+        LONGSWORD_SLASH(451, TrainType.STRENGTH, 43, 1, Misc.ATTACK_SLASH),
+        LONGSWORD_LUNGE(412, TrainType.ATTACK_STRENGTH_DEFENCE, 43, 2, Misc.ATTACK_STAB),
+        LONGSWORD_BLOCK(451, TrainType.DEFENCE, 43, 3, Misc.ATTACK_SLASH),
+        MACE_POUND(1833, TrainType.ATTACK, 43, 0, Misc.ATTACK_CRUSH),
+        MACE_PUMMEL(401, TrainType.STRENGTH, 43, 1, Misc.ATTACK_CRUSH),
+        MACE_SPIKE(412, TrainType.ATTACK_STRENGTH_DEFENCE, 43, 2, Misc.ATTACK_STAB),
+        MACE_BLOCK(401, TrainType.DEFENCE, 43, 3, Misc.ATTACK_CRUSH),
+        KNIFE_ACCURATE(806, TrainType.RANGED, 43, 0, Misc.ATTACK_RANGE),
+        KNIFE_RAPID(806, TrainType.RANGED, 43, 1, Misc.ATTACK_RANGE),
+        KNIFE_LONGRANGE(806, TrainType.RANGE_DEFENCE, 43, 2, Misc.ATTACK_RANGE),
+        SPEAR_LUNGE(2080, TrainType.ATTACK_STRENGTH_DEFENCE, 43, 0, Misc.ATTACK_STAB),
+        SPEAR_SWIPE(2081, TrainType.ATTACK_STRENGTH_DEFENCE, 43, 1, Misc.ATTACK_SLASH),
+        SPEAR_POUND(2082, TrainType.ATTACK_STRENGTH_DEFENCE, 43, 2, Misc.ATTACK_CRUSH),
+        SPEAR_BLOCK(2080, TrainType.DEFENCE, 43, 3, Misc.ATTACK_STAB),
+        TWOHANDEDSWORD_CHOP(407, TrainType.ATTACK, 43, 0, Misc.ATTACK_SLASH),
+        TWOHANDEDSWORD_SLASH(407, TrainType.STRENGTH, 43, 1, Misc.ATTACK_SLASH),
+        TWOHANDEDSWORD_SMASH(406, TrainType.STRENGTH, 43, 2, Misc.ATTACK_CRUSH),
+        TWOHANDEDSWORD_BLOCK(407, TrainType.DEFENCE, 43, 3, Misc.ATTACK_SLASH),
+        PICKAXE_SPIKE(412, TrainType.ATTACK, 43, 0, Misc.ATTACK_STAB),
+        PICKAXE_IMPALE(412, TrainType.STRENGTH, 43, 1, Misc.ATTACK_STAB),
+        PICKAXE_SMASH(401, TrainType.STRENGTH, 43, 2, Misc.ATTACK_CRUSH),
+        PICKAXE_BLOCK(412, TrainType.DEFENCE, 43, 3, Misc.ATTACK_STAB),
+        CLAWS_CHOP(451, TrainType.ATTACK, 43, 0, Misc.ATTACK_SLASH),
+        CLAWS_SLASH(451, TrainType.STRENGTH, 43, 1, Misc.ATTACK_SLASH),
+        CLAWS_LUNGE(412, TrainType.ATTACK_STRENGTH_DEFENCE, 43, 2, Misc.ATTACK_STAB),
+        CLAWS_BLOCK(451, TrainType.DEFENCE, 43, 3, Misc.ATTACK_SLASH),
+        HALBERD_JAB(412, TrainType.ATTACK_STRENGTH_DEFENCE, 43, 0, Misc.ATTACK_STAB),
+        HALBERD_SWIPE(440, TrainType.STRENGTH, 43, 1, Misc.ATTACK_SLASH),
+        HALBERD_FEND(412, TrainType.DEFENCE, 43, 2, Misc.ATTACK_STAB),
+        UNARMED_PUNCH(422, TrainType.ATTACK, 43, 0, Misc.ATTACK_CRUSH),
+        UNARMED_KICK(423, TrainType.STRENGTH, 43, 1, Misc.ATTACK_CRUSH),
+        UNARMED_BLOCK(422, TrainType.DEFENCE, 43, 2, Misc.ATTACK_CRUSH),
+        WHIP_FLICK(1658, TrainType.ATTACK, 43, 0, Misc.ATTACK_SLASH),
+        WHIP_LASH(1658, TrainType.ATTACK_STRENGTH_DEFENCE, 43, 1, Misc.ATTACK_SLASH),
+        WHIP_DEFLECT(1658, TrainType.DEFENCE, 43, 2, Misc.ATTACK_SLASH),
+        THROWNAXE_ACCURATE(806, TrainType.RANGED, 43, 0, Misc.ATTACK_RANGE),
+        THROWNAXE_RAPID(806, TrainType.RANGED, 43, 1, Misc.ATTACK_RANGE),
+        THROWNAXE_LONGRANGE(806, TrainType.RANGE_DEFENCE, 43, 2, Misc.ATTACK_RANGE),
+        DART_ACCURATE(806, TrainType.RANGED, 43, 0, Misc.ATTACK_RANGE),
+        DART_RAPID(806, TrainType.RANGED, 43, 1, Misc.ATTACK_RANGE),
+        DART_LONGRANGE(806, TrainType.RANGE_DEFENCE, 43, 2, Misc.ATTACK_RANGE),
+        JAVELIN_ACCURATE(806, TrainType.RANGED, 43, 0, Misc.ATTACK_RANGE),
+        JAVELIN_RAPID(806, TrainType.RANGED, 43, 2, Misc.ATTACK_RANGE),
+        JAVELIN_LONGRANGE(806, TrainType.RANGE_DEFENCE, 43, 3, Misc.ATTACK_RANGE);
+
+        /** The animation this fight type holds. */
+        private int animation;
+
+        /** The train type this fight type holds. */
+        private TrainType trainType;
+
+        /** The parent config id. */
+        private int parentId;
+
+        /** The child config id. */
+        private int childId;
+
+        /** The bonus type. */
+        private int bonusType;
+
+        /**
+         * Create a new {@link FightType}.
+         * 
+         * @param animation
+         *        the animation this fight type holds.
+         * @param trainType
+         *        the train type this fight type holds.
+         * @param parentId
+         *        the parent config id.
+         * @param childId
+         *        the child config id.
+         * @param bonusType
+         *        the bonus type.
+         */
+        private FightType(int animation, TrainType trainType, int parentId, int childId, int bonusType) {
+            this.animation = animation;
+            this.trainType = trainType;
+            this.parentId = parentId;
+            this.childId = childId;
+            this.bonusType = bonusType;
+        }
+
+        /**
+         * Gets the animation this fight type holds.
+         * 
+         * @return the animation.
+         */
+        public int getAnimation() {
+            return animation;
+        }
+
+        /**
+         * Gets the train type this fight type holds.
+         * 
+         * @return the train type.
+         */
+        public TrainType getTrainType() {
+            return trainType;
+        }
+
+        /**
+         * Gets the parent config id.
+         * 
+         * @return the parent id.
+         */
+        public int getParentId() {
+            return parentId;
+        }
+
+        /**
+         * Gets the child config id.
+         * 
+         * @return the child id.
+         */
+        public int getChildId() {
+            return childId;
+        }
+
+        /**
+         * Gets the bonus type.
+         * 
+         * @return the bonus type.
+         */
+        public int getBonusType() {
+            return bonusType;
+        }
     }
 
     /**
@@ -285,13 +421,13 @@ public class AssignWeaponInterface {
      */
     public static void assignInterface(Player player, Item item) {
 
-        /** Block if this item isn't a weapon. */
-        if (item == null || item.getDefinition().getEquipmentSlot() != Misc.EQUIPMENT_SLOT_WEAPON) {
+        /** Block if invalid item. */
+        if (item == null) {
             return;
         }
 
         /** Retrieve the interface for the weapon from the map. */
-        WeaponInterface weapon = weaponInterface.get(item.getId());
+        WeaponInterface weapon = weaponInterface[item.getId()];
 
         /** Write the interface to the sidebar. */
         if (weapon == WeaponInterface.UNARMED) {
@@ -323,5 +459,31 @@ public class AssignWeaponInterface {
         player.getPacketBuilder().sendSidebarInterface(0, WeaponInterface.UNARMED.getInterfaceId());
         player.getPacketBuilder().sendString("Unarmed", WeaponInterface.UNARMED.getNameLineId());
         player.setWeapon(WeaponInterface.UNARMED);
+    }
+
+    /**
+     * Changes the fight type when a weapon is equipped or unequipped.
+     * 
+     * @param item
+     *        the weapon being equipped.
+     * @param player
+     *        the player changing their weapon.
+     */
+    public static void changeFightType(Item item, Player player) {
+
+        /** Set the new fight type based on the current skill being trained. */
+        for (FightType fightType : player.getWeapon().getFightType()) {
+            if (fightType.getTrainType() == player.getFightType().getTrainType()) {
+                player.setFightType(fightType);
+                player.getPacketBuilder().sendConfig(player.getFightType().getParentId(), player.getFightType().getChildId());
+                System.out.println("" + player.getFightType().name());
+                return;
+            }
+        }
+
+        /** Or set the default fight type for that weapon. */
+        player.setFightType(player.getWeapon().getFightType()[0]);
+        player.getPacketBuilder().sendConfig(player.getFightType().getParentId(), player.getFightType().getChildId());
+        System.out.println("" + player.getFightType().name());
     }
 }

@@ -1,4 +1,4 @@
-package server.world.entity.combat;
+package server.world.entity;
 
 /**
  * A projectile used when doing things like firing arrows or casting spells.
@@ -7,30 +7,24 @@ package server.world.entity.combat;
  */
 public class Projectile {
 
-    /**
-     * The id of the projectile.
-     */
+    /** The id of the projectile. */
     private int id;
 
-    /**
-     * The height of the projectile.
-     */
+    /** The height of the projectile. */
     private int height;
 
-    /**
-     * The delay of the projectile.
-     */
+    /** The delay of the projectile. */
     private int delay;
 
     /**
      * Create a new projectile.
      * 
      * @param projectileId
-     *            the projectile id.
+     *        the projectile id.
      * @param projectileHeight
-     *            the projectile height.
+     *        the projectile height.
      * @param projectileDelay
-     *            the projectile delay.
+     *        the projectile delay.
      */
     public Projectile(int projectileId, int projectileHeight, int projectileDelay) {
         this.setProjectileId(projectileId);
@@ -42,9 +36,9 @@ public class Projectile {
      * Create a new projectile.
      * 
      * @param projectileId
-     *            the projectile id.
+     *        the projectile id.
      * @param projectileHeight
-     *            the projectile height.
+     *        the projectile height.
      */
     public Projectile(int projectileId, int projectileHeight) {
         this.setProjectileId(projectileId);
@@ -56,7 +50,7 @@ public class Projectile {
      * Create a new projectile.
      * 
      * @param projectileId
-     *            the projectile id.
+     *        the projectile id.
      */
     public Projectile(int projectileId) {
         this.setProjectileId(projectileId);
@@ -73,7 +67,7 @@ public class Projectile {
 
     /**
      * @param projectileId
-     *            the projectileId to set.
+     *        the projectileId to set.
      */
     public void setProjectileId(int projectileId) {
         this.id = projectileId;
@@ -88,7 +82,7 @@ public class Projectile {
 
     /**
      * @param projectileHeight
-     *            the projectileHeight to set.
+     *        the projectileHeight to set.
      */
     public void setProjectileHeight(int projectileHeight) {
         this.height = projectileHeight;
@@ -103,7 +97,7 @@ public class Projectile {
 
     /**
      * @param projectileDelay
-     *            the projectileDelay to set.
+     *        the projectileDelay to set.
      */
     public void setProjectileDelay(int projectileDelay) {
         this.delay = projectileDelay;

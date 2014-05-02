@@ -5,6 +5,8 @@ import server.world.entity.UpdateFlags.Flag;
 import server.world.entity.player.Player;
 import server.world.entity.player.content.AssignWeaponAnimation;
 import server.world.entity.player.content.AssignWeaponInterface;
+import server.world.entity.player.minigame.Minigame;
+import server.world.entity.player.minigame.MinigameFactory;
 import server.world.item.Item;
 import server.world.item.ItemContainer;
 import server.world.item.ItemContainer.ContainerPolicy;
@@ -60,6 +62,15 @@ public class EquipmentContainer {
         /** Check if this item is even valid. */
         if (item == null) {
             return;
+        }
+
+        /** Check if we can equip the item based on the minigame we're in. */
+        for (Minigame minigame : MinigameFactory.getMinigames().values()) {
+            if (minigame.inMinigame(player)) {
+                if (!minigame.canEquip(player, item, item.getDefinition().getEquipmentSlot())) {
+                    return;
+                }
+            }
         }
 
         /** Equip the item a certain way if it's stackable. */
@@ -148,11 +159,16 @@ public class EquipmentContainer {
             container.set(designatedSlot, new Item(item.getId(), item.getAmount()));
         }
 
-        /** Assign the new sidebar interface based on the weapon. */
-        AssignWeaponInterface.assignInterface(player, item);
+        if (item.getDefinition().getEquipmentSlot() == Misc.EQUIPMENT_SLOT_WEAPON) {
+            /** Assign the new sidebar interface based on the weapon. */
+            AssignWeaponInterface.assignInterface(player, item);
 
-        /** Assign the new animation based on the weapon. */
-        AssignWeaponAnimation.assignAnimation(player, item);
+            /** Assign the new animation based on the weapon. */
+            AssignWeaponAnimation.assignAnimation(player, item);
+
+            /** Assign a new fight type based on the weapon. */
+            AssignWeaponInterface.changeFightType(item, player);
+        }
 
         /** Write the item bonus. */
         player.writeBonus();
@@ -178,6 +194,15 @@ public class EquipmentContainer {
         /** Get the item on this slot. */
         Item item = container.getItem(slot);
 
+        /** Check if we can remove the item based on the minigame we're in. */
+        for (Minigame minigame : MinigameFactory.getMinigames().values()) {
+            if (minigame.inMinigame(player)) {
+                if (!minigame.canUnequip(player, item, slot)) {
+                    return;
+                }
+            }
+        }
+
         /** Check if we have enough space to remove it. */
         if (!player.getInventory().getContainer().hasRoomFor(item)) {
             player.getPacketBuilder().sendMessage("You do not have enough space in your inventory!");
@@ -191,6 +216,7 @@ public class EquipmentContainer {
         /** Reset the sidebar interface and appearance animation. */
         if (slot == Misc.EQUIPMENT_SLOT_WEAPON) {
             AssignWeaponInterface.reset(player);
+            AssignWeaponInterface.changeFightType(item, player);
             player.getUpdateAnimation().reset();
         }
 

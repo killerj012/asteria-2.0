@@ -8,23 +8,10 @@ import server.core.net.packet.PacketOpcodeHeader;
 import server.util.Misc;
 import server.world.entity.Animation;
 import server.world.entity.player.Player;
-import server.world.entity.player.content.DwarfMultiCannon;
 import server.world.entity.player.content.Spellbook;
 import server.world.entity.player.skill.SkillManager;
 import server.world.entity.player.skill.SkillManager.SkillConstant;
-import server.world.entity.player.skill.impl.Mining;
-import server.world.entity.player.skill.impl.Runecrafting;
-import server.world.entity.player.skill.impl.Smithing;
-import server.world.entity.player.skill.impl.Thieving;
-import server.world.entity.player.skill.impl.Woodcutting;
-import server.world.entity.player.skill.impl.Mining.Pickaxe;
-import server.world.entity.player.skill.impl.Mining.Rock;
-import server.world.entity.player.skill.impl.Runecrafting.Altar;
-import server.world.entity.player.skill.impl.Thieving.TheftObject;
-import server.world.entity.player.skill.impl.Woodcutting.Axe;
-import server.world.entity.player.skill.impl.Woodcutting.Tree;
 import server.world.map.Position;
-import server.world.object.WildernessObeliskSet;
 
 /**
  * Sent when the player first/second/third clicks an object.
@@ -53,43 +40,8 @@ public class DecodeObjectActionPacket extends PacketDecoder {
                     public void run() {
                         if (Misc.canClickObject(player.getPosition(), new Position(objectX, objectY, player.getPosition().getZ()), objSize)) {
 
-                            if (Tree.containsTree(objectId)) {
-                                Tree tree = Tree.getTree(objectId);
-                                Axe axe = Woodcutting.getSingleton().getAxe(player);
-
-                                if (axe != null) {
-                                    Woodcutting.getSingleton().chopTree(player, tree, axe, new Position(objectX, objectY, player.getPosition().getZ()), objectId);
-                                }
-                            }
-
                             switch (objectId) {
-                                case 6:
-                                    DwarfMultiCannon.fireCannon(player, new Position(objectX, objectY, player.getPosition().getZ()));
-                                    break;
-                                case 14829:
-                                    WildernessObeliskSet.activateObelisk(player, 0);
-                                    break;
-                                case 14830:
-                                    WildernessObeliskSet.activateObelisk(player, 1);
-                                    break;
-                                case 14827:
-                                    WildernessObeliskSet.activateObelisk(player, 2);
-                                    break;
-                                case 14828:
-                                    WildernessObeliskSet.activateObelisk(player, 3);
-                                    break;
-                                case 14826:
-                                    WildernessObeliskSet.activateObelisk(player, 4);
-                                    break;
-                                case 14831:
-                                    WildernessObeliskSet.activateObelisk(player, 5);
-                                    break;
-                                case 450:
-                                case 451:
-                                case 452:
-                                case 453:
-                                    player.getPacketBuilder().sendMessage("There is no ore concealed within this rock!");
-                                    break;
+
                                 case 3193:
                                 case 2213:
                                     player.getBank().open();
@@ -111,73 +63,6 @@ public class DecodeObjectActionPacket extends PacketDecoder {
                                         Spellbook.convert(player, Spellbook.ANCIENT);
                                     }
                                     break;
-                                case 2108:
-                                case 2109:
-                                case 2090:
-                                case 2091:
-                                case 2094:
-                                case 2095:
-                                case 2092:
-                                case 2093:
-                                case 2100:
-                                case 2101:
-                                case 2096:
-                                case 2097:
-                                case 2098:
-                                case 2099:
-                                case 2102:
-                                case 2103:
-                                case 2104:
-                                case 2105:
-                                case 2106:
-                                case 2107:
-                                case 2491:
-                                    Rock rock = Rock.getRock(objectId);
-
-                                    if (rock == null) {
-                                        return;
-                                    }
-
-                                    Pickaxe pick = Mining.getSingleton().getPickaxe(player);
-
-                                    if (pick == null) {
-                                        return;
-                                    }
-
-                                    Mining.getSingleton().startRockMine(player, rock, pick, new Position(objectX, objectY, player.getPosition().getZ()), objectId);
-                                    break;
-                                case 2478:
-                                case 2479:
-                                case 2480:
-                                case 2481:
-                                case 2482:
-                                case 2483:
-                                case 2484:
-                                case 2487:
-                                case 2486:
-                                case 2485:
-                                case 2488:
-                                case 7141:
-                                case 7138:
-                                    for (Altar a : Altar.values()) {
-                                        if (a == null) {
-                                            continue;
-                                        }
-
-                                        if (a.getAltarId() == objectId) {
-                                            Runecrafting.getSingleton().craftRunes(player, a.getRune());
-                                        }
-                                    }
-                                    break;
-                                case 2781:
-                                case 2785:
-                                case 2966:
-                                case 6189:
-                                case 3044:
-                                case 3294:
-                                case 4304:
-                                    Smithing.getSingleton().smeltInterface(player);
-                                    break;
                             }
                         }
                     }
@@ -197,41 +82,7 @@ public class DecodeObjectActionPacket extends PacketDecoder {
                     public void run() {
                         if (Misc.canClickObject(player.getPosition(), new Position(objX, objY, player.getPosition().getZ()), size)) {
                             switch (objId) {
-                                case 6:
-                                    DwarfMultiCannon.retrieveCannon(player, new Position(objX, objY, player.getPosition().getZ()));
-                                    break;
-                                case 635:
-                                    Thieving.getSingleton().stealFromObject(player, TheftObject.TEA_STALL);
-                                    break;
-                                case 2108:
-                                case 2109:
-                                case 2090:
-                                case 2091:
-                                case 2094:
-                                case 2095:
-                                case 2092:
-                                case 2093:
-                                case 2100:
-                                case 2101:
-                                case 2096:
-                                case 2097:
-                                case 2098:
-                                case 2099:
-                                case 2102:
-                                case 2103:
-                                case 2104:
-                                case 2105:
-                                case 2106:
-                                case 2107:
-                                case 2491:
-                                    Rock rock = Rock.getRock(objId);
 
-                                    if (rock == null) {
-                                        return;
-                                    }
-
-                                    Mining.getSingleton().prospect(player, rock);
-                                    break;
                             }
                         }
                     }
@@ -252,11 +103,6 @@ public class DecodeObjectActionPacket extends PacketDecoder {
                         if (Misc.canClickObject(player.getPosition(), new Position(x, y, player.getPosition().getZ()), objectSize)) {
                             switch (id) {
 
-                                // FIXME: Find the ids for all of the thieving
-                                // stalls, and add them here.
-                                case 635:
-                                    Thieving.getSingleton().stealFromObject(player, TheftObject.TEA_STALL);
-                                    break;
                             }
                         }
                     }

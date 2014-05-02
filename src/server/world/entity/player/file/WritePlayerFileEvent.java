@@ -71,7 +71,7 @@ public class WritePlayerFileEvent extends PlayerFileEvent {
                 object.addProperty("spell-book", getPlayer().getSpellbook().name());
                 object.addProperty("is-banned", new Boolean(getPlayer().isBanned()));
                 object.addProperty("auto-retaliate", new Boolean(getPlayer().isAutoRetaliate()));
-                object.add("unlocked-music", builder.toJsonTree(getPlayer().getMusicSet().getUnlocked().toArray()));
+                object.addProperty("fight-type", getPlayer().getFightType().name());
 
                 FileWriter fileWriter = new FileWriter(file());
                 fileWriter.write(builder.toJson(object));

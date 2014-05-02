@@ -5,9 +5,6 @@ import server.core.net.packet.PacketDecoder;
 import server.core.net.packet.PacketOpcodeHeader;
 import server.world.entity.player.Player;
 import server.world.entity.player.skill.SkillEvent;
-import server.world.entity.player.skill.impl.Smithing;
-import server.world.entity.player.skill.impl.Smithing.Smith;
-import server.world.entity.player.skill.impl.Smithing.SmithingTableItem;
 import server.world.item.Item;
 import server.world.item.ItemDefinition;
 import server.world.shop.Shop;
@@ -35,20 +32,6 @@ public class DecodeItemInterfacePacket extends PacketDecoder {
 
                 switch (interfaceId) {
 
-                    case 1119:
-                    case 1120:
-                    case 1121:
-                    case 1122:
-                    case 1123:
-                        SmithingTableItem index = Smith.getIndex(itemId);
-                        Smith table = Smith.getTable(itemId);
-
-                        if (index == null || table == null) {
-                            return;
-                        }
-
-                        Smithing.getSingleton().smith(player, index, table, 1);
-                        break;
                     case 1688:
                         player.getEquipment().removeItem(slot);
                         break;
@@ -81,20 +64,7 @@ public class DecodeItemInterfacePacket extends PacketDecoder {
                 slot = in.readShort(true, PacketBuffer.ByteOrder.LITTLE);
 
                 switch (interfaceId) {
-                    case 1119:
-                    case 1120:
-                    case 1121:
-                    case 1122:
-                    case 1123:
-                        SmithingTableItem index = Smith.getIndex(itemId);
-                        Smith table = Smith.getTable(itemId);
 
-                        if (index == null || table == null) {
-                            return;
-                        }
-
-                        Smithing.getSingleton().smith(player, index, table, 5);
-                        break;
                     case 5064:
                         player.getBank().addItem(slot, new Item(itemId, 5));
                         break;
@@ -123,20 +93,7 @@ public class DecodeItemInterfacePacket extends PacketDecoder {
                 slot = in.readShort(PacketBuffer.ValueType.A);
 
                 switch (interfaceId) {
-                    case 1119:
-                    case 1120:
-                    case 1121:
-                    case 1122:
-                    case 1123:
-                        SmithingTableItem index = Smith.getIndex(itemId);
-                        Smith table = Smith.getTable(itemId);
 
-                        if (index == null || table == null) {
-                            return;
-                        }
-
-                        Smithing.getSingleton().smith(player, index, table, 10);
-                        break;
                     case 5064:
                         player.getBank().addItem(slot, new Item(itemId, 10));
                         break;

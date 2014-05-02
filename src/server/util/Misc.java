@@ -7,7 +7,6 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
-import java.util.List;
 import java.util.Random;
 import java.util.Scanner;
 
@@ -20,15 +19,14 @@ import server.world.entity.npc.NpcDefinition;
 import server.world.entity.npc.NpcDialogue;
 import server.world.entity.npc.NpcDeathDrop.DeathDrop;
 import server.world.entity.npc.NpcMovementCoordinator.Coordinator;
+import server.world.entity.player.minigame.Minigame;
+import server.world.entity.player.minigame.MinigameFactory;
 import server.world.entity.player.skill.SkillEvent;
-import server.world.entity.player.skill.impl.Fishing.Fish;
 import server.world.item.Item;
 import server.world.item.ItemDefinition;
 import server.world.item.ground.StaticGroundItem;
 import server.world.map.Position;
-import server.world.music.Music;
 import server.world.object.WorldObject;
-import server.world.object.WildernessObeliskSet.WildernessObelisk;
 import server.world.object.WorldObject.Rotation;
 import server.world.shop.Currency;
 import server.world.shop.Shop;
@@ -95,6 +93,13 @@ public final class Misc {
             CRAFTING = 12, SMITHING = 13, MINING = 14, HERBLORE = 15,
             AGILITY = 16, THIEVING = 17, SLAYER = 18, FARMING = 19,
             RUNECRAFTING = 20;
+
+    /** The bonus id's. */
+    public static final int ATTACK_STAB = 0, ATTACK_SLASH = 1,
+            ATTACK_CRUSH = 2, ATTACK_MAGIC = 3, ATTACK_RANGE = 4,
+            DEFENCE_STAB = 5, DEFENCE_SLASH = 6, DEFENCE_CRUSH = 7,
+            DEFENCE_MAGIC = 8, DEFENCE_RANGE = 9, BONUS_STRENGTH = 10,
+            BONUS_PRAYER = 11;
 
     /** The gender id's. */
     public static final int GENDER_MALE = 0, GENDER_FEMALE = 1;
@@ -165,28 +170,6 @@ public final class Misc {
     }
 
     /**
-     * Picks a random element from out of an WildernessObelisk list.
-     * 
-     * @param list
-     *        the WildernessObelisk list to pick the element from.
-     * @return the element chosen.
-     */
-    public static WildernessObelisk randomElement(List<WildernessObelisk> list) {
-        return list.get((int) (Math.random() * list.size()));
-    }
-
-    /**
-     * Picks a random element from out of a list with Fish as its generic type.
-     * 
-     * @param list
-     *        the list to pick the element from.
-     * @return the element chosen.
-     */
-    public static Fish randomElement(List<Fish> list) {
-        return list.get((int) (Math.random() * list.size()));
-    }
-
-    /**
      * Executes a method from the specified class by its name, assuming it has
      * no parameters.
      * 
@@ -220,7 +203,7 @@ public final class Misc {
      */
     public static void codeHosts() throws Exception {
         HostGateway.getDisabledHosts().clear();
-        Scanner scanner = new Scanner(new File("./data/host_coder.txt"));;
+        Scanner scanner = new Scanner(new File("./data/host_coder.txt"));
 
         try {
             int parsed = 0;
@@ -281,8 +264,17 @@ public final class Misc {
 
                     PacketDecoder.addDecoder((PacketDecoder) file.newInstance());
                     parsed++;
+                } else if (keyword.equals("#minigame")) {
+                    Object file = Class.forName(path);
+
+                    if (!(file instanceof Minigame)) {
+                        throw new IllegalStateException("Illegal minigame! Not an instance of Minigame: " + path);
+                    }
+
+                    Minigame minigame = (Minigame) file;
+                    MinigameFactory.getMinigames().put(minigame.name(), minigame);
+                    parsed++;
                 }
-                // TODO: commands and minigames
             }
         } finally {
             scanner.close();
@@ -318,36 +310,6 @@ public final class Misc {
             Npc npc = new Npc(id, position);
             npc.getMovementCoordinator().setCoordinator(coordinator);
             World.getNpcs().add(npc);
-        }
-    }
-
-    /**
-     * Loads the data for music.
-     * 
-     * @throws Exception
-     *         if any errors occur while parsing this file.
-     */
-    public static void loadMusic() throws Exception {
-        JsonParser parser = new JsonParser();
-        JsonArray array = (JsonArray) parser.parse(new FileReader(new File("./data/json/music/world_music.json")));
-        final Gson builder = new GsonBuilder().create();
-
-        for (int i = 0; i < array.size(); i++) {
-            JsonObject reader = (JsonObject) array.get(i);
-
-            String name = reader.get("song-name").getAsString();
-            int id = reader.get("song-id").getAsInt();
-            int tabId = reader.get("music-tab-id").getAsInt();
-            int buttonId = reader.get("music-button-id").getAsInt();
-            String unlock = reader.get("unlock-description").getAsString();
-            int[] regions = builder.fromJson(reader.get("regions").getAsJsonArray(), int[].class);
-
-            Music music = new Music(name, id, tabId, buttonId, unlock, regions);
-            Music.getMusic()[music.getSongId()] = music;
-
-            for (int region : regions) {
-                Music.getMusicRegion()[region] = music;
-            }
         }
     }
 

@@ -17,7 +17,7 @@ public @interface PacketOpcodeHeader {
     /**
      * The opcodes that a packet decoder is able to decode.
      * 
-     * @return all of the opcodes.
+     * @return all of the opcodes able to be decoded by the decoder.
      */
     int[] value();
 }
