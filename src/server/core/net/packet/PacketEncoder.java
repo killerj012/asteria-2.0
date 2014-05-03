@@ -40,6 +40,20 @@ public final class PacketEncoder {
     }
 
     /**
+     * Displays a string on an empty chatbox interface.
+     * 
+     * @param s
+     *        the string to display.
+     * @return this packet encoder.
+     */
+    public PacketEncoder sendChatboxString(String s) {
+        sendString(s, 357);
+        sendString("Click here to continue", 358);
+        sendChatInterface(356);
+        return this;
+    }
+
+    /**
      * Plays an animation for this object.
      * 
      * @param position

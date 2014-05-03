@@ -15,6 +15,8 @@ import server.world.World;
 import server.world.entity.Animation;
 import server.world.entity.Entity;
 import server.world.entity.Gfx;
+import server.world.entity.combat.prayer.CombatPrayer;
+import server.world.entity.combat.prayer.CombatPrayerWorker;
 import server.world.entity.npc.Npc;
 import server.world.entity.npc.NpcDialogue;
 import server.world.entity.player.container.BankContainer;
@@ -56,6 +58,9 @@ public class Player extends Entity {
     /** The network for this player. */
     private final Session session;
 
+    /** If the player data needs to be read or not. */
+    private boolean needsRead = true;
+
     /** The current fight type selected. */
     private FightType fightType = FightType.UNARMED_PUNCH;
 
@@ -67,6 +72,12 @@ public class Player extends Entity {
 
     /** An array of all the trainable skills. */
     private Skill[] trainable = new Skill[21];
+
+    /** Prayer worker. */
+    private Worker prayerDrain = new CombatPrayerWorker(this).terminateRun();
+
+    /** The prayer statuses. */
+    private boolean[] prayerActive = new boolean[18];
 
     /** The current players combat level. */
     private double combatLevel;
@@ -127,7 +138,8 @@ public class Player extends Entity {
             buryTimer = new Stopwatch().reset(),
             altarTimer = new Stopwatch().reset(),
             npcTheftTimer = new Stopwatch().reset(),
-            objectTheftTimer = new Stopwatch().reset();
+            objectTheftTimer = new Stopwatch().reset(),
+            lastCombat = new Stopwatch().headStart(10000);
 
     /** The last delay when stealing. */
     private long lastTheftDelay;
@@ -234,6 +246,10 @@ public class Player extends Entity {
         getColors()[2] = 9;
         getColors()[3] = 5;
         getColors()[4] = 0;
+
+        /** Set various flags. */
+        setNpc(false);
+        setPlayer(true);
     }
 
     @Override
@@ -247,7 +263,9 @@ public class Player extends Entity {
             @Override
             public void fire() {
                 if (getDeathTicks() == 0) {
+
                     // and stop combat
+                    player.getCombatBuilder().reset();
                     getMovementQueue().reset();
                 } else if (getDeathTicks() == 1) {
                     animation(DEATH);
@@ -283,7 +301,9 @@ public class Player extends Entity {
                     getPacketBuilder().resetAnimation();
                     getPacketBuilder().sendMessage("Oh dear, you're dead!");
                     getPacketBuilder().walkableInterface(65535);
-                    // Prayer.getSingleton().stopAllCombatPrayer(player);
+                    player.getSkills()[Misc.PRAYER].setLevel(player.getSkills()[Misc.PRAYER].getLevelForExperience());
+                    CombatPrayer.deactivateAllPrayer(player);
+                    SkillManager.refresh(player, SkillConstant.PRAYER);
                     heal(player.getSkills()[Misc.HITPOINTS].getLevelForExperience());
                     setHasDied(false);
                     setDeathTicks(0);
@@ -509,6 +529,7 @@ public class Player extends Entity {
         getPacketBuilder().sendConfig(173, getMovementQueue().isRunToggled() ? 1 : 0);
         getPacketBuilder().sendConfig(172, isAutoRetaliate() ? 1 : 0);
         getPacketBuilder().sendConfig(fightType.getParentId(), fightType.getChildId());
+        CombatPrayer.resetPrayerGlows(this);
     }
 
     /**
@@ -566,7 +587,7 @@ public class Player extends Entity {
 
             this.getPacketBuilder().sendString("@yel@Level: " + wildernessLevel, 199);
         } else {
-            this.getPacketBuilder().sendPlayerMenu("null", 3);
+            this.getPacketBuilder().sendPlayerMenu("Attack", 3);
             this.getPacketBuilder().walkableInterface(-1);
             this.setWildernessInterface(false);
             wildernessLevel = 0;
@@ -1286,5 +1307,49 @@ public class Player extends Entity {
      */
     public void setFightType(FightType fightType) {
         this.fightType = fightType;
+    }
+
+    /**
+     * @return the prayerActive
+     */
+    public boolean[] getPrayerActive() {
+        return prayerActive;
+    }
+
+    /**
+     * @return the prayerDrain
+     */
+    public Worker getPrayerDrain() {
+        return prayerDrain;
+    }
+
+    /**
+     * @param prayerDrain
+     *        the prayerDrain to set
+     */
+    public void setPrayerDrain(CombatPrayerWorker prayerDrain) {
+        this.prayerDrain = prayerDrain;
+    }
+
+    /**
+     * @return the lastCombat
+     */
+    public Stopwatch getLastCombat() {
+        return lastCombat;
+    }
+
+    /**
+     * @return the needsRead
+     */
+    public boolean isNeedsRead() {
+        return needsRead;
+    }
+
+    /**
+     * @param needsRead
+     *        the needsRead to set
+     */
+    public void setNeedsRead(boolean needsRead) {
+        this.needsRead = needsRead;
     }
 }

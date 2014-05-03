@@ -20,6 +20,12 @@ public abstract class Entity {
     /** The index of the entity. */
     private int slot = -1;
 
+    /** If this entity is a player. */
+    private boolean isPlayer;
+
+    /** If this entity is an npc. */
+    private boolean isNpc;
+
     /** If this entity retaliates automatically. */
     private boolean isAutoRetaliate;
 
@@ -613,5 +619,35 @@ public abstract class Entity {
      */
     public CombatBuilder getCombatBuilder() {
         return combatBuilder;
+    }
+
+    /**
+     * @return the isPlayer
+     */
+    public boolean isPlayer() {
+        return isPlayer;
+    }
+
+    /**
+     * @param isPlayer
+     *        the isPlayer to set
+     */
+    public void setPlayer(boolean isPlayer) {
+        this.isPlayer = isPlayer;
+    }
+
+    /**
+     * @return the isNpc
+     */
+    public boolean isNpc() {
+        return isNpc;
+    }
+
+    /**
+     * @param isNpc
+     *        the isNpc to set
+     */
+    public void setNpc(boolean isNpc) {
+        this.isNpc = isNpc;
     }
 }

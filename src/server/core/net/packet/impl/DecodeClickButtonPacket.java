@@ -6,6 +6,7 @@ import server.core.net.buffer.PacketBuffer;
 import server.core.net.packet.PacketDecoder;
 import server.core.net.packet.PacketOpcodeHeader;
 import server.util.Misc;
+import server.world.entity.combat.prayer.CombatPrayer;
 import server.world.entity.npc.NpcDialogue;
 import server.world.entity.player.Player;
 import server.world.entity.player.content.AssignWeaponInterface.FightType;
@@ -75,76 +76,58 @@ public class DecodeClickButtonPacket extends PacketDecoder {
             // break;
             /** Prayers */
             case 21233:
-                // Prayer.getSingleton().activatePrayer(player,
-                // CombatPrayer.THICK_SKIN);
+                CombatPrayer.THICK_SKIN.activatePrayer(player, true);
                 break;
             case 21234:
-                // Prayer.getSingleton().activatePrayer(player,
-                // CombatPrayer.BURST_OF_STRENGTH);
+                CombatPrayer.BURST_OF_STRENGTH.activatePrayer(player, true);
                 break;
             case 21235:
-                // Prayer.getSingleton().activatePrayer(player,
-                // CombatPrayer.CLARITY_OF_THOUGHT);
+                CombatPrayer.CLARITY_OF_THOUGHT.activatePrayer(player, true);
                 break;
             case 21236:
-                // Prayer.getSingleton().activatePrayer(player,
-                // CombatPrayer.ROCK_SKIN);
+                CombatPrayer.ROCK_SKIN.activatePrayer(player, true);
                 break;
             case 21237:
-                // Prayer.getSingleton().activatePrayer(player,
-                // CombatPrayer.SUPERHUMAN_STRENGTH);
+                CombatPrayer.SUPERHUMAN_STRENGTH.activatePrayer(player, true);
                 break;
             case 21238:
-                // Prayer.getSingleton().activatePrayer(player,
-                // CombatPrayer.IMPROVED_REFLEXES);
+                CombatPrayer.IMPROVED_REFLEXES.activatePrayer(player, true);
                 break;
             case 21239:
-                // Prayer.getSingleton().activatePrayer(player,
-                // CombatPrayer.RAPID_RESTORE);
+                CombatPrayer.RAPID_RESTORE.activatePrayer(player, true);
                 break;
             case 21240:
-                // Prayer.getSingleton().activatePrayer(player,
-                // CombatPrayer.RAPID_HEAL);
+                CombatPrayer.RAPID_HEAL.activatePrayer(player, true);
                 break;
             case 21241:
-                // Prayer.getSingleton().activatePrayer(player,
-                // CombatPrayer.PROTECT_ITEM);
+                CombatPrayer.PROTECT_ITEM.activatePrayer(player, true);
                 break;
             case 21242:
-                // Prayer.getSingleton().activatePrayer(player,
-                // CombatPrayer.STEEL_SKIN);
+                CombatPrayer.STEEL_SKIN.activatePrayer(player, true);
                 break;
             case 21243:
-                // Prayer.getSingleton().activatePrayer(player,
-                // CombatPrayer.ULTIMATE_STRENGTH);
+                CombatPrayer.ULTIMATE_STRENGTH.activatePrayer(player, true);
                 break;
             case 21244:
-                // Prayer.getSingleton().activatePrayer(player,
-                // CombatPrayer.INCREDIBLE_REFLEXES);
+                CombatPrayer.INCREDIBLE_REFLEXES.activatePrayer(player, true);
                 break;
             case 21245:
-                // Prayer.getSingleton().activatePrayer(player,
-                // CombatPrayer.PROTECT_FROM_MAGIC);
+                CombatPrayer.PROTECT_FROM_MAGIC.activatePrayer(player, true);
                 break;
             case 21246:
-                // Prayer.getSingleton().activatePrayer(player,
-                // CombatPrayer.PROTECT_FROM_MISSILES);
+                CombatPrayer.PROTECT_FROM_MISSILES.activatePrayer(player, true);
                 break;
             case 21247:
-                // Prayer.getSingleton().activatePrayer(player,
-                // CombatPrayer.PROTECT_FROM_MELEE);
+                CombatPrayer.PROTECT_FROM_MELEE.activatePrayer(player, true);
                 break;
             case 2171:
-                // Prayer.getSingleton().activatePrayer(player,
-                // CombatPrayer.RETRIBUTION);
+                CombatPrayer.RETRIBUTION.activatePrayer(player, true);
                 break;
             case 2172:
-                // Prayer.getSingleton().activatePrayer(player,
-                // CombatPrayer.REDEMPTION);
+                CombatPrayer.REDEMPTION.activatePrayer(player, true);
                 break;
             case 2173:
-                // Prayer.getSingleton().activatePrayer(player,
-                // CombatPrayer.SMITE);
+                CombatPrayer.SMITE.activatePrayer(player, true);
                 break;
             /** End of Prayers */
 
@@ -232,6 +215,11 @@ public class DecodeClickButtonPacket extends PacketDecoder {
                             return;
                         }
                     }
+                }
+
+                if (player.getLastCombat().elapsed() <= 10000) {
+                    player.getPacketBuilder().sendMessage("You must wait 10 seconds after combat before logging out.");
+                    return;
                 }
 
                 player.getSession().disconnect();

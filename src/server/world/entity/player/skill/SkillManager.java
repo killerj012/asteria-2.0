@@ -3,6 +3,7 @@ package server.world.entity.player.skill;
 import java.util.HashMap;
 import java.util.Map;
 
+import server.util.Misc;
 import server.world.entity.Gfx;
 import server.world.entity.player.Player;
 
@@ -297,6 +298,10 @@ public class SkillManager {
         player.getPacketBuilder().sendString("" + player.getSkills()[skill.ordinal()].getLevelForExperience() + "", skill.getRefreshTwo());
         player.getPacketBuilder().sendString("" + player.getSkills()[skill.ordinal()].getExperience() + "", skill.getRefreshThree());
         player.getPacketBuilder().sendString("" + player.getSkills()[skill.ordinal()].getExperienceForNextLevel() + "", skill.getRefreshFour());
+
+        if (skill == SkillConstant.PRAYER) {
+            player.getPacketBuilder().sendString("Prayer: " + player.getSkills()[Misc.PRAYER].getLevel() + "/" + player.getSkills()[Misc.PRAYER].getLevelForExperience() + "", 687);
+        }
     }
 
     /**
@@ -328,7 +333,7 @@ public class SkillManager {
     public static void login(Player player) {
         for (int i = 0; i < player.getSkills().length; i++) {
             player.getSkills()[i] = new Skill();
-
+            System.out.println("lol");
             if (i == 3) {
                 player.getSkills()[i].setLevel(10);
                 player.getSkills()[i].setExperience(1300);

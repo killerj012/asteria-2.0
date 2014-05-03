@@ -1,5 +1,6 @@
 package server.core.worker;
 
+
 /**
  * A flexible dynamic worker created to carry out general game logic on the game
  * thread.
@@ -119,6 +120,17 @@ public abstract class Worker {
      */
     public void incrementCurrentDelay() {
         this.currentDelay++;
+    }
+
+    /**
+     * Dynamically sets the run value to false. This should not be used in a
+     * normal scenario. Do not invoke this if you do not know what you're doing!
+     * 
+     * @return this worker for chaining.
+     */
+    public Worker terminateRun() {
+        this.running = false;
+        return this;
     }
 
     /**

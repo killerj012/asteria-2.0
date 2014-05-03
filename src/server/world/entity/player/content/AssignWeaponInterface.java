@@ -476,7 +476,6 @@ public class AssignWeaponInterface {
             if (fightType.getTrainType() == player.getFightType().getTrainType()) {
                 player.setFightType(fightType);
                 player.getPacketBuilder().sendConfig(player.getFightType().getParentId(), player.getFightType().getChildId());
-                System.out.println("" + player.getFightType().name());
                 return;
             }
         }
@@ -484,6 +483,5 @@ public class AssignWeaponInterface {
         /** Or set the default fight type for that weapon. */
         player.setFightType(player.getWeapon().getFightType()[0]);
         player.getPacketBuilder().sendConfig(player.getFightType().getParentId(), player.getFightType().getChildId());
-        System.out.println("" + player.getFightType().name());
     }
 }

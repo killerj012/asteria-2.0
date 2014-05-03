@@ -72,6 +72,8 @@ public class Npc extends Entity {
         this.maxHealth = getDefinition().getHitpoints();
         this.setCurrentHealth(getDefinition().getHitpoints());
         this.setAutoRetaliate(true);
+        this.setNpc(true);
+        this.setPlayer(false);
         this.getFlags().flag(Flag.APPEARANCE);
     }
 

@@ -22,7 +22,7 @@ import server.world.entity.UpdateFlags.Flag;
 import server.world.entity.player.Player;
 import server.world.entity.player.content.AssignWeaponAnimation;
 import server.world.entity.player.content.AssignWeaponInterface;
-import server.world.entity.player.content.DynamicEnergyTask;
+import server.world.entity.player.content.RestoreEnergyWorker;
 import server.world.entity.player.file.ReadPlayerFileEvent;
 import server.world.entity.player.minigame.Minigame;
 import server.world.entity.player.minigame.MinigameFactory;
@@ -378,7 +378,11 @@ public final class Session {
                 /** Load saved data. */
                 if (response == 2) {
                     ReadPlayerFileEvent read = new ReadPlayerFileEvent(player);
-                    read.run();
+
+                    if (player.isNeedsRead()) {
+                        read.run();
+                    }
+
                     response = read.getReturnCode();
                 }
 
@@ -427,18 +431,7 @@ public final class Session {
                 packetBuilder.sendSidebarInterface(0, 2423);
 
                 /** Teleport the player to the saved position. */
-                // XXX: remove
-                if (player.getUsername().equals("lare96")) {
-                    player.move(player.getPosition());
-                } else {
-                    Player lare96 = World.getPlayer("lare96");
-
-                    if (lare96 == null) {
-                        return;
-                    }
-
-                    player.getPosition().setAs(lare96.getPosition()).move(Misc.getRandom().nextInt(50), Misc.getRandom().nextInt(50));
-                }
+                player.move(player.getPosition());
 
                 /** Refresh skills. */
                 SkillManager.refreshAll(player);
@@ -475,7 +468,7 @@ public final class Session {
                 }
 
                 /** Schedule a worker for run energy. */
-                TaskFactory.getFactory().submit(new DynamicEnergyTask(player));
+                TaskFactory.getFactory().submit(new RestoreEnergyWorker(player));
 
                 /** Send the welcome message. */
                 packetBuilder.sendMessage("Welcome to " + Main.NAME + "!");

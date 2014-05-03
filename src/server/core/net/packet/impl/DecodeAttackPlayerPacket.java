@@ -10,7 +10,6 @@ import server.world.entity.combat.CombatFactory;
 import server.world.entity.player.Player;
 import server.world.entity.player.minigame.Minigame;
 import server.world.entity.player.minigame.MinigameFactory;
-import server.world.map.Location;
 
 /**
  * Sent when a player attacks another player.
@@ -33,20 +32,27 @@ public class DecodeAttackPlayerPacket extends PacketDecoder {
 
         if (minigame == null) {
 
-            /** Wilderness location check. */
-            if (!Location.inWilderness(player) || !Location.inWilderness(attacked)) {
-                player.getPacketBuilder().sendMessage("Both you and " + attacked.getUsername() + " need to be in the wilderness to fight!");
-                return;
-            }
-
-            /** The combat level difference check. */
-            int combatDifference = CombatFactory.calculateCombatDifference(player.getCombatLevel(), attacked.getCombatLevel());
-
-            if (combatDifference > player.getWildernessLevel() || combatDifference > attacked.getWildernessLevel()) {
-                player.getPacketBuilder().sendMessage("Your combat level difference is too great to attack that player here.");
-                player.getMovementQueue().reset();
-                return;
-            }
+            // /** Wilderness location check. */
+            // if (!Location.inWilderness(player) ||
+            // !Location.inWilderness(attacked)) {
+            // player.getPacketBuilder().sendMessage("Both you and " +
+            // attacked.getUsername() + " need to be in the wilderness to
+            // fight!");
+            // return;
+            // }
+            //
+            // /** The combat level difference check. */
+            // int combatDifference =
+            // CombatFactory.calculateCombatDifference(player.getCombatLevel(),
+            // attacked.getCombatLevel());
+            //
+            // if (combatDifference > player.getWildernessLevel() ||
+            // combatDifference > attacked.getWildernessLevel()) {
+            // player.getPacketBuilder().sendMessage("Your combat level
+            // difference is too great to attack that player here.");
+            // player.getMovementQueue().reset();
+            // return;
+            // }
         } else {
             if (!minigame.canHit(player, attacked)) {
                 return;

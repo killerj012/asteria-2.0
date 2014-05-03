@@ -42,7 +42,7 @@ public class CombatBuilder {
 
             @Override
             public boolean listenForEvent() {
-                if (builder.getEntity() instanceof Player) {
+                if (builder.getEntity().isPlayer()) {
                     Player player = (Player) builder.getEntity();
 
                     if (CombatFactory.RANGE_WEAPONS.contains(player.getEquipment().getContainer().getItemId(Misc.EQUIPMENT_SLOT_WEAPON))) {
@@ -186,7 +186,7 @@ public class CombatBuilder {
     }
 
     public boolean isBeingAttacked() {
-        return lastAttacker != null;
+        return combatWorker != null && combatWorker.isRunning();
     }
 
     /**

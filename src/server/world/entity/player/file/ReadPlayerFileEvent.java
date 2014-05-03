@@ -46,6 +46,7 @@ public class ReadPlayerFileEvent extends PlayerFileEvent {
             SkillManager.login(player);
             logger.info(player + " is logging in for the first time!");
             returnCode = Misc.LOGIN_RESPONSE_OK;
+            player.setNeedsRead(false);
         }
     }
 

@@ -10,18 +10,18 @@ import server.world.entity.player.Player;
  * 
  * @author lare96
  */
-public class DynamicEnergyTask extends Worker {
+public class RestoreEnergyWorker extends Worker {
 
     /** The player we are restoring run energy for. */
     private Player player;
 
     /**
-     * Create a new {@link DynamicEnergyTask}.
+     * Create a new {@link RestoreEnergyWorker}.
      * 
      * @param player
      *        the player we are restoring run energy for.
      */
-    public DynamicEnergyTask(Player player) {
+    public RestoreEnergyWorker(Player player) {
         super(restorationRate(player), false);
         super.attach(player);
         this.player = player;

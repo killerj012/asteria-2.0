@@ -1,6 +1,5 @@
 package server.world.entity.combat.strategy;
 
-import server.util.Misc;
 import server.world.entity.Animation;
 import server.world.entity.Entity;
 import server.world.entity.Hit;
@@ -21,8 +20,6 @@ public class DefaultMeleeCombatStrategy implements CombatStrategy {
 
     @Override
     public CombatHit attack(Entity entity, Entity victim) {
-        // XXX: combat formula here!
-
         if (entity instanceof Npc) {
             Npc npc = (Npc) entity;
             npc.facePosition(victim.getPosition().clone());
@@ -32,7 +29,7 @@ public class DefaultMeleeCombatStrategy implements CombatStrategy {
             player.facePosition(victim.getPosition().clone());
             player.animation(new Animation(player.getFightType().getAnimation()));
         }
-        return new CombatHit(new Hit[] { new Hit(Misc.getRandom().nextInt(3)) }, CombatType.MELEE);
+        return new CombatHit(new Hit[] { new Hit(1) }, CombatType.MELEE);
     }
 
     @Override

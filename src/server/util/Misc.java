@@ -825,6 +825,17 @@ public final class Misc {
         private long time = System.currentTimeMillis();
 
         /**
+         * Resets with a head start option.
+         * 
+         * @param startAt
+         *        the head start value.
+         */
+        public Stopwatch headStart(long startAt) {
+            time = System.currentTimeMillis() - startAt;
+            return this;
+        }
+
+        /**
          * Resets this stopwatch.
          * 
          * @return this stopwatch.
