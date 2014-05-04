@@ -99,8 +99,8 @@ public class Npc extends Entity {
 
                     /** Drop the items on death and remove the npc from the area. */
                     if (respawnTicks == 0) {
-                        Entity killer = /* getCombatBuilder().getMostDamageInflicted() */null;
-                        dropDeathItems(null);
+                        Entity killer = getCombatBuilder().getKiller();
+                        dropDeathItems(killer);
                         move(new Position(1, 1));
 
                         if (!isRespawn()) {
@@ -134,11 +134,6 @@ public class Npc extends Entity {
     }
 
     @Override
-    public void follow(Entity entity) {
-
-    }
-
-    @Override
     public int getAttackSpeed() {
         return this.getDefinition().getAttackSpeed();
     }
@@ -152,16 +147,10 @@ public class Npc extends Entity {
      * Drops items for the entity that killed this npc.
      * 
      * @param killer
-     *        the killer for this entity (if any).
-     * @param global
-     *        if this drop should be static.
+     *        the killer for this entity.
      */
     public void dropDeathItems(Entity killer) {
-        killer = World.getPlayer("lare96");
 
-        if (killer == null) {
-            return;
-        }
         /** Get the drops for this npc. */
         DeathDrop[] dropItems = NpcDeathDrop.calculateDeathDrop(this).clone();
 
@@ -174,7 +163,7 @@ public class Npc extends Entity {
          * If the killer is an npc or an unknown entity register static ground
          * items that will vanish within a minute.
          */
-        if (killer == null || killer instanceof Npc) {
+        if (killer == null || killer.isNpc()) {
             for (DeathDrop drop : dropItems) {
                 if (drop == null) {
                     continue;
@@ -187,7 +176,7 @@ public class Npc extends Entity {
              * If the killer is a player register normal ground items just for
              * the killer.
              */
-        } else if (killer instanceof Player) {
+        } else if (killer.isPlayer()) {
             Player player = (Player) killer;
 
             for (DeathDrop drop : dropItems) {
@@ -221,7 +210,7 @@ public class Npc extends Entity {
      * @return the respawn time in ticks.
      */
     public int getRespawnTime() {
-        return (getDefinition().getRespawnTime() == 0 ? 1 : getDefinition().getRespawnTime()) * 2;
+        return (getDefinition().getRespawnTime() == 0 ? 1 : getDefinition().getRespawnTime());
     }
 
     /**

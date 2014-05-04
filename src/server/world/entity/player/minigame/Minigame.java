@@ -168,6 +168,17 @@ public abstract class Minigame {
     }
 
     /**
+     * If a {@link Player} can keep their items on death.
+     * 
+     * @param player
+     *        the player trying to keep their items.
+     * @return true by default.
+     */
+    public boolean canKeepItems() {
+        return true;
+    }
+
+    /**
      * The position that a {@link Player} will be returned to once dead.
      * 
      * @param player

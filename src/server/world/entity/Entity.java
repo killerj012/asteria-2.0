@@ -3,6 +3,7 @@ package server.world.entity;
 import server.core.worker.TaskFactory;
 import server.core.worker.Worker;
 import server.util.Misc;
+import server.util.Misc.Stopwatch;
 import server.world.entity.UpdateFlags.Flag;
 import server.world.entity.combat.CombatBuilder;
 import server.world.entity.player.Player;
@@ -95,6 +96,22 @@ public abstract class Entity {
     /** The current region of the entity. */
     private Position currentRegion = new Position(0, 0, 0);
 
+    /** If the player is following. */
+    private boolean following;
+
+    /** The entity you are following. */
+    private Entity followingEntity;
+
+    /** The follow worker. */
+    private Worker followWorker = new Worker(-1, false) {
+        @Override
+        public void fire() {
+        }
+    }.terminateRun();
+
+    /** The last time you were hit. */
+    private Stopwatch lastCombat = new Stopwatch().headStart(10000);
+
     /**
      * Handles processing for this entity.
      */
@@ -117,14 +134,6 @@ public abstract class Entity {
      *        the new position to move this entity on.
      */
     public abstract void move(Position position);
-
-    /**
-     * Prompts this entity to start following another entity.
-     * 
-     * @param entity
-     *        the entity to follow.
-     */
-    public abstract void follow(Entity follow);
 
     /**
      * Resets this entity after updating.
@@ -649,5 +658,57 @@ public abstract class Entity {
      */
     public void setNpc(boolean isNpc) {
         this.isNpc = isNpc;
+    }
+
+    /**
+     * @return the following
+     */
+    public boolean isFollowing() {
+        return following;
+    }
+
+    /**
+     * @param following
+     *        the following to set
+     */
+    public void setFollowing(boolean following) {
+        this.following = following;
+    }
+
+    /**
+     * @return the followWorker
+     */
+    public Worker getFollowWorker() {
+        return followWorker;
+    }
+
+    /**
+     * @param followWorker
+     *        the followWorker to set
+     */
+    public void setFollowWorker(Worker followWorker) {
+        this.followWorker = followWorker;
+    }
+
+    /**
+     * @return the followingEntity
+     */
+    public Entity getFollowingEntity() {
+        return followingEntity;
+    }
+
+    /**
+     * @param followingEntity
+     *        the followingEntity to set
+     */
+    public void setFollowingEntity(Entity followingEntity) {
+        this.followingEntity = followingEntity;
+    }
+
+    /**
+     * @return the lastCombat
+     */
+    public Stopwatch getLastCombat() {
+        return lastCombat;
     }
 }

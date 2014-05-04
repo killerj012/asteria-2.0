@@ -67,7 +67,7 @@ public class GroundItem {
      */
     public GroundItem(Item item, Position position, Player player) {
         this.item = item;
-        this.position = position;
+        this.position = position.clone();
         this.player = player;
         this.state = ItemState.SEEN_BY_OWNER;
         this.processor = new GroundItemWorker(this);

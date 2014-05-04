@@ -333,7 +333,7 @@ public class SkillManager {
     public static void login(Player player) {
         for (int i = 0; i < player.getSkills().length; i++) {
             player.getSkills()[i] = new Skill();
-            System.out.println("lol");
+
             if (i == 3) {
                 player.getSkills()[i].setLevel(10);
                 player.getSkills()[i].setExperience(1300);

@@ -79,7 +79,7 @@ public class UpdateFlags {
         /** Interacting entity update. */
         FACE_ENTITY,
 
-        /** Face coordinate entity update. */
+        /** Face coordinate update. */
         FACE_COORDINATE,
 
         /** Hit update. */

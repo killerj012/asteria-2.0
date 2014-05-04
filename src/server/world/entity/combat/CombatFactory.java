@@ -20,12 +20,13 @@ import server.world.entity.player.Player;
 public class CombatFactory {
 
     /** A list of weapons used for ranging. */
-    public static final List<Integer> RANGE_WEAPONS = Arrays.asList();
+    public static final List<Integer> RANGE_WEAPONS = Arrays.asList(2577, 589, 776, 775, 800, 801, 802, 803, 804, 805, 806, 807, 808, 809, 810, 811, 825, 826, 827, 828, 829, 830, 837, 839, 841, 843, 845, 847, 849, 851, 853, 855, 857, 859, 861, 863, 864, 865, 866, 867, 868, 869, 1095, 1097, 1099, 1135, 1133, 1131, 1129, 1169, 1167, 2581, 2576, 2995, 2487, 2489, 2491, 2493, 1495, 2497, 2499, 2501, 2503, 2505, 2507, 2509, 3105, 3107, 3749, 4732, 4734, 4736, 4738, 5553, 5554, 5555, 5556, 5557, 5558, 4212, 4214, 4215, 4216, 4217, 4218, 4219, 4220, 4221, 4222, 4223, 4224, 4225, 4226, 4227, 4228, 4229, 4230, 4231, 4232, 4233, 4234, 2631, 2633, 2635, 2637, 2639, 2641, 2643, 2645, 2647, 2649, 6733);
 
+    /**
+     * So this class cannot be instantiated.
+     */
     private CombatFactory() {
     }
-
-    // TODO: poisoning and retreating
 
     public static double calculateMaxMeleeHit(Entity entity) {
         if (entity.isPlayer()) {

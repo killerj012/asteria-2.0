@@ -132,12 +132,16 @@ public class DecodeClickButtonPacket extends PacketDecoder {
             /** End of Prayers */
 
             case 150:
-                player.setAutoRetaliate(true);
-                player.getPacketBuilder().sendMessage("Auto retaliate has been turned on!");
+                if (!player.isAutoRetaliate()) {
+                    player.setAutoRetaliate(true);
+                    player.getPacketBuilder().sendMessage("Auto retaliate has been turned on!");
+                }
                 break;
             case 151:
-                player.setAutoRetaliate(false);
-                player.getPacketBuilder().sendMessage("Auto retaliate has been turned off!");
+                if (player.isAutoRetaliate()) {
+                    player.setAutoRetaliate(false);
+                    player.getPacketBuilder().sendMessage("Auto retaliate has been turned off!");
+                }
                 break;
             case 56109:
                 switch (player.getOption()) {

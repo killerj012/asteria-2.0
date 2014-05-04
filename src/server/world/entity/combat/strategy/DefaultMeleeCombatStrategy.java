@@ -1,5 +1,6 @@
 package server.world.entity.combat.strategy;
 
+import server.util.Misc;
 import server.world.entity.Animation;
 import server.world.entity.Entity;
 import server.world.entity.Hit;
@@ -9,26 +10,38 @@ import server.world.entity.combat.CombatType;
 import server.world.entity.npc.Npc;
 import server.world.entity.player.Player;
 import server.world.entity.player.content.AssignWeaponInterface.WeaponInterface;
+import server.world.item.Item;
 
 public class DefaultMeleeCombatStrategy implements CombatStrategy {
 
     @Override
     public boolean prepareAttack(Entity entity) {
         return true;
-
     }
 
     @Override
     public CombatHit attack(Entity entity, Entity victim) {
         if (entity instanceof Npc) {
             Npc npc = (Npc) entity;
-            npc.facePosition(victim.getPosition().clone());
             npc.animation(new Animation(npc.getDefinition().getAttackAnimation()));
+
+            if (npc.getDefinition().isPoisonous()) {
+                // chance to poison the player/npc here
+            }
         } else if (entity instanceof Player) {
             Player player = (Player) entity;
-            player.facePosition(victim.getPosition().clone());
+            Item weapon = player.getEquipment().getContainer().getItem(Misc.EQUIPMENT_SLOT_WEAPON);
             player.animation(new Animation(player.getFightType().getAnimation()));
+
+            if (weapon.getDefinition().getItemName().endsWith("(p)")) {
+                // chance to poison the entity here
+            } else if (weapon.getDefinition().getItemName().endsWith("(p+)")) {
+                // chance to poison the entity badly here
+            } else if (weapon.getDefinition().getItemName().endsWith("(p++)")) {
+                // chance to poison the entity deadly here
+            }
         }
+
         return new CombatHit(new Hit[] { new Hit(1) }, CombatType.MELEE);
     }
 

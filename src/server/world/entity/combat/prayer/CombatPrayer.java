@@ -126,7 +126,6 @@ public enum CombatPrayer {
 
     RAPID_HEAL(5, -1, 22, 90, new GenericAction<Player>() {
         @Override
-        // TODO: get working
         public void fireAction(Player player) {
             player.getPrayerActive()[CombatPrayer.RAPID_HEAL.ordinal()] = true;
             player.getPacketBuilder().sendConfig(CombatPrayer.RAPID_HEAL.getPrayerGlow(), 1);

@@ -67,7 +67,16 @@ public class MovementQueue {
 
         /** Walk if this is a walk point. */
         if (walkPoint != null && walkPoint.getDirection() != -1) {
-            entity.getPosition().move(Misc.DIRECTION_DELTA_X[walkPoint.getDirection()], Misc.DIRECTION_DELTA_Y[walkPoint.getDirection()]);
+            int x = Misc.DIRECTION_DELTA_X[walkPoint.getDirection()];
+            int y = Misc.DIRECTION_DELTA_Y[walkPoint.getDirection()];
+
+            if (entity.isFollowing() && entity.getFollowingEntity() != null) {
+                if (entity.getPosition().clone().move(x, y).equals(entity.getFollowingEntity().getPosition())) {
+                    return;
+                }
+            }
+
+            entity.getPosition().move(x, y);
             entity.setPrimaryDirection(walkPoint.getDirection());
 
             if (entity instanceof Player) {
@@ -78,6 +87,15 @@ public class MovementQueue {
 
         /** Run if this is a run point. */
         if (runPoint != null && runPoint.getDirection() != -1) {
+            int x = Misc.DIRECTION_DELTA_X[runPoint.getDirection()];
+            int y = Misc.DIRECTION_DELTA_Y[runPoint.getDirection()];
+
+            if (entity.isFollowing() && entity.getFollowingEntity() != null) {
+                if (entity.getPosition().clone().move(x, y).equals(entity.getFollowingEntity().getPosition())) {
+                    return;
+                }
+            }
+
             if (entity instanceof Player) {
                 Player player = (Player) entity;
                 if (player.getRunEnergy() > 0) {
@@ -89,7 +107,7 @@ public class MovementQueue {
                 }
             }
 
-            entity.getPosition().move(Misc.DIRECTION_DELTA_X[runPoint.getDirection()], Misc.DIRECTION_DELTA_Y[runPoint.getDirection()]);
+            entity.getPosition().move(x, y);
             entity.setSecondaryDirection(runPoint.getDirection());
         }
 
@@ -238,6 +256,122 @@ public class MovementQueue {
                 this.cancel();
             }
         });
+    }
+
+    /**
+     * Prompts this entity to follow another entity.
+     * 
+     * @param leader
+     *        the entity to follow.
+     */
+    public void follow(final Entity leader) {
+        if (entity.isFollowing() && entity.getFollowingEntity() != leader) {
+            entity.faceEntity(65535);
+            entity.getFollowWorker().cancel();
+            entity.setFollowing(false);
+            entity.setFollowingEntity(null);
+        }
+
+        if (!entity.getFollowWorker().isRunning()) {
+
+            entity.setFollowing(true);
+            entity.setFollowingEntity(leader);
+
+            entity.setFollowWorker(new Worker(1, true) {
+                @Override
+                public void fire() {
+                    if (!entity.isFollowing() || !entity.getPosition().withinDistance(leader.getPosition(), 20) || entity.isHasDied() || leader.isHasDied()) {
+                        entity.faceEntity(65535);
+                        entity.setFollowing(false);
+                        entity.setFollowingEntity(null);
+                        this.cancel();
+                        return;
+                    }
+
+                    if (leader.isPlayer()) {
+                        entity.faceEntity(leader.getSlot() + 32768);
+                    } else if (leader.isNpc()) {
+                        entity.faceEntity(leader.getSlot());
+                    }
+
+                    entity.faceEntity(entity.getFaceIndex());
+
+                    if (entity.getMovementQueue().isLockMovement()) {
+                        return;
+                    }
+
+                    if (entity.getPosition().equals(leader.getPosition().clone())) {
+                        entity.getMovementQueue().reset();
+
+                        int x = entity.getPosition().getX();
+                        int y = entity.getPosition().getY();
+                        int z = entity.getPosition().getZ();
+
+                        switch (Misc.getRandom().nextInt(3)) {
+                            case 0:
+                                if (/* entity.canMove(-1, 0) && */true) {
+                                    entity.getMovementQueue().walk(new Position(x - 1, y, z));
+                                }
+                                break;
+                            case 1:
+                                if (/* entity.canMove(-1, 0) && */true) {
+                                    entity.getMovementQueue().walk(new Position(x + 1, y, z));
+                                }
+                                break;
+                            case 2:
+                                if (/* entity.canMove(-1, 0) && */true) {
+                                    entity.getMovementQueue().walk(new Position(x, y - 1, z));
+                                }
+                                break;
+
+                            case 3:
+                                if (/* entity.canMove(-1, 0) && */true) {
+                                    entity.getMovementQueue().walk(new Position(x, y + 1, z));
+                                }
+                                break;
+                        }
+                        return;
+                    }
+
+                    if (entity.isPlayer()) {
+                        Player player = (Player) entity;
+
+                        if (player.getCombatBuilder().isAttacking()) {
+                            // ...
+                        }
+
+                        if (player.getPosition().withinDistance(leader.getPosition(), 1)) {
+                            return;
+                        }
+
+                        int x = leader.getPosition().getX();
+                        int y = leader.getPosition().getY();
+                        // ClippedPathFinder.getPathFinder().findRoute(player,
+                        // x, y, true, 0, 0);
+                        player.getMovementQueue().walk(new Position(x, y, player.getPosition().getZ()));
+
+                    } else if (entity.isNpc()) {
+                        Npc npc = (Npc) entity;
+
+                        if (npc.getCombatBuilder().isAttacking()) {
+                            // ...
+                        }
+
+                        if (npc.getPosition().withinDistance(leader.getPosition(), 1)) {
+                            return;
+                        }
+
+                        int x = leader.getPosition().getX();
+                        int y = leader.getPosition().getY();
+                        // ClippedPathFinder.getDumbPathFinder().findRoute(player,
+                        // x, y, true, 0, 0);
+                        npc.getMovementQueue().walk(new Position(x, y, npc.getPosition().getZ()));
+                    }
+                }
+            });
+
+            TaskFactory.getFactory().submit(entity.getFollowWorker());
+        }
     }
 
     /**

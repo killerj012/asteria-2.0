@@ -26,6 +26,6 @@ public class DecodeFollowPlayerPacket extends PacketDecoder {
         }
 
         SkillEvent.fireSkillEvents(player);
-        player.follow(follow);
+        player.getMovementQueue().follow(follow);
     }
 }

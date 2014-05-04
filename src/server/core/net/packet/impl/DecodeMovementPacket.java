@@ -23,12 +23,16 @@ public class DecodeMovementPacket extends PacketDecoder {
         // minimap click
         if (player.getSession().getPacketOpcode() == 248) {
             SkillEvent.fireSkillEvents(player);
+            player.setFollowing(false);
+            player.getCombatBuilder().resetAttackTimer();
             length -= 14;
         }
 
         // yellow x click
         if (player.getSession().getPacketOpcode() == 164) {
             SkillEvent.fireSkillEvents(player);
+            player.setFollowing(false);
+            player.getCombatBuilder().resetAttackTimer();
             // player.getRS2Packet().sendMessage("164");
 
             // red x click

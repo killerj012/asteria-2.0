@@ -13,9 +13,8 @@ import server.world.entity.player.skill.SkillManager;
 import server.world.entity.player.skill.SkillManager.SkillConstant;
 import server.world.map.Location;
 
-public class CombatWorker extends Worker {
+public class CombatWorker extends Worker { // XXX: cooldown system
 
-    private int cooldown = 15;
     private CombatBuilder builder;
     private CombatStrategy strategy;
 
@@ -27,7 +26,10 @@ public class CombatWorker extends Worker {
 
     @Override
     public void fire() {
-        if (cooldown == 0 || builder.getEntity().isHasDied() || builder.getCurrentTarget().isUnregistered() || builder.getEntity().isUnregistered()) {
+        if (builder.getEntity().isHasDied() || builder.getCurrentTarget().isUnregistered() || builder.getEntity().isUnregistered()) {
+            if (builder.getEntity().isPlayer()) {
+                System.out.println("stopped0");
+            }
             this.cancel();
             builder.reset();
             return;
@@ -46,7 +48,6 @@ public class CombatWorker extends Worker {
         }
 
         builder.decrementAttackTimer();
-        cooldown--;
 
         if (builder.getAttackTimer() == 0) {
             if (builder.getEntity().isHasDied() || builder.getCurrentTarget().isHasDied() || builder.getCurrentTarget().isUnregistered() || builder.getEntity().isUnregistered()) {
@@ -56,11 +57,13 @@ public class CombatWorker extends Worker {
             }
 
             if (!builder.getEntity().getPosition().withinDistance(builder.getCurrentTarget().getPosition(), strategy.getDistance(builder.getEntity()))) {
+                if (builder.getEntity().isPlayer()) {
+                    System.out.println("stopped2");
+                }
                 return;
             }
 
             if (!strategy.prepareAttack(builder.getEntity())) {
-                System.out.println("stopped3");
                 return;
             }
 
@@ -88,6 +91,8 @@ public class CombatWorker extends Worker {
                 totalDamage += combatHit.getHits()[2].getDamage();
                 totalDamage += combatHit.getHits()[3].getDamage();
             }
+
+            builder.getCurrentTarget().getCombatBuilder().addDamage(builder.getEntity(), totalDamage);
 
             if (builder.getEntity().isPlayer() && builder.getCurrentTarget().isPlayer()) {
                 Player player = (Player) builder.getEntity();
@@ -118,7 +123,6 @@ public class CombatWorker extends Worker {
                 if (CombatPrayer.isPrayerActivated(player, CombatPrayer.SMITE)) {
                     target.getSkills()[Misc.PRAYER].decreaseLevel(totalDamage / 4);
                 }
-                player.getLastCombat().reset();
             } else if (builder.getCurrentTarget().isPlayer()) {
                 Player player = (Player) builder.getCurrentTarget();
 
@@ -133,20 +137,20 @@ public class CombatWorker extends Worker {
                         SkillManager.refresh(player, SkillConstant.HITPOINTS);
                     }
                 }
-                player.getLastCombat().reset();
             }
 
             builder.getCurrentTarget().getCombatBuilder().setLastAttacker(builder.getEntity());
             builder.setAttackTimer(strategy.attackTimer(builder.getEntity()));
-            cooldown = 15;
+            builder.getEntity().getLastCombat().reset();
 
             if (builder.getCurrentTarget().isAutoRetaliate() && !builder.getCurrentTarget().getCombatBuilder().isAttacking()) {
-                builder.getCurrentTarget().facePosition(builder.getEntity().getPosition().clone());
+                // builder.getCurrentTarget().facePosition(builder.getEntity().getPosition().clone());
+                builder.getCurrentTarget().getMovementQueue().follow(builder.getEntity());
 
                 if (builder.getCurrentTarget().isNpc()) {
                     builder.getCurrentTarget().getCombatBuilder().attack(builder.getEntity(), ((Npc) builder.getCurrentTarget()).getCombatStrategy());
                 } else if (builder.getCurrentTarget().isPlayer()) {
-                    Player player = (Player) builder.getEntity();
+                    Player player = (Player) builder.getCurrentTarget();
 
                     if (CombatFactory.RANGE_WEAPONS.contains(player.getEquipment().getContainer().getItemId(Misc.EQUIPMENT_SLOT_WEAPON))) {
                         builder.getCurrentTarget().getCombatBuilder().attack(builder.getEntity(), CombatFactory.newDefaultRangedStrategy());

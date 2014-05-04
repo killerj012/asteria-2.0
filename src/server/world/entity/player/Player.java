@@ -1,6 +1,7 @@
 package server.world.entity.player;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.logging.Logger;
@@ -36,6 +37,8 @@ import server.world.entity.player.skill.SkillEvent;
 import server.world.entity.player.skill.SkillManager;
 import server.world.entity.player.skill.SkillManager.SkillConstant;
 import server.world.item.Item;
+import server.world.item.ground.GroundItem;
+import server.world.item.ground.StaticGroundItem;
 import server.world.map.Location;
 import server.world.map.Position;
 
@@ -48,6 +51,9 @@ import server.world.map.Position;
  */
 @SuppressWarnings("all")
 public class Player extends Entity {
+
+    /** A message sent to a player that has killed another player. */
+    public static final String[] DEATH_MESSAGES = { "You have killed -player-!" };
 
     /** The items recieved when the player logs in for the first time. */
     public static final Item[] STARTER_PACKAGE = { new Item(995, 10000) };
@@ -73,7 +79,7 @@ public class Player extends Entity {
     /** An array of all the trainable skills. */
     private Skill[] trainable = new Skill[21];
 
-    /** Prayer worker. */
+    /** The prayer worker. */
     private Worker prayerDrain = new CombatPrayerWorker(this).terminateRun();
 
     /** The prayer statuses. */
@@ -138,8 +144,7 @@ public class Player extends Entity {
             buryTimer = new Stopwatch().reset(),
             altarTimer = new Stopwatch().reset(),
             npcTheftTimer = new Stopwatch().reset(),
-            objectTheftTimer = new Stopwatch().reset(),
-            lastCombat = new Stopwatch().headStart(10000);
+            objectTheftTimer = new Stopwatch().reset();
 
     /** The last delay when stealing. */
     private long lastTheftDelay;
@@ -263,36 +268,34 @@ public class Player extends Entity {
             @Override
             public void fire() {
                 if (getDeathTicks() == 0) {
-
-                    // and stop combat
                     player.getCombatBuilder().reset();
                     getMovementQueue().reset();
                 } else if (getDeathTicks() == 1) {
                     animation(DEATH);
                     SkillEvent.fireSkillEvents(player);
                     player.getTradeSession().resetTrade(false);
-
-                    // duel, whatever
-
                 } else if (getDeathTicks() == 5) {
-                    // send message to whoever killed this player and do
-                    // whatever
-                    // decide what items/equipment to keep, drop all other
-                    // items/equipment, take into account the protect item
-                    // prayer
-
-                    Entity killer = null;
+                    Entity killer = getCombatBuilder().getKiller();
                     Minigame minigame = MinigameFactory.getMinigame(player);
 
                     if (minigame != null) {
                         minigame.fireOnDeath(player);
 
-                        if (killer instanceof Player) {
+                        if (!minigame.canKeepItems()) {
+                            if (killer == null || killer.isNpc()) {
+                                dropDeathItems(null);
+                            } else if (killer.isPlayer()) {
+                                dropDeathItems((Player) killer);
+                            }
+                        }
+
+                        if (killer != null && killer.isPlayer()) {
                             minigame.fireOnKill((Player) killer, player);
                         }
 
                         move(minigame.getDeathPosition(player));
                     } else {
+                        deathHook(killer);
                         move(new Position(3093, 3244));
                     }
                 } else if (getDeathTicks() == 6) {
@@ -457,11 +460,6 @@ public class Player extends Entity {
     }
 
     @Override
-    public void follow(final Entity entity) {
-
-    }
-
-    @Override
     public int getAttackSpeed() {
         int speed = weapon.getSpeed();
 
@@ -492,6 +490,106 @@ public class Player extends Entity {
         }
 
         logger.info(this + " has logged out.");
+    }
+
+    /**
+     * The hook fired when this player is killed.
+     * 
+     * @param killer
+     *        the entity who killed this player (if any).
+     */
+    public void deathHook(Entity killer) {
+        if (killer == null || killer.isNpc()) {
+            dropDeathItems(null);
+        } else if (killer.isPlayer()) {
+            Player plr = (Player) killer;
+
+            plr.getPacketBuilder().sendMessage(Misc.randomElement(DEATH_MESSAGES).replaceAll("-player-", username));
+            dropDeathItems(plr);
+        }
+    }
+
+    /**
+     * Drops everything except the 3 (or 4) most valuable items on death.
+     */
+    public void dropDeathItems(Player killer) {
+
+        /** All of the player's inventory and equipment. */
+        ArrayList<Item> dropItems = new ArrayList<Item>();
+
+        dropItems.addAll(Arrays.asList(player.getEquipment().getContainer().toArray()));
+        dropItems.addAll(Arrays.asList(player.getInventory().getContainer().toArray()));
+
+        /** Remove all of the player's inventory and equipment. */
+        player.getEquipment().getContainer().clear();
+        player.getInventory().getContainer().clear();
+        player.getEquipment().refresh();
+        player.getInventory().refresh(3214);
+
+        /** Create an array of items to keep. */
+        Item[] keepItems = new Item[3];
+
+        /** Expand that array if we have the protect item prayer activated. */
+        if (CombatPrayer.isPrayerActivated(this, CombatPrayer.PROTECT_ITEM)) {
+            keepItems = new Item[4];
+        }
+
+        /** Fill the array with the most valuable items. */
+        for (int i = 0; i < keepItems.length; i++) {
+            keepItems[i] = getMaximumValue(dropItems);
+            dropItems.remove(keepItems[i]);
+        }
+
+        /** Keep the saved items. */
+        player.getInventory().addItemSet(keepItems);
+
+        /** Drop the other items. */
+        if (killer == null) {
+            for (Item item : dropItems) {
+                if (item == null) {
+                    continue;
+                }
+
+                World.getGroundItems().register(new StaticGroundItem(item, getPosition(), true, false));
+            }
+            return;
+        } else {
+            for (Item item : dropItems) {
+                if (item == null) {
+                    continue;
+                }
+
+                World.getGroundItems().register(new GroundItem(item, getPosition(), killer));
+            }
+        }
+    }
+
+    /**
+     * Gets the item with the highest general store price out of a list of
+     * items.
+     * 
+     * @param items
+     *        the items to choose from.
+     * @return the item with the highest value.
+     */
+    private Item getMaximumValue(ArrayList<Item> items) {
+        Item lastItem = null;
+
+        for (Item item : items) {
+            if (item == null) {
+                continue;
+            }
+
+            if (lastItem == null) {
+                lastItem = item;
+                continue;
+            }
+
+            if (!(lastItem.getDefinition().getGeneralStorePrice() > item.getDefinition().getGeneralStorePrice())) {
+                lastItem = item;
+            }
+        }
+        return lastItem;
     }
 
     /**
@@ -527,7 +625,7 @@ public class Player extends Entity {
      */
     public void loadConfigs() {
         getPacketBuilder().sendConfig(173, getMovementQueue().isRunToggled() ? 1 : 0);
-        getPacketBuilder().sendConfig(172, isAutoRetaliate() ? 1 : 0);
+        getPacketBuilder().sendConfig(172, isAutoRetaliate() ? 0 : 1);
         getPacketBuilder().sendConfig(fightType.getParentId(), fightType.getChildId());
         CombatPrayer.resetPrayerGlows(this);
     }
@@ -1329,13 +1427,6 @@ public class Player extends Entity {
      */
     public void setPrayerDrain(CombatPrayerWorker prayerDrain) {
         this.prayerDrain = prayerDrain;
-    }
-
-    /**
-     * @return the lastCombat
-     */
-    public Stopwatch getLastCombat() {
-        return lastCombat;
     }
 
     /**
