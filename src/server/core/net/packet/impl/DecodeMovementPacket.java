@@ -19,6 +19,7 @@ public class DecodeMovementPacket extends PacketDecoder {
     @Override
     public void decode(Player player, PacketBuffer.ReadBuffer in) {
         int length = player.getSession().getPacketLength();
+        player.faceEntity(65535);
 
         // minimap click
         if (player.getSession().getPacketOpcode() == 248) {

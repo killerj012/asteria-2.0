@@ -7,8 +7,9 @@ import java.util.Map.Entry;
 
 import server.core.worker.TaskFactory;
 import server.core.worker.listener.EventListener;
-import server.util.Misc;
 import server.world.entity.Entity;
+import server.world.entity.combat.task.CombatHookTask;
+import server.world.entity.npc.Npc;
 import server.world.entity.player.Player;
 
 /**
@@ -32,10 +33,19 @@ public class CombatBuilder {
     private int attackTimer;
 
     /** The worker used to handle the combat process. */
-    private CombatWorker combatWorker;
+    private CombatHookTask combatWorker;
 
     /** A map of all entities who have inflicted damage. */
     private Map<Entity, Integer> damageMap = new HashMap<Entity, Integer>();
+
+    /** The current combat strategy this npc is using. */
+    private CombatStrategy currentStrategy;
+
+    /** If the cooldown should start or not. */
+    private boolean cooldownEffect;
+
+    /** The amount of cooldown ticks left. */
+    private int cooldown = 5;
 
     /**
      * Create a new {@link CombatBuilder}.
@@ -52,10 +62,8 @@ public class CombatBuilder {
      * 
      * @param victim
      *        the entity that will be attacked.
-     * @param finalStrategy
-     *        the strategy that will be used to attack this entity.
      */
-    public void attack(final Entity victim, final CombatStrategy finalStrategy) {
+    public void attack(final Entity victim) {
 
         /** Start following the victim. */
         entity.getMovementQueue().follow(victim);
@@ -63,6 +71,8 @@ public class CombatBuilder {
         /** Check if we are already attacking this target. */
         if (currentTarget != null) {
             if (currentTarget == victim) {
+                cooldownEffect = false;
+                cooldown = 5;
                 return;
             }
         }
@@ -70,14 +80,17 @@ public class CombatBuilder {
         /** A dummy instance of this combat builder. */
         final CombatBuilder builder = this;
 
+        /** Determine the combat strategy for npcs. */
+        if (builder.getEntity().isNpc()) {
+            Npc npc = (Npc) builder.getEntity();
+            CombatFactory.determineNpcStrategy(npc);
+        }
+
         /**
          * A listener that will be used to determine when the entity is close
          * enough to attack.
          */
         TaskFactory.getFactory().submit(new EventListener() {
-
-            /** The combat strategy being used to attack. */
-            private CombatStrategy strategy = finalStrategy;
 
             /** Will be used to determine how many loops have been made. */
             private int loopCount;
@@ -85,17 +98,13 @@ public class CombatBuilder {
             @Override
             public boolean listenForEvent() {
 
-                /** Redetermines the combat strategy if you're a player. */
+                /**
+                 * Redetermines the combat strategy while walking to the victim
+                 * if you're a player.
+                 */
                 if (builder.getEntity().isPlayer()) {
                     Player player = (Player) builder.getEntity();
-
-                    if (CombatFactory.RANGE_WEAPONS.contains(player.getEquipment().getContainer().getItemId(Misc.EQUIPMENT_SLOT_WEAPON))) {
-                        strategy = CombatFactory.newDefaultRangedStrategy();
-                    } else if (player.isAutocastMagic()) {
-                        strategy = CombatFactory.newDefaultMagicStrategy();
-                    } else {
-                        strategy = CombatFactory.newDefaultMeleeStrategy();
-                    }
+                    CombatFactory.determinePlayerStrategy(player);
                 }
 
                 /**
@@ -103,6 +112,7 @@ public class CombatBuilder {
                  * out of range.
                  */
                 if (loopCount > 15 || !entity.getPosition().isViewableFrom(victim.getPosition())) {
+                    builder.reset();
                     this.cancel();
                     entity.faceEntity(65535);
                     entity.getFollowWorker().cancel();
@@ -113,7 +123,9 @@ public class CombatBuilder {
 
                 /** Set the attack timer. */
                 if (loopCount == 0) {
-                    attackTimer = strategy.attackTimer(entity);
+                    cooldownEffect = false;
+                    cooldown = 5;
+                    attackTimer = currentStrategy.attackTimer(entity);
                 }
 
                 /**
@@ -128,7 +140,7 @@ public class CombatBuilder {
                 loopCount++;
 
                 /** Start combat once we are in the correct distance. */
-                return entity.getPosition().withinDistance(victim.getPosition(), strategy.getDistance(entity));
+                return !entity.getPosition().withinDistance(victim.getPosition(), currentStrategy.getDistance(entity));
             }
 
             @Override
@@ -141,7 +153,7 @@ public class CombatBuilder {
                 }
 
                 /** Prepare to attack using this strategy. */
-                if (!strategy.prepareAttack(entity)) {
+                if (!currentStrategy.prepareAttack(entity)) {
                     return;
                 }
 
@@ -150,12 +162,34 @@ public class CombatBuilder {
 
                 /** Start the combat worker if needed. */
                 if (combatWorker == null || !combatWorker.isRunning()) {
-                    combatWorker = new CombatWorker(builder, strategy);
+                    combatWorker = new CombatHookTask(builder);
                     TaskFactory.getFactory().submit(combatWorker);
-                    entity.getLastCombat().reset();
                 }
             }
         });
+    }
+
+    /**
+     * Decrements the cooldown.
+     */
+    public void decrementCooldown() {
+        cooldown--;
+    }
+
+    /**
+     * Resets the cooldown;
+     */
+    public void resetCooldown() {
+        cooldown = 5;
+    }
+
+    /**
+     * Gets the cooldown.
+     * 
+     * @return the cooldown.
+     */
+    public int getCooldown() {
+        return cooldown;
     }
 
     /**
@@ -208,17 +242,27 @@ public class CombatBuilder {
         currentTarget = null;
         combatWorker = null;
         attackTimer = 0;
+        currentStrategy = null;
+        cooldownEffect = false;
     }
 
     /**
      * Resets the attack timer to the value based on the strategy being used.
      */
     public void resetAttackTimer() {
-        if (combatWorker == null || !combatWorker.isRunning()) {
+        if (currentStrategy == null) {
             return;
         }
 
-        attackTimer = combatWorker.getStrategy().attackTimer(entity);
+        cooldownEffect = true;
+        attackTimer = currentStrategy.attackTimer(entity);
+    }
+
+    /**
+     * Resets the damage map.
+     */
+    public void resetDamage() {
+        damageMap.clear();
     }
 
     /**
@@ -230,6 +274,7 @@ public class CombatBuilder {
 
         /** We weren't killed by any entities. */
         if (damageMap.size() == 0) {
+            System.out.println("1");
             return null;
         }
 
@@ -243,10 +288,12 @@ public class CombatBuilder {
                     continue;
                 }
 
+                System.out.println("2");
                 return nextEntry.getKey();
             }
         }
 
+        System.out.println("3");
         /** If no killers have been found return the last attacker. */
         return lastAttacker;
     }
@@ -260,6 +307,11 @@ public class CombatBuilder {
      *        the amount of damage dealt.
      */
     public void addDamage(Entity entity, int amountDealt) {
+
+        /** No damage below 0 is accounted for. */
+        if (amountDealt < 1) {
+            return;
+        }
 
         /** Add on to the damage for existing entities. */
         if (damageMap.containsKey(entity)) {
@@ -346,5 +398,33 @@ public class CombatBuilder {
      */
     public void setLastAttacker(Entity lastAttacker) {
         this.lastAttacker = lastAttacker;
+    }
+
+    /**
+     * Gets the current combat strategy this npc is using.
+     * 
+     * @return the current combat strategy this npc is using.
+     */
+    public CombatStrategy getCurrentStrategy() {
+        return currentStrategy;
+    }
+
+    /**
+     * Sets the current combat strategy this npc is using.
+     * 
+     * @param currentStrategy
+     *        the current combat strategy this npc is using.
+     */
+    public void setCurrentStrategy(CombatStrategy currentStrategy) {
+        this.currentStrategy = currentStrategy;
+    }
+
+    /**
+     * Gets if the cooldown should start or not.
+     * 
+     * @return true if the cooldown should start.
+     */
+    public boolean isCooldownEffect() {
+        return cooldownEffect;
     }
 }

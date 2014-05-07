@@ -163,6 +163,10 @@ public class EntityContainer<T extends Entity> implements Iterable<T> {
      * @return true if this container has the entity.
      */
     public boolean contains(T entity) {
+        if (entity.getSlot() > backingArray.length || entity.getSlot() < 1) {
+            return false;
+        }
+
         return backingArray[entity.getSlot()] != null;
     }
 

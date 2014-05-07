@@ -47,11 +47,11 @@ public class AssignWeaponInterface {
                 weaponInterface[def.getItemId()] = WeaponInterface.BATTLEAXE;
             } else if (def.getItemName().equals("Crossbow") || def.getItemName().endsWith("crossbow")) {
                 weaponInterface[def.getItemId()] = WeaponInterface.CROSSBOW;
-            } else if (def.getItemName().endsWith("shortbow")) {
+            } else if (def.getItemName().endsWith("shortbow") || def.getItemName().startsWith("Crystal bow") || def.getItemName().endsWith("crystal bow")) {
                 weaponInterface[def.getItemId()] = WeaponInterface.SHORTBOW;
             } else if (def.getItemName().endsWith("longbow")) {
                 weaponInterface[def.getItemId()] = WeaponInterface.LONGBOW;
-            } else if (def.getItemName().endsWith("dagger")) {
+            } else if (def.getItemName().endsWith("dagger") || def.getItemName().endsWith("dagger(p)") || def.getItemName().endsWith("dagger(p+)") || def.getItemName().endsWith("dagger(p++)")) {
                 weaponInterface[def.getItemId()] = WeaponInterface.DAGGER;
             } else if (def.getItemName().endsWith("longsword")) {
                 weaponInterface[def.getItemId()] = WeaponInterface.LONGSWORD;
@@ -149,7 +149,7 @@ public class AssignWeaponInterface {
          * @param fightType
          *        the fight types that correspond with this interface.
          */
-        WeaponInterface(int interfaceId, int nameLineId, CombatType combatType, int speed, FightType[] fightType) {
+        private WeaponInterface(int interfaceId, int nameLineId, CombatType combatType, int speed, FightType[] fightType) {
             this.interfaceId = interfaceId;
             this.nameLineId = nameLineId;
             this.combatType = combatType;
@@ -241,92 +241,96 @@ public class AssignWeaponInterface {
         }
     }
 
+    public enum FightStyle {
+        ACCURATE, AGGRESSIVE, DEFENSIVE, CONTROLLED
+    }
+
     /**
      * The different fight types on the weapon interfaces.
      * 
      * @author lare96
      */
     public enum FightType {
-        STAFF_BASH(406, TrainType.ATTACK, 43, 0, Misc.ATTACK_CRUSH),
-        STAFF_POUND(406, TrainType.STRENGTH, 43, 1, Misc.ATTACK_CRUSH),
-        STAFF_FOCUS(406, TrainType.DEFENCE, 43, 2, Misc.ATTACK_CRUSH),
-        WARHAMMER_POUND(401, TrainType.ATTACK, 43, 0, Misc.ATTACK_CRUSH),
-        WARHAMMER_PUMMEL(401, TrainType.STRENGTH, 43, 1, Misc.ATTACK_CRUSH),
-        WARHAMMER_BLOCK(401, TrainType.DEFENCE, 43, 2, Misc.ATTACK_CRUSH),
-        SCYTHE_REAP(408, TrainType.ATTACK, 43, 0, Misc.ATTACK_SLASH),
-        SCYTHE_CHOP(451, TrainType.STRENGTH, 43, 1, Misc.ATTACK_STAB),
-        SCYTHE_JAB(412, TrainType.STRENGTH, 43, 2, Misc.ATTACK_CRUSH),
-        SCYTHE_BLOCK(408, TrainType.DEFENCE, 43, 3, Misc.ATTACK_SLASH),
-        BATTLEAXE_CHOP(1833, TrainType.ATTACK, 43, 0, Misc.ATTACK_SLASH),
-        BATTLEAXE_HACK(1833, TrainType.STRENGTH, 43, 1, Misc.ATTACK_SLASH),
-        BATTLEAXE_SMASH(401, TrainType.STRENGTH, 43, 2, Misc.ATTACK_CRUSH),
-        BATTLEAXE_BLOCK(1833, TrainType.DEFENCE, 43, 3, Misc.ATTACK_SLASH),
-        CROSSBOW_ACCURATE(427, TrainType.RANGED, 43, 0, Misc.ATTACK_RANGE),
-        CROSSBOW_RAPID(427, TrainType.RANGED, 43, 1, Misc.ATTACK_RANGE),
-        CROSSBOW_LONGRANGE(427, TrainType.RANGE_DEFENCE, 43, 2, Misc.ATTACK_RANGE),
-        SHORTBOW_ACCURATE(426, TrainType.RANGED, 43, 0, Misc.ATTACK_RANGE),
-        SHORTBOW_RAPID(426, TrainType.RANGED, 43, 1, Misc.ATTACK_RANGE),
-        SHORTBOW_LONGRANGE(426, TrainType.RANGE_DEFENCE, 43, 2, Misc.ATTACK_RANGE),
-        LONGBOW_ACCURATE(426, TrainType.RANGED, 43, 0, Misc.ATTACK_RANGE),
-        LONGBOW_RAPID(426, TrainType.RANGED, 43, 1, Misc.ATTACK_RANGE),
-        LONGBOW_LONGRANGE(426, TrainType.RANGE_DEFENCE, 43, 2, Misc.ATTACK_RANGE),
-        DAGGER_STAB(402, TrainType.ATTACK, 43, 0, Misc.ATTACK_STAB),
-        DAGGER_LUNGE(402, TrainType.STRENGTH, 43, 1, Misc.ATTACK_STAB),
-        DAGGER_SLASH(451, TrainType.STRENGTH, 43, 2, Misc.ATTACK_STAB),
-        DAGGER_BLOCK(402, TrainType.DEFENCE, 43, 3, Misc.ATTACK_STAB),
-        SWORD_STAB(412, TrainType.ATTACK, 43, 0, Misc.ATTACK_STAB),
-        SWORD_LUNGE(412, TrainType.STRENGTH, 43, 1, Misc.ATTACK_STAB),
-        SWORD_SLASH(451, TrainType.STRENGTH, 43, 2, Misc.ATTACK_SLASH),
-        SWORD_BLOCK(412, TrainType.DEFENCE, 43, 3, Misc.ATTACK_STAB),
-        SCIMITAR_CHOP(451, TrainType.ATTACK, 43, 0, Misc.ATTACK_SLASH),
-        SCIMITAR_SLASH(451, TrainType.STRENGTH, 43, 1, Misc.ATTACK_SLASH),
-        SCIMITAR_LUNGE(412, TrainType.ATTACK_STRENGTH_DEFENCE, 43, 2, Misc.ATTACK_STAB),
-        SCIMITAR_BLOCK(451, TrainType.DEFENCE, 43, 3, Misc.ATTACK_SLASH),
-        LONGSWORD_CHOP(451, TrainType.ATTACK, 43, 0, Misc.ATTACK_SLASH),
-        LONGSWORD_SLASH(451, TrainType.STRENGTH, 43, 1, Misc.ATTACK_SLASH),
-        LONGSWORD_LUNGE(412, TrainType.ATTACK_STRENGTH_DEFENCE, 43, 2, Misc.ATTACK_STAB),
-        LONGSWORD_BLOCK(451, TrainType.DEFENCE, 43, 3, Misc.ATTACK_SLASH),
-        MACE_POUND(1833, TrainType.ATTACK, 43, 0, Misc.ATTACK_CRUSH),
-        MACE_PUMMEL(401, TrainType.STRENGTH, 43, 1, Misc.ATTACK_CRUSH),
-        MACE_SPIKE(412, TrainType.ATTACK_STRENGTH_DEFENCE, 43, 2, Misc.ATTACK_STAB),
-        MACE_BLOCK(401, TrainType.DEFENCE, 43, 3, Misc.ATTACK_CRUSH),
-        KNIFE_ACCURATE(806, TrainType.RANGED, 43, 0, Misc.ATTACK_RANGE),
-        KNIFE_RAPID(806, TrainType.RANGED, 43, 1, Misc.ATTACK_RANGE),
-        KNIFE_LONGRANGE(806, TrainType.RANGE_DEFENCE, 43, 2, Misc.ATTACK_RANGE),
-        SPEAR_LUNGE(2080, TrainType.ATTACK_STRENGTH_DEFENCE, 43, 0, Misc.ATTACK_STAB),
-        SPEAR_SWIPE(2081, TrainType.ATTACK_STRENGTH_DEFENCE, 43, 1, Misc.ATTACK_SLASH),
-        SPEAR_POUND(2082, TrainType.ATTACK_STRENGTH_DEFENCE, 43, 2, Misc.ATTACK_CRUSH),
-        SPEAR_BLOCK(2080, TrainType.DEFENCE, 43, 3, Misc.ATTACK_STAB),
-        TWOHANDEDSWORD_CHOP(407, TrainType.ATTACK, 43, 0, Misc.ATTACK_SLASH),
-        TWOHANDEDSWORD_SLASH(407, TrainType.STRENGTH, 43, 1, Misc.ATTACK_SLASH),
-        TWOHANDEDSWORD_SMASH(406, TrainType.STRENGTH, 43, 2, Misc.ATTACK_CRUSH),
-        TWOHANDEDSWORD_BLOCK(407, TrainType.DEFENCE, 43, 3, Misc.ATTACK_SLASH),
-        PICKAXE_SPIKE(412, TrainType.ATTACK, 43, 0, Misc.ATTACK_STAB),
-        PICKAXE_IMPALE(412, TrainType.STRENGTH, 43, 1, Misc.ATTACK_STAB),
-        PICKAXE_SMASH(401, TrainType.STRENGTH, 43, 2, Misc.ATTACK_CRUSH),
-        PICKAXE_BLOCK(412, TrainType.DEFENCE, 43, 3, Misc.ATTACK_STAB),
-        CLAWS_CHOP(451, TrainType.ATTACK, 43, 0, Misc.ATTACK_SLASH),
-        CLAWS_SLASH(451, TrainType.STRENGTH, 43, 1, Misc.ATTACK_SLASH),
-        CLAWS_LUNGE(412, TrainType.ATTACK_STRENGTH_DEFENCE, 43, 2, Misc.ATTACK_STAB),
-        CLAWS_BLOCK(451, TrainType.DEFENCE, 43, 3, Misc.ATTACK_SLASH),
-        HALBERD_JAB(412, TrainType.ATTACK_STRENGTH_DEFENCE, 43, 0, Misc.ATTACK_STAB),
-        HALBERD_SWIPE(440, TrainType.STRENGTH, 43, 1, Misc.ATTACK_SLASH),
-        HALBERD_FEND(412, TrainType.DEFENCE, 43, 2, Misc.ATTACK_STAB),
-        UNARMED_PUNCH(422, TrainType.ATTACK, 43, 0, Misc.ATTACK_CRUSH),
-        UNARMED_KICK(423, TrainType.STRENGTH, 43, 1, Misc.ATTACK_CRUSH),
-        UNARMED_BLOCK(422, TrainType.DEFENCE, 43, 2, Misc.ATTACK_CRUSH),
-        WHIP_FLICK(1658, TrainType.ATTACK, 43, 0, Misc.ATTACK_SLASH),
-        WHIP_LASH(1658, TrainType.ATTACK_STRENGTH_DEFENCE, 43, 1, Misc.ATTACK_SLASH),
-        WHIP_DEFLECT(1658, TrainType.DEFENCE, 43, 2, Misc.ATTACK_SLASH),
-        THROWNAXE_ACCURATE(806, TrainType.RANGED, 43, 0, Misc.ATTACK_RANGE),
-        THROWNAXE_RAPID(806, TrainType.RANGED, 43, 1, Misc.ATTACK_RANGE),
-        THROWNAXE_LONGRANGE(806, TrainType.RANGE_DEFENCE, 43, 2, Misc.ATTACK_RANGE),
-        DART_ACCURATE(806, TrainType.RANGED, 43, 0, Misc.ATTACK_RANGE),
-        DART_RAPID(806, TrainType.RANGED, 43, 1, Misc.ATTACK_RANGE),
-        DART_LONGRANGE(806, TrainType.RANGE_DEFENCE, 43, 2, Misc.ATTACK_RANGE),
-        JAVELIN_ACCURATE(806, TrainType.RANGED, 43, 0, Misc.ATTACK_RANGE),
-        JAVELIN_RAPID(806, TrainType.RANGED, 43, 2, Misc.ATTACK_RANGE),
-        JAVELIN_LONGRANGE(806, TrainType.RANGE_DEFENCE, 43, 3, Misc.ATTACK_RANGE);
+        STAFF_BASH(406, TrainType.ATTACK, 43, 0, Misc.ATTACK_CRUSH, FightStyle.ACCURATE),
+        STAFF_POUND(406, TrainType.STRENGTH, 43, 1, Misc.ATTACK_CRUSH, FightStyle.AGGRESSIVE),
+        STAFF_FOCUS(406, TrainType.DEFENCE, 43, 2, Misc.ATTACK_CRUSH, FightStyle.DEFENSIVE),
+        WARHAMMER_POUND(401, TrainType.ATTACK, 43, 0, Misc.ATTACK_CRUSH, FightStyle.ACCURATE),
+        WARHAMMER_PUMMEL(401, TrainType.STRENGTH, 43, 1, Misc.ATTACK_CRUSH, FightStyle.AGGRESSIVE),
+        WARHAMMER_BLOCK(401, TrainType.DEFENCE, 43, 2, Misc.ATTACK_CRUSH, FightStyle.DEFENSIVE),
+        SCYTHE_REAP(408, TrainType.ATTACK, 43, 0, Misc.ATTACK_SLASH, FightStyle.ACCURATE),
+        SCYTHE_CHOP(451, TrainType.STRENGTH, 43, 1, Misc.ATTACK_STAB, FightStyle.AGGRESSIVE),
+        SCYTHE_JAB(412, TrainType.STRENGTH, 43, 2, Misc.ATTACK_CRUSH, FightStyle.AGGRESSIVE),
+        SCYTHE_BLOCK(408, TrainType.DEFENCE, 43, 3, Misc.ATTACK_SLASH, FightStyle.DEFENSIVE),
+        BATTLEAXE_CHOP(1833, TrainType.ATTACK, 43, 0, Misc.ATTACK_SLASH, FightStyle.ACCURATE),
+        BATTLEAXE_HACK(1833, TrainType.STRENGTH, 43, 1, Misc.ATTACK_SLASH, FightStyle.AGGRESSIVE),
+        BATTLEAXE_SMASH(401, TrainType.STRENGTH, 43, 2, Misc.ATTACK_CRUSH, FightStyle.AGGRESSIVE),
+        BATTLEAXE_BLOCK(1833, TrainType.DEFENCE, 43, 3, Misc.ATTACK_SLASH, FightStyle.DEFENSIVE),
+        CROSSBOW_ACCURATE(427, TrainType.RANGED, 43, 0, Misc.ATTACK_RANGE, FightStyle.ACCURATE),
+        CROSSBOW_RAPID(427, TrainType.RANGED, 43, 1, Misc.ATTACK_RANGE, FightStyle.AGGRESSIVE),
+        CROSSBOW_LONGRANGE(427, TrainType.RANGE_DEFENCE, 43, 2, Misc.ATTACK_RANGE, FightStyle.DEFENSIVE),
+        SHORTBOW_ACCURATE(426, TrainType.RANGED, 43, 0, Misc.ATTACK_RANGE, FightStyle.ACCURATE),
+        SHORTBOW_RAPID(426, TrainType.RANGED, 43, 1, Misc.ATTACK_RANGE, FightStyle.AGGRESSIVE),
+        SHORTBOW_LONGRANGE(426, TrainType.RANGE_DEFENCE, 43, 2, Misc.ATTACK_RANGE, FightStyle.DEFENSIVE),
+        LONGBOW_ACCURATE(426, TrainType.RANGED, 43, 0, Misc.ATTACK_RANGE, FightStyle.ACCURATE),
+        LONGBOW_RAPID(426, TrainType.RANGED, 43, 1, Misc.ATTACK_RANGE, FightStyle.AGGRESSIVE),
+        LONGBOW_LONGRANGE(426, TrainType.RANGE_DEFENCE, 43, 2, Misc.ATTACK_RANGE, FightStyle.DEFENSIVE),
+        DAGGER_STAB(402, TrainType.ATTACK, 43, 0, Misc.ATTACK_STAB, FightStyle.ACCURATE),
+        DAGGER_LUNGE(402, TrainType.STRENGTH, 43, 1, Misc.ATTACK_STAB, FightStyle.AGGRESSIVE),
+        DAGGER_SLASH(451, TrainType.STRENGTH, 43, 2, Misc.ATTACK_STAB, FightStyle.AGGRESSIVE),
+        DAGGER_BLOCK(402, TrainType.DEFENCE, 43, 3, Misc.ATTACK_STAB, FightStyle.DEFENSIVE),
+        SWORD_STAB(412, TrainType.ATTACK, 43, 0, Misc.ATTACK_STAB, FightStyle.ACCURATE),
+        SWORD_LUNGE(412, TrainType.STRENGTH, 43, 1, Misc.ATTACK_STAB, FightStyle.AGGRESSIVE),
+        SWORD_SLASH(451, TrainType.STRENGTH, 43, 2, Misc.ATTACK_SLASH, FightStyle.AGGRESSIVE),
+        SWORD_BLOCK(412, TrainType.DEFENCE, 43, 3, Misc.ATTACK_STAB, FightStyle.DEFENSIVE),
+        SCIMITAR_CHOP(451, TrainType.ATTACK, 43, 0, Misc.ATTACK_SLASH, FightStyle.ACCURATE),
+        SCIMITAR_SLASH(451, TrainType.STRENGTH, 43, 1, Misc.ATTACK_SLASH, FightStyle.AGGRESSIVE),
+        SCIMITAR_LUNGE(412, TrainType.ATTACK_STRENGTH_DEFENCE, 43, 2, Misc.ATTACK_STAB, FightStyle.CONTROLLED),
+        SCIMITAR_BLOCK(451, TrainType.DEFENCE, 43, 3, Misc.ATTACK_SLASH, FightStyle.DEFENSIVE),
+        LONGSWORD_CHOP(451, TrainType.ATTACK, 43, 0, Misc.ATTACK_SLASH, FightStyle.ACCURATE),
+        LONGSWORD_SLASH(451, TrainType.STRENGTH, 43, 1, Misc.ATTACK_SLASH, FightStyle.AGGRESSIVE),
+        LONGSWORD_LUNGE(412, TrainType.ATTACK_STRENGTH_DEFENCE, 43, 2, Misc.ATTACK_STAB, FightStyle.CONTROLLED),
+        LONGSWORD_BLOCK(451, TrainType.DEFENCE, 43, 3, Misc.ATTACK_SLASH, FightStyle.DEFENSIVE),
+        MACE_POUND(1833, TrainType.ATTACK, 43, 0, Misc.ATTACK_CRUSH, FightStyle.ACCURATE),
+        MACE_PUMMEL(401, TrainType.STRENGTH, 43, 1, Misc.ATTACK_CRUSH, FightStyle.AGGRESSIVE),
+        MACE_SPIKE(412, TrainType.ATTACK_STRENGTH_DEFENCE, 43, 2, Misc.ATTACK_STAB, FightStyle.CONTROLLED),
+        MACE_BLOCK(401, TrainType.DEFENCE, 43, 3, Misc.ATTACK_CRUSH, FightStyle.DEFENSIVE),
+        KNIFE_ACCURATE(806, TrainType.RANGED, 43, 0, Misc.ATTACK_RANGE, FightStyle.ACCURATE),
+        KNIFE_RAPID(806, TrainType.RANGED, 43, 1, Misc.ATTACK_RANGE, FightStyle.AGGRESSIVE),
+        KNIFE_LONGRANGE(806, TrainType.RANGE_DEFENCE, 43, 2, Misc.ATTACK_RANGE, FightStyle.DEFENSIVE),
+        SPEAR_LUNGE(2080, TrainType.ATTACK_STRENGTH_DEFENCE, 43, 0, Misc.ATTACK_STAB, FightStyle.CONTROLLED),
+        SPEAR_SWIPE(2081, TrainType.ATTACK_STRENGTH_DEFENCE, 43, 1, Misc.ATTACK_SLASH, FightStyle.CONTROLLED),
+        SPEAR_POUND(2082, TrainType.ATTACK_STRENGTH_DEFENCE, 43, 2, Misc.ATTACK_CRUSH, FightStyle.CONTROLLED),
+        SPEAR_BLOCK(2080, TrainType.DEFENCE, 43, 3, Misc.ATTACK_STAB, FightStyle.DEFENSIVE),
+        TWOHANDEDSWORD_CHOP(407, TrainType.ATTACK, 43, 0, Misc.ATTACK_SLASH, FightStyle.ACCURATE),
+        TWOHANDEDSWORD_SLASH(407, TrainType.STRENGTH, 43, 1, Misc.ATTACK_SLASH, FightStyle.AGGRESSIVE),
+        TWOHANDEDSWORD_SMASH(406, TrainType.STRENGTH, 43, 2, Misc.ATTACK_CRUSH, FightStyle.AGGRESSIVE),
+        TWOHANDEDSWORD_BLOCK(407, TrainType.DEFENCE, 43, 3, Misc.ATTACK_SLASH, FightStyle.DEFENSIVE),
+        PICKAXE_SPIKE(412, TrainType.ATTACK, 43, 0, Misc.ATTACK_STAB, FightStyle.ACCURATE),
+        PICKAXE_IMPALE(412, TrainType.STRENGTH, 43, 1, Misc.ATTACK_STAB, FightStyle.AGGRESSIVE),
+        PICKAXE_SMASH(401, TrainType.STRENGTH, 43, 2, Misc.ATTACK_CRUSH, FightStyle.AGGRESSIVE),
+        PICKAXE_BLOCK(412, TrainType.DEFENCE, 43, 3, Misc.ATTACK_STAB, FightStyle.DEFENSIVE),
+        CLAWS_CHOP(451, TrainType.ATTACK, 43, 0, Misc.ATTACK_SLASH, FightStyle.ACCURATE),
+        CLAWS_SLASH(451, TrainType.STRENGTH, 43, 1, Misc.ATTACK_SLASH, FightStyle.AGGRESSIVE),
+        CLAWS_LUNGE(412, TrainType.ATTACK_STRENGTH_DEFENCE, 43, 2, Misc.ATTACK_STAB, FightStyle.CONTROLLED),
+        CLAWS_BLOCK(451, TrainType.DEFENCE, 43, 3, Misc.ATTACK_SLASH, FightStyle.DEFENSIVE),
+        HALBERD_JAB(412, TrainType.ATTACK_STRENGTH_DEFENCE, 43, 0, Misc.ATTACK_STAB, FightStyle.CONTROLLED),
+        HALBERD_SWIPE(440, TrainType.STRENGTH, 43, 1, Misc.ATTACK_SLASH, FightStyle.AGGRESSIVE),
+        HALBERD_FEND(412, TrainType.DEFENCE, 43, 2, Misc.ATTACK_STAB, FightStyle.DEFENSIVE),
+        UNARMED_PUNCH(422, TrainType.ATTACK, 43, 0, Misc.ATTACK_CRUSH, FightStyle.ACCURATE),
+        UNARMED_KICK(423, TrainType.STRENGTH, 43, 1, Misc.ATTACK_CRUSH, FightStyle.AGGRESSIVE),
+        UNARMED_BLOCK(422, TrainType.DEFENCE, 43, 2, Misc.ATTACK_CRUSH, FightStyle.DEFENSIVE),
+        WHIP_FLICK(1658, TrainType.ATTACK, 43, 0, Misc.ATTACK_SLASH, FightStyle.ACCURATE),
+        WHIP_LASH(1658, TrainType.ATTACK_STRENGTH_DEFENCE, 43, 1, Misc.ATTACK_SLASH, FightStyle.CONTROLLED),
+        WHIP_DEFLECT(1658, TrainType.DEFENCE, 43, 2, Misc.ATTACK_SLASH, FightStyle.DEFENSIVE),
+        THROWNAXE_ACCURATE(806, TrainType.RANGED, 43, 0, Misc.ATTACK_RANGE, FightStyle.ACCURATE),
+        THROWNAXE_RAPID(806, TrainType.RANGED, 43, 1, Misc.ATTACK_RANGE, FightStyle.AGGRESSIVE),
+        THROWNAXE_LONGRANGE(806, TrainType.RANGE_DEFENCE, 43, 2, Misc.ATTACK_RANGE, FightStyle.DEFENSIVE),
+        DART_ACCURATE(806, TrainType.RANGED, 43, 0, Misc.ATTACK_RANGE, FightStyle.ACCURATE),
+        DART_RAPID(806, TrainType.RANGED, 43, 1, Misc.ATTACK_RANGE, FightStyle.AGGRESSIVE),
+        DART_LONGRANGE(806, TrainType.RANGE_DEFENCE, 43, 2, Misc.ATTACK_RANGE, FightStyle.DEFENSIVE),
+        JAVELIN_ACCURATE(806, TrainType.RANGED, 43, 0, Misc.ATTACK_RANGE, FightStyle.ACCURATE),
+        JAVELIN_RAPID(806, TrainType.RANGED, 43, 2, Misc.ATTACK_RANGE, FightStyle.AGGRESSIVE),
+        JAVELIN_LONGRANGE(806, TrainType.RANGE_DEFENCE, 43, 3, Misc.ATTACK_RANGE, FightStyle.DEFENSIVE);
 
         /** The animation this fight type holds. */
         private int animation;
@@ -343,6 +347,9 @@ public class AssignWeaponInterface {
         /** The bonus type. */
         private int bonusType;
 
+        /** The fighting style. */
+        private FightStyle style;
+
         /**
          * Create a new {@link FightType}.
          * 
@@ -356,13 +363,16 @@ public class AssignWeaponInterface {
          *        the child config id.
          * @param bonusType
          *        the bonus type.
+         * @param fightStyle
+         *        the fighting style.
          */
-        private FightType(int animation, TrainType trainType, int parentId, int childId, int bonusType) {
+        private FightType(int animation, TrainType trainType, int parentId, int childId, int bonusType, FightStyle style) {
             this.animation = animation;
             this.trainType = trainType;
             this.parentId = parentId;
             this.childId = childId;
             this.bonusType = bonusType;
+            this.style = style;
         }
 
         /**
@@ -408,6 +418,15 @@ public class AssignWeaponInterface {
          */
         public int getBonusType() {
             return bonusType;
+        }
+
+        /**
+         * Gets the fighting style.
+         * 
+         * @return the fighting style.
+         */
+        public FightStyle getStyle() {
+            return style;
         }
     }
 

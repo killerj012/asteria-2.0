@@ -5,8 +5,6 @@ import server.world.World;
 import server.world.entity.Animation;
 import server.world.entity.Entity;
 import server.world.entity.UpdateFlags.Flag;
-import server.world.entity.combat.CombatFactory;
-import server.world.entity.combat.CombatStrategy;
 import server.world.entity.npc.NpcDeathDrop.DeathDrop;
 import server.world.entity.player.Player;
 import server.world.entity.player.minigame.Minigame;
@@ -67,8 +65,8 @@ public class Npc extends Entity {
      */
     public Npc(int npcId, Position position) {
         this.npcId = npcId;
-        this.getPosition().setAs(position);
-        this.originalPosition.setAs(position);
+        this.getPosition().setAs(position.clone());
+        this.originalPosition.setAs(position.clone());
         this.maxHealth = getDefinition().getHitpoints();
         this.setCurrentHealth(getDefinition().getHitpoints());
         this.setAutoRetaliate(true);
@@ -110,6 +108,7 @@ public class Npc extends Entity {
 
                     /** Respawn the npc when a set amount of time has elapsed. */
                     if (respawnTicks == getRespawnTime()) {
+                        getCombatBuilder().resetDamage();
                         getPosition().setAs(getOriginalPosition());
                         setCurrentHealth(getMaxHealth());
                         World.getNpcs().add(thisNpc);
@@ -136,6 +135,11 @@ public class Npc extends Entity {
     @Override
     public int getAttackSpeed() {
         return this.getDefinition().getAttackSpeed();
+    }
+
+    @Override
+    public int getCurrentHealth() {
+        return this.getCurrentHP();
     }
 
     @Override
@@ -193,15 +197,6 @@ public class Npc extends Entity {
                 }
             }
         }
-    }
-
-    /**
-     * Gets the combat strategy of this npc.
-     * 
-     * @return the combat strategy of this npc.
-     */
-    public CombatStrategy getCombatStrategy() {
-        return CombatFactory.newDefaultMeleeStrategy();
     }
 
     /**
@@ -285,7 +280,7 @@ public class Npc extends Entity {
      * 
      * @return the current health.
      */
-    public int getCurrentHealth() {
+    public int getCurrentHP() {
         return currentHealth;
     }
 

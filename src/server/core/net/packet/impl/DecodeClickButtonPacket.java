@@ -131,6 +131,18 @@ public class DecodeClickButtonPacket extends PacketDecoder {
                 break;
             /** End of Prayers */
 
+            case 48177:
+                if (player.isAcceptAid()) {
+                    player.getPacketBuilder().sendMessage("Accept aid has been turned off.");
+                    player.setAcceptAid(false);
+                }
+                break;
+            case 48176:
+                if (!player.isAcceptAid()) {
+                    player.getPacketBuilder().sendMessage("Accept aid has been turned on.");
+                    player.setAcceptAid(true);
+                }
+                break;
             case 150:
                 if (!player.isAutoRetaliate()) {
                     player.setAutoRetaliate(true);

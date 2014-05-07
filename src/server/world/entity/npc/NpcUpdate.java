@@ -226,22 +226,22 @@ public class NpcUpdate {
      *        the npc to append this update for.
      */
     private static void appendSecondaryHit(PacketBuffer.WriteBuffer out, Npc npc) {
-        npc.decreaseHealth(npc.getSecondaryHit().getDamage());
+        if (!npc.isHasDied()) {
+            if (npc.getCurrentHP() <= 0) {
+                npc.setCurrentHealth(0);
 
-        if (npc.getCurrentHealth() <= 0) {
-            npc.setCurrentHealth(0);
-
-            try {
-                npc.setHasDied(true);
-                TaskFactory.getFactory().submit(npc.death());
-            } catch (Exception e) {
-                e.printStackTrace();
+                try {
+                    npc.setHasDied(true);
+                    TaskFactory.getFactory().submit(npc.death());
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
             }
         }
 
-        out.writeByte(npc.getSecondaryHit().getDamage(), ValueType.A);
+        out.writeByte(npc.getPrimaryHit().getDamage(), ValueType.A);
         out.writeByte(npc.getSecondaryHit().getType().getId(), ValueType.C);
-        out.writeByte(npc.getCurrentHealth(), ValueType.A);
+        out.writeByte(npc.getCurrentHP(), ValueType.A);
         out.writeByte(npc.getMaxHealth());
     }
 
@@ -278,22 +278,22 @@ public class NpcUpdate {
      *        the npc to append this update for.
      */
     private static void appendPrimaryHit(PacketBuffer.WriteBuffer out, Npc npc) {
-        npc.decreaseHealth(npc.getPrimaryHit().getDamage());
+        if (!npc.isHasDied()) {
+            if (npc.getCurrentHP() <= 0) {
+                npc.setCurrentHealth(0);
 
-        if (npc.getCurrentHealth() <= 0) {
-            npc.setCurrentHealth(0);
-
-            try {
-                npc.setHasDied(true);
-                TaskFactory.getFactory().submit(npc.death());
-            } catch (Exception e) {
-                e.printStackTrace();
+                try {
+                    npc.setHasDied(true);
+                    TaskFactory.getFactory().submit(npc.death());
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
             }
         }
 
         out.writeByte(npc.getPrimaryHit().getDamage(), ValueType.C);
         out.writeByte(npc.getPrimaryHit().getType().getId(), ValueType.S);
-        out.writeByte(npc.getCurrentHealth(), ValueType.S);
+        out.writeByte(npc.getCurrentHP(), ValueType.S);
         out.writeByte(npc.getMaxHealth(), ValueType.C);
     }
 

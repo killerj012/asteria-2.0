@@ -33,7 +33,7 @@ public abstract class EventListener extends Worker {
      *        if the listener should be shut down once the logic has fired.
      */
     public EventListener(boolean shutdownOnFire) {
-        super(1, true);
+        super(1, false);
         this.shutdownOnFire = shutdownOnFire;
     }
 

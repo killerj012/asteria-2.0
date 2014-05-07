@@ -34,8 +34,6 @@ public class DecodePickupItemPacket extends PacketDecoder {
                     GroundItem worldItem = World.getGroundItems().searchDatabase(itemId, new Position(itemX, itemY, player.getPosition().getZ()));
 
                     if (worldItem == null) {
-                        player.getPacketBuilder().sendMessage("Nothing interesting happens.");
-                        player.getPacketBuilder().removeGroundItem(World.getGroundItems().searchDatabase(itemId, new Position(itemX, itemY, player.getPosition().getZ())));
                         return;
                     }
 

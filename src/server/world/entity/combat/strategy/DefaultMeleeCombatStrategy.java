@@ -1,16 +1,15 @@
 package server.world.entity.combat.strategy;
 
-import server.util.Misc;
 import server.world.entity.Animation;
 import server.world.entity.Entity;
 import server.world.entity.Hit;
+import server.world.entity.combat.CombatFactory;
 import server.world.entity.combat.CombatHit;
 import server.world.entity.combat.CombatStrategy;
 import server.world.entity.combat.CombatType;
 import server.world.entity.npc.Npc;
 import server.world.entity.player.Player;
 import server.world.entity.player.content.AssignWeaponInterface.WeaponInterface;
-import server.world.item.Item;
 
 public class DefaultMeleeCombatStrategy implements CombatStrategy {
 
@@ -21,28 +20,18 @@ public class DefaultMeleeCombatStrategy implements CombatStrategy {
 
     @Override
     public CombatHit attack(Entity entity, Entity victim) {
-        if (entity instanceof Npc) {
+        if (entity.isNpc()) {
             Npc npc = (Npc) entity;
             npc.animation(new Animation(npc.getDefinition().getAttackAnimation()));
-
-            if (npc.getDefinition().isPoisonous()) {
-                // chance to poison the player/npc here
-            }
-        } else if (entity instanceof Player) {
+        } else if (entity.isPlayer()) {
             Player player = (Player) entity;
-            Item weapon = player.getEquipment().getContainer().getItem(Misc.EQUIPMENT_SLOT_WEAPON);
             player.animation(new Animation(player.getFightType().getAnimation()));
-
-            if (weapon.getDefinition().getItemName().endsWith("(p)")) {
-                // chance to poison the entity here
-            } else if (weapon.getDefinition().getItemName().endsWith("(p+)")) {
-                // chance to poison the entity badly here
-            } else if (weapon.getDefinition().getItemName().endsWith("(p++)")) {
-                // chance to poison the entity deadly here
-            }
         }
 
-        return new CombatHit(new Hit[] { new Hit(1) }, CombatType.MELEE);
+        if (CombatFactory.hitAccuracy(entity, victim, CombatType.MELEE, 1)) {
+            return new CombatHit(new Hit[] { CombatFactory.getMeleeHit(entity) }, CombatType.MELEE);
+        }
+        return null;
     }
 
     @Override
@@ -52,8 +41,8 @@ public class DefaultMeleeCombatStrategy implements CombatStrategy {
 
     @Override
     public int getDistance(Entity entity) {
-        if (entity instanceof Npc) {
-            return ((Npc) entity).getDefinition().getNpcSize();
+        if (entity.isNpc()) {
+            return 1;
         }
 
         int distance = 1;

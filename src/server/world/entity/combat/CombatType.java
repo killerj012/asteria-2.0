@@ -1,7 +1,7 @@
 package server.world.entity.combat;
 
 /**
- * Constants representing the different types of combat.
+ * All of the different types of combat that can be used.
  * 
  * @author lare96
  */

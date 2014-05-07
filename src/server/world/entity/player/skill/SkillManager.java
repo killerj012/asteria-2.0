@@ -5,6 +5,7 @@ import java.util.Map;
 
 import server.util.Misc;
 import server.world.entity.Gfx;
+import server.world.entity.UpdateFlags.Flag;
 import server.world.entity.player.Player;
 
 /**
@@ -246,6 +247,7 @@ public class SkillManager {
             }
             levelUp(player, SkillConstant.getSkill(skill));
             player.gfx(new Gfx(199));
+            player.getFlags().flag(Flag.APPEARANCE);
         }
 
         player.getPacketBuilder().sendSkill(skill, player.getSkills()[skill].getLevel(), player.getSkills()[skill].getExperience());

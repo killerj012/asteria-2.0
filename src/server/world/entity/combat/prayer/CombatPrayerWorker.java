@@ -47,6 +47,15 @@ public class CombatPrayerWorker extends Worker {
             return;
         }
 
+        /** Take into account the prayer bonus. */
+        double blockRate = ((double) player.getPlayerBonus()[Misc.BONUS_PRAYER] / 100) * drainRate;
+
+        if ((drainRate - blockRate) < 1) {
+            drainRate = 0;
+        } else {
+            drainRate = (int) (drainRate - blockRate);
+        }
+
         /** If there are prayers active then drain the specified amount. */
         player.getSkills()[Misc.PRAYER].decreaseLevel(drainRate);
         SkillManager.refresh(player, SkillConstant.PRAYER);

@@ -29,7 +29,7 @@
 "size": 1,
 "attackable": true,
 "aggressive": false,
-"retreats": false,
+"retreats": true,
 "poisonous": false,
 "respawn": 10,
 "maxHit": 1,

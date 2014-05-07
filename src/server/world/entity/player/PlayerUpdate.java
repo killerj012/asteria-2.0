@@ -292,7 +292,7 @@ public final class PlayerUpdate {
             int posX = player.getPosition().getLocalX(player.getCurrentRegion());
             int posY = player.getPosition().getLocalY(player.getCurrentRegion());
             appendPlacement(out, posX, posY, player.getPosition().getZ(), player.isResetMovementQueue(), updateRequired);
-            player.setNeedsPlacement(false);
+            // player.setNeedsPlacement(false);
         } else { // No placement update, check for movement.
             int pDir = player.getPrimaryDirection();
             int sDir = player.getSecondaryDirection();
@@ -493,14 +493,16 @@ public final class PlayerUpdate {
         out.writeByte(player.getPrimaryHit().getDamage());
         out.writeByte(player.getPrimaryHit().getType().getId(), ValueType.A);
 
-        if (player.getSkills()[Misc.HITPOINTS].getLevel() <= 0) {
-            player.getSkills()[Misc.HITPOINTS].setLevel(0);
+        if (!player.isHasDied()) {
+            if (player.getSkills()[Misc.HITPOINTS].getLevel() <= 0) {
+                player.getSkills()[Misc.HITPOINTS].setLevel(0);
 
-            try {
-                player.setHasDied(true);
-                TaskFactory.getFactory().submit(player.death());
-            } catch (Exception e) {
-                e.printStackTrace();
+                try {
+                    player.setHasDied(true);
+                    TaskFactory.getFactory().submit(player.death());
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
             }
         }
 
@@ -517,19 +519,19 @@ public final class PlayerUpdate {
      *        the packet to write to.
      */
     private static void appendSecondaryHit(Player player, PacketBuffer.WriteBuffer out) {
-        player.getSkills()[Misc.HITPOINTS].decreaseLevel(player.getSecondaryHit().getDamage());
-
         out.writeByte(player.getSecondaryHit().getDamage());
         out.writeByte(player.getSecondaryHit().getType().getId(), ValueType.S);
 
-        if (player.getSkills()[Misc.HITPOINTS].getLevel() <= 0) {
-            player.getSkills()[Misc.HITPOINTS].setLevel(0);
+        if (!player.isHasDied()) {
+            if (player.getSkills()[Misc.HITPOINTS].getLevel() <= 0) {
+                player.getSkills()[Misc.HITPOINTS].setLevel(0);
 
-            try {
-                player.setHasDied(true);
-                TaskFactory.getFactory().submit(player.death());
-            } catch (Exception e) {
-                e.printStackTrace();
+                try {
+                    player.setHasDied(true);
+                    TaskFactory.getFactory().submit(player.death());
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
             }
         }
 

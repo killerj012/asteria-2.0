@@ -5,14 +5,13 @@ import server.core.net.buffer.PacketBuffer.ReadBuffer;
 import server.core.net.buffer.PacketBuffer.ValueType;
 import server.core.net.packet.PacketDecoder;
 import server.core.net.packet.PacketOpcodeHeader;
-import server.util.Misc;
 import server.world.World;
-import server.world.entity.combat.CombatFactory;
 import server.world.entity.npc.Npc;
 import server.world.entity.npc.NpcDefinition;
 import server.world.entity.player.Player;
 import server.world.entity.player.minigame.Minigame;
 import server.world.entity.player.minigame.MinigameFactory;
+import server.world.map.Location;
 import server.world.map.Position;
 import server.world.shop.Shop;
 
@@ -54,13 +53,13 @@ public class DecodeNpcActionPacket extends PacketDecoder {
                     }
                 }
 
-                if (CombatFactory.RANGE_WEAPONS.contains(player.getEquipment().getContainer().getItemId(Misc.EQUIPMENT_SLOT_WEAPON))) {
-                    player.getCombatBuilder().attack(attackMelee, CombatFactory.newDefaultRangedStrategy());
-                } else if (player.isAutocastMagic()) {
-                    player.getCombatBuilder().attack(attackMelee, CombatFactory.newDefaultMagicStrategy());
-                } else {
-                    player.getCombatBuilder().attack(attackMelee, CombatFactory.newDefaultMeleeStrategy());
+                /** Multicombat location check. */
+                if (!Location.inMultiCombat(player) && player.getCombatBuilder().isBeingAttacked() && player.getCombatBuilder().getCurrentTarget() != attackMelee) {
+                    player.getPacketBuilder().sendMessage("You are already under attack!");
+                    return;
                 }
+
+                player.getCombatBuilder().attack(attackMelee);
                 break;
             case MAGE_NPC:
                 index = in.readShort(true, ValueType.A, ByteOrder.LITTLE);
@@ -83,7 +82,7 @@ public class DecodeNpcActionPacket extends PacketDecoder {
                     return;
                 }
 
-                player.getCombatBuilder().attack(attackMagic, CombatFactory.newDefaultMagicStrategy());
+                player.getCombatBuilder().attack(attackMagic);
                 break;
             case FIRST_CLICK:
                 index = in.readShort(true, ByteOrder.LITTLE);

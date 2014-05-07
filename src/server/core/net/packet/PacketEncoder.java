@@ -1012,6 +1012,20 @@ public final class PacketEncoder {
     }
 
     /**
+     * Sends the slot to the client. Used for
+     * 
+     * @return this packet builder.
+     */
+    public PacketEncoder sendDetails() {
+        PacketBuffer.WriteBuffer out = PacketBuffer.newWriteBuffer(4);
+        out.writeHeader(249);
+        out.writeByte(1, ValueType.A);
+        out.writeShort(player.getSlot(), ValueType.A, ByteOrder.LITTLE);
+        player.getSession().encode(out);
+        return this;
+    }
+
+    /**
      * Sends an interface to your chatbox.
      * 
      * @param frame

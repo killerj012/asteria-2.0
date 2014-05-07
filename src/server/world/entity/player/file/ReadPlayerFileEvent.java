@@ -5,6 +5,7 @@ import java.io.FileReader;
 import java.util.logging.Logger;
 
 import server.util.Misc;
+import server.world.entity.combat.task.CombatPoisonTask.CombatPoison;
 import server.world.entity.player.Player;
 import server.world.entity.player.PlayerFileEvent;
 import server.world.entity.player.content.Spellbook;
@@ -78,6 +79,10 @@ public class ReadPlayerFileEvent extends PlayerFileEvent {
             final boolean banned = reader.get("is-banned").getAsBoolean();
             final boolean retaliate = reader.get("auto-retaliate").getAsBoolean();
             final FightType fightType = FightType.valueOf(reader.get("fight-type").getAsString());
+            final int skullTimer = reader.get("skull-timer").getAsInt();
+            final boolean acceptAid = reader.get("accept-aid").getAsBoolean();
+            final int poisonHits = reader.get("poison-hits").getAsInt();
+            final CombatPoison poisonStrength = CombatPoison.valueOf(reader.get("poison-strength").getAsString());
 
             getPlayer().setUsername(username);
 
@@ -104,6 +109,10 @@ public class ReadPlayerFileEvent extends PlayerFileEvent {
             getPlayer().setAutoRetaliate(retaliate);
             getPlayer().setFightType(fightType);
             getPlayer().setSpellbook(book);
+            getPlayer().setSkullTimer(skullTimer);
+            getPlayer().setAcceptAid(acceptAid);
+            getPlayer().setPoisonHits(poisonHits);
+            getPlayer().setPoisonStrength(poisonStrength);
 
             for (Long l : friends) {
                 getPlayer().getFriends().add(l);

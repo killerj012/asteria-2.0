@@ -1,6 +1,5 @@
 package server.core.worker;
 
-
 /**
  * A flexible dynamic worker created to carry out general game logic on the game
  * thread.
@@ -79,8 +78,10 @@ public abstract class Worker {
      * firing in the future.
      */
     public void cancel() {
-        this.running = false;
-        fireOnCancel();
+        if (running) {
+            this.running = false;
+            fireOnCancel();
+        }
     }
 
     /**

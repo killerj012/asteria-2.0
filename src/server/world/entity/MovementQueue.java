@@ -288,6 +288,10 @@ public class MovementQueue {
                         return;
                     }
 
+                    if (entity.getCombatBuilder().isAttacking() && entity.getPosition().withinDistance(entity.getCombatBuilder().getCurrentTarget().getPosition(), entity.getCombatBuilder().getCurrentStrategy().getDistance(entity))) {
+                        return;
+                    }
+
                     if (leader.isPlayer()) {
                         entity.faceEntity(leader.getSlot() + 32768);
                     } else if (leader.isNpc()) {

@@ -72,6 +72,10 @@ public class WritePlayerFileEvent extends PlayerFileEvent {
                 object.addProperty("is-banned", new Boolean(getPlayer().isBanned()));
                 object.addProperty("auto-retaliate", new Boolean(getPlayer().isAutoRetaliate()));
                 object.addProperty("fight-type", getPlayer().getFightType().name());
+                object.addProperty("skull-timer", new Integer(getPlayer().getSkullTimer()));
+                object.addProperty("accept-aid", new Boolean(getPlayer().isAcceptAid()));
+                object.addProperty("poison-hits", new Integer(getPlayer().getPoisonHits()));
+                object.addProperty("poison-strength", getPlayer().getPoisonStrength().name());
 
                 FileWriter fileWriter = new FileWriter(file());
                 fileWriter.write(builder.toJson(object));

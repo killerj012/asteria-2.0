@@ -24802,7 +24802,7 @@
 	{
 	   "id": 800,
 	   "name": "Bronze thrownaxe",
-	   "examine": "null",
+	   "examine": "A finely balanced throwing axe.",
 	   "equipmentType": 3,
 	   "noted": false,
 	   "noteable": false,
@@ -96157,7 +96157,7 @@
 	      5,
 	      0,
 	      0,
-	      39,
+	      20,
 	      0
 	   ]
 	},
@@ -176639,7 +176639,7 @@
 	},
 	{
 	   "id": 5698,
-	   "name": "Drag dagger(p++)",
+	   "name": "Dragon dagger(p++)",
 	   "examine": "A powerful dagger.",
 	   "equipmentType": 3,
 	   "noted": false,
@@ -176670,7 +176670,7 @@
 	},
 	{
 	   "id": 5699,
-	   "name": "Drag dagger(p++)",
+	   "name": "Dragon dagger(p++)",
 	   "examine": "Swap this note at any bank for the equivalent item.",
 	   "equipmentType": -1,
 	   "noted": true,

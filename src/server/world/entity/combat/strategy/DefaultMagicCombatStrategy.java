@@ -8,9 +8,10 @@ public class DefaultMagicCombatStrategy implements CombatStrategy {
 
     @Override
     public boolean prepareAttack(Entity entity) {
+        // check for magic level
+        // check for runes
+        // check if you have spell selected (if autocasting)
         return false;
-        // TODO Auto-generated method stub
-
     }
 
     @Override

@@ -6,6 +6,8 @@ import server.util.Misc;
 import server.util.Misc.Stopwatch;
 import server.world.entity.UpdateFlags.Flag;
 import server.world.entity.combat.CombatBuilder;
+import server.world.entity.combat.task.CombatPoisonTask.CombatPoison;
+import server.world.entity.npc.Npc;
 import server.world.entity.player.Player;
 import server.world.entity.player.skill.SkillManager;
 import server.world.entity.player.skill.SkillManager.SkillConstant;
@@ -26,6 +28,12 @@ public abstract class Entity {
 
     /** If this entity is an npc. */
     private boolean isNpc;
+
+    /** The amount of poison hits left to take. */
+    private int poisonHits;
+
+    /** The strength of the poison. */
+    private CombatPoison poisonStrength = CombatPoison.MILD;
 
     /** If this entity retaliates automatically. */
     private boolean isAutoRetaliate;
@@ -136,6 +144,13 @@ public abstract class Entity {
     public abstract void move(Position position);
 
     /**
+     * Gets the current health of the entity.
+     * 
+     * @return the current health of the entity.
+     */
+    public abstract int getCurrentHealth();
+
+    /**
      * Resets this entity after updating.
      */
     public void reset() {
@@ -203,21 +218,67 @@ public abstract class Entity {
     }
 
     /**
-     * Deals one damage splat to this entity.
+     * Deals one damage to this entity.
      * 
      * @param hit
      *        the damage to be dealt.
      */
     public void dealDamage(Hit hit) {
-        this.primaryHit = hit.clone();
-        this.getFlags().flag(Flag.HIT);
+        int writeDamage = hit.getDamage();
 
-        if (this instanceof Player) {
+        if (isPlayer()) {
             Player player = (Player) this;
 
-            player.getSkills()[Misc.HITPOINTS].decreaseLevel(player.getPrimaryHit().getDamage());
+            if (writeDamage > player.getSkills()[Misc.HITPOINTS].getLevel()) {
+                writeDamage = player.getSkills()[Misc.HITPOINTS].getLevel();
+            }
+
+            player.getSkills()[Misc.HITPOINTS].decreaseLevel(writeDamage);
             SkillManager.refresh(player, SkillConstant.HITPOINTS);
+        } else if (isNpc()) {
+            Npc npc = (Npc) this;
+
+            if (writeDamage > npc.getCurrentHP()) {
+                writeDamage = npc.getCurrentHP();
+            }
+
+            npc.decreaseHealth(writeDamage);
         }
+
+        this.primaryHit = new Hit(writeDamage, hit.getType());
+        this.getFlags().flag(Flag.HIT);
+    }
+
+    /**
+     * Deal secondary damage to this entity.
+     * 
+     * @param secondaryHit
+     *        the damage to be dealt.
+     */
+    private void dealSecondaryDamage(Hit secondaryHit) {
+        int writeDamage = secondaryHit.getDamage();
+
+        if (isPlayer()) {
+            Player player = (Player) this;
+
+            if (writeDamage > player.getSkills()[Misc.HITPOINTS].getLevel()) {
+                writeDamage = player.getSkills()[Misc.HITPOINTS].getLevel();
+            }
+
+            player.getSkills()[Misc.HITPOINTS].decreaseLevel(player.getSecondaryHit().getDamage());
+            SkillManager.refresh(player, SkillConstant.HITPOINTS);
+        } else if (isNpc()) {
+            Npc npc = (Npc) this;
+
+            if (writeDamage > npc.getCurrentHP()) {
+                writeDamage = npc.getCurrentHP();
+            }
+
+            npc.decreaseHealth(npc.getSecondaryHit().getDamage());
+        }
+
+        this.secondaryHit = secondaryHit.clone();
+        this.getFlags().flag(Flag.HIT_2);
     }
 
     /**
@@ -256,7 +317,7 @@ public abstract class Entity {
     }
 
     /**
-     * Deals two damage splats to this entity.
+     * Deals four damage splats to this entity.
      * 
      * @param hit
      *        the first hit.
@@ -277,24 +338,6 @@ public abstract class Entity {
                 this.cancel();
             }
         });
-    }
-
-    /**
-     * Deal secondary damage to this entity.
-     * 
-     * @param secondaryHit
-     *        the damage and hit-type.
-     */
-    private void dealSecondaryDamage(Hit secondaryHit) {
-        this.secondaryHit = secondaryHit.clone();
-        this.getFlags().flag(Flag.HIT_2);
-
-        if (this instanceof Player) {
-            Player player = (Player) this;
-
-            player.getSkills()[Misc.HITPOINTS].decreaseLevel(player.getPrimaryHit().getDamage());
-            SkillManager.refresh(player, SkillConstant.HITPOINTS);
-        }
     }
 
     /**
@@ -710,5 +753,39 @@ public abstract class Entity {
      */
     public Stopwatch getLastCombat() {
         return lastCombat;
+    }
+
+    /**
+     * @return the poisonHits
+     */
+    public int getPoisonHits() {
+        return poisonHits;
+    }
+
+    /**
+     * @param poisonHits
+     *        the poisonHits to set
+     */
+    public void setPoisonHits(int poisonHits) {
+        this.poisonHits = poisonHits;
+    }
+
+    /**
+     * @return the poisonStrength
+     */
+    public CombatPoison getPoisonStrength() {
+        return poisonStrength;
+    }
+
+    /**
+     * @param poisonStrength
+     *        the poisonStrength to set
+     */
+    public void setPoisonStrength(CombatPoison poisonStrength) {
+        this.poisonStrength = poisonStrength;
+    }
+
+    public void decrementPoisonHits() {
+        this.poisonHits--;
     }
 }

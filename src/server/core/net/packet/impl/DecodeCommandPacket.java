@@ -21,9 +21,11 @@ import server.util.Misc;
 import server.world.World;
 import server.world.entity.Animation;
 import server.world.entity.Gfx;
+import server.world.entity.Hit;
 import server.world.entity.npc.Npc;
 import server.world.entity.player.Player;
 import server.world.entity.player.content.TeleportSpell;
+import server.world.entity.player.skill.SkillManager;
 import server.world.item.Item;
 import server.world.item.ItemDefinition;
 import server.world.map.Position;
@@ -50,6 +52,12 @@ public class DecodeCommandPacket extends PacketDecoder {
             int child = Integer.parseInt(cmd[2]);
 
             player.getPacketBuilder().sendConfig(parent, child);
+        } else if (cmd[0].equals("die")) {
+            player.dealDamage(new Hit(100));
+        } else if (cmd[0].equals("master")) {
+            for (int i = 0; i < player.getSkills().length; i++) {
+                SkillManager.addExperience(player, (2147000000 - player.getSkills()[i].getExperience()), i);
+            }
         } else if (cmd[0].equals("reload")) {
             try {
                 Misc.codeFiles();

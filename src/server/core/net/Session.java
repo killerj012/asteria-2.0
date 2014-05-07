@@ -7,7 +7,6 @@ import java.nio.channels.SocketChannel;
 import java.security.SecureRandom;
 import java.util.logging.Logger;
 
-import server.Main;
 import server.core.net.buffer.PacketBuffer;
 import server.core.net.buffer.PacketBuffer.ReadBuffer;
 import server.core.net.buffer.PacketBuffer.WriteBuffer;
@@ -19,10 +18,13 @@ import server.util.Misc;
 import server.util.Misc.Stopwatch;
 import server.world.World;
 import server.world.entity.UpdateFlags.Flag;
+import server.world.entity.combat.task.CombatPoisonTask;
+import server.world.entity.combat.task.CombatSkullTask;
 import server.world.entity.player.Player;
 import server.world.entity.player.content.AssignWeaponAnimation;
 import server.world.entity.player.content.AssignWeaponInterface;
 import server.world.entity.player.content.RestoreEnergyWorker;
+import server.world.entity.player.content.RestoreStatWorker;
 import server.world.entity.player.file.ReadPlayerFileEvent;
 import server.world.entity.player.minigame.Minigame;
 import server.world.entity.player.minigame.MinigameFactory;
@@ -413,6 +415,7 @@ public final class Session {
 
                 /** Update their appearance. */
                 packetBuilder.sendMapRegion();
+                packetBuilder.sendDetails();
                 player.getFlags().flag(Flag.APPEARANCE);
 
                 /** Load sidebar interfaces. */
@@ -467,11 +470,16 @@ public final class Session {
                     player.setNewPlayer(false);
                 }
 
-                /** Schedule a worker for run energy. */
+                /** Schedule various workers. */
                 TaskFactory.getFactory().submit(new RestoreEnergyWorker(player));
+                TaskFactory.getFactory().submit(new RestoreStatWorker(player));
+
+                if (player.getPoisonHits() > 0) {
+                    TaskFactory.getFactory().submit(new CombatPoisonTask(player));
+                }
 
                 /** Send the welcome message. */
-                packetBuilder.sendMessage("Welcome to " + Main.NAME + "!");
+                packetBuilder.sendMessage(Player.WELCOME_MESSAGE);
 
                 /** Do minigame stuff. */
                 for (Minigame minigame : MinigameFactory.getMinigames().values()) {
@@ -486,6 +494,13 @@ public final class Session {
 
                 /** Assign the new animation based on the weapon. */
                 AssignWeaponAnimation.assignAnimation(player, player.getEquipment().getContainer().getItem(Misc.EQUIPMENT_SLOT_WEAPON));
+
+                /** Check if the player is skulled. */
+                if (player.getSkullTimer() > 0) {
+                    player.setSkullIcon(0);
+                    player.getFlags().flag(Flag.APPEARANCE);
+                    TaskFactory.getFactory().submit(new CombatSkullTask(player));
+                }
 
                 /** Load the configs. */
                 player.loadConfigs();
