@@ -12,6 +12,7 @@ import server.world.entity.EntityContainer;
 import server.world.entity.npc.Npc;
 import server.world.entity.player.Player;
 import server.world.entity.player.PlayerParallelUpdateService;
+import server.world.entity.player.content.AssignSkillRequirement;
 import server.world.entity.player.content.AssignWeaponAnimation;
 import server.world.entity.player.content.AssignWeaponInterface;
 import server.world.entity.player.file.WritePlayerFileEvent;
@@ -67,6 +68,7 @@ public final class World {
             Misc.loadWorldNpcs();
             AssignWeaponAnimation.class.newInstance();
             AssignWeaponInterface.class.newInstance();
+            AssignSkillRequirement.class.newInstance();
             Misc.loadNpcDrops();
             MinigameFactory.fireDynamicTasks();
         } catch (Exception e) {

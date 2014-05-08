@@ -43,9 +43,16 @@ public class DefaultRangedCombatStrategy implements CombatStrategy {
                     return false;
                 }
 
-                if (!arrowItem.getDefinition().getItemName().endsWith("rack") && !arrowItem.getDefinition().getItemName().endsWith("bolts") && !arrowItem.getDefinition().getItemName().endsWith("bolts(p)") && !arrowItem.getDefinition().getItemName().endsWith("bolts(p+)") && !arrowItem.getDefinition().getItemName().endsWith("bolts(p++)")) {
-                    player.getPacketBuilder().sendMessage("You need to use bolts with your crossbow.");
-                    return false;
+                if (!player.getEquipment().getContainer().getItem(Misc.EQUIPMENT_SLOT_WEAPON).getDefinition().getItemName().startsWith("Karils")) {
+                    if (!arrowItem.getDefinition().getItemName().endsWith("bolts") && !arrowItem.getDefinition().getItemName().endsWith("bolts(p)") && !arrowItem.getDefinition().getItemName().endsWith("bolts(p+)") && !arrowItem.getDefinition().getItemName().endsWith("bolts(p++)")) {
+                        player.getPacketBuilder().sendMessage("You need to use bolts with your crossbow.");
+                        return false;
+                    }
+                } else {
+                    if (!arrowItem.getDefinition().getItemName().endsWith("rack")) {
+                        player.getPacketBuilder().sendMessage("You need to use bolt racks with this crossbow.");
+                        return false;
+                    }
                 }
             }
         }
@@ -57,6 +64,12 @@ public class DefaultRangedCombatStrategy implements CombatStrategy {
         if (entity.isPlayer()) {
             Player player = (Player) entity;
             player.animation(new Animation(player.getFightType().getAnimation()));
+
+            if (player.getEquipment().getContainer().getItem(Misc.EQUIPMENT_SLOT_WEAPON).getDefinition().getItemName().startsWith("Karils")) {
+                player.animation(new Animation(2075));
+            } else {
+                player.animation(new Animation(player.getFightType().getAnimation()));
+            }
 
             if (CombatFactory.hitAccuracy(entity, victim, CombatType.RANGE, 1)) {
                 return new CombatHit(new Hit[] { CombatFactory.getRangeHit(entity, RangedAmmo.getAmmo(player)) }, CombatType.RANGE);

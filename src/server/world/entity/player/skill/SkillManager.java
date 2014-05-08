@@ -1,8 +1,5 @@
 package server.world.entity.player.skill;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import server.util.Misc;
 import server.world.entity.Gfx;
 import server.world.entity.UpdateFlags.Flag;
@@ -72,16 +69,6 @@ public class SkillManager {
 
         /** The line that will be used to refresh the skill. */
         private int refreshOne, refreshTwo, refreshThree, refreshFour;
-
-        /** A map that holds the skill id mapped to the skill instance. */
-        private static Map<Integer, SkillConstant> map = new HashMap<Integer, SkillConstant>();
-
-        /** Fill the map with data. */
-        static {
-            for (SkillConstant s : SkillConstant.values()) {
-                map.put(s.ordinal(), s);
-            }
-        }
 
         /**
          * Create a new {@link SkillConstant}.
@@ -194,7 +181,12 @@ public class SkillManager {
          * @return the skill constant with this id.
          */
         public static SkillConstant getSkill(int id) {
-            return map.get(id);
+            for (SkillConstant skill : SkillConstant.values()) {
+                if (skill.ordinal() == id) {
+                    return skill;
+                }
+            }
+            return null;
         }
     }
 

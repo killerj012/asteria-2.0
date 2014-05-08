@@ -145,6 +145,18 @@ public class CombatHookTask extends Worker {
             CombatHit combatHit = builder.getCurrentStrategy().attack(builder.getEntity(), builder.getCurrentTarget());
 
             if (combatHit != null && combatHit.getHits() != null) {
+
+                if (builder.getEntity().isPlayer()) {
+                    Player player = (Player) builder.getEntity();
+
+                    if (Misc.getRandom().nextInt(1) == 0) {
+                        if (CombatFactory.isWearingFullGuthans(player)) {
+                            builder.getCurrentTarget().gfx(new Gfx(398));
+                            player.heal(combatHit.getHits()[0].getDamage());
+                        }
+                    }
+                }
+
                 if (builder.getCurrentTarget().isPlayer() && builder.getEntity().isNpc()) {
                     Player player = (Player) builder.getCurrentTarget();
 
@@ -159,6 +171,31 @@ public class CombatHookTask extends Worker {
                     } else if (combatHit.getHitType() == CombatType.RANGE && CombatPrayer.isPrayerActivated(player, CombatPrayer.PROTECT_FROM_MISSILES)) {
                         for (int i = 0; i < combatHit.getHits().length; i++) {
                             combatHit.getHits()[i] = new Hit(0);
+                        }
+                    }
+                } else if (builder.getCurrentTarget().isPlayer() && builder.getEntity().isPlayer()) {
+                    Player player = (Player) builder.getEntity();
+                    Player target = (Player) builder.getCurrentTarget();
+
+                    if (!CombatFactory.isWearingFullVeracs(player)) {
+                        if (combatHit.getHitType() == CombatType.MELEE && CombatPrayer.isPrayerActivated(target, CombatPrayer.PROTECT_FROM_MELEE)) {
+                            if (Misc.getRandom().nextInt(4) == 0) {
+                                for (int i = 0; i < combatHit.getHits().length; i++) {
+                                    combatHit.getHits()[i] = new Hit(0);
+                                }
+                            }
+                        } else if (combatHit.getHitType() == CombatType.MAGIC && CombatPrayer.isPrayerActivated(target, CombatPrayer.PROTECT_FROM_MAGIC)) {
+                            if (Misc.getRandom().nextInt(4) == 0) {
+                                for (int i = 0; i < combatHit.getHits().length; i++) {
+                                    combatHit.getHits()[i] = new Hit(0);
+                                }
+                            }
+                        } else if (combatHit.getHitType() == CombatType.RANGE && CombatPrayer.isPrayerActivated(target, CombatPrayer.PROTECT_FROM_MISSILES)) {
+                            if (Misc.getRandom().nextInt(4) == 0) {
+                                for (int i = 0; i < combatHit.getHits().length; i++) {
+                                    combatHit.getHits()[i] = new Hit(0);
+                                }
+                            }
                         }
                     }
                 }

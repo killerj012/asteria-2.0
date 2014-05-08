@@ -52,6 +52,8 @@
 #full_helm 2673
 #full_helm 3486
 #full_helm 6623
+#full_helm 4724
+#full_helm 7475
 
 #platebody 1115
 #platebody 1117
@@ -73,3 +75,5 @@
 #platebody 4728
 #platebody 4749
 #platebody 6617
+#platebody 4736
+#platebody 4712

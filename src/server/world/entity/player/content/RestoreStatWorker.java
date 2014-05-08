@@ -5,6 +5,8 @@ import server.core.worker.Worker;
 import server.util.Misc;
 import server.world.entity.combat.prayer.CombatPrayer;
 import server.world.entity.player.Player;
+import server.world.entity.player.skill.SkillManager;
+import server.world.entity.player.skill.SkillManager.SkillConstant;
 
 /**
  * A {@link Worker} implementation that restores boosted and weakened stats.
@@ -45,10 +47,12 @@ public class RestoreStatWorker extends Worker {
                         player.getSkills()[i].increaseLevel(1);
                     }
                 }
+                SkillManager.refresh(player, SkillConstant.getSkill(i));
 
                 /** Check all boosted stats. */
             } else if (player.getSkills()[i].getLevel() > player.getSkills()[i].getLevelForExperience() && i != Misc.HITPOINTS) {
                 player.getSkills()[i].decreaseLevel(1);
+                SkillManager.refresh(player, SkillConstant.getSkill(i));
             }
         }
 
@@ -62,6 +66,7 @@ public class RestoreStatWorker extends Worker {
             if (CombatPrayer.isPrayerActivated(player, CombatPrayer.RAPID_HEAL)) {
                 if (player.getSkills()[Misc.HITPOINTS].getLevel() < player.getSkills()[Misc.HITPOINTS].getLevelForExperience()) {
                     player.getSkills()[Misc.HITPOINTS].increaseLevel(1);
+                    SkillManager.refresh(player, SkillConstant.HITPOINTS);
                 }
             }
         }

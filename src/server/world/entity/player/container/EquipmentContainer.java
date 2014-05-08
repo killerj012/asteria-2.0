@@ -3,6 +3,7 @@ package server.world.entity.player.container;
 import server.util.Misc;
 import server.world.entity.UpdateFlags.Flag;
 import server.world.entity.player.Player;
+import server.world.entity.player.content.AssignSkillRequirement;
 import server.world.entity.player.content.AssignWeaponAnimation;
 import server.world.entity.player.content.AssignWeaponInterface;
 import server.world.entity.player.minigame.Minigame;
@@ -71,6 +72,11 @@ public class EquipmentContainer {
                     return;
                 }
             }
+        }
+
+        /** Check if we have the required level to equip this item. */
+        if (!AssignSkillRequirement.checkRequirement(player, item)) {
+            return;
         }
 
         /** Equip the item a certain way if it's stackable. */

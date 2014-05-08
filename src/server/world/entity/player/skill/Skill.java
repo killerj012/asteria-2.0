@@ -93,7 +93,7 @@ public class Skill {
      *        the amount to decrease this level by.
      */
     public void decreaseLevel(int amount) {
-        if ((level - amount) < 0) {
+        if ((level - amount) < 1) {
             level = 0;
             return;
         }

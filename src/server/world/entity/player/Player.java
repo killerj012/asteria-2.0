@@ -1041,6 +1041,21 @@ public class Player extends Entity {
      * @param runEnergy
      *        the runEnergy to set
      */
+    public void decrementRunEnergy(int amount) {
+        if ((runEnergy - amount) < 1) {
+            runEnergy = 0;
+            getPacketBuilder().sendString(getRunEnergy() + "%", 149);
+            return;
+        }
+
+        this.runEnergy -= amount;
+        getPacketBuilder().sendString(getRunEnergy() + "%", 149);
+    }
+
+    /**
+     * @param runEnergy
+     *        the runEnergy to set
+     */
     public void incrementRunEnergy() {
         this.runEnergy += 1;
         getPacketBuilder().sendString(getRunEnergy() + "%", 149);
@@ -1568,4 +1583,5 @@ public class Player extends Entity {
     public void setAcceptAid(boolean acceptAid) {
         this.acceptAid = acceptAid;
     }
+
 }

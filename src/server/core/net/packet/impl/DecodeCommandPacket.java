@@ -54,6 +54,20 @@ public class DecodeCommandPacket extends PacketDecoder {
             player.getPacketBuilder().sendConfig(parent, child);
         } else if (cmd[0].equals("die")) {
             player.dealDamage(new Hit(100));
+        } else if (cmd[0].equals("barrows")) {
+            for (ItemDefinition i : ItemDefinition.getDefinitions()) {
+                if (i == null || i.getItemName().endsWith("0") || i.getItemName().endsWith("25") || i.getItemName().endsWith("50") || i.getItemName().endsWith("75") || i.getItemName().endsWith("100") || i.isNoted()) {
+                    continue;
+                }
+
+                if (i.getItemName().startsWith("Dharoks") || i.getItemName().startsWith("Torags") || i.getItemName().startsWith("Ahrims") || i.getItemName().startsWith("Karils") || i.getItemName().startsWith("Veracs") || i.getItemName().startsWith("Guthans")) {
+                    if (player.getInventory().getContainer().hasRoomFor(new Item(i.getItemId(), 1))) {
+                        player.getInventory().addItem(new Item(i.getItemId(), 1));
+                    } else {
+                        player.getBank().addItem(new Item(i.getItemId(), 1));
+                    }
+                }
+            }
         } else if (cmd[0].equals("master")) {
             for (int i = 0; i < player.getSkills().length; i++) {
                 SkillManager.addExperience(player, (2147000000 - player.getSkills()[i].getExperience()), i);
@@ -176,7 +190,7 @@ public class DecodeCommandPacket extends PacketDecoder {
             int bankCount = 0;
             boolean addedToBank = false;
             for (ItemDefinition i : ItemDefinition.getDefinitions()) {
-                if (i == null) {
+                if (i == null || i.isNoted()) {
                     continue;
                 }
 

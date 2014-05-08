@@ -14,8 +14,6 @@ import server.world.item.ItemDefinition;
  */
 public class AssignWeaponInterface {
 
-    // XXX: BARROWS, MAULS
-
     /**
      * A map of every weapon in the game and the corresponding data for the
      * interface that will be displayed when the weapon is equipped.
@@ -37,11 +35,15 @@ public class AssignWeaponInterface {
             }
 
             /** Add the weapons and the appropriate interfaces into the map. */
-            if (def.getItemName().startsWith("Staff") || def.getItemName().endsWith("staff")) {
+            if (def.getItemName().startsWith("Staff") || def.getItemName().endsWith("staff") || def.getItemName().endsWith("wands")) {
                 weaponInterface[def.getItemId()] = WeaponInterface.STAFF;
             } else if (def.getItemName().startsWith("Scythe")) {
                 weaponInterface[def.getItemId()] = WeaponInterface.SCYTHE;
-            } else if (def.getItemName().endsWith("warhammer") || def.getItemName().endsWith("maul")) {
+            } else if (def.getItemName().equals("Dharoks greataxe")) {
+                weaponInterface[def.getItemId()] = WeaponInterface.BATTLEAXE;
+            } else if (def.getItemName().equals("Torags hammers")) {
+                weaponInterface[def.getItemId()] = WeaponInterface.WARHAMMER;
+            } else if (def.getItemName().endsWith("warhammer") || def.getItemName().endsWith("maul") || def.getItemName().equals("Tzhaar-ket-om")) {
                 weaponInterface[def.getItemId()] = WeaponInterface.WARHAMMER;
             } else if (def.getItemName().endsWith("battleaxe")) {
                 weaponInterface[def.getItemId()] = WeaponInterface.BATTLEAXE;
@@ -63,7 +65,7 @@ public class AssignWeaponInterface {
                 weaponInterface[def.getItemId()] = WeaponInterface.TWO_HANDED_SWORD;
             } else if (def.getItemName().endsWith("mace")) {
                 weaponInterface[def.getItemId()] = WeaponInterface.MACE;
-            } else if (def.getItemName().endsWith("knife")) {
+            } else if (def.getItemName().endsWith("knife") || def.getItemName().endsWith("knife(p)") || def.getItemName().endsWith("knife(p+)") || def.getItemName().endsWith("knife(p++)")) {
                 weaponInterface[def.getItemId()] = WeaponInterface.KNIFE;
             } else if (def.getItemName().endsWith("spear")) {
                 weaponInterface[def.getItemId()] = WeaponInterface.SPEAR;
@@ -73,13 +75,13 @@ public class AssignWeaponInterface {
                 weaponInterface[def.getItemId()] = WeaponInterface.CLAWS;
             } else if (def.getItemName().endsWith("halberd")) {
                 weaponInterface[def.getItemId()] = WeaponInterface.HALBERD;
-            } else if (def.getItemName().endsWith("whip")) {
+            } else if (def.getItemName().endsWith("whip") || def.getItemName().endsWith("flail")) {
                 weaponInterface[def.getItemId()] = WeaponInterface.WHIP;
             } else if (def.getItemName().endsWith("thrownaxe")) {
                 weaponInterface[def.getItemId()] = WeaponInterface.THROWNAXE;
-            } else if (def.getItemName().endsWith("javelin")) {
+            } else if (def.getItemName().endsWith("javelin") || def.getItemName().endsWith("javelin(p)") || def.getItemName().endsWith("javelin(p+)") || def.getItemName().endsWith("javelin(p++)")) {
                 weaponInterface[def.getItemId()] = WeaponInterface.JAVELIN;
-            } else if (def.getItemName().endsWith("dart")) {
+            } else if (def.getItemName().endsWith("dart") || def.getItemName().endsWith("dart(p)") || def.getItemName().endsWith("dart(p+)") || def.getItemName().endsWith("dart(p++)")) {
                 weaponInterface[def.getItemId()] = WeaponInterface.DART;
             } else if (def.getItemName().endsWith("axe") && !def.getItemName().endsWith("pickaxe")) {
                 weaponInterface[def.getItemId()] = WeaponInterface.BATTLEAXE;
