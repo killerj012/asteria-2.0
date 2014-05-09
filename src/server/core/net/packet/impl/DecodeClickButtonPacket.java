@@ -74,6 +74,7 @@ public class DecodeClickButtonPacket extends PacketDecoder {
             // case 51039: // ghorrock
             //
             // break;
+
             /** Prayers */
             case 21233:
                 CombatPrayer.THICK_SKIN.activatePrayer(player, true);
@@ -530,10 +531,10 @@ public class DecodeClickButtonPacket extends PacketDecoder {
             case 22228: // unarmed
                 player.setFightType(FightType.UNARMED_PUNCH);
                 break;
-            case 22227:
+            case 22230:
                 player.setFightType(FightType.UNARMED_KICK);
                 break;
-            case 22226:
+            case 22229:
                 player.setFightType(FightType.UNARMED_BLOCK);
                 break;
             case 48010: // whip

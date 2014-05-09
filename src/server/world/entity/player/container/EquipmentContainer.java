@@ -173,7 +173,7 @@ public class EquipmentContainer {
             AssignWeaponAnimation.assignAnimation(player, item);
 
             /** Assign a new fight type based on the weapon. */
-            AssignWeaponInterface.changeFightType(item, player);
+            AssignWeaponInterface.changeFightType(player);
         }
 
         /** Write the item bonus. */
@@ -222,7 +222,7 @@ public class EquipmentContainer {
         /** Reset the sidebar interface and appearance animation. */
         if (slot == Misc.EQUIPMENT_SLOT_WEAPON) {
             AssignWeaponInterface.reset(player);
-            AssignWeaponInterface.changeFightType(item, player);
+            AssignWeaponInterface.changeFightType(player);
             player.getUpdateAnimation().reset();
         }
 

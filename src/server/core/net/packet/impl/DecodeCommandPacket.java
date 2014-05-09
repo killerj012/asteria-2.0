@@ -28,9 +28,9 @@ import server.world.entity.player.content.TeleportSpell;
 import server.world.entity.player.skill.SkillManager;
 import server.world.item.Item;
 import server.world.item.ItemDefinition;
+import server.world.map.Palette;
 import server.world.map.Position;
-import server.world.map.RegionBuilder;
-import server.world.map.RegionTileBuilder;
+import server.world.map.Palette.PaletteTile;
 import server.world.object.WorldObject;
 import server.world.object.WorldObject.Rotation;
 
@@ -170,17 +170,28 @@ public class DecodeCommandPacket extends PacketDecoder {
             final int id = Integer.parseInt(cmd[1]);
             player.getPacketBuilder().sendMusic(id);
         } else if (cmd[0].equals("region")) {
-            RegionBuilder map = new RegionBuilder();
+            // RegionBuilder map = new RegionBuilder();
+            //
+            // for (int z = 0; z < 4; z++) {
+            // for (int x = 0; x < 13; x++) {
+            // for (int y = 0; y < 13; y++) {
+            // map.setTile(x, y, z, new
+            // RegionTileBuilder(player.getPosition().getX(),
+            // player.getPosition().getY()));
+            // }
+            // }
+            // }
 
+            Palette p = new Palette();
             for (int z = 0; z < 4; z++) {
                 for (int x = 0; x < 13; x++) {
                     for (int y = 0; y < 13; y++) {
-                        map.setTile(x, y, z, new RegionTileBuilder(player.getPosition().getX(), player.getPosition().getY()));
+                        p.setTile(x, y, z, new PaletteTile(3222, 3222, 0));
                     }
                 }
             }
 
-            player.getPacketBuilder().sendCustomMapRegion(map);
+            player.getPacketBuilder().sendCustomMapRegion(p);
         } else if (cmd[0].equals("item")) {
             String item = cmd[1].replaceAll("_", " ");
             int amount = Integer.parseInt(cmd[2]);
@@ -236,6 +247,23 @@ public class DecodeCommandPacket extends PacketDecoder {
             int emote = Integer.parseInt(cmd[1]);
 
             player.animation(new Animation(emote));
+        } else if (cmd[0].equals("emote2")) {
+            TaskFactory.getFactory().submit(new Worker(2, false, WorkRate.APPROXIMATE_SECOND) {
+                int start = Integer.parseInt(cmd[1]);
+                int end = Integer.parseInt(cmd[2]);
+
+                @Override
+                public void fire() {
+                    if (start == end) {
+                        this.cancel();
+                        return;
+                    }
+
+                    player.animation(new Animation(start));
+                    player.getPacketBuilder().sendMessage("Playing emote: " + start);
+                    start++;
+                }
+            }.attach(player));
         } else if (cmd[0].equals("players")) {
             int size = World.getPlayers().getSize();
             player.getPacketBuilder().sendMessage(size == 1 ? "There is currently 1 player online!" : "There are currently " + size + " players online!");

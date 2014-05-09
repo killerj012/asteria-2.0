@@ -289,6 +289,7 @@ public class MovementQueue {
                     }
 
                     if (entity.getCombatBuilder().isAttacking() && entity.getPosition().withinDistance(entity.getCombatBuilder().getCurrentTarget().getPosition(), entity.getCombatBuilder().getCurrentStrategy().getDistance(entity))) {
+                        entity.getMovementQueue().reset();
                         return;
                     }
 

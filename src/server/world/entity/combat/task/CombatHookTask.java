@@ -16,6 +16,7 @@ import server.world.entity.player.minigame.MinigameFactory;
 import server.world.entity.player.skill.SkillManager;
 import server.world.entity.player.skill.SkillManager.SkillConstant;
 import server.world.map.Location;
+import server.world.map.Position;
 
 /**
  * A worker that handles every combat turn during a combat session.
@@ -133,7 +134,10 @@ public class CombatHookTask extends Worker {
                 return;
             }
 
-            if (!builder.getEntity().getPosition().withinDistance(builder.getCurrentTarget().getPosition(), builder.getCurrentStrategy().getDistance(builder.getEntity()))) {
+            Position attackerPosition = builder.getEntity().getPosition().clone();
+            Position victimPosition = builder.getCurrentTarget().getPosition().clone();
+
+            if (!builder.getEntity().getMovementQueue().isRunToggled() && !attackerPosition.withinDistance(victimPosition, builder.getCurrentStrategy().getDistance(builder.getEntity())) || builder.getEntity().getMovementQueue().isRunToggled() && !attackerPosition.withinDistance(victimPosition, (builder.getCurrentStrategy().getDistance(builder.getEntity()) + 3))) {
                 return;
             }
 

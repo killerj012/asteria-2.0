@@ -46,7 +46,7 @@ public class AssignWeaponAnimation {
                 weaponAnimation[def.getItemId()] = new WeaponAnimationIndex(809, 1146, 1210);
             } else if (def.getItemName().startsWith("Veracs")) {
                 weaponAnimation[def.getItemId()] = new WeaponAnimationIndex(1832, 1830, 1831);
-            } else if (def.getItemName().startsWith("Karils")) {
+            } else if (def.getItemName().startsWith("Karils") || def.getItemName().equals("Crossbow")) {
                 weaponAnimation[def.getItemId()] = new WeaponAnimationIndex(2074, 2076, 2077);
             } else if (def.getItemName().endsWith("shortbow") || def.getItemName().endsWith("longbow")) {
                 weaponAnimation[def.getItemId()] = new WeaponAnimationIndex(808, 819, 824);

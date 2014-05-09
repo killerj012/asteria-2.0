@@ -466,7 +466,7 @@ public final class Session {
                 /** Starter package and makeover mage. */
                 if (player.isNewPlayer()) {
                     player.getInventory().addItemSet(Player.STARTER_PACKAGE);
-                    // XXX: makeover mage
+                    player.getPacketBuilder().sendInterface(3559);
                     player.setNewPlayer(false);
                 }
 

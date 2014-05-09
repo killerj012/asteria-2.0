@@ -15,7 +15,7 @@ public class NiceWizardDialogue extends NpcDialogue {
         switch (player.getConversationStage()) {
             case 0:
                 oneLineMobDialogue(player, Expression.HAPPY, "Hi " + player.getUsername() + "! Nice day today isn't it?", 460);
-                this.next(player);
+                this.stop(player);
                 break;
         }
     }

@@ -4,6 +4,8 @@ import server.util.Misc;
 import server.world.entity.Animation;
 import server.world.entity.Entity;
 import server.world.entity.Hit;
+import server.world.entity.Projectile;
+import server.world.entity.UpdateFlags.Flag;
 import server.world.entity.combat.CombatFactory;
 import server.world.entity.combat.CombatHit;
 import server.world.entity.combat.CombatStrategy;
@@ -11,6 +13,7 @@ import server.world.entity.combat.CombatType;
 import server.world.entity.combat.data.RangedAmmo;
 import server.world.entity.npc.Npc;
 import server.world.entity.player.Player;
+import server.world.entity.player.content.AssignWeaponInterface;
 import server.world.entity.player.content.AssignWeaponInterface.FightStyle;
 import server.world.entity.player.content.AssignWeaponInterface.WeaponInterface;
 import server.world.item.Item;
@@ -71,8 +74,30 @@ public class DefaultRangedCombatStrategy implements CombatStrategy {
                 player.animation(new Animation(player.getFightType().getAnimation()));
             }
 
+            if (player.getWeapon() == WeaponInterface.SHORTBOW || player.getWeapon() == WeaponInterface.LONGBOW || player.getWeapon() == WeaponInterface.CROSSBOW) {
+                if (player.getEquipment().getContainer().getItem(Misc.EQUIPMENT_SLOT_ARROWS).getAmount() == 1) {
+                    player.getPacketBuilder().sendMessage("That was your last piece of ammo!");
+                    player.getEquipment().getContainer().set(Misc.EQUIPMENT_SLOT_ARROWS, null);
+                } else {
+                    player.getEquipment().getContainer().getItem(Misc.EQUIPMENT_SLOT_ARROWS).decrementAmount();
+                }
+            } else {
+                if (player.getEquipment().getContainer().getItem(Misc.EQUIPMENT_SLOT_WEAPON).getAmount() == 1) {
+                    player.getPacketBuilder().sendMessage("That was your last piece of ammo!");
+                    player.getEquipment().getContainer().set(Misc.EQUIPMENT_SLOT_WEAPON, null);
+                    AssignWeaponInterface.reset(player);
+                    AssignWeaponInterface.changeFightType(player);
+                    player.getFlags().flag(Flag.APPEARANCE);
+                } else {
+                    player.getEquipment().getContainer().getItem(Misc.EQUIPMENT_SLOT_WEAPON).decrementAmount();
+                }
+            }
+
+            RangedAmmo ammo = RangedAmmo.getAmmo(player);
+            player.getEquipment().refresh();
+            new Projectile(player, victim, ammo.getProjectileId(), ammo.getDelay(), ammo.getSpeed(), ammo.getStartHeight(), ammo.getEndHeight(), ammo.getCurve()).sendProjectile();
             if (CombatFactory.hitAccuracy(entity, victim, CombatType.RANGE, 1)) {
-                return new CombatHit(new Hit[] { CombatFactory.getRangeHit(entity, RangedAmmo.getAmmo(player)) }, CombatType.RANGE);
+                return new CombatHit(new Hit[] { CombatFactory.getRangeHit(entity, ammo) }, CombatType.RANGE);
             }
         } else if (entity.isNpc()) {
             Npc npc = (Npc) entity;

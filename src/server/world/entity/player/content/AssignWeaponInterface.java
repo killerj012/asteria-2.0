@@ -480,17 +480,16 @@ public class AssignWeaponInterface {
         player.getPacketBuilder().sendSidebarInterface(0, WeaponInterface.UNARMED.getInterfaceId());
         player.getPacketBuilder().sendString("Unarmed", WeaponInterface.UNARMED.getNameLineId());
         player.setWeapon(WeaponInterface.UNARMED);
+
     }
 
     /**
      * Changes the fight type when a weapon is equipped or unequipped.
      * 
-     * @param item
-     *        the weapon being equipped.
      * @param player
      *        the player changing their weapon.
      */
-    public static void changeFightType(Item item, Player player) {
+    public static void changeFightType(Player player) {
 
         /** Set the new fight type based on the current skill being trained. */
         for (FightType fightType : player.getWeapon().getFightType()) {

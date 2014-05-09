@@ -25,3 +25,4 @@
 #packet server.core.net.packet.impl.DecodeRequestPacket
 #packet server.core.net.packet.impl.DecodeRotateCameraPacket
 #packet server.core.net.packet.impl.DecodeUpdateRegionPacket
+#packet server.core.net.packet.impl.DecodeCharacterSelectionPacket

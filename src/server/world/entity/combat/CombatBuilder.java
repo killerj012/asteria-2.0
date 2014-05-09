@@ -146,6 +146,9 @@ public class CombatBuilder {
             @Override
             public void run() {
 
+                /** Stop movement before attacking. */
+                entity.getMovementQueue().reset();
+
                 /** Change targets if needed. */
                 if (currentTarget != null && combatWorker.isRunning()) {
                     currentTarget = victim;

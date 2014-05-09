@@ -33,9 +33,9 @@ public class DefaultMeleeCombatStrategy implements CombatStrategy {
             if (item != null) {
                 if (item.getDefinition().getItemName().startsWith("Dharoks")) {
                     if (player.getFightType() == FightType.BATTLEAXE_SMASH) {
-                        player.animation(new Animation(2066));
-                    } else {
                         player.animation(new Animation(2067));
+                    } else {
+                        player.animation(new Animation(2066));
                     }
                 } else if (item.getDefinition().getItemName().equals("Granite maul")) {
                     player.animation(new Animation(1665));

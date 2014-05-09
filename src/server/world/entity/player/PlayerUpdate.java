@@ -214,7 +214,7 @@ public final class PlayerUpdate {
 
             /** Beard. */
             if (player.getGender() == Misc.GENDER_MALE) {
-                if (player.getEquipment().getContainer().getItemId(Misc.EQUIPMENT_SLOT_HEAD) > 1 && !Misc.getIsFullHelm()[player.getEquipment().getContainer().getItemId(Misc.EQUIPMENT_SLOT_HEAD)]) {
+                if (player.getEquipment().getContainer().getItemId(Misc.EQUIPMENT_SLOT_HEAD) > 1 && !Misc.getIsFullHelm()[player.getEquipment().getContainer().getItemId(Misc.EQUIPMENT_SLOT_HEAD)] || player.getEquipment().getContainer().isSlotFree(Misc.EQUIPMENT_SLOT_HEAD)) {
                     block.writeShort(0x100 + player.getAppearance()[Misc.APPEARANCE_SLOT_BEARD]);
                 } else {
                     block.writeByte(0);

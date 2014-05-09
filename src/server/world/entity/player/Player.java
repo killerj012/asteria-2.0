@@ -323,6 +323,7 @@ public class Player extends Entity {
                     skullTimer = 0;
                     skullIcon = -1;
                     AssignWeaponInterface.reset(player);
+                    AssignWeaponInterface.changeFightType(player);
                     getPacketBuilder().resetAnimation();
                     getCombatBuilder().resetDamage();
                     getPacketBuilder().sendMessage("Oh dear, you're dead!");
@@ -363,6 +364,16 @@ public class Player extends Entity {
             }
         }
 
+        if (!getSkills()[Misc.MAGIC].reqLevel(spell.levelRequired())) {
+            getPacketBuilder().sendMessage("You need a magic level of " + spell.levelRequired() + " to teleport here!");
+            return;
+        }
+
+        if (wildernessLevel >= 20) {
+            player.getPacketBuilder().sendMessage("You must be below level 20 wilderness to teleport!");
+            return;
+        }
+
         if (spell.itemsRequired() != null) {
             for (Item item : spell.itemsRequired()) {
                 if (item == null) {
@@ -376,11 +387,6 @@ public class Player extends Entity {
 
                 player.getInventory().deleteItem(item);
             }
-        }
-
-        if (!getSkills()[Misc.MAGIC].reqLevel(spell.levelRequired())) {
-            getPacketBuilder().sendMessage("You need a magic level of " + spell.levelRequired() + " to teleport here!");
-            return;
         }
 
         teleportStage = 1;

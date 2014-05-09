@@ -12,9 +12,9 @@ import server.world.World;
 import server.world.entity.player.Player;
 import server.world.item.Item;
 import server.world.item.ground.GroundItem;
+import server.world.map.Palette;
 import server.world.map.Position;
-import server.world.map.RegionBuilder;
-import server.world.map.RegionTileBuilder;
+import server.world.map.Palette.PaletteTile;
 import server.world.object.WorldObject;
 import server.world.object.WorldObject.Rotation;
 
@@ -258,25 +258,18 @@ public final class PacketEncoder {
         return this;
     }
 
-    /**
-     * Sends a custom map region.
-     * 
-     * @param region
-     *        the map region to send.
-     * @return this packet encoder.
-     */
-    public PacketEncoder sendCustomMapRegion(RegionBuilder region) {
+    public PacketEncoder sendCustomMapRegion(Palette palette) {
         this.sendMapRegion();
+        PacketBuffer.WriteBuffer out = PacketBuffer.newWriteBuffer(100);
+        out.writeVariableShortPacketHeader(241);
+        out.writeShort(player.getPosition().getRegionY() + 6, ValueType.A);
+        out.setAccessType(AccessType.BIT_ACCESS);
 
-        PacketBuffer.WriteBuffer out = PacketBuffer.newWriteBuffer(50);
-        out.writeVariableShortPacketHeader(241).writeShort(player.getPosition().getRegionY() + 6, ValueType.A).setAccessType(AccessType.BIT_ACCESS);
-        for (int z = 0; z < RegionBuilder.SIZE_LENGTH_Z; z++) {
-            for (int x = 0; x < RegionBuilder.SIZE_LENGTH_X; x++) {
-                for (int y = 0; y < RegionBuilder.SIZE_LENGTH_Y; y++) {
-                    RegionTileBuilder tile = region.getTile(x, y, z);
-
-                    out.writeBit(tile != null);
-
+        for (int z = 0; z < 4; z++) {
+            for (int x = 0; x < 13; x++) {
+                for (int y = 0; y < 13; y++) {
+                    PaletteTile tile = palette.getTile(x, y, z);
+                    out.writeBits(1, tile != null ? 1 : 0);
                     if (tile != null) {
                         out.writeBits(26, tile.getX() << 14 | tile.getY() << 3 | tile.getZ() << 24 | tile.getRotation() << 1);
                     }
@@ -284,7 +277,8 @@ public final class PacketEncoder {
             }
         }
         out.setAccessType(AccessType.BYTE_ACCESS);
-        out.writeShort(player.getPosition().getRegionX() + 6).finishVariableShortPacketHeader();
+        out.writeShort(player.getPosition().getRegionX() + 6);
+        out.finishVariableShortPacketHeader();
         player.getSession().encode(out);
         return this;
     }
@@ -554,7 +548,7 @@ public final class PacketEncoder {
      *        the time it takes for this projectile to hit its desired position.
      * @return this packet encoder.
      */
-    public PacketEncoder sendGlobalProjectile(Position position, Position offset, int angle, int speed, int gfxMoving, int startHeight, int endHeight, int lockon, int time) {
+    public static void sendGlobalProjectile(Position position, Position offset, int angle, int speed, int gfxMoving, int startHeight, int endHeight, int lockon, int time) {
         for (Player player : World.getPlayers()) {
             if (player == null) {
                 continue;
@@ -564,7 +558,6 @@ public final class PacketEncoder {
                 player.getPacketBuilder().sendProjectile(position, offset, angle, speed, gfxMoving, startHeight, endHeight, lockon, time);
             }
         }
-        return this;
     }
 
     /**

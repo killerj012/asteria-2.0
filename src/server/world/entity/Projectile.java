@@ -1,105 +1,117 @@
 package server.world.entity;
 
-/**
- * A projectile used when doing things like firing arrows or casting spells.
- * 
- * @author lare96
- */
+import server.world.World;
+import server.world.entity.player.Player;
+import server.world.map.Position;
+
 public class Projectile {
 
-    /** The id of the projectile. */
-    private int id;
-
-    /** The height of the projectile. */
-    private int height;
-
-    /** The delay of the projectile. */
+    private Position start;
+    private Position offset;
+    private int angle;
+    private int speed;
+    private int projectileId;
+    private int startHeight;
+    private int endHeight;
+    private int lockon;
     private int delay;
+    private int curve;
 
-    /**
-     * Create a new projectile.
-     * 
-     * @param projectileId
-     *        the projectile id.
-     * @param projectileHeight
-     *        the projectile height.
-     * @param projectileDelay
-     *        the projectile delay.
-     */
-    public Projectile(int projectileId, int projectileHeight, int projectileDelay) {
-        this.setProjectileId(projectileId);
-        this.setProjectileHeight(projectileHeight);
-        this.setProjectileDelay(projectileDelay);
+    public Projectile(Position start, Position end, int lockon, int projectileId, int delay, int speed, int startHeight, int endHeight, int curve) {
+        this.start = start;
+        this.offset = new Position((end.getX() - start.getX()), (end.getY() - start.getY()));
+        this.lockon = lockon;
+        this.projectileId = projectileId;
+        this.delay = speed;
+        this.speed = delay;
+        this.startHeight = startHeight;
+        this.endHeight = endHeight;
+        this.curve = curve;
+    }
+
+    public Projectile(Entity source, Entity victim, int projectileId, int delay, int speed, int startHeight, int endHeight, int curve) {
+        this(source.getPosition(), victim.getPosition(), (victim.isPlayer() ? -victim.getSlot() - 1 : victim.getSlot() + 1), projectileId, delay, speed, startHeight, endHeight, curve);
+    }
+
+    public void sendProjectile() {
+        for (Player player : World.getPlayers()) {
+            if (player == null) {
+                continue;
+            }
+
+            if (start.isViewableFrom(player.getPosition())) {
+                player.getPacketBuilder().sendProjectile(start, offset, angle, speed, projectileId, startHeight, endHeight, lockon, delay);
+            }
+        }
     }
 
     /**
-     * Create a new projectile.
-     * 
-     * @param projectileId
-     *        the projectile id.
-     * @param projectileHeight
-     *        the projectile height.
+     * @return the start
      */
-    public Projectile(int projectileId, int projectileHeight) {
-        this.setProjectileId(projectileId);
-        this.setProjectileHeight(projectileHeight);
-        this.setProjectileDelay(0);
+    public Position getStart() {
+        return start;
     }
 
     /**
-     * Create a new projectile.
-     * 
-     * @param projectileId
-     *        the projectile id.
+     * @return the offset
      */
-    public Projectile(int projectileId) {
-        this.setProjectileId(projectileId);
-        this.setProjectileHeight(0);
-        this.setProjectileDelay(0);
+    public Position getOffset() {
+        return offset;
     }
 
     /**
-     * @return the projectileId.
+     * @return the angle
+     */
+    public int getAngle() {
+        return angle;
+    }
+
+    /**
+     * @return the speed
+     */
+    public int getSpeed() {
+        return speed;
+    }
+
+    /**
+     * @return the projectileId
      */
     public int getProjectileId() {
-        return id;
+        return projectileId;
     }
 
     /**
-     * @param projectileId
-     *        the projectileId to set.
+     * @return the startHeight
      */
-    public void setProjectileId(int projectileId) {
-        this.id = projectileId;
+    public int getStartHeight() {
+        return startHeight;
     }
 
     /**
-     * @return the projectileHeight.
+     * @return the endHeight
      */
-    public int getProjectileHeight() {
-        return height;
+    public int getEndHeight() {
+        return endHeight;
     }
 
     /**
-     * @param projectileHeight
-     *        the projectileHeight to set.
+     * @return the lockon
      */
-    public void setProjectileHeight(int projectileHeight) {
-        this.height = projectileHeight;
+    public int getLockon() {
+        return lockon;
     }
 
     /**
-     * @return the projectileDelay.
+     * @return the delay
      */
-    public int getProjectileDelay() {
+    public int getDelay() {
         return delay;
     }
 
     /**
-     * @param projectileDelay
-     *        the projectileDelay to set.
+     * @return the curve
      */
-    public void setProjectileDelay(int projectileDelay) {
-        this.delay = projectileDelay;
+    public int getCurve() {
+        return curve;
     }
 }
