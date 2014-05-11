@@ -143,6 +143,12 @@ public class ConsumeFood {
             return;
         }
 
+        /** Check if your hp is currently 0. */
+        if (player.getSkills()[Misc.HITPOINTS].getLevel() < 1) {
+            player.getPacketBuilder().sendMessage("Too late, you're dead!");
+            return;
+        }
+
         /** Consume the food. */
         if (player.getEatingTimer().elapsed() > EATING_DELAY) {
             if (player.getInventory().getContainer().contains(food.getItemId())) {

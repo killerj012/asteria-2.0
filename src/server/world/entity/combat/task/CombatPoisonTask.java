@@ -78,6 +78,8 @@ public class CombatPoisonTask extends Worker {
 
     @Override
     public void fire() {
+
+        /** Stop the task if needed. */
         if (entity.isUnregistered() || entity.getPoisonHits() == 0) {
             entity.setPoisonHits(0);
             entity.setPoisonStrength(CombatPoison.MILD);
@@ -85,15 +87,18 @@ public class CombatPoisonTask extends Worker {
             return;
         }
 
+        /** Calculate the poison hit for this turn. */
         int calculateHit = entity.getPoisonStrength().getDamageRange().calculate();
 
+        /**
+         * If the damage is above your current health then don't deal any
+         * damage.
+         */
         if (calculateHit >= entity.getCurrentHealth()) {
-            entity.setPoisonHits(0);
-            entity.setPoisonStrength(CombatPoison.MILD);
-            this.cancel();
             return;
         }
 
+        /** Otherwise deal damage as normal. */
         entity.dealDamage(new Hit(calculateHit, HitType.POISON));
         entity.decrementPoisonHits();
     }

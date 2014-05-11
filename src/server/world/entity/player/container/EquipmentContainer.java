@@ -182,6 +182,7 @@ public class EquipmentContainer {
         /** Refresh everything. */
         refresh();
         player.getFlags().flag(Flag.APPEARANCE);
+        player.setAutocast(false);
     }
 
     /**
@@ -233,6 +234,7 @@ public class EquipmentContainer {
         refresh();
         player.getInventory().refresh(3214);
         player.getFlags().flag(Flag.APPEARANCE);
+        player.setAutocast(false);
     }
 
     /**

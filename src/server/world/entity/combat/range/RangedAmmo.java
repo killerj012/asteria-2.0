@@ -1,4 +1,4 @@
-package server.world.entity.combat.data;
+package server.world.entity.combat.range;
 
 import server.util.Misc;
 import server.world.entity.player.Player;
@@ -12,65 +12,65 @@ import server.world.entity.player.content.AssignWeaponInterface.WeaponInterface;
 public enum RangedAmmo {
 
     /** A collection of arrows. */
-    BRONZE_ARROW(882, 7, 10, 44, 3, 43, 31, 15, 19),
-    IRON_ARROW(884, 10, 9, 44, 3, 43, 31, 15, 18),
-    STEEL_ARROW(886, 16, 11, 44, 3, 43, 31, 15, 20),
-    MITHRIL_ARROW(888, 22, 12, 44, 3, 43, 31, 15, 21),
-    ADAMANT_ARROW(890, 31, 13, 44, 3, 43, 31, 15, 22),
-    RUNE_ARROW(892, 49, 15, 44, 3, 43, 31, 15, 24),
+    BRONZE_ARROW("Bronze arrow", 7, 10, 44, 3, 43, 31, 19),
+    IRON_ARROW("Iron arrow", 10, 9, 44, 3, 43, 31, 18),
+    STEEL_ARROW("Steel arrow", 16, 11, 44, 3, 43, 31, 20),
+    MITHRIL_ARROW("Mithril arrow", 22, 12, 44, 3, 43, 31, 21),
+    ADAMANT_ARROW("Adamant arrow", 31, 13, 44, 3, 43, 31, 22),
+    RUNE_ARROW("Rune arrow", 49, 15, 44, 3, 43, 31, 24),
 
     /** A collection of bolts. */
-    BOLTS(877, 10, 27, 44, 3, 43, 31, 15, 28),
-    BARBED_BOLTS(881, 12, 27, 44, 3, 43, 31, 15, 28),
-    OPAL_BOLTS(879, 14, 27, 44, 3, 43, 31, 15, 28),
-    PEARL_BOLTS(880, 48, 27, 44, 3, 43, 31, 15, 28),
-    BOLT_RACK(4740, 55, 27, 44, 3, 43, 31, 15, 28),
+    BOLTS("Bolts", 10, 27, 44, 3, 43, 31, 28),
+    BARBED_BOLTS("Barbed bolts", 12, 27, 44, 3, 43, 31, 28),
+    OPAL_BOLTS("Opal bolts", 14, 27, 44, 3, 43, 31, 28),
+    PEARL_BOLTS("Pearl bolts", 48, 27, 44, 3, 43, 31, 28),
+    BOLT_RACK("Bolt rack", 55, 27, 44, 3, 43, 31, 28),
 
     /** A collection of knives. */
-    BRONZE_KNIFE(864, 3, 212, 33, 3, 45, 37, 5, 219),
-    IRON_KNIFE(863, 4, 213, 33, 3, 45, 37, 5, 220),
-    STEEL_KNIFE(865, 7, 214, 33, 3, 45, 37, 5, 221),
-    BLACK_KNIFE(869, 8, 215, 33, 3, 45, 37, 5, 222),
-    MITHRIL_KNIFE(866, 10, 216, 33, 3, 45, 37, 5, 223),
-    ADAMANT_KNIFE(867, 14, 217, 33, 3, 45, 37, 5, 224),
-    RUNE_KNIFE(868, 24, 218, 33, 3, 45, 37, 5, 225),
+    BRONZE_KNIFE("Bronze knife", 3, 212, 33, 3, 45, 37, 219),
+    IRON_KNIFE("Iron knife", 4, 213, 33, 3, 45, 37, 220),
+    STEEL_KNIFE("Steel knife", 7, 214, 33, 3, 45, 37, 221),
+    BLACK_KNIFE("Black knife", 8, 215, 33, 3, 45, 37, 222),
+    MITHRIL_KNIFE("Mithril knife", 10, 216, 33, 3, 45, 37, 223),
+    ADAMANT_KNIFE("Adamant knife", 14, 217, 33, 3, 45, 37, 224),
+    RUNE_KNIFE("Rune knife", 24, 218, 33, 3, 45, 37, 225),
 
     /** A collection of darts. */
-    BRONZE_DART(806, 1, 226, 40, 2, 45, 37, 5, 232),
-    IRON_DART(807, 3, 227, 40, 2, 45, 37, 5, 233),
-    STEEL_DART(808, 4, 228, 40, 2, 45, 37, 5, 234),
-    BLACK_DART(3093, 6, 273, 40, 2, 45, 37, 5, 273),
-    MITHRIL_DART(809, 7, 229, 40, 2, 45, 37, 5, 235),
-    ADAMANT_DART(810, 10, 230, 40, 2, 45, 37, 5, 236),
-    RUNE_DART(811, 14, 231, 40, 2, 45, 37, 5, 237),
+    BRONZE_DART("Bronze dart", 1, 226, 40, 2, 45, 37, 232),
+    IRON_DART("Iron dart", 3, 227, 40, 2, 45, 37, 233),
+    STEEL_DART("Steel dart", 4, 228, 40, 2, 45, 37, 234),
+    BLACK_DART("Black dart", 6, 273, 40, 2, 45, 37, 273),
+    MITHRIL_DART("Mithril dart", 7, 229, 40, 2, 45, 37, 235),
+    ADAMANT_DART("Adamant dart", 10, 230, 40, 2, 45, 37, 236),
+    RUNE_DART("Rune dart", 14, 231, 40, 2, 45, 37, 237),
 
     /** A collection of javelins. */
-    BRONZE_JAVELIN(825, 6, 200, 40, 2, 45, 37, 5, 206),
-    IRON_JAVELIN(826, 10, 201, 40, 2, 45, 37, 5, 207),
-    STEEL_JAVELIN(827, 12, 202, 40, 2, 45, 37, 5, 208),
-    MITHRIL_JAVELIN(828, 18, 203, 40, 2, 45, 37, 5, 209),
-    ADAMANT_JAVELIN(829, 28, 204, 40, 2, 45, 37, 5, 210),
-    RUNE_JAVELIN(830, 42, 205, 40, 2, 45, 37, 5, 211),
+    BRONZE_JAVELIN("Bronze javelin", 6, 200, 40, 2, 45, 37, 206),
+    IRON_JAVELIN("Iron javelin", 10, 201, 40, 2, 45, 37, 207),
+    STEEL_JAVELIN("Steel javelin", 12, 202, 40, 2, 45, 37, 208),
+    MITHRIL_JAVELIN("Mithril javelin", 18, 203, 40, 2, 45, 37, 209),
+    ADAMANT_JAVELIN("Adamant javelin", 28, 204, 40, 2, 45, 37, 210),
+    RUNE_JAVELIN("Rune javelin", 42, 205, 40, 2, 45, 37, 211),
 
     /** A collection of throwing axes. */
-    BRONZE_THROWNAXE(800, 5, 35, 44, 3, 43, 31, 15, 43),
-    IRON_THROWNAXE(801, 7, 36, 44, 3, 43, 31, 15, 42),
-    STEEL_THROWNAXE(802, 11, 37, 44, 3, 43, 31, 15, 44),
-    MITHRIL_THROWNAXE(803, 16, 38, 44, 3, 43, 31, 15, 45),
-    ADAMANT_THROWNAXE(804, 23, 39, 44, 3, 43, 31, 15, 46),
-    RUNE_THROWNAXE(805, 26, 41, 44, 3, 43, 31, 15, 48),
+    BRONZE_THROWNAXE("Bronze thrownaxe", 5, 35, 44, 3, 43, 31, 43),
+    IRON_THROWNAXE("Iron thrownaxe", 7, 36, 44, 3, 43, 31, 42),
+    STEEL_THROWNAXE("Steel thrownaxe", 11, 37, 44, 3, 43, 31, 44),
+    MITHRIL_THROWNAXE("Mithril thrownaxe", 16, 38, 44, 3, 43, 31, 45),
+    ADAMANT_THROWNAXE("Adamant thrownaxe", 23, 39, 44, 3, 43, 31, 46),
+    RUNE_THROWNAXE("Rune thrownaxe", 26, 41, 44, 3, 43, 31, 48),
 
     /** Other miscellaneous range ammo. */
-    TOKTZ_XIL_UL(6522, 50, 442, 44, 3, 43, 31, 15, 0);
+    TOKTZ_XIL_UL("Toktz-xil-ul", 50, 442, 44, 3, 43, 31, 0);
 
     /** The item id of this ammo. */
-    private int itemId;
+    private String name;
 
     /** The strength of this ammo. */
     private int rangedStrength;
 
     /** The projectile data for of this ammo. */
-    private int projectileId, delay, speed, startHeight, endHeight, curve;
+    private int projectileId, delay, speed, startHeight, endHeight;
 
     /** The graphic id of this ammo. */
     private int graphicId;
@@ -78,8 +78,8 @@ public enum RangedAmmo {
     /**
      * Create a new {@link RangedAmmo}.
      * 
-     * @param itemId
-     *        the item id of this ammo.
+     * @param name
+     *        the name of this ammo.
      * @param rangedStrength
      *        the strength of this ammo.
      * @param projectileId
@@ -92,20 +92,17 @@ public enum RangedAmmo {
      *        the projectile data for of this ammo.
      * @param endHeight
      *        the projectile data for of this ammo.
-     * @param curve
-     *        the projectile data for of this ammo.
      * @param graphicId
      *        the graphic id of this ammo.
      */
-    private RangedAmmo(int itemId, int rangedStrength, int projectileId, int delay, int speed, int startHeight, int endHeight, int curve, int graphicId) {
-        this.itemId = itemId;
+    private RangedAmmo(String name, int rangedStrength, int projectileId, int delay, int speed, int startHeight, int endHeight, int graphicId) {
+        this.name = name;
         this.rangedStrength = rangedStrength;
         this.projectileId = projectileId;
         this.delay = delay;
         this.speed = speed;
         this.startHeight = startHeight;
         this.endHeight = endHeight;
-        this.curve = curve;
         this.graphicId = graphicId;
     }
 
@@ -119,13 +116,13 @@ public enum RangedAmmo {
     public static RangedAmmo getAmmo(Player player) {
         if (player.getWeapon() == WeaponInterface.SHORTBOW || player.getWeapon() == WeaponInterface.LONGBOW || player.getWeapon() == WeaponInterface.CROSSBOW) {
             for (RangedAmmo tableItem : RangedAmmo.values()) {
-                if (tableItem.getItemId() == player.getEquipment().getContainer().getItem(Misc.EQUIPMENT_SLOT_ARROWS).getId()) {
+                if (player.getEquipment().getContainer().getItem(Misc.EQUIPMENT_SLOT_ARROWS).getDefinition().getItemName().startsWith(tableItem.getName())) {
                     return tableItem;
                 }
             }
         } else {
             for (RangedAmmo tableItem : RangedAmmo.values()) {
-                if (tableItem.getItemId() == player.getEquipment().getContainer().getItem(Misc.EQUIPMENT_SLOT_WEAPON).getId()) {
+                if (player.getEquipment().getContainer().getItem(Misc.EQUIPMENT_SLOT_WEAPON).getDefinition().getItemName().startsWith(tableItem.getName())) {
                     return tableItem;
                 }
             }
@@ -134,12 +131,12 @@ public enum RangedAmmo {
     }
 
     /**
-     * Get the item id of this ammo.
+     * Get the name of this ammo.
      * 
-     * @return the item id of this ammo.
+     * @return the name of this ammo.
      */
-    public int getItemId() {
-        return itemId;
+    public String getName() {
+        return name;
     }
 
     /**
@@ -194,15 +191,6 @@ public enum RangedAmmo {
      */
     public int getEndHeight() {
         return endHeight;
-    }
-
-    /**
-     * Get the projectile data for of this ammo.
-     * 
-     * @return the curve
-     */
-    public int getCurve() {
-        return curve;
     }
 
     /**

@@ -13,8 +13,11 @@ import server.world.entity.player.skill.SkillManager.SkillConstant;
  */
 public class CombatPrayerWorker extends Worker {
 
-    /** The amount of prayer that will be drained this cycle. */
-    private int drainRate;
+    /** Holds the drain rate for every prayer. */
+    private int[] prayerTicks = new int[18];
+
+    /** Flag that determines if any prayers are active. */
+    private boolean cancelWorker = true;
 
     /** The player attached to this worker. */
     private Player player;
@@ -26,7 +29,7 @@ public class CombatPrayerWorker extends Worker {
      *        the player attached to this worker.
      */
     public CombatPrayerWorker(Player player) {
-        super(20, false);
+        super(1, false);
         super.attach(player);
         this.player = player;
     }
@@ -34,34 +37,28 @@ public class CombatPrayerWorker extends Worker {
     @Override
     public void fire() {
 
-        /** Determine the drain rate for this cycle. */
+        /** Drain the prayer if needed. */
         for (int i = 0; i < player.getPrayerActive().length; i++) {
             if (player.getPrayerActive()[i]) {
-                drainRate += CombatPrayer.getPrayer(i).getDrainRate();
+                prayerTicks[i]++;
+                cancelWorker = false;
+
+                if (prayerTicks[i] >= calculateDrainRate(CombatPrayer.getPrayer(i))) {
+                    player.getSkills()[Misc.PRAYER].decreaseLevel(1);
+                    SkillManager.refresh(player, SkillConstant.PRAYER);
+                    prayerTicks[i] = 0;
+                }
             }
         }
 
         /** If there are no prayers active then stop the task. */
-        if (drainRate == 0) {
+        if (cancelWorker) {
             this.cancel();
             return;
         }
 
-        /** Take into account the prayer bonus. */
-        double blockRate = ((double) player.getPlayerBonus()[Misc.BONUS_PRAYER] / 100) * drainRate;
-
-        if ((drainRate - blockRate) < 1) {
-            drainRate = 0;
-        } else {
-            drainRate = (int) (drainRate - blockRate);
-        }
-
-        /** If there are prayers active then drain the specified amount. */
-        player.getSkills()[Misc.PRAYER].decreaseLevel(drainRate);
-        SkillManager.refresh(player, SkillConstant.PRAYER);
-
-        /** Reset the drain rate for the next cycle. */
-        drainRate = 0;
+        /** Reset the flag for the next cycle. */
+        cancelWorker = true;
 
         /** Check the prayer level. */
         if (player.getSkills()[Misc.PRAYER].getLevel() < 1) {
@@ -70,5 +67,16 @@ public class CombatPrayerWorker extends Worker {
             this.cancel();
             return;
         }
+    }
+
+    /**
+     * Calculates the amount of ticks needed to drain 1 level of prayer.
+     * 
+     * @param prayer
+     *        the prayer being calculated.
+     * @return the amount of ticks needed to drain 1 level of prayer.
+     */
+    private int calculateDrainRate(CombatPrayer prayer) {
+        return (player.getPlayerBonus()[Misc.BONUS_PRAYER] / 3) + prayer.getDrainRate();
     }
 }

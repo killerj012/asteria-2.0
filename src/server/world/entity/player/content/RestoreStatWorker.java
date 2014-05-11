@@ -39,7 +39,7 @@ public class RestoreStatWorker extends Worker {
              * Check all weakened stats taking into account the rapid restore
              * prayer.
              */
-            if (player.getSkills()[i].getLevel() < player.getSkills()[i].getLevelForExperience() && i != Misc.HITPOINTS) {
+            if (player.getSkills()[i].getLevel() < player.getSkills()[i].getLevelForExperience() && i != Misc.HITPOINTS && i != Misc.PRAYER) {
                 player.getSkills()[i].increaseLevel(1);
 
                 if (CombatPrayer.isPrayerActivated(player, CombatPrayer.RAPID_RESTORE)) {
@@ -50,7 +50,7 @@ public class RestoreStatWorker extends Worker {
                 SkillManager.refresh(player, SkillConstant.getSkill(i));
 
                 /** Check all boosted stats. */
-            } else if (player.getSkills()[i].getLevel() > player.getSkills()[i].getLevelForExperience() && i != Misc.HITPOINTS) {
+            } else if (player.getSkills()[i].getLevel() > player.getSkills()[i].getLevelForExperience() && i != Misc.HITPOINTS && i != Misc.PRAYER) {
                 player.getSkills()[i].decreaseLevel(1);
                 SkillManager.refresh(player, SkillConstant.getSkill(i));
             }

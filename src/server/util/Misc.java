@@ -880,6 +880,10 @@ public final class Misc {
          * @return the inclusive interval.
          */
         public Interval inclusiveInterval(int start, int end) {
+            if (start > end) {
+                throw new IllegalArgumentException("End value must be higher than start value!");
+            }
+
             this.start = start;
             this.end = end;
             return this;
@@ -891,6 +895,10 @@ public final class Misc {
          * @return the exclusive interval.
          */
         public Interval exclusiveInterval(int start, int end) {
+            if (start > end) {
+                throw new IllegalArgumentException("End value must be higher than start value!");
+            }
+
             this.start = start + 1;
             this.end = end - 1;
             return this;
@@ -902,7 +910,9 @@ public final class Misc {
          * @return the random value.
          */
         public int calculate() {
-            return (start + Misc.getRandom().nextInt(end));
+            int difference = end - start;
+
+            return (start + Misc.getRandom().nextInt(difference));
         }
 
         /**

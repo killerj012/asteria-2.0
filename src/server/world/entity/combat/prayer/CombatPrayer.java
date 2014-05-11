@@ -13,7 +13,7 @@ import server.world.entity.player.Player;
  */
 public enum CombatPrayer {
 
-    THICK_SKIN(2, -1, 1, 83, new GenericAction<Player>() {
+    THICK_SKIN(20, -1, 1, 83, new GenericAction<Player>() {
         @Override
         public void fireAction(Player player) {
             CombatPrayer.ROCK_SKIN.deactivatePrayer(player, false);
@@ -29,7 +29,7 @@ public enum CombatPrayer {
         }
     }),
 
-    BURST_OF_STRENGTH(2, -1, 4, 84, new GenericAction<Player>() {
+    BURST_OF_STRENGTH(20, -1, 4, 84, new GenericAction<Player>() {
         @Override
         public void fireAction(Player player) {
             CombatPrayer.SUPERHUMAN_STRENGTH.deactivatePrayer(player, false);
@@ -45,7 +45,7 @@ public enum CombatPrayer {
         }
     }),
 
-    CLARITY_OF_THOUGHT(2, -1, 7, 85, new GenericAction<Player>() {
+    CLARITY_OF_THOUGHT(20, -1, 7, 85, new GenericAction<Player>() {
         @Override
         public void fireAction(Player player) {
             CombatPrayer.IMPROVED_REFLEXES.deactivatePrayer(player, false);
@@ -61,7 +61,7 @@ public enum CombatPrayer {
         }
     }),
 
-    ROCK_SKIN(3, -1, 10, 86, new GenericAction<Player>() {
+    ROCK_SKIN(10, -1, 10, 86, new GenericAction<Player>() {
         @Override
         public void fireAction(Player player) {
             CombatPrayer.STEEL_SKIN.deactivatePrayer(player, false);
@@ -77,7 +77,7 @@ public enum CombatPrayer {
         }
     }),
 
-    SUPERHUMAN_STRENGTH(3, -1, 13, 87, new GenericAction<Player>() {
+    SUPERHUMAN_STRENGTH(10, -1, 13, 87, new GenericAction<Player>() {
         @Override
         public void fireAction(Player player) {
             CombatPrayer.BURST_OF_STRENGTH.deactivatePrayer(player, false);
@@ -93,7 +93,7 @@ public enum CombatPrayer {
         }
     }),
 
-    IMPROVED_REFLEXES(3, -1, 16, 88, new GenericAction<Player>() {
+    IMPROVED_REFLEXES(10, -1, 16, 88, new GenericAction<Player>() {
         @Override
         public void fireAction(Player player) {
             CombatPrayer.CLARITY_OF_THOUGHT.deactivatePrayer(player, false);
@@ -109,7 +109,7 @@ public enum CombatPrayer {
         }
     }),
 
-    RAPID_RESTORE(1, -1, 19, 89, new GenericAction<Player>() {
+    RAPID_RESTORE(29, -1, 19, 89, new GenericAction<Player>() {
         @Override
         public void fireAction(Player player) {
             player.getPrayerActive()[CombatPrayer.RAPID_RESTORE.ordinal()] = true;
@@ -123,7 +123,7 @@ public enum CombatPrayer {
         }
     }),
 
-    RAPID_HEAL(1, -1, 22, 90, new GenericAction<Player>() {
+    RAPID_HEAL(29, -1, 22, 90, new GenericAction<Player>() {
         @Override
         public void fireAction(Player player) {
             player.getPrayerActive()[CombatPrayer.RAPID_HEAL.ordinal()] = true;
@@ -137,7 +137,7 @@ public enum CombatPrayer {
         }
     }),
 
-    PROTECT_ITEM(1, -1, 25, 91, new GenericAction<Player>() {
+    PROTECT_ITEM(29, -1, 25, 91, new GenericAction<Player>() {
         @Override
         public void fireAction(Player player) {
             player.getPrayerActive()[CombatPrayer.PROTECT_ITEM.ordinal()] = true;
@@ -151,7 +151,7 @@ public enum CombatPrayer {
         }
     }),
 
-    STEEL_SKIN(4, -1, 28, 92, new GenericAction<Player>() {
+    STEEL_SKIN(5, -1, 28, 92, new GenericAction<Player>() {
         @Override
         public void fireAction(Player player) {
             CombatPrayer.THICK_SKIN.deactivatePrayer(player, false);
@@ -167,7 +167,7 @@ public enum CombatPrayer {
         }
     }),
 
-    ULTIMATE_STRENGTH(4, -1, 31, 93, new GenericAction<Player>() {
+    ULTIMATE_STRENGTH(5, -1, 31, 93, new GenericAction<Player>() {
         @Override
         public void fireAction(Player player) {
             CombatPrayer.BURST_OF_STRENGTH.deactivatePrayer(player, false);
@@ -183,7 +183,7 @@ public enum CombatPrayer {
         }
     }),
 
-    INCREDIBLE_REFLEXES(4, -1, 34, 94, new GenericAction<Player>() {
+    INCREDIBLE_REFLEXES(5, -1, 34, 94, new GenericAction<Player>() {
         @Override
         public void fireAction(Player player) {
             CombatPrayer.IMPROVED_REFLEXES.deactivatePrayer(player, false);
@@ -268,7 +268,7 @@ public enum CombatPrayer {
         }
     }),
 
-    RETRIBUTION(6, 3, 46, 98, new GenericAction<Player>() {
+    RETRIBUTION(17, 3, 46, 98, new GenericAction<Player>() {
         @Override
         public void fireAction(Player player) {
             CombatPrayer.PROTECT_FROM_MISSILES.deactivatePrayer(player, false);
@@ -314,7 +314,7 @@ public enum CombatPrayer {
         }
     }),
 
-    SMITE(6, 4, 52, 100, new GenericAction<Player>() {
+    SMITE(7, 4, 52, 100, new GenericAction<Player>() {
         @Override
         public void fireAction(Player player) {
             CombatPrayer.PROTECT_FROM_MISSILES.deactivatePrayer(player, false);
@@ -337,10 +337,7 @@ public enum CombatPrayer {
         }
     });
 
-    /**
-     * The rate this prayer drains your prayer level at (drain by <number> every
-     * 2 ticks).
-     */
+    /** Drain the prayer by 1 every <number> ticks. */
     private int drainRate;
 
     /** The head icon of this prayer. */

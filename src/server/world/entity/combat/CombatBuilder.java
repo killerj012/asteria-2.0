@@ -247,6 +247,8 @@ public class CombatBuilder {
         attackTimer = 0;
         currentStrategy = null;
         cooldownEffect = false;
+        lastAttacker = null;
+        cooldown = 5;
     }
 
     /**
@@ -277,7 +279,6 @@ public class CombatBuilder {
 
         /** We weren't killed by any entities. */
         if (damageMap.size() == 0) {
-            System.out.println("1");
             return null;
         }
 
@@ -290,13 +291,10 @@ public class CombatBuilder {
                 if (nextEntry.getKey().isHasDied() || nextEntry.getKey().isUnregistered()) {
                     continue;
                 }
-
-                System.out.println("2");
                 return nextEntry.getKey();
             }
         }
 
-        System.out.println("3");
         /** If no killers have been found return the last attacker. */
         return lastAttacker;
     }
@@ -343,7 +341,7 @@ public class CombatBuilder {
      * @return true if this entity is being attacked by another entity.
      */
     public boolean isBeingAttacked() {
-        return combatWorker != null && combatWorker.isRunning();
+        return lastAttacker != null;
     }
 
     /**

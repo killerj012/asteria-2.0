@@ -242,6 +242,11 @@ public class MovementQueue {
      *        the desired time unit.
      */
     public void lockMovementFor(int delay, WorkRate workRate) {
+        if (this.isLockMovement()) {
+            return;
+        }
+
+        this.reset();
         this.setLockMovement(true);
 
         TaskFactory.getFactory().submit(new Worker(delay, false, workRate) {

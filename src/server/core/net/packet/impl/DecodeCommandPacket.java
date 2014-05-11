@@ -103,13 +103,20 @@ public class DecodeCommandPacket extends PacketDecoder {
                 }
 
                 @Override
-                public Item[] itemsRequired() {
+                public int levelRequired() {
+                    return 1;
+                }
+
+                @Override
+                public Item[] equipmentRequired(Player player) {
+                    // TODO Auto-generated method stub
                     return null;
                 }
 
                 @Override
-                public int levelRequired() {
-                    return 1;
+                public Item[] itemsRequired(Player player) {
+                    // TODO Auto-generated method stub
+                    return null;
                 }
             });
         } else if (cmd[0].equals("move")) {
@@ -165,6 +172,10 @@ public class DecodeCommandPacket extends PacketDecoder {
             int npc = Integer.parseInt(cmd[1]);
 
             final Npc mob = new Npc(npc, player.getPosition());
+            World.getNpcs().add(mob);
+        } else if (cmd[0].equals("dummynpc")) {
+            final Npc mob = new Npc(1, player.getPosition());
+            mob.setCurrentHealth(100000);
             World.getNpcs().add(mob);
         } else if (cmd[0].equals("music")) {
             final int id = Integer.parseInt(cmd[1]);
@@ -241,6 +252,9 @@ public class DecodeCommandPacket extends PacketDecoder {
         } else if (cmd[0].equals("empty")) {
             player.getInventory().getContainer().clear();
             player.getInventory().refresh(3214);
+        } else if (cmd[0].equals("emptybank")) {
+            player.getBank().getContainer().clear();
+            player.getBank().open();
         } else if (cmd[0].equals("bank")) {
             player.getBank().open();
         } else if (cmd[0].equals("emote")) {

@@ -3,14 +3,15 @@ package server.world.entity.combat;
 import server.core.worker.TaskFactory;
 import server.util.Misc;
 import server.world.entity.Entity;
-import server.world.entity.Gfx;
 import server.world.entity.Hit;
 import server.world.entity.UpdateFlags.Flag;
-import server.world.entity.combat.data.RangedAmmo;
 import server.world.entity.combat.prayer.CombatPrayer;
+import server.world.entity.combat.range.RangedAmmo;
 import server.world.entity.combat.strategy.DefaultMagicCombatStrategy;
 import server.world.entity.combat.strategy.DefaultMeleeCombatStrategy;
 import server.world.entity.combat.strategy.DefaultRangedCombatStrategy;
+import server.world.entity.combat.task.CombatAccuracyHitTask;
+import server.world.entity.combat.task.CombatHitTask;
 import server.world.entity.combat.task.CombatPoisonTask;
 import server.world.entity.combat.task.CombatSkullTask;
 import server.world.entity.combat.task.CombatPoisonTask.CombatPoison;
@@ -18,9 +19,6 @@ import server.world.entity.npc.Npc;
 import server.world.entity.player.Player;
 import server.world.entity.player.content.AssignWeaponInterface.FightStyle;
 import server.world.entity.player.content.AssignWeaponInterface.WeaponInterface;
-import server.world.entity.player.skill.SkillManager;
-import server.world.entity.player.skill.SkillManager.SkillConstant;
-import server.world.item.Item;
 
 /**
  * A class containing static factory fields and methods used for combat.
@@ -112,7 +110,19 @@ public class CombatFactory {
             return maxHit;
         } else if (entity.isNpc()) {
             Npc npc = (Npc) entity;
-            return npc.getDefinition().getMaxHit();
+            int maxHit = npc.getDefinition().getMaxHit();
+
+            if (npc.getStatsWeakened()[1]) {
+                maxHit -= (int) ((0.10) * (maxHit));
+            } else if (npc.getStatsBadlyWeakened()[1]) {
+                maxHit -= (int) ((0.20) * (maxHit));
+            }
+
+            if (maxHit < 1) {
+                maxHit = 1;
+            }
+
+            return maxHit;
         }
         return 0;
     }
@@ -207,6 +217,16 @@ public class CombatFactory {
         } else if (entity.isNpc()) {
             Npc npc = (Npc) entity;
             baseAttack = npc.getDefinition().getAttackBonus();
+
+            if (npc.getStatsWeakened()[0]) {
+                baseAttack -= (int) ((0.10) * (baseAttack));
+            } else if (npc.getStatsBadlyWeakened()[0]) {
+                baseAttack -= (int) ((0.20) * (baseAttack));
+            }
+
+            if (baseAttack < 1) {
+                baseAttack = 1;
+            }
         }
 
         return Math.floor(baseAttack + attackBonus) + 8;
@@ -256,6 +276,16 @@ public class CombatFactory {
                 case MAGIC:
                     baseDefence = npc.getDefinition().getDefenceMage();
                     break;
+            }
+
+            if (npc.getStatsWeakened()[2]) {
+                baseDefence -= (int) ((0.10) * (baseDefence));
+            } else if (npc.getStatsBadlyWeakened()[2]) {
+                baseDefence -= (int) ((0.20) * (baseDefence));
+            }
+
+            if (baseDefence < 0) {
+                baseDefence = 0;
             }
         }
         return Math.floor(baseDefence) + 8;
@@ -388,77 +418,28 @@ public class CombatFactory {
             ((Player) victim).getPacketBuilder().sendMessage("Chance of npc hitting you: " + (int) (chance * 100) + "%");
         }
 
+        if (type == CombatType.MAGIC) {
+            if (attacker.getCurrentlyCasting().maximumStrength() == -1) {
+                if (!accurate) {
+                    TaskFactory.getFactory().submit(new CombatAccuracyHitTask(attacker, victim, type, hitCount, 3, false));
+                } else {
+                    TaskFactory.getFactory().submit(new CombatHitTask(attacker, victim, null, type, 0, 3, false));
+                }
+                return accurate;
+            }
+        }
+
         if (!accurate) {
             switch (type) {
                 case MELEE:
+                    TaskFactory.getFactory().submit(new CombatAccuracyHitTask(attacker, victim, type, hitCount, 1, true));
+                    break;
                 case RANGE:
-                    if (hitCount == 0 || hitCount == 1) {
-                        victim.dealDamage(new Hit(0));
-                    } else if (hitCount == 2) {
-                        victim.dealDoubleDamage(new Hit(0), new Hit(0));
-                    } else if (hitCount == 3) {
-                        victim.dealTripleDamage(new Hit(0), new Hit(0), new Hit(0));
-                    } else if (hitCount == 4) {
-                        victim.dealQuadrupleDamage(new Hit(0), new Hit(0), new Hit(0), new Hit(0));
-                    }
+                    TaskFactory.getFactory().submit(new CombatAccuracyHitTask(attacker, victim, type, hitCount, 2, false));
                     break;
                 case MAGIC:
-                    victim.gfx(new Gfx(85));
+                    TaskFactory.getFactory().submit(new CombatAccuracyHitTask(attacker, victim, type, hitCount, 3, false));
                     break;
-            }
-            if (attacker.isNpc()) {
-                Npc npc = (Npc) attacker;
-                if (npc.getDefinition().isPoisonous()) {
-                    CombatFactory.poisonEntity(victim, CombatPoison.STRONG);
-                }
-            } else if (attacker.isPlayer()) {
-                Player player = (Player) attacker;
-
-                if (Misc.getRandom().nextInt(4) == 0) {
-                    if (CombatFactory.isWearingFullTorags(player) && victim.isPlayer()) {
-                        Player target = (Player) victim;
-                        target.decrementRunEnergy(Misc.getRandom().nextInt(19) + 1);
-                        target.gfx(new Gfx(399));
-                    } else if (CombatFactory.isWearingFullKarils(player) && victim.isPlayer()) {
-                        Player target = (Player) victim;
-                        target.gfx(new Gfx(401));
-                        player.getSkills()[Misc.AGILITY].decreaseLevel(Misc.getRandom().nextInt(4) + 1);
-                        SkillManager.refresh(target, SkillConstant.AGILITY);
-                    } else if (CombatFactory.isWearingFullAhrims(player) && victim.isPlayer()) {
-                        Player target = (Player) victim;
-                        target.getSkills()[Misc.STRENGTH].decreaseLevel(Misc.getRandom().nextInt(4) + 1);
-                        SkillManager.refresh(target, SkillConstant.STRENGTH);
-                        target.gfx(new Gfx(400));
-                    }
-                }
-
-                if (type == CombatType.MELEE || type == CombatType.RANGE) {
-                    Item weapon = player.getEquipment().getContainer().getItem(Misc.EQUIPMENT_SLOT_WEAPON);
-
-                    if (weapon != null) {
-                        if (weapon.getDefinition().getItemName().endsWith("(p)")) {
-                            CombatFactory.poisonEntity(victim, CombatPoison.MILD);
-                        } else if (weapon.getDefinition().getItemName().endsWith("(p+)")) {
-                            CombatFactory.poisonEntity(victim, CombatPoison.STRONG);
-                        } else if (weapon.getDefinition().getItemName().endsWith("(p++)")) {
-                            CombatFactory.poisonEntity(victim, CombatPoison.SEVERE);
-                        }
-                    }
-                }
-
-                if (type == CombatType.RANGE) {
-                    Item weapon = player.getEquipment().getContainer().getItem(Misc.EQUIPMENT_SLOT_ARROWS);
-
-                    if (weapon != null) {
-                        if (weapon.getDefinition().getItemName().endsWith("(p)")) {
-                            CombatFactory.poisonEntity(victim, CombatPoison.MILD);
-                        } else if (weapon.getDefinition().getItemName().endsWith("(p+)")) {
-                            CombatFactory.poisonEntity(victim, CombatPoison.STRONG);
-                        } else if (weapon.getDefinition().getItemName().endsWith("(p++)")) {
-                            CombatFactory.poisonEntity(victim, CombatPoison.SEVERE);
-                        }
-                    }
-                }
             }
         }
         return accurate;
@@ -471,10 +452,10 @@ public class CombatFactory {
      *        the player to determine the combat strategy for.
      */
     public static void determinePlayerStrategy(Player player) {
-        if (player.getWeapon() == WeaponInterface.SHORTBOW || player.getWeapon() == WeaponInterface.LONGBOW || player.getWeapon() == WeaponInterface.CROSSBOW || player.getWeapon() == WeaponInterface.DART || player.getWeapon() == WeaponInterface.JAVELIN || player.getWeapon() == WeaponInterface.THROWNAXE || player.getWeapon() == WeaponInterface.KNIFE) {
-            player.getCombatBuilder().setCurrentStrategy(CombatFactory.newDefaultRangedStrategy());
-        } else if (player.isAutocastMagic() || player.getSpellSelected() > 0) {
+        if (player.getCastSpell() != null) {
             player.getCombatBuilder().setCurrentStrategy(CombatFactory.newDefaultMagicStrategy());
+        } else if (player.getWeapon() == WeaponInterface.SHORTBOW || player.getWeapon() == WeaponInterface.LONGBOW || player.getWeapon() == WeaponInterface.CROSSBOW || player.getWeapon() == WeaponInterface.DART || player.getWeapon() == WeaponInterface.JAVELIN || player.getWeapon() == WeaponInterface.THROWNAXE || player.getWeapon() == WeaponInterface.KNIFE) {
+            player.getCombatBuilder().setCurrentStrategy(CombatFactory.newDefaultRangedStrategy());
         } else {
             player.getCombatBuilder().setCurrentStrategy(CombatFactory.newDefaultMeleeStrategy());
         }
@@ -527,7 +508,7 @@ public class CombatFactory {
      *        the player to determine for.
      * @return true if the player is wearing full karils.
      */
-    private static boolean isWearingFullKarils(Player player) {
+    public static boolean isWearingFullKarils(Player player) {
         if (player.getEquipment().getContainer().getItem(Misc.EQUIPMENT_SLOT_HEAD) == null || player.getEquipment().getContainer().getItem(Misc.EQUIPMENT_SLOT_CHEST) == null || player.getEquipment().getContainer().getItem(Misc.EQUIPMENT_SLOT_LEGS) == null || player.getEquipment().getContainer().getItem(Misc.EQUIPMENT_SLOT_WEAPON) == null) {
             return false;
         }
@@ -542,7 +523,7 @@ public class CombatFactory {
      *        the player to determine for.
      * @return true if the player is wearing full ahrims.
      */
-    private static boolean isWearingFullAhrims(Player player) {
+    public static boolean isWearingFullAhrims(Player player) {
         if (player.getEquipment().getContainer().getItem(Misc.EQUIPMENT_SLOT_HEAD) == null || player.getEquipment().getContainer().getItem(Misc.EQUIPMENT_SLOT_CHEST) == null || player.getEquipment().getContainer().getItem(Misc.EQUIPMENT_SLOT_LEGS) == null || player.getEquipment().getContainer().getItem(Misc.EQUIPMENT_SLOT_WEAPON) == null) {
             return false;
         }
@@ -557,7 +538,7 @@ public class CombatFactory {
      *        the player to determine for.
      * @return true if the player is wearing full torags.
      */
-    private static boolean isWearingFullTorags(Player player) {
+    public static boolean isWearingFullTorags(Player player) {
         if (player.getEquipment().getContainer().getItem(Misc.EQUIPMENT_SLOT_HEAD) == null || player.getEquipment().getContainer().getItem(Misc.EQUIPMENT_SLOT_CHEST) == null || player.getEquipment().getContainer().getItem(Misc.EQUIPMENT_SLOT_LEGS) == null || player.getEquipment().getContainer().getItem(Misc.EQUIPMENT_SLOT_WEAPON) == null) {
             return false;
         }

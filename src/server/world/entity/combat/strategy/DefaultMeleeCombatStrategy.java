@@ -14,15 +14,25 @@ import server.world.entity.player.content.AssignWeaponInterface.FightType;
 import server.world.entity.player.content.AssignWeaponInterface.WeaponInterface;
 import server.world.item.Item;
 
+/**
+ * The default combat strategy assigned to an entity during a melee based combat
+ * session.
+ * 
+ * @author lare96
+ */
 public class DefaultMeleeCombatStrategy implements CombatStrategy {
 
     @Override
     public boolean prepareAttack(Entity entity) {
+
+        /** We don't need to check anything before attacking with melee. */
         return true;
     }
 
     @Override
     public CombatHit attack(Entity entity, Entity victim) {
+
+        /** Determine the animation that will be used. */
         if (entity.isNpc()) {
             Npc npc = (Npc) entity;
             npc.animation(new Animation(npc.getDefinition().getAttackAnimation()));
@@ -55,6 +65,7 @@ public class DefaultMeleeCombatStrategy implements CombatStrategy {
             }
         }
 
+        /** Determine the damage that will be dealt this turn (if any). */
         if (CombatFactory.hitAccuracy(entity, victim, CombatType.MELEE, 1)) {
             return new CombatHit(new Hit[] { CombatFactory.getMeleeHit(entity) }, CombatType.MELEE);
         }
@@ -63,15 +74,23 @@ public class DefaultMeleeCombatStrategy implements CombatStrategy {
 
     @Override
     public int attackTimer(Entity entity) {
+
+        /** The attack speed implementation is used here. */
         return entity.getAttackSpeed();
     }
 
     @Override
     public int getDistance(Entity entity) {
+
+        /** The default distance for all npcs is 1. */
         if (entity.isNpc()) {
             return 1;
         }
 
+        /**
+         * The default distance for all players is 1, or 2 if they are using a
+         * halberd.
+         */
         int distance = 1;
         Player player = (Player) entity;
 

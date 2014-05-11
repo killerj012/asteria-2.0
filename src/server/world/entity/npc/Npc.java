@@ -37,6 +37,10 @@ public class Npc extends Entity {
     /** If this npc respawns or not. */
     private boolean respawn;
 
+    /** Determines if npcs have been weakened. */
+    private boolean[] statsWeakened = new boolean[3],
+            statsBadlyWeakened = new boolean[3];
+
     /** The movement coordinator for this npc. */
     private NpcMovementCoordinator movementCoordinator = new NpcMovementCoordinator(this);
 
@@ -111,6 +115,12 @@ public class Npc extends Entity {
                         getCombatBuilder().resetDamage();
                         getPosition().setAs(getOriginalPosition());
                         setCurrentHealth(getMaxHealth());
+                        statsWeakened[0] = false;
+                        statsWeakened[1] = false;
+                        statsWeakened[2] = false;
+                        statsBadlyWeakened[0] = false;
+                        statsBadlyWeakened[1] = false;
+                        statsBadlyWeakened[2] = false;
                         World.getNpcs().add(thisNpc);
                         this.cancel();
                     } else {
@@ -359,5 +369,19 @@ public class Npc extends Entity {
      */
     public NpcMovementCoordinator getMovementCoordinator() {
         return movementCoordinator;
+    }
+
+    /**
+     * @return the statsWeakened
+     */
+    public boolean[] getStatsWeakened() {
+        return statsWeakened;
+    }
+
+    /**
+     * @return the statsBadlyWeakened
+     */
+    public boolean[] getStatsBadlyWeakened() {
+        return statsBadlyWeakened;
     }
 }

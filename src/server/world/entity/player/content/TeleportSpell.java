@@ -2,6 +2,8 @@ package server.world.entity.player.content;
 
 import server.world.entity.Entity;
 import server.world.entity.Spell;
+import server.world.entity.player.Player;
+import server.world.item.Item;
 import server.world.map.Position;
 
 /**
@@ -37,7 +39,17 @@ public abstract class TeleportSpell extends Spell {
     }
 
     @Override
-    protected void castSpell(Entity cast, Entity castOn) {
-        // cast.teleport(this);
+    public Item[] equipmentRequired(Player player) {
+        return null;
+    }
+
+    @Override
+    public boolean prepareCast(Entity cast, Entity castOn) {
+        return true;
+    }
+
+    @Override
+    public void castSpell(Entity cast, Entity castOn) {
+
     }
 }

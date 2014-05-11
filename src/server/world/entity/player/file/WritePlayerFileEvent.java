@@ -76,6 +76,7 @@ public class WritePlayerFileEvent extends PlayerFileEvent {
                 object.addProperty("accept-aid", new Boolean(getPlayer().isAcceptAid()));
                 object.addProperty("poison-hits", new Integer(getPlayer().getPoisonHits()));
                 object.addProperty("poison-strength", getPlayer().getPoisonStrength().name());
+                object.addProperty("teleblock-timer", new Integer(getPlayer().getTeleblockTimer()));
 
                 FileWriter fileWriter = new FileWriter(file());
                 fileWriter.write(builder.toJson(object));

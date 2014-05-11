@@ -1,27 +1,26 @@
 package server.world.entity.combat.task;
 
 import server.core.worker.Worker;
-import server.world.entity.UpdateFlags.Flag;
 import server.world.entity.player.Player;
 
 /**
- * A {@link Worker} implementation that will unskull the player after the
+ * A {@link Worker} implementation that will unteleblock the player after the
  * counter reaches 0.
  * 
  * @author lare96
  */
-public class CombatSkullTask extends Worker {
+public class CombatTeleblockTask extends Worker {
 
     /** The player attached to this worker. */
     private Player player;
 
     /**
-     * Create a new {@link CombatSkullTask}.
+     * Create a new {@link CombatTeleblockTask}.
      * 
      * @param player
      *        the player attached to this worker.
      */
-    public CombatSkullTask(Player player) {
+    public CombatTeleblockTask(Player player) {
         super(1, false);
         super.attach(player);
         this.player = player;
@@ -30,16 +29,14 @@ public class CombatSkullTask extends Worker {
     @Override
     public void fire() {
 
-        /** When the timer reaches 0 unskull the player. */
-        if (player.getSkullTimer() == 0) {
-            player.getPacketBuilder().sendMessage("You have been successfully unskulled.");
-            player.setSkullIcon(-1);
-            player.getFlags().flag(Flag.APPEARANCE);
+        /** When the timer reaches 0 unteleblock the player. */
+        if (player.getTeleblockTimer() == 0) {
+            player.getPacketBuilder().sendMessage("You feel the effects of the strange spell go away.");
             this.cancel();
             return;
         }
 
         /** Otherwise decrement the timer. */
-        player.decrementSkullTimer();
+        player.decrementTeleblockTimer();
     }
 }

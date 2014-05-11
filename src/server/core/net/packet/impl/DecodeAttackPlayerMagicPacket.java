@@ -2,27 +2,33 @@ package server.core.net.packet.impl;
 
 import server.core.net.buffer.PacketBuffer.ByteOrder;
 import server.core.net.buffer.PacketBuffer.ReadBuffer;
+import server.core.net.buffer.PacketBuffer.ValueType;
 import server.core.net.packet.PacketDecoder;
 import server.core.net.packet.PacketOpcodeHeader;
 import server.world.World;
+import server.world.entity.Spell;
 import server.world.entity.combat.CombatFactory;
+import server.world.entity.combat.magic.CombatMagicSpells;
+import server.world.entity.combat.magic.CombatSpell;
 import server.world.entity.player.Player;
 import server.world.entity.player.minigame.Minigame;
 import server.world.entity.player.minigame.MinigameFactory;
 import server.world.map.Location;
 
 /**
- * Sent when a player attacks another player.
+ * Sent when a player attacks another player using magic.
  * 
  * @author lare96
  */
-@PacketOpcodeHeader( { 73 })
-public class DecodeAttackPlayerPacket extends PacketDecoder {
+@PacketOpcodeHeader( { 249 })
+public class DecodeAttackPlayerMagicPacket extends PacketDecoder {
 
     @Override
     public void decode(Player player, ReadBuffer in) {
-        int index = in.readShort(true, ByteOrder.LITTLE);
+        int index = in.readShort(true, ValueType.A);
+        int spellId = in.readShort(true, ByteOrder.LITTLE);
         Player attacked = World.getPlayers().get(index);
+        Spell spell = CombatMagicSpells.getSpell(spellId).getSpell();
 
         if (attacked == null) {
             return;
@@ -64,6 +70,7 @@ public class DecodeAttackPlayerPacket extends PacketDecoder {
         }
 
         /** Start combat! */
+        player.setCastSpell((CombatSpell) spell);
         player.getCombatBuilder().attack(attacked);
     }
 }

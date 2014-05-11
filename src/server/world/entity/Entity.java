@@ -6,6 +6,7 @@ import server.util.Misc;
 import server.util.Misc.Stopwatch;
 import server.world.entity.UpdateFlags.Flag;
 import server.world.entity.combat.CombatBuilder;
+import server.world.entity.combat.magic.CombatSpell;
 import server.world.entity.combat.task.CombatPoisonTask.CombatPoison;
 import server.world.entity.npc.Npc;
 import server.world.entity.player.Player;
@@ -109,6 +110,9 @@ public abstract class Entity {
 
     /** The entity you are following. */
     private Entity followingEntity;
+
+    /** The combat spell currently being casted. */
+    private CombatSpell currentlyCasting;
 
     /** The follow worker. */
     private Worker followWorker = new Worker(-1, false) {
@@ -235,6 +239,7 @@ public abstract class Entity {
 
             player.getSkills()[Misc.HITPOINTS].decreaseLevel(writeDamage);
             SkillManager.refresh(player, SkillConstant.HITPOINTS);
+            player.getPacketBuilder().closeWindows();
         } else if (isNpc()) {
             Npc npc = (Npc) this;
 
@@ -267,6 +272,7 @@ public abstract class Entity {
 
             player.getSkills()[Misc.HITPOINTS].decreaseLevel(player.getSecondaryHit().getDamage());
             SkillManager.refresh(player, SkillConstant.HITPOINTS);
+            player.getPacketBuilder().closeWindows();
         } else if (isNpc()) {
             Npc npc = (Npc) this;
 
@@ -787,5 +793,20 @@ public abstract class Entity {
 
     public void decrementPoisonHits() {
         this.poisonHits--;
+    }
+
+    /**
+     * @return the currentlyCasting
+     */
+    public CombatSpell getCurrentlyCasting() {
+        return currentlyCasting;
+    }
+
+    /**
+     * @param currentlyCasting
+     *        the currentlyCasting to set
+     */
+    public void setCurrentlyCasting(CombatSpell currentlyCasting) {
+        this.currentlyCasting = currentlyCasting;
     }
 }

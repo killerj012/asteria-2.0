@@ -202,7 +202,7 @@ public class ItemContainer {
     }
 
     /**
-     * Checks if this container has a set of certain item.
+     * Checks if this container has a set of certain items.
      * 
      * @param item
      *        the item to check in this container for.

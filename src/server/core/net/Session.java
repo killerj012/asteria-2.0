@@ -20,6 +20,7 @@ import server.world.World;
 import server.world.entity.UpdateFlags.Flag;
 import server.world.entity.combat.task.CombatPoisonTask;
 import server.world.entity.combat.task.CombatSkullTask;
+import server.world.entity.combat.task.CombatTeleblockTask;
 import server.world.entity.player.Player;
 import server.world.entity.player.content.AssignWeaponAnimation;
 import server.world.entity.player.content.AssignWeaponInterface;
@@ -500,6 +501,11 @@ public final class Session {
                     player.setSkullIcon(0);
                     player.getFlags().flag(Flag.APPEARANCE);
                     TaskFactory.getFactory().submit(new CombatSkullTask(player));
+                }
+
+                /** Check if the player is teleblocked. */
+                if (player.getTeleblockTimer() > 0) {
+                    TaskFactory.getFactory().submit(new CombatTeleblockTask(player));
                 }
 
                 /** Load the configs. */

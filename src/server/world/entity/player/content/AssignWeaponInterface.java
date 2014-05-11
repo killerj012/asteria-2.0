@@ -65,7 +65,7 @@ public class AssignWeaponInterface {
                 weaponInterface[def.getItemId()] = WeaponInterface.TWO_HANDED_SWORD;
             } else if (def.getItemName().endsWith("mace")) {
                 weaponInterface[def.getItemId()] = WeaponInterface.MACE;
-            } else if (def.getItemName().endsWith("knife") || def.getItemName().endsWith("knife(p)") || def.getItemName().endsWith("knife(p+)") || def.getItemName().endsWith("knife(p++)")) {
+            } else if (def.getItemName().endsWith("knife") || def.getItemName().endsWith("knife(p)") || def.getItemName().endsWith("knife(p+)") || def.getItemName().endsWith("knife(p++)") || def.getItemName().equals("Toktz-xil-ul")) {
                 weaponInterface[def.getItemId()] = WeaponInterface.KNIFE;
             } else if (def.getItemName().endsWith("spear")) {
                 weaponInterface[def.getItemId()] = WeaponInterface.SPEAR;

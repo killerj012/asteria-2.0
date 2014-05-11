@@ -18,8 +18,10 @@ import server.world.entity.Animation;
 import server.world.entity.Entity;
 import server.world.entity.Gfx;
 import server.world.entity.UpdateFlags.Flag;
+import server.world.entity.combat.magic.CombatSpell;
 import server.world.entity.combat.prayer.CombatPrayer;
 import server.world.entity.combat.prayer.CombatPrayerWorker;
+import server.world.entity.combat.task.CombatPoisonTask.CombatPoison;
 import server.world.entity.npc.Npc;
 import server.world.entity.npc.NpcDialogue;
 import server.world.entity.player.container.BankContainer;
@@ -70,6 +72,12 @@ public class Player extends Entity {
     /** The network for this player. */
     private final Session session;
 
+    /** The spell currently selected. */
+    private CombatSpell castSpell;
+
+    /** If the player is autocasting. */
+    private boolean autocast;
+
     /** If the player data needs to be read or not. */
     private boolean needsRead = true;
 
@@ -78,9 +86,6 @@ public class Player extends Entity {
 
     /** The current fight type selected. */
     private FightType fightType = FightType.UNARMED_PUNCH;
-
-    /** If this player has magic selected or is autocasting. */
-    private boolean autocastMagic, usingMagic;
 
     /** The weapon animation for this player. */
     private WeaponAnimationIndex equipmentAnimation = new WeaponAnimationIndex();
@@ -140,7 +145,10 @@ public class Player extends Entity {
     private int headIcon = -1;
 
     /** The players skull stuff. */
-    private int skullIcon = -1, skullTimer = 0;
+    private int skullIcon = -1, skullTimer;
+
+    /** Teleblock stuff. */
+    private int teleblockTimer;
 
     /** The player's run energy. */
     private int runEnergy = 100;
@@ -281,6 +289,8 @@ public class Player extends Entity {
             public void fire() {
                 if (getDeathTicks() == 0) {
                     getMovementQueue().reset();
+                    setPoisonHits(0);
+                    setPoisonStrength(CombatPoison.MILD);
                 } else if (getDeathTicks() == 1) {
                     animation(DEATH);
                     SkillEvent.fireSkillEvents(player);
@@ -322,6 +332,7 @@ public class Player extends Entity {
                 } else if (getDeathTicks() == 6) {
                     skullTimer = 0;
                     skullIcon = -1;
+                    teleblockTimer = 0;
                     AssignWeaponInterface.reset(player);
                     AssignWeaponInterface.changeFightType(player);
                     getPacketBuilder().resetAnimation();
@@ -356,11 +367,21 @@ public class Player extends Entity {
             return;
         }
 
-        for (Minigame minigame : MinigameFactory.getMinigames().values()) {
-            if (minigame.inMinigame(player)) {
-                if (!minigame.canTeleport(player)) {
-                    return;
-                }
+        if (wildernessLevel >= 20) {
+            player.getPacketBuilder().sendMessage("You must be below level 20 wilderness to teleport!");
+            return;
+        }
+
+        if (teleblockTimer > 0) {
+            if ((teleblockTimer * 600) == 600) {
+                getPacketBuilder().sendMessage("You'll be able to teleport in a second! Just wait!");
+                return;
+            } else if ((teleblockTimer * 600) >= 1000 && (teleblockTimer * 600) <= 60000) {
+                getPacketBuilder().sendMessage("You must wait approximately " + ((teleblockTimer * 600) / 1000) + " seconds in order to teleport!");
+                return;
+            } else if ((teleblockTimer * 600) > 60000) {
+                getPacketBuilder().sendMessage("You must wait approximately " + ((teleblockTimer * 600) / 60000) + " minutes in order to teleport!");
+                return;
             }
         }
 
@@ -369,13 +390,16 @@ public class Player extends Entity {
             return;
         }
 
-        if (wildernessLevel >= 20) {
-            player.getPacketBuilder().sendMessage("You must be below level 20 wilderness to teleport!");
-            return;
+        for (Minigame minigame : MinigameFactory.getMinigames().values()) {
+            if (minigame.inMinigame(player)) {
+                if (!minigame.canTeleport(player)) {
+                    return;
+                }
+            }
         }
 
-        if (spell.itemsRequired() != null) {
-            for (Item item : spell.itemsRequired()) {
+        if (spell.itemsRequired(this) != null) {
+            for (Item item : spell.itemsRequired(this)) {
                 if (item == null) {
                     continue;
                 }
@@ -468,7 +492,7 @@ public class Player extends Entity {
             }
 
             @Override
-            public Item[] itemsRequired() {
+            public Item[] itemsRequired(Player player) {
                 return null;
             }
 
@@ -1445,36 +1469,6 @@ public class Player extends Entity {
     }
 
     /**
-     * @return the autocastMagic
-     */
-    public boolean isAutocastMagic() {
-        return autocastMagic;
-    }
-
-    /**
-     * @param autocastMagic
-     *        the autocastMagic to set
-     */
-    public void setAutocastMagic(boolean autocastMagic) {
-        this.autocastMagic = autocastMagic;
-    }
-
-    /**
-     * @return the usingMagic
-     */
-    public boolean isUsingMagic() {
-        return usingMagic;
-    }
-
-    /**
-     * @param usingMagic
-     *        the usingMagic to set
-     */
-    public void setUsingMagic(boolean usingMagic) {
-        this.usingMagic = usingMagic;
-    }
-
-    /**
      * @return the fightType
      */
     public FightType getFightType() {
@@ -1588,6 +1582,55 @@ public class Player extends Entity {
      */
     public void setAcceptAid(boolean acceptAid) {
         this.acceptAid = acceptAid;
+    }
+
+    /**
+     * @return the castSpell
+     */
+    public CombatSpell getCastSpell() {
+        return castSpell;
+    }
+
+    /**
+     * @param castSpell
+     *        the castSpell to set
+     */
+    public void setCastSpell(CombatSpell castSpell) {
+        this.castSpell = castSpell;
+    }
+
+    /**
+     * @return the autocast
+     */
+    public boolean isAutocast() {
+        return autocast;
+    }
+
+    /**
+     * @param autocast
+     *        the autocast to set
+     */
+    public void setAutocast(boolean autocast) {
+        this.autocast = autocast;
+    }
+
+    /**
+     * @return the teleblockTimer
+     */
+    public int getTeleblockTimer() {
+        return teleblockTimer;
+    }
+
+    /**
+     * @param teleblockTimer
+     *        the teleblockTimer to set
+     */
+    public void setTeleblockTimer(int teleblockTimer) {
+        this.teleblockTimer = teleblockTimer;
+    }
+
+    public void decrementTeleblockTimer() {
+        teleblockTimer--;
     }
 
 }

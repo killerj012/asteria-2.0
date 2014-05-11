@@ -6,6 +6,9 @@ import server.core.net.buffer.PacketBuffer.ValueType;
 import server.core.net.packet.PacketDecoder;
 import server.core.net.packet.PacketOpcodeHeader;
 import server.world.World;
+import server.world.entity.Spell;
+import server.world.entity.combat.magic.CombatSpell;
+import server.world.entity.combat.magic.CombatMagicSpells;
 import server.world.entity.npc.Npc;
 import server.world.entity.npc.NpcDefinition;
 import server.world.entity.player.Player;
@@ -54,7 +57,7 @@ public class DecodeNpcActionPacket extends PacketDecoder {
                 }
 
                 /** Multicombat location check. */
-                if (!Location.inMultiCombat(player) && player.getCombatBuilder().isBeingAttacked() && player.getCombatBuilder().getCurrentTarget() != attackMelee) {
+                if (!Location.inMultiCombat(player) && player.getCombatBuilder().isBeingAttacked() && player.getCombatBuilder().getLastAttacker() != attackMelee) {
                     player.getPacketBuilder().sendMessage("You are already under attack!");
                     return;
                 }
@@ -63,7 +66,9 @@ public class DecodeNpcActionPacket extends PacketDecoder {
                 break;
             case MAGE_NPC:
                 index = in.readShort(true, ValueType.A, ByteOrder.LITTLE);
+                int spellId = in.readShort(true, ValueType.A);
                 final Npc attackMagic = World.getNpcs().get(index);
+                Spell spell = CombatMagicSpells.getSpell(spellId).getSpell();
 
                 if (attackMagic == null) {
                     return;
@@ -82,6 +87,13 @@ public class DecodeNpcActionPacket extends PacketDecoder {
                     return;
                 }
 
+                /** Multicombat location check. */
+                if (!Location.inMultiCombat(player) && player.getCombatBuilder().isBeingAttacked() && player.getCombatBuilder().getLastAttacker() != attackMagic) {
+                    player.getPacketBuilder().sendMessage("You are already under attack!");
+                    return;
+                }
+
+                player.setCastSpell((CombatSpell) spell);
                 player.getCombatBuilder().attack(attackMagic);
                 break;
             case FIRST_CLICK:

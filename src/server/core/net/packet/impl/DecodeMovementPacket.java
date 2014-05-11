@@ -42,6 +42,7 @@ public class DecodeMovementPacket extends PacketDecoder {
         }
 
         if (player.getMovementQueue().isLockMovement()) {
+            player.getPacketBuilder().sendMessage("You are unable to move.");
             return;
         }
 

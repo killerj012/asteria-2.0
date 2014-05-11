@@ -87,6 +87,21 @@ public class Skill {
     }
 
     /**
+     * Increments this level by the speicified amount to the maximum amount.
+     * 
+     * @param amount
+     *        the amount to increase this level by.
+     */
+    public void increaseLevel(int amount, int maximum) {
+        if ((level + amount) > maximum) {
+            level = maximum;
+            return;
+        }
+
+        level += amount;
+    }
+
+    /**
      * Decrements this level by the speicified amount.
      * 
      * @param amount

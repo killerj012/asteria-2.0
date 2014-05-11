@@ -13,9 +13,6 @@ import server.world.item.ItemContainer.ContainerPolicy;
  */
 public class BankContainer {
 
-    // TODO: when the player's bank is full, when you click on the item it goes
-    // in but inventory doesn't update
-
     /** The player's bank being managed. */
     private Player player;
 
@@ -89,6 +86,10 @@ public class BankContainer {
         } else if (freeBankingSlots == -1 && container.contains(item.getId())) {
             player.getInventory().deleteItemSlot(item, slot);
             container.getItem(container.getSlotById(item.getId())).incrementAmountBy(item.getAmount());
+            checkForZero();
+            player.getInventory().refresh(5064);
+            Item[] bankItems = container.toArray();
+            player.getPacketBuilder().sendUpdateItems(5382, bankItems);
             return;
         }
 
@@ -136,6 +137,10 @@ public class BankContainer {
              */
         } else if (freeBankingSlots == -1 && container.contains(item.getId())) {
             container.getItem(container.getSlotById(item.getId())).incrementAmountBy(item.getAmount());
+            checkForZero();
+            player.getInventory().refresh(5064);
+            Item[] bankItems = container.toArray();
+            player.getPacketBuilder().sendUpdateItems(5382, bankItems);
             return;
         }
 
@@ -180,17 +185,13 @@ public class BankContainer {
             item.setAmount(withdrawAmount);
         }
 
-        /**
-         * If we are withdrawing more than the free slots we have.
-         */
-        if (!item.getDefinition().isStackable()) {
-            if (item.getAmount() > player.getInventory().getContainer().freeSlots() && !item.getDefinition().isStackable()) {
-                item.setAmount(player.getInventory().getContainer().freeSlots());
-            }
+        /** If we are withdrawing more than the free slots we have. */
+        if (item.getAmount() > player.getInventory().getContainer().freeSlots() && !item.getDefinition().isStackable() && !player.isWithdrawAsNote()) {
+            item.setAmount(player.getInventory().getContainer().freeSlots());
         }
 
         /** Check the inventory space. */
-        if (!item.getDefinition().isStackable()) {
+        if (!item.getDefinition().isStackable() && !item.getDefinition().isNoted() && !player.isWithdrawAsNote()) {
             if (player.getInventory().getContainer().freeSlots() < item.getAmount()) {
                 player.getPacketBuilder().sendMessage("You do not have enough space in your inventory!");
                 return;

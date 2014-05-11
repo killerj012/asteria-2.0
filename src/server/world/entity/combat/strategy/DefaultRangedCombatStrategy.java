@@ -3,6 +3,7 @@ package server.world.entity.combat.strategy;
 import server.util.Misc;
 import server.world.entity.Animation;
 import server.world.entity.Entity;
+import server.world.entity.Gfx;
 import server.world.entity.Hit;
 import server.world.entity.Projectile;
 import server.world.entity.UpdateFlags.Flag;
@@ -10,18 +11,27 @@ import server.world.entity.combat.CombatFactory;
 import server.world.entity.combat.CombatHit;
 import server.world.entity.combat.CombatStrategy;
 import server.world.entity.combat.CombatType;
-import server.world.entity.combat.data.RangedAmmo;
-import server.world.entity.npc.Npc;
+import server.world.entity.combat.range.RangedAmmo;
 import server.world.entity.player.Player;
 import server.world.entity.player.content.AssignWeaponInterface;
 import server.world.entity.player.content.AssignWeaponInterface.FightStyle;
 import server.world.entity.player.content.AssignWeaponInterface.WeaponInterface;
 import server.world.item.Item;
 
+/**
+ * The default combat strategy assigned to an entity during a ranged based
+ * combat session. NPCs with ranged attacks should not be assigned this combat
+ * strategy but instead have an individualized combat strategy dedicated to
+ * them.
+ * 
+ * @author lare96
+ */
 public class DefaultRangedCombatStrategy implements CombatStrategy {
 
     @Override
     public boolean prepareAttack(Entity entity) {
+
+        /** If the entity is a player we need to check for ammo. */
         if (entity.isPlayer()) {
             Player player = (Player) entity;
             Item arrowItem = player.getEquipment().getContainer().getItem(Misc.EQUIPMENT_SLOT_ARROWS);
@@ -64,9 +74,15 @@ public class DefaultRangedCombatStrategy implements CombatStrategy {
 
     @Override
     public CombatHit attack(Entity entity, Entity victim) {
+
+        /**
+         * If the entity is a player we need to decrement and fire projectiles
+         * and gfx's based on the current ammo they have equipped.
+         */
         if (entity.isPlayer()) {
             Player player = (Player) entity;
             player.animation(new Animation(player.getFightType().getAnimation()));
+            RangedAmmo ammo = RangedAmmo.getAmmo(player);
 
             if (player.getEquipment().getContainer().getItem(Misc.EQUIPMENT_SLOT_WEAPON).getDefinition().getItemName().startsWith("Karils")) {
                 player.animation(new Animation(2075));
@@ -93,20 +109,11 @@ public class DefaultRangedCombatStrategy implements CombatStrategy {
                 }
             }
 
-            RangedAmmo ammo = RangedAmmo.getAmmo(player);
             player.getEquipment().refresh();
-            new Projectile(player, victim, ammo.getProjectileId(), ammo.getDelay(), ammo.getSpeed(), ammo.getStartHeight(), ammo.getEndHeight(), ammo.getCurve()).sendProjectile();
+            player.gfx(new Gfx(ammo.getGraphicId(), 6553600));
+            new Projectile(player, victim, ammo.getProjectileId(), ammo.getDelay(), ammo.getSpeed(), ammo.getStartHeight(), ammo.getEndHeight(), 0).sendProjectile();
             if (CombatFactory.hitAccuracy(entity, victim, CombatType.RANGE, 1)) {
                 return new CombatHit(new Hit[] { CombatFactory.getRangeHit(entity, ammo) }, CombatType.RANGE);
-            }
-        } else if (entity.isNpc()) {
-            Npc npc = (Npc) entity;
-            RangedAmmo npcAmmo = RangedAmmo.MITHRIL_ARROW;
-
-            npc.animation(new Animation(npc.getDefinition().getAttackAnimation()));
-
-            if (CombatFactory.hitAccuracy(entity, victim, CombatType.RANGE, 1)) {
-                return new CombatHit(new Hit[] { CombatFactory.getRangeHit(entity, npcAmmo) }, CombatType.RANGE);
             }
         }
         return null;
@@ -114,48 +121,54 @@ public class DefaultRangedCombatStrategy implements CombatStrategy {
 
     @Override
     public int attackTimer(Entity entity) {
+
+        /** Get the attack speed implementation. */
         return entity.getAttackSpeed();
     }
 
     @SuppressWarnings("incomplete-switch")
     @Override
     public int getDistance(Entity entity) {
-        if (entity.isNpc()) {
-            return 6;
+
+        /**
+         * If the entity is player then get the appropriate distance based on
+         * the weapon being used.
+         */
+        if (entity.isPlayer()) {
+            Player player = (Player) entity;
+            int distance = 0;
+
+            switch (player.getWeapon()) {
+                case DART:
+                    distance = 4;
+                    break;
+                case THROWNAXE:
+                    distance = 4;
+                    break;
+                case KNIFE:
+                    distance = 5;
+                    break;
+                case JAVELIN:
+                    distance = 5;
+                    break;
+                case CROSSBOW:
+                    distance = 8;
+                    break;
+                case SHORTBOW:
+                    distance = 7;
+                    break;
+                case LONGBOW:
+                    distance = 8;
+                    break;
+            }
+
+            /** Increase the distance when using longranged. */
+            if (player.getFightType().getStyle() == FightStyle.DEFENSIVE) {
+                distance += 2;
+            }
+
+            return distance;
         }
-
-        Player player = (Player) entity;
-        int distance = 0;
-
-        switch (player.getWeapon()) {
-            case DART:
-                distance = 4;
-                break;
-            case THROWNAXE:
-                distance = 4;
-                break;
-            case KNIFE:
-                distance = 5;
-                break;
-            case JAVELIN:
-                distance = 5;
-                break;
-            case CROSSBOW:
-                distance = 8;
-                break;
-            case SHORTBOW:
-                distance = 7;
-                break;
-            case LONGBOW:
-                distance = 8;
-                break;
-        }
-
-        if (player.getFightType().getStyle() == FightStyle.DEFENSIVE) {
-            distance += 2;
-        }
-
-        return distance;
+        return 6;
     }
-
 }
