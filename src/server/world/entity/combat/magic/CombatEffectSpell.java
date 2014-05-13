@@ -2,6 +2,8 @@ package server.world.entity.combat.magic;
 
 import server.world.entity.Entity;
 import server.world.entity.Spell;
+import server.world.entity.player.Player;
+import server.world.item.Item;
 
 /**
  * A {@link Spell} implemenation primarily used for spells that have effects
@@ -14,8 +16,15 @@ public abstract class CombatEffectSpell extends CombatSpell {
     @Override
     public int maximumStrength() {
 
-        /** Disabling spells don't show a hitsplat. */
+        /** Effect spells don't show a hitsplat. */
         return -1;
+    }
+
+    @Override
+    public Item[] equipmentRequired(Player player) {
+
+        /** Effect spells never require equipment. */
+        return null;
     }
 
     @Override

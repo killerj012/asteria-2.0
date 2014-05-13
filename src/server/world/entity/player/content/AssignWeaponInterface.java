@@ -1,7 +1,7 @@
 package server.world.entity.player.content;
 
 import server.util.Misc;
-import server.world.entity.combat.CombatType;
+import server.world.entity.combat.special.CombatSpecial;
 import server.world.entity.player.Player;
 import server.world.item.Item;
 import server.world.item.ItemDefinition;
@@ -98,29 +98,29 @@ public class AssignWeaponInterface {
      * @author lare96
      */
     public enum WeaponInterface {
-        STAFF(328, 331, CombatType.MELEE, 6, new FightType[] { FightType.STAFF_BASH, FightType.STAFF_FOCUS, FightType.STAFF_POUND }),
-        WARHAMMER(425, 428, CombatType.MELEE, 6, new FightType[] { FightType.WARHAMMER_BLOCK, FightType.WARHAMMER_POUND, FightType.WARHAMMER_PUMMEL }),
-        SCYTHE(776, 779, CombatType.MELEE, 6, new FightType[] { FightType.SCYTHE_BLOCK, FightType.SCYTHE_CHOP, FightType.SCYTHE_JAB, FightType.SCYTHE_REAP }),
-        BATTLEAXE(1698, 1701, CombatType.MELEE, 6, new FightType[] { FightType.BATTLEAXE_BLOCK, FightType.BATTLEAXE_CHOP, FightType.BATTLEAXE_HACK, FightType.BATTLEAXE_SMASH }),
-        CROSSBOW(1749, 1752, CombatType.RANGE, 5, new FightType[] { FightType.CROSSBOW_RAPID, FightType.CROSSBOW_ACCURATE, FightType.CROSSBOW_LONGRANGE }),
-        SHORTBOW(1764, 1767, CombatType.RANGE, 5, new FightType[] { FightType.SHORTBOW_RAPID, FightType.SHORTBOW_ACCURATE, FightType.SHORTBOW_LONGRANGE }),
-        LONGBOW(1764, 1767, CombatType.RANGE, 6, new FightType[] { FightType.LONGBOW_RAPID, FightType.LONGBOW_ACCURATE, FightType.LONGBOW_LONGRANGE }),
-        DAGGER(2276, 2279, CombatType.MELEE, 4, new FightType[] { FightType.DAGGER_BLOCK, FightType.DAGGER_LUNGE, FightType.DAGGER_SLASH, FightType.DAGGER_STAB }),
-        SWORD(2276, 2279, CombatType.MELEE, 5, new FightType[] { FightType.SWORD_BLOCK, FightType.SWORD_LUNGE, FightType.SWORD_SLASH, FightType.SWORD_STAB }),
-        SCIMITAR(2423, 2426, CombatType.MELEE, 4, new FightType[] { FightType.SCIMITAR_BLOCK, FightType.SCIMITAR_CHOP, FightType.SCIMITAR_LUNGE, FightType.SCIMITAR_SLASH }),
-        LONGSWORD(2423, 2426, CombatType.MELEE, 5, new FightType[] { FightType.LONGSWORD_BLOCK, FightType.LONGSWORD_CHOP, FightType.LONGSWORD_LUNGE, FightType.LONGSWORD_SLASH }),
-        MACE(3796, 3799, CombatType.MELEE, 4, new FightType[] { FightType.MACE_BLOCK, FightType.MACE_POUND, FightType.MACE_PUMMEL, FightType.MACE_SPIKE }),
-        KNIFE(4446, 4449, CombatType.RANGE, 4, new FightType[] { FightType.KNIFE_RAPID, FightType.KNIFE_ACCURATE, FightType.KNIFE_LONGRANGE }),
-        SPEAR(4679, 4682, CombatType.MELEE, 6, new FightType[] { FightType.SPEAR_BLOCK, FightType.SPEAR_LUNGE, FightType.SPEAR_POUND, FightType.SPEAR_SWIPE }),
-        TWO_HANDED_SWORD(4705, 4708, CombatType.MELEE, 6, new FightType[] { FightType.TWOHANDEDSWORD_BLOCK, FightType.TWOHANDEDSWORD_CHOP, FightType.TWOHANDEDSWORD_SLASH, FightType.TWOHANDEDSWORD_SMASH }),
-        PICKAXE(5570, 5573, CombatType.MELEE, 6, new FightType[] { FightType.PICKAXE_BLOCK, FightType.PICKAXE_IMPALE, FightType.PICKAXE_SMASH, FightType.PICKAXE_SPIKE }),
-        CLAWS(7762, 7765, CombatType.MELEE, 4, new FightType[] { FightType.CLAWS_BLOCK, FightType.CLAWS_CHOP, FightType.CLAWS_LUNGE, FightType.CLAWS_SLASH }),
-        HALBERD(8460, 8463, CombatType.MELEE, 6, new FightType[] { FightType.HALBERD_FEND, FightType.HALBERD_JAB, FightType.HALBERD_SWIPE }),
-        UNARMED(5855, 5857, CombatType.MELEE, 6, new FightType[] { FightType.UNARMED_BLOCK, FightType.UNARMED_KICK, FightType.UNARMED_PUNCH }),
-        WHIP(12290, 12293, CombatType.MELEE, 4, new FightType[] { FightType.WHIP_FLICK, FightType.WHIP_LASH, FightType.WHIP_DEFLECT }),
-        THROWNAXE(4446, 4449, CombatType.RANGE, 6, new FightType[] { FightType.THROWNAXE_RAPID, FightType.THROWNAXE_ACCURATE, FightType.THROWNAXE_LONGRANGE }),
-        DART(4446, 4449, CombatType.RANGE, 3, new FightType[] { FightType.DART_RAPID, FightType.DART_ACCURATE, FightType.DART_LONGRANGE }),
-        JAVELIN(4446, 4449, CombatType.RANGE, 6, new FightType[] { FightType.JAVELIN_RAPID, FightType.JAVELIN_ACCURATE, FightType.JAVELIN_LONGRANGE });
+        STAFF(328, 331, 6, new FightType[] { FightType.STAFF_BASH, FightType.STAFF_FOCUS, FightType.STAFF_POUND }, -1, -1, new SpecialWeapon[] {}),
+        WARHAMMER(425, 428, 6, new FightType[] { FightType.WARHAMMER_BLOCK, FightType.WARHAMMER_POUND, FightType.WARHAMMER_PUMMEL }, 7474, 7486, new SpecialWeapon[] { new SpecialWeapon(4153, CombatSpecial.GRANITE_MAUL) }),
+        SCYTHE(776, 779, 6, new FightType[] { FightType.SCYTHE_BLOCK, FightType.SCYTHE_CHOP, FightType.SCYTHE_JAB, FightType.SCYTHE_REAP }, -1, -1, new SpecialWeapon[] {}),
+        BATTLEAXE(1698, 1701, 6, new FightType[] { FightType.BATTLEAXE_BLOCK, FightType.BATTLEAXE_CHOP, FightType.BATTLEAXE_HACK, FightType.BATTLEAXE_SMASH }, 7499, 7511, new SpecialWeapon[] { new SpecialWeapon(1377, CombatSpecial.DRAGON_BATTLEAXE) }),
+        CROSSBOW(1749, 1752, 5, new FightType[] { FightType.CROSSBOW_RAPID, FightType.CROSSBOW_ACCURATE, FightType.CROSSBOW_LONGRANGE }, 7524, 7536, new SpecialWeapon[] {}),
+        SHORTBOW(1764, 1767, 5, new FightType[] { FightType.SHORTBOW_RAPID, FightType.SHORTBOW_ACCURATE, FightType.SHORTBOW_LONGRANGE }, 7549, 7561, new SpecialWeapon[] { new SpecialWeapon(861, CombatSpecial.MAGIC_SHORTBOW) }),
+        LONGBOW(1764, 1767, 6, new FightType[] { FightType.LONGBOW_RAPID, FightType.LONGBOW_ACCURATE, FightType.LONGBOW_LONGRANGE }, 7549, 7561, new SpecialWeapon[] { new SpecialWeapon(859, CombatSpecial.MAGIC_LONGBOW) }),
+        DAGGER(2276, 2279, 5, new FightType[] { FightType.DAGGER_BLOCK, FightType.DAGGER_LUNGE, FightType.DAGGER_SLASH, FightType.DAGGER_STAB }, 7574, 7586, new SpecialWeapon[] { new SpecialWeapon(1215, CombatSpecial.DRAGON_DAGGER), new SpecialWeapon(1231, CombatSpecial.DRAGON_DAGGER), new SpecialWeapon(5680, CombatSpecial.DRAGON_DAGGER), new SpecialWeapon(5698, CombatSpecial.DRAGON_DAGGER) }),
+        SWORD(2276, 2279, 5, new FightType[] { FightType.SWORD_BLOCK, FightType.SWORD_LUNGE, FightType.SWORD_SLASH, FightType.SWORD_STAB }, 7574, 7586, new SpecialWeapon[] {}),
+        SCIMITAR(2423, 2426, 5, new FightType[] { FightType.SCIMITAR_BLOCK, FightType.SCIMITAR_CHOP, FightType.SCIMITAR_LUNGE, FightType.SCIMITAR_SLASH }, 7599, 7611, new SpecialWeapon[] { new SpecialWeapon(4587, CombatSpecial.DRAGON_SCIMITAR) }),
+        LONGSWORD(2423, 2426, 6, new FightType[] { FightType.LONGSWORD_BLOCK, FightType.LONGSWORD_CHOP, FightType.LONGSWORD_LUNGE, FightType.LONGSWORD_SLASH }, 7599, 7611, new SpecialWeapon[] { new SpecialWeapon(1305, CombatSpecial.DRAGON_LONGSWORD) }),
+        MACE(3796, 3799, 4, new FightType[] { FightType.MACE_BLOCK, FightType.MACE_POUND, FightType.MACE_PUMMEL, FightType.MACE_SPIKE }, 7624, 7636, new SpecialWeapon[] { new SpecialWeapon(1434, CombatSpecial.DRAGON_MACE), }),
+        KNIFE(4446, 4449, 4, new FightType[] { FightType.KNIFE_RAPID, FightType.KNIFE_ACCURATE, FightType.KNIFE_LONGRANGE }, 7649, 7661, new SpecialWeapon[] {}),
+        SPEAR(4679, 4682, 6, new FightType[] { FightType.SPEAR_BLOCK, FightType.SPEAR_LUNGE, FightType.SPEAR_POUND, FightType.SPEAR_SWIPE }, 7674, 7686, new SpecialWeapon[] { new SpecialWeapon(1249, CombatSpecial.DRAGON_SPEAR), new SpecialWeapon(1263, CombatSpecial.DRAGON_SPEAR), new SpecialWeapon(5716, CombatSpecial.DRAGON_SPEAR), new SpecialWeapon(5730, CombatSpecial.DRAGON_SPEAR) }),
+        TWO_HANDED_SWORD(4705, 4708, 6, new FightType[] { FightType.TWOHANDEDSWORD_BLOCK, FightType.TWOHANDEDSWORD_CHOP, FightType.TWOHANDEDSWORD_SLASH, FightType.TWOHANDEDSWORD_SMASH }, 7699, 7711, new SpecialWeapon[] { new SpecialWeapon(7158, CombatSpecial.DRAGON_2H_SWORD) }),
+        PICKAXE(5570, 5573, 6, new FightType[] { FightType.PICKAXE_BLOCK, FightType.PICKAXE_IMPALE, FightType.PICKAXE_SMASH, FightType.PICKAXE_SPIKE }, -1, -1, new SpecialWeapon[] {}),
+        CLAWS(7762, 7765, 4, new FightType[] { FightType.CLAWS_BLOCK, FightType.CLAWS_CHOP, FightType.CLAWS_LUNGE, FightType.CLAWS_SLASH }, 7800, 7812, new SpecialWeapon[] {}),
+        HALBERD(8460, 8463, 6, new FightType[] { FightType.HALBERD_FEND, FightType.HALBERD_JAB, FightType.HALBERD_SWIPE }, 8493, 8505, new SpecialWeapon[] { new SpecialWeapon(3204, CombatSpecial.DRAGON_HALBERD) }),
+        UNARMED(5855, 5857, 6, new FightType[] { FightType.UNARMED_BLOCK, FightType.UNARMED_KICK, FightType.UNARMED_PUNCH }, -1, -1, new SpecialWeapon[] {}),
+        WHIP(12290, 12293, 4, new FightType[] { FightType.WHIP_FLICK, FightType.WHIP_LASH, FightType.WHIP_DEFLECT }, 12323, 12335, new SpecialWeapon[] { new SpecialWeapon(4151, CombatSpecial.ABYSSAL_WHIP) }),
+        THROWNAXE(4446, 4449, 6, new FightType[] { FightType.THROWNAXE_RAPID, FightType.THROWNAXE_ACCURATE, FightType.THROWNAXE_LONGRANGE }, 7649, 7661, new SpecialWeapon[] {}),
+        DART(4446, 4449, 3, new FightType[] { FightType.DART_RAPID, FightType.DART_ACCURATE, FightType.DART_LONGRANGE }, 7649, 7661, new SpecialWeapon[] {}),
+        JAVELIN(4446, 4449, 6, new FightType[] { FightType.JAVELIN_RAPID, FightType.JAVELIN_ACCURATE, FightType.JAVELIN_LONGRANGE }, 7649, 7661, new SpecialWeapon[] {});
 
         /** The interface that will be displayed on the sidebar. */
         private int interfaceId;
@@ -128,14 +128,20 @@ public class AssignWeaponInterface {
         /** The line that the name of the item will be printed to. */
         private int nameLineId;
 
-        /** The combat type of the interface. */
-        private CombatType combatType;
-
         /** The attack speed of weapons using this interface. */
         private int speed;
 
         /** The fight types that correspond with this interface. */
         private FightType[] fightType;
+
+        /** The id of the special bar for this interface. */
+        private int specialBar;
+
+        /** The id of the special meter for this interface. */
+        private int specialMeter;
+
+        /** The items using this interface that requrie a special bar. */
+        private SpecialWeapon[] specialAttackItems;
 
         /**
          * Creates a new weapon interface.
@@ -144,19 +150,25 @@ public class AssignWeaponInterface {
          *        the interface that will be displayed on the sidebar.
          * @param nameLineId
          *        the line that the name of the item will be printed to.
-         * @param combatType
-         *        the combat type of the interface.
          * @param speed
          *        the attack speed of weapons using this interface.
          * @param fightType
          *        the fight types that correspond with this interface.
+         * @param specialBar
+         *        the id of the special bar for this interface.
+         * @param specialMeter
+         *        the id of the special meter for this interface.
+         * @param specialAttackItems
+         *        the items using this interface that requrie a special bar.
          */
-        private WeaponInterface(int interfaceId, int nameLineId, CombatType combatType, int speed, FightType[] fightType) {
+        private WeaponInterface(int interfaceId, int nameLineId, int speed, FightType[] fightType, int specialBar, int specialMeter, SpecialWeapon[] specialAttackItems) {
             this.interfaceId = interfaceId;
             this.nameLineId = nameLineId;
-            this.combatType = combatType;
             this.speed = speed;
             this.fightType = fightType;
+            this.specialBar = specialBar;
+            this.specialMeter = specialMeter;
+            this.specialAttackItems = specialAttackItems;
         }
 
         /**
@@ -178,15 +190,6 @@ public class AssignWeaponInterface {
         }
 
         /**
-         * Gets the combat type of the interface.
-         * 
-         * @return the combat type.
-         */
-        public CombatType getCombatType() {
-            return combatType;
-        }
-
-        /**
          * Gets the attack speed of weapons using this interface.
          * 
          * @return the attack speed of weapons using this interface.
@@ -202,6 +205,33 @@ public class AssignWeaponInterface {
          */
         public FightType[] getFightType() {
             return fightType;
+        }
+
+        /**
+         * Gets the id of the special bar for this interface.
+         * 
+         * @return the id of the special bar for this interface.
+         */
+        public int getSpecialBar() {
+            return specialBar;
+        }
+
+        /**
+         * Gets the id of the special meter for this interface.
+         * 
+         * @return the id of the special meter for this interface.
+         */
+        public int getSpecialMeter() {
+            return specialMeter;
+        }
+
+        /**
+         * Gets the items using this interface that requrie a special bar.
+         * 
+         * @return the items using this interface that requrie a special bar.
+         */
+        public SpecialWeapon[] getSpecialAttackItems() {
+            return specialAttackItems;
         }
     }
 
@@ -433,6 +463,34 @@ public class AssignWeaponInterface {
     }
 
     /**
+     * Assigns special bars to the attack style interface if needed.
+     * 
+     * @param player
+     *        the player to assign the special bar for.
+     */
+    public static void assignSpecialBar(Player player) {
+        if (player.getWeapon().getSpecialBar() == -1) {
+            player.setCombatSpecial(null);
+            return;
+        }
+
+        if (player.getWeapon().getSpecialAttackItems().length == 0) {
+            player.getPacketBuilder().sendHideInterfaceLayer(player.getWeapon().getSpecialBar(), true);
+            player.setCombatSpecial(null);
+            return;
+        }
+
+        for (SpecialWeapon weapon : player.getWeapon().getSpecialAttackItems()) {
+            if (player.getEquipment().getContainer().getIdBySlot(Misc.EQUIPMENT_SLOT_WEAPON) == weapon.getItemId()) {
+                player.getPacketBuilder().sendHideInterfaceLayer(player.getWeapon().getSpecialBar(), false);
+                player.setCombatSpecial(weapon.getCombatSpecial());
+                return;
+            }
+        }
+
+    }
+
+    /**
      * Assigns the correct interface for the player based on the item.
      * 
      * @param player
@@ -466,6 +524,8 @@ public class AssignWeaponInterface {
         player.getPacketBuilder().sendSidebarInterface(0, weapon.getInterfaceId());
         player.getPacketBuilder().sendString("" + item.getDefinition().getItemName() + "", weapon.getNameLineId());
         player.setWeapon(weapon);
+        assignSpecialBar(player);
+        CombatSpecial.updateSpecialAmount(player);
     }
 
     /**
@@ -480,7 +540,7 @@ public class AssignWeaponInterface {
         player.getPacketBuilder().sendSidebarInterface(0, WeaponInterface.UNARMED.getInterfaceId());
         player.getPacketBuilder().sendString("Unarmed", WeaponInterface.UNARMED.getNameLineId());
         player.setWeapon(WeaponInterface.UNARMED);
-
+        assignSpecialBar(player);
     }
 
     /**
@@ -503,5 +563,31 @@ public class AssignWeaponInterface {
         /** Or set the default fight type for that weapon. */
         player.setFightType(player.getWeapon().getFightType()[0]);
         player.getPacketBuilder().sendConfig(player.getFightType().getParentId(), player.getFightType().getChildId());
+    }
+
+    private static class SpecialWeapon {
+
+        private int itemId;
+
+        private CombatSpecial combatSpecial;
+
+        public SpecialWeapon(int itemId, CombatSpecial combatSpecial) {
+            this.itemId = itemId;
+            this.combatSpecial = combatSpecial;
+        }
+
+        /**
+         * @return the itemId
+         */
+        public int getItemId() {
+            return itemId;
+        }
+
+        /**
+         * @return the combatSpecial
+         */
+        public CombatSpecial getCombatSpecial() {
+            return combatSpecial;
+        }
     }
 }

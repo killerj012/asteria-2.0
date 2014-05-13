@@ -39,16 +39,71 @@ public abstract class Spell {
             /** Check the items required. */
             if (this.itemsRequired(player) != null) {
                 Item[] compareItem = this.itemsRequired(player).clone();
-                // MagicRuneStaff runeStaff = this.getStaff(player);
-                // MagicRuneCombination[] combinationRune =
-                // this.getCombinationRunes(player);
+                MagicRuneStaff runeStaff = this.getStaff(player);
+                List<MagicRuneCombination> combinationRune = this.getCombinationRunes(player);
+                List<Item> removeRune = new ArrayList<Item>();
 
-                // XXX: filter out staff here
-                // XXX: filter out combination runes here
+                if (runeStaff != null) {
+                    for (int i = 0; i < compareItem.length; i++) {
+                        if (compareItem[i] == null) {
+                            continue;
+                        }
+
+                        for (int runeId : runeStaff.getRuneIds()) {
+                            if (compareItem[i] == null) {
+                                continue;
+                            }
+
+                            if (compareItem[i].getId() == runeId) {
+                                compareItem[i] = null;
+                                continue;
+                            }
+                        }
+                    }
+                }
+
+                if (combinationRune != null) {
+                    for (int i = 0; i < compareItem.length; i++) {
+                        if (compareItem[i] == null) {
+                            continue;
+                        }
+
+                        for (MagicRuneCombination rune : combinationRune) {
+                            if (compareItem[i] == null) {
+                                continue;
+                            }
+
+                            int runesNeeded = compareItem[i].getAmount();
+
+                            if (compareItem[i].getId() == rune.getFirstRune()) {
+                                if (runesNeeded > player.getInventory().getContainer().getCount(rune.getCombinationRune())) {
+                                    continue;
+                                }
+
+                                compareItem[i].decrementAmountBy(runesNeeded);
+                                removeRune.add(new Item(rune.getCombinationRune(), runesNeeded));
+                                player.getInventory().getContainer().getById(rune.getCombinationRune()).decrementAmountBy(runesNeeded);
+                            } else if (compareItem[i].getId() == rune.getSecondRune()) {
+                                if (runesNeeded > player.getInventory().getContainer().getCount(rune.getCombinationRune())) {
+                                    continue;
+                                }
+
+                                compareItem[i].decrementAmountBy(runesNeeded);
+                                player.getInventory().getContainer().getById(rune.getCombinationRune()).decrementAmountBy(runesNeeded);
+                                removeRune.add(new Item(rune.getCombinationRune(), runesNeeded));
+                            }
+
+                            if (compareItem[i].getAmount() == 0) {
+                                compareItem[i] = null;
+                            }
+                        }
+                    }
+                }
 
                 if (!player.getInventory().getContainer().contains(compareItem)) {
                     player.getPacketBuilder().sendMessage("You do not have the required items to cast this spell.");
                     cast.getCombatBuilder().reset();
+                    player.getInventory().addItemCollection(removeRune);
                     return false;
                 }
 
@@ -93,7 +148,7 @@ public abstract class Spell {
      *        the player that will be checked for a staff.
      * @return the staff that the player is currently wielding.
      */
-    public MagicRuneCombination[] getCombinationRunes(Player player) {
+    public List<MagicRuneCombination> getCombinationRunes(Player player) {
         List<MagicRuneCombination> combinationRune = new ArrayList<MagicRuneCombination>();
 
         for (MagicRuneCombination rune : MagicRuneCombination.values()) {
@@ -105,7 +160,7 @@ public abstract class Spell {
         if (combinationRune.isEmpty()) {
             return null;
         }
-        return (MagicRuneCombination[]) combinationRune.toArray();
+        return combinationRune;
     }
 
     /**

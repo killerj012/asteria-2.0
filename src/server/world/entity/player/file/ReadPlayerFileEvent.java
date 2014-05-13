@@ -84,6 +84,7 @@ public class ReadPlayerFileEvent extends PlayerFileEvent {
             final int poisonHits = reader.get("poison-hits").getAsInt();
             final CombatPoison poisonStrength = CombatPoison.valueOf(reader.get("poison-strength").getAsString());
             final int teleblockTimer = reader.get("teleblock-timer").getAsInt();
+            final int specialAmount = reader.get("special-amount").getAsInt();
 
             getPlayer().setUsername(username);
 
@@ -115,6 +116,7 @@ public class ReadPlayerFileEvent extends PlayerFileEvent {
             getPlayer().setPoisonHits(poisonHits);
             getPlayer().setPoisonStrength(poisonStrength);
             getPlayer().setTeleblockTimer(teleblockTimer);
+            getPlayer().setSpecialPercentage(specialAmount);
 
             for (Long l : friends) {
                 getPlayer().getFriends().add(l);

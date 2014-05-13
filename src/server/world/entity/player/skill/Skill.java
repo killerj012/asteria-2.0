@@ -142,6 +142,12 @@ public class Skill {
      */
     public void setLevel(int level) {
         this.level = level;
+
+        if (level < 0) {
+            level = 0;
+        } else if (level > 120) {
+            level = 120;
+        }
     }
 
     /**

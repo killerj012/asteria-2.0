@@ -122,7 +122,8 @@ public abstract class Entity {
     }.terminateRun();
 
     /** The last time you were hit. */
-    private Stopwatch lastCombat = new Stopwatch().headStart(10000);
+    private Stopwatch lastCombat = new Stopwatch().headStart(10000),
+            lastFight = new Stopwatch().headStart(10000);
 
     /**
      * Handles processing for this entity.
@@ -270,7 +271,7 @@ public abstract class Entity {
                 writeDamage = player.getSkills()[Misc.HITPOINTS].getLevel();
             }
 
-            player.getSkills()[Misc.HITPOINTS].decreaseLevel(player.getSecondaryHit().getDamage());
+            player.getSkills()[Misc.HITPOINTS].decreaseLevel(writeDamage);
             SkillManager.refresh(player, SkillConstant.HITPOINTS);
             player.getPacketBuilder().closeWindows();
         } else if (isNpc()) {
@@ -280,10 +281,10 @@ public abstract class Entity {
                 writeDamage = npc.getCurrentHP();
             }
 
-            npc.decreaseHealth(npc.getSecondaryHit().getDamage());
+            npc.decreaseHealth(writeDamage);
         }
 
-        this.secondaryHit = secondaryHit.clone();
+        this.secondaryHit = new Hit(writeDamage, secondaryHit.getType());
         this.getFlags().flag(Flag.HIT_2);
     }
 
@@ -808,5 +809,12 @@ public abstract class Entity {
      */
     public void setCurrentlyCasting(CombatSpell currentlyCasting) {
         this.currentlyCasting = currentlyCasting;
+    }
+
+    /**
+     * @return the lastFight
+     */
+    public Stopwatch getLastFight() {
+        return lastFight;
     }
 }

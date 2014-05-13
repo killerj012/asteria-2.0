@@ -3,6 +3,7 @@ package server.world.entity.combat.task;
 import server.core.worker.Worker;
 import server.util.Misc;
 import server.world.World;
+import server.world.entity.Animation;
 import server.world.entity.Entity;
 import server.world.entity.Gfx;
 import server.world.entity.Hit;
@@ -16,6 +17,7 @@ import server.world.entity.player.minigame.MinigameFactory;
 import server.world.entity.player.skill.SkillManager;
 import server.world.entity.player.skill.SkillManager.SkillConstant;
 import server.world.item.Item;
+import server.world.item.ground.GroundItem;
 import server.world.map.Location;
 
 /**
@@ -93,7 +95,7 @@ public class CombatHitTask extends Worker {
             target.getCombatBuilder().addDamage(attacker, totalDamage);
         }
 
-        /** Finish the magic spell here. */
+        /** Various checks for different combat types. */
         if (combatType == CombatType.MAGIC) {
             target.gfx(attacker.getCurrentlyCasting().endGfx());
             attacker.getCurrentlyCasting().endCast(attacker, target, true);
@@ -106,9 +108,31 @@ public class CombatHitTask extends Worker {
                     player.setCastSpell(null);
                 }
             }
+        } else if (combatType == CombatType.MELEE) {
+            if (target.isPlayer()) {
+                Player player = (Player) attacker;
+                player.animation(new Animation(404));
+            }
+        } else if (combatType == CombatType.RANGE) {
+            if (target.isPlayer()) {
+                Player player = (Player) attacker;
+                player.animation(new Animation(404));
+            }
+
+            if (attacker.isPlayer()) {
+                if (Misc.getRandom().nextInt(3) != 0) {
+
+                    Player player = (Player) attacker;
+
+                    if (player.getFireAmmo() != 0) {
+                        World.getGroundItems().registerAndStack(new GroundItem(new Item(player.getFireAmmo(), 1), target.getPosition(), player));
+                        player.setFireAmmo(0);
+                    }
+                }
+            }
         }
 
-        /** Various poisoning effects take place here. */
+        /** Various entity effects take place here. */
         if (attacker.isNpc()) {
             Npc npc = (Npc) attacker;
 
@@ -117,6 +141,10 @@ public class CombatHitTask extends Worker {
             }
         } else if (attacker.isPlayer()) {
             Player player = (Player) attacker;
+
+            if (player.isSpecialActivated()) {
+                player.getCombatSpecial().getSpecialStrategy().onHit(player, target);
+            }
 
             if (combatType == CombatType.MELEE || combatType == CombatType.RANGE) {
                 Item weapon = player.getEquipment().getContainer().getItem(Misc.EQUIPMENT_SLOT_WEAPON);

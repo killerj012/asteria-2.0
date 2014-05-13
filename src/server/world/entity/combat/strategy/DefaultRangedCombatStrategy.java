@@ -95,6 +95,7 @@ public class DefaultRangedCombatStrategy implements CombatStrategy {
                     player.getPacketBuilder().sendMessage("That was your last piece of ammo!");
                     player.getEquipment().getContainer().set(Misc.EQUIPMENT_SLOT_ARROWS, null);
                 } else {
+                    player.setFireAmmo(player.getEquipment().getContainer().getItem(Misc.EQUIPMENT_SLOT_ARROWS).getId());
                     player.getEquipment().getContainer().getItem(Misc.EQUIPMENT_SLOT_ARROWS).decrementAmount();
                 }
             } else {
@@ -105,15 +106,22 @@ public class DefaultRangedCombatStrategy implements CombatStrategy {
                     AssignWeaponInterface.changeFightType(player);
                     player.getFlags().flag(Flag.APPEARANCE);
                 } else {
+                    player.setFireAmmo(player.getEquipment().getContainer().getItem(Misc.EQUIPMENT_SLOT_WEAPON).getId());
                     player.getEquipment().getContainer().getItem(Misc.EQUIPMENT_SLOT_WEAPON).decrementAmount();
                 }
             }
 
             player.getEquipment().refresh();
-            player.gfx(new Gfx(ammo.getGraphicId(), 6553600));
-            new Projectile(player, victim, ammo.getProjectileId(), ammo.getDelay(), ammo.getSpeed(), ammo.getStartHeight(), ammo.getEndHeight(), 0).sendProjectile();
-            if (CombatFactory.hitAccuracy(entity, victim, CombatType.RANGE, 1)) {
-                return new CombatHit(new Hit[] { CombatFactory.getRangeHit(entity, ammo) }, CombatType.RANGE);
+            player.setRangedAmmo(ammo);
+            if (!player.isSpecialActivated()) {
+                player.gfx(new Gfx(ammo.getGraphicId(), 6553600));
+                new Projectile(player, victim, ammo.getProjectileId(), ammo.getDelay(), ammo.getSpeed(), ammo.getStartHeight(), ammo.getEndHeight(), 0).sendProjectile();
+
+                if (CombatFactory.hitAccuracy(entity, victim, CombatType.RANGE, 1)) {
+                    return new CombatHit(new Hit[] { CombatFactory.getRangeHit(entity, ammo) }, CombatType.RANGE);
+                }
+            } else {
+                return player.getCombatSpecial().getSpecialStrategy().calculateHit(player, victim);
             }
         }
         return null;

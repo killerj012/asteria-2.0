@@ -7,8 +7,9 @@ import server.world.entity.Animation;
 import server.world.entity.Entity;
 import server.world.entity.Gfx;
 import server.world.entity.Projectile;
-import server.world.entity.Spell;
+import server.world.entity.combat.CombatFactory;
 import server.world.entity.combat.task.CombatTeleblockTask;
+import server.world.entity.combat.task.CombatPoisonTask.CombatPoison;
 import server.world.entity.npc.Npc;
 import server.world.entity.player.Player;
 import server.world.entity.player.skill.SkillManager;
@@ -16,7 +17,7 @@ import server.world.entity.player.skill.SkillManager.SkillConstant;
 import server.world.item.Item;
 
 /**
- * Every single spell that can be cast in game.
+ * Every single combat spell that can be cast in game.
  * 
  * @author lare96
  */
@@ -126,11 +127,6 @@ public enum CombatMagicSpells {
         @Override
         public int baseExperience() {
             return 13;
-        }
-
-        @Override
-        public Item[] equipmentRequired(Player player) {
-            return null;
         }
 
         @Override
@@ -306,11 +302,6 @@ public enum CombatMagicSpells {
         }
 
         @Override
-        public Item[] equipmentRequired(Player player) {
-            return null;
-        }
-
-        @Override
         public Item[] itemsRequired(Player player) {
             return new Item[] { new Item(555, 3), new Item(557, 2), new Item(559, 1) };
         }
@@ -483,11 +474,6 @@ public enum CombatMagicSpells {
         }
 
         @Override
-        public Item[] equipmentRequired(Player player) {
-            return null;
-        }
-
-        @Override
         public Item[] itemsRequired(Player player) {
             return new Item[] { new Item(555, 2), new Item(557, 3), new Item(559, 1) };
         }
@@ -542,11 +528,6 @@ public enum CombatMagicSpells {
         @Override
         public int baseExperience() {
             return 30;
-        }
-
-        @Override
-        public Item[] equipmentRequired(Player player) {
-            return null;
         }
 
         @Override
@@ -961,11 +942,6 @@ public enum CombatMagicSpells {
         @Override
         public int baseExperience() {
             return 60;
-        }
-
-        @Override
-        public Item[] equipmentRequired(Player player) {
-            return null;
         }
 
         @Override
@@ -1447,11 +1423,6 @@ public enum CombatMagicSpells {
         }
 
         @Override
-        public Item[] equipmentRequired(Player player) {
-            return null;
-        }
-
-        @Override
         public Item[] itemsRequired(Player player) {
             return new Item[] { new Item(557, 5), new Item(555, 5), new Item(566, 1) };
         }
@@ -1573,11 +1544,6 @@ public enum CombatMagicSpells {
         }
 
         @Override
-        public Item[] equipmentRequired(Player player) {
-            return null;
-        }
-
-        @Override
         public Item[] itemsRequired(Player player) {
             return new Item[] { new Item(557, 8), new Item(555, 8), new Item(566, 1) };
         }
@@ -1686,11 +1652,6 @@ public enum CombatMagicSpells {
         }
 
         @Override
-        public Item[] equipmentRequired(Player player) {
-            return null;
-        }
-
-        @Override
         public Item[] itemsRequired(Player player) {
             return new Item[] { new Item(555, 5), new Item(557, 5), new Item(561, 4) };
         }
@@ -1761,11 +1722,6 @@ public enum CombatMagicSpells {
         }
 
         @Override
-        public Item[] equipmentRequired(Player player) {
-            return null;
-        }
-
-        @Override
         public Item[] itemsRequired(Player player) {
             return new Item[] { new Item(557, 12), new Item(555, 12), new Item(556, 1) };
         }
@@ -1829,11 +1785,6 @@ public enum CombatMagicSpells {
         }
 
         @Override
-        public Item[] equipmentRequired(Player player) {
-            return null;
-        }
-
-        @Override
         public Item[] itemsRequired(Player player) {
             return new Item[] { new Item(563, 1), new Item(562, 1), new Item(560, 1) };
         }
@@ -1850,33 +1801,992 @@ public enum CombatMagicSpells {
     }),
 
     /** Ancient spellbook spells. */
-    SMOKE_RUSH(null),
-    SHADOW_RUSH(null),
-    BLOOD_RUSH(null),
-    ICE_RUSH(null),
-    SMOKE_BURST(null),
-    SHADOW_BURST(null),
-    BLOOD_BURST(null),
-    ICE_BURST(null),
-    SMOKE_BLITZ(null),
-    SHADOW_BLITZ(null),
-    BLOOD_BLITZ(null),
-    ICE_BLITZ(null),
-    SMOKE_BARRAGE(null),
-    SHADOW_BARRAGE(null),
-    BLOOD_BARRAGE(null),
-    ICE_BARRAGE(null);
+    SMOKE_RUSH(new CombatAncientSpell() {
+        @Override
+        public void spellEffect(Entity cast, Entity castOn) {
+            CombatFactory.poisonEntity(castOn, CombatPoison.MILD);
+        }
 
-    private Spell spell;
+        @Override
+        public int spellRadius() {
+            return 0;
+        }
 
-    private CombatMagicSpells(Spell spell) {
+        @Override
+        public Animation castAnimation() {
+            return new Animation(1978);
+        }
+
+        @Override
+        public Projectile castProjectile(Entity cast, Entity castOn) {
+            return new Projectile(cast, castOn, 384, 44, 3, 43, 31, 0);
+        }
+
+        @Override
+        public Gfx endGfx() {
+            return new Gfx(385);
+        }
+
+        @Override
+        public int maximumStrength() {
+            return 13;
+        }
+
+        @Override
+        public Gfx startGfx() {
+            return null;
+        }
+
+        @Override
+        public int baseExperience() {
+            return 30;
+        }
+
+        @Override
+        public Item[] itemsRequired(Player player) {
+            return new Item[] { new Item(556, 1), new Item(554, 1), new Item(562, 2), new Item(560, 2) };
+        }
+
+        @Override
+        public int levelRequired() {
+            return 50;
+        }
+
+        @Override
+        public int spellId() {
+            return 12939;
+        }
+    }),
+    SHADOW_RUSH(new CombatAncientSpell() {
+        @Override
+        public void spellEffect(Entity cast, Entity castOn) {
+            if (castOn.isPlayer()) {
+                Player player = (Player) castOn;
+
+                if (player.getSkills()[Misc.ATTACK].getLevel() < player.getSkills()[Misc.ATTACK].getLevelForExperience()) {
+                    return;
+                }
+
+                player.getSkills()[Misc.ATTACK].decreaseLevel((int) (0.1 * (player.getSkills()[Misc.ATTACK].getLevel())));
+                SkillManager.refresh(player, SkillConstant.ATTACK);
+            }
+        }
+
+        @Override
+        public int spellRadius() {
+            return 0;
+        }
+
+        @Override
+        public Animation castAnimation() {
+            return new Animation(1978);
+        }
+
+        @Override
+        public Projectile castProjectile(Entity cast, Entity castOn) {
+            return new Projectile(cast, castOn, 378, 44, 3, 43, 31, 0);
+        }
+
+        @Override
+        public Gfx endGfx() {
+            return new Gfx(379);
+        }
+
+        @Override
+        public int maximumStrength() {
+            return 14;
+        }
+
+        @Override
+        public Gfx startGfx() {
+            return null;
+        }
+
+        @Override
+        public int baseExperience() {
+            return 31;
+        }
+
+        @Override
+        public Item[] itemsRequired(Player player) {
+            return new Item[] { new Item(556, 1), new Item(566, 1), new Item(562, 2), new Item(560, 2) };
+        }
+
+        @Override
+        public int levelRequired() {
+            return 52;
+        }
+
+        @Override
+        public int spellId() {
+            return 12987;
+        }
+    }),
+    BLOOD_RUSH(new CombatAncientSpell() {
+        @Override
+        public void spellEffect(Entity cast, Entity castOn) {
+            if (Misc.getRandom().nextInt(4) == 0) {
+                if (cast.isPlayer()) {
+                    Player player = (Player) cast;
+                    player.getSkills()[Misc.HITPOINTS].increaseLevel(Misc.getRandom().nextInt(10), 99);
+                    SkillManager.refresh(player, SkillConstant.HITPOINTS);
+                }
+            }
+        }
+
+        @Override
+        public int spellRadius() {
+            return 0;
+        }
+
+        @Override
+        public Animation castAnimation() {
+            return new Animation(1978);
+        }
+
+        @Override
+        public Projectile castProjectile(Entity cast, Entity castOn) {
+            return new Projectile(cast, castOn, 372, 44, 3, 43, 31, 0);
+        }
+
+        @Override
+        public Gfx endGfx() {
+            return new Gfx(373);
+        }
+
+        @Override
+        public int maximumStrength() {
+            return 15;
+        }
+
+        @Override
+        public Gfx startGfx() {
+            return null;
+        }
+
+        @Override
+        public int baseExperience() {
+            return 33;
+        }
+
+        @Override
+        public Item[] itemsRequired(Player player) {
+            return new Item[] { new Item(565, 1), new Item(562, 2), new Item(560, 2) };
+        }
+
+        @Override
+        public int levelRequired() {
+            return 56;
+        }
+
+        @Override
+        public int spellId() {
+            return 12901;
+        }
+    }),
+    ICE_RUSH(new CombatAncientSpell() {
+        @Override
+        public void spellEffect(Entity cast, Entity castOn) {
+            castOn.getMovementQueue().lockMovementFor(10, WorkRate.APPROXIMATE_SECOND);
+        }
+
+        @Override
+        public int spellRadius() {
+            return 0;
+        }
+
+        @Override
+        public Animation castAnimation() {
+            return new Animation(1978);
+        }
+
+        @Override
+        public Projectile castProjectile(Entity cast, Entity castOn) {
+            return new Projectile(cast, castOn, 360, 44, 3, 43, 31, 0);
+        }
+
+        @Override
+        public Gfx endGfx() {
+            return new Gfx(361);
+        }
+
+        @Override
+        public int maximumStrength() {
+            return 18;
+        }
+
+        @Override
+        public Gfx startGfx() {
+            return null;
+        }
+
+        @Override
+        public int baseExperience() {
+            return 34;
+        }
+
+        @Override
+        public Item[] itemsRequired(Player player) {
+            return new Item[] { new Item(555, 2), new Item(562, 2), new Item(560, 2) };
+        }
+
+        @Override
+        public int levelRequired() {
+            return 58;
+        }
+
+        @Override
+        public int spellId() {
+            return 12861;
+        }
+    }),
+    SMOKE_BURST(new CombatAncientSpell() {
+        @Override
+        public void spellEffect(Entity cast, Entity castOn) {
+            CombatFactory.poisonEntity(castOn, CombatPoison.MILD);
+        }
+
+        @Override
+        public int spellRadius() {
+            return 3;
+        }
+
+        @Override
+        public Animation castAnimation() {
+            return new Animation(1979);
+        }
+
+        @Override
+        public Projectile castProjectile(Entity cast, Entity castOn) {
+            return null;
+        }
+
+        @Override
+        public Gfx endGfx() {
+            return new Gfx(389);
+        }
+
+        @Override
+        public int maximumStrength() {
+            return 13;
+        }
+
+        @Override
+        public Gfx startGfx() {
+            return null;
+        }
+
+        @Override
+        public int baseExperience() {
+            return 36;
+        }
+
+        @Override
+        public Item[] itemsRequired(Player player) {
+            return new Item[] { new Item(556, 2), new Item(554, 2), new Item(562, 4), new Item(560, 2) };
+        }
+
+        @Override
+        public int levelRequired() {
+            return 62;
+        }
+
+        @Override
+        public int spellId() {
+            return 12963;
+        }
+    }),
+    SHADOW_BURST(new CombatAncientSpell() {
+        @Override
+        public void spellEffect(Entity cast, Entity castOn) {
+            if (castOn.isPlayer()) {
+                Player player = (Player) castOn;
+
+                if (player.getSkills()[Misc.ATTACK].getLevel() < player.getSkills()[Misc.ATTACK].getLevelForExperience()) {
+                    return;
+                }
+
+                player.getSkills()[Misc.ATTACK].decreaseLevel((int) (0.1 * (player.getSkills()[Misc.ATTACK].getLevel())));
+                SkillManager.refresh(player, SkillConstant.ATTACK);
+            }
+        }
+
+        @Override
+        public int spellRadius() {
+            return 3;
+        }
+
+        @Override
+        public Animation castAnimation() {
+            return new Animation(1979);
+        }
+
+        @Override
+        public Projectile castProjectile(Entity cast, Entity castOn) {
+            return null;
+        }
+
+        @Override
+        public Gfx endGfx() {
+            return new Gfx(382);
+        }
+
+        @Override
+        public int maximumStrength() {
+            return 18;
+        }
+
+        @Override
+        public Gfx startGfx() {
+            return null;
+        }
+
+        @Override
+        public int baseExperience() {
+            return 37;
+        }
+
+        @Override
+        public Item[] itemsRequired(Player player) {
+            return new Item[] { new Item(556, 1), new Item(566, 2), new Item(562, 4), new Item(560, 2) };
+        }
+
+        @Override
+        public int levelRequired() {
+            return 64;
+        }
+
+        @Override
+        public int spellId() {
+            return 13011;
+        }
+    }),
+    BLOOD_BURST(new CombatAncientSpell() {
+        @Override
+        public void spellEffect(Entity cast, Entity castOn) {
+            if (Misc.getRandom().nextInt(4) == 0) {
+                if (cast.isPlayer()) {
+                    Player player = (Player) cast;
+                    player.getSkills()[Misc.HITPOINTS].increaseLevel(Misc.getRandom().nextInt(10), 99);
+                    SkillManager.refresh(player, SkillConstant.HITPOINTS);
+                }
+            }
+        }
+
+        @Override
+        public int spellRadius() {
+            return 3;
+        }
+
+        @Override
+        public Animation castAnimation() {
+            return new Animation(1979);
+        }
+
+        @Override
+        public Projectile castProjectile(Entity cast, Entity castOn) {
+            return null;
+        }
+
+        @Override
+        public Gfx endGfx() {
+            return new Gfx(376);
+        }
+
+        @Override
+        public int maximumStrength() {
+            return 21;
+        }
+
+        @Override
+        public Gfx startGfx() {
+            return null;
+        }
+
+        @Override
+        public int baseExperience() {
+            return 39;
+        }
+
+        @Override
+        public Item[] itemsRequired(Player player) {
+            return new Item[] { new Item(565, 2), new Item(562, 4), new Item(560, 2) };
+        }
+
+        @Override
+        public int levelRequired() {
+            return 68;
+        }
+
+        @Override
+        public int spellId() {
+            return 12919;
+        }
+    }),
+    ICE_BURST(new CombatAncientSpell() {
+        @Override
+        public void spellEffect(Entity cast, Entity castOn) {
+            castOn.getMovementQueue().lockMovementFor(10, WorkRate.APPROXIMATE_SECOND);
+        }
+
+        @Override
+        public int spellRadius() {
+            return 3;
+        }
+
+        @Override
+        public Animation castAnimation() {
+            return new Animation(1979);
+        }
+
+        @Override
+        public Projectile castProjectile(Entity cast, Entity castOn) {
+            return null;
+        }
+
+        @Override
+        public Gfx endGfx() {
+            return new Gfx(363);
+        }
+
+        @Override
+        public int maximumStrength() {
+            return 22;
+        }
+
+        @Override
+        public Gfx startGfx() {
+            return null;
+        }
+
+        @Override
+        public int baseExperience() {
+            return 40;
+        }
+
+        @Override
+        public Item[] itemsRequired(Player player) {
+            return new Item[] { new Item(555, 4), new Item(562, 4), new Item(560, 2) };
+        }
+
+        @Override
+        public int levelRequired() {
+            return 70;
+        }
+
+        @Override
+        public int spellId() {
+            return 12881;
+        }
+    }),
+    SMOKE_BLITZ(new CombatAncientSpell() {
+        @Override
+        public void spellEffect(Entity cast, Entity castOn) {
+            CombatFactory.poisonEntity(castOn, CombatPoison.STRONG);
+        }
+
+        @Override
+        public int spellRadius() {
+            return 0;
+        }
+
+        @Override
+        public Animation castAnimation() {
+            return new Animation(1978);
+        }
+
+        @Override
+        public Projectile castProjectile(Entity cast, Entity castOn) {
+            return new Projectile(cast, castOn, 386, 44, 3, 43, 31, 0);
+        }
+
+        @Override
+        public Gfx endGfx() {
+            return new Gfx(387);
+        }
+
+        @Override
+        public int maximumStrength() {
+            return 23;
+        }
+
+        @Override
+        public Gfx startGfx() {
+            return null;
+        }
+
+        @Override
+        public int baseExperience() {
+            return 42;
+        }
+
+        @Override
+        public Item[] itemsRequired(Player player) {
+            return new Item[] { new Item(556, 2), new Item(554, 2), new Item(565, 2), new Item(560, 2) };
+        }
+
+        @Override
+        public int levelRequired() {
+            return 74;
+        }
+
+        @Override
+        public int spellId() {
+            return 12951;
+        }
+    }),
+    SHADOW_BLITZ(new CombatAncientSpell() {
+        @Override
+        public void spellEffect(Entity cast, Entity castOn) {
+            if (castOn.isPlayer()) {
+                Player player = (Player) castOn;
+
+                if (player.getSkills()[Misc.ATTACK].getLevel() < player.getSkills()[Misc.ATTACK].getLevelForExperience()) {
+                    return;
+                }
+
+                player.getSkills()[Misc.ATTACK].decreaseLevel((int) (0.15 * (player.getSkills()[Misc.ATTACK].getLevel())));
+                SkillManager.refresh(player, SkillConstant.ATTACK);
+            }
+        }
+
+        @Override
+        public int spellRadius() {
+            return 0;
+        }
+
+        @Override
+        public Animation castAnimation() {
+            return new Animation(1978);
+        }
+
+        @Override
+        public Projectile castProjectile(Entity cast, Entity castOn) {
+            return new Projectile(cast, castOn, 380, 44, 3, 43, 31, 0);
+        }
+
+        @Override
+        public Gfx endGfx() {
+            return new Gfx(381);
+        }
+
+        @Override
+        public int maximumStrength() {
+            return 24;
+        }
+
+        @Override
+        public Gfx startGfx() {
+            return null;
+        }
+
+        @Override
+        public int baseExperience() {
+            return 43;
+        }
+
+        @Override
+        public Item[] itemsRequired(Player player) {
+            return new Item[] { new Item(556, 2), new Item(566, 2), new Item(565, 2), new Item(560, 2) };
+        }
+
+        @Override
+        public int levelRequired() {
+            return 76;
+        }
+
+        @Override
+        public int spellId() {
+            return 12999;
+        }
+    }),
+    BLOOD_BLITZ(new CombatAncientSpell() {
+        @Override
+        public void spellEffect(Entity cast, Entity castOn) {
+            if (Misc.getRandom().nextInt(4) == 0) {
+                if (cast.isPlayer()) {
+                    Player player = (Player) cast;
+                    player.getSkills()[Misc.HITPOINTS].increaseLevel(Misc.getRandom().nextInt(15), 99);
+                    SkillManager.refresh(player, SkillConstant.HITPOINTS);
+                }
+            }
+        }
+
+        @Override
+        public int spellRadius() {
+            return 0;
+        }
+
+        @Override
+        public Animation castAnimation() {
+            return new Animation(1978);
+        }
+
+        @Override
+        public Projectile castProjectile(Entity cast, Entity castOn) {
+            return new Projectile(cast, castOn, 374, 44, 3, 43, 31, 0);
+        }
+
+        @Override
+        public Gfx endGfx() {
+            return new Gfx(375);
+        }
+
+        @Override
+        public int maximumStrength() {
+            return 25;
+        }
+
+        @Override
+        public Gfx startGfx() {
+            return null;
+        }
+
+        @Override
+        public int baseExperience() {
+            return 45;
+        }
+
+        @Override
+        public Item[] itemsRequired(Player player) {
+            return new Item[] { new Item(565, 4), new Item(560, 2) };
+        }
+
+        @Override
+        public int levelRequired() {
+            return 80;
+        }
+
+        @Override
+        public int spellId() {
+            return 12911;
+        }
+    }),
+    ICE_BLITZ(new CombatAncientSpell() {
+        @Override
+        public void spellEffect(Entity cast, Entity castOn) {
+            castOn.getMovementQueue().lockMovementFor(15, WorkRate.APPROXIMATE_SECOND);
+        }
+
+        @Override
+        public int spellRadius() {
+            return 0;
+        }
+
+        @Override
+        public Animation castAnimation() {
+            return new Animation(1978);
+        }
+
+        @Override
+        public Projectile castProjectile(Entity cast, Entity castOn) {
+            return null;
+        }
+
+        @Override
+        public Gfx endGfx() {
+            return new Gfx(367);
+        }
+
+        @Override
+        public int maximumStrength() {
+            return 26;
+        }
+
+        @Override
+        public Gfx startGfx() {
+            return new Gfx(366, 6553600);
+        }
+
+        @Override
+        public int baseExperience() {
+            return 46;
+        }
+
+        @Override
+        public Item[] itemsRequired(Player player) {
+            return new Item[] { new Item(556, 2), new Item(554, 2), new Item(565, 2), new Item(560, 2) };
+        }
+
+        @Override
+        public int levelRequired() {
+            return 82;
+        }
+
+        @Override
+        public int spellId() {
+            return 12871;
+        }
+    }),
+    SMOKE_BARRAGE(new CombatAncientSpell() {
+        @Override
+        public void spellEffect(Entity cast, Entity castOn) {
+            CombatFactory.poisonEntity(castOn, CombatPoison.SEVERE);
+        }
+
+        @Override
+        public int spellRadius() {
+            return 3;
+        }
+
+        @Override
+        public Animation castAnimation() {
+            return new Animation(1979);
+        }
+
+        @Override
+        public Projectile castProjectile(Entity cast, Entity castOn) {
+            return null;
+        }
+
+        @Override
+        public Gfx endGfx() {
+            return new Gfx(391);
+        }
+
+        @Override
+        public int maximumStrength() {
+            return 27;
+        }
+
+        @Override
+        public Gfx startGfx() {
+            return null;
+        }
+
+        @Override
+        public int baseExperience() {
+            return 48;
+        }
+
+        @Override
+        public Item[] itemsRequired(Player player) {
+            return new Item[] { new Item(556, 4), new Item(554, 4), new Item(565, 2), new Item(560, 4) };
+        }
+
+        @Override
+        public int levelRequired() {
+            return 86;
+        }
+
+        @Override
+        public int spellId() {
+            return 12975;
+        }
+    }),
+    SHADOW_BARRAGE(new CombatAncientSpell() {
+        @Override
+        public void spellEffect(Entity cast, Entity castOn) {
+            if (castOn.isPlayer()) {
+                Player player = (Player) castOn;
+
+                if (player.getSkills()[Misc.ATTACK].getLevel() < player.getSkills()[Misc.ATTACK].getLevelForExperience()) {
+                    return;
+                }
+
+                player.getSkills()[Misc.ATTACK].decreaseLevel((int) (0.15 * (player.getSkills()[Misc.ATTACK].getLevel())));
+                SkillManager.refresh(player, SkillConstant.ATTACK);
+            }
+        }
+
+        @Override
+        public int spellRadius() {
+            return 3;
+        }
+
+        @Override
+        public Animation castAnimation() {
+            return new Animation(1979);
+        }
+
+        @Override
+        public Projectile castProjectile(Entity cast, Entity castOn) {
+            return null;
+        }
+
+        @Override
+        public Gfx endGfx() {
+            return new Gfx(383);
+        }
+
+        @Override
+        public int maximumStrength() {
+            return 28;
+        }
+
+        @Override
+        public Gfx startGfx() {
+            return null;
+        }
+
+        @Override
+        public int baseExperience() {
+            return 49;
+        }
+
+        @Override
+        public Item[] itemsRequired(Player player) {
+            return new Item[] { new Item(556, 4), new Item(566, 3), new Item(565, 2), new Item(560, 4) };
+        }
+
+        @Override
+        public int levelRequired() {
+            return 88;
+        }
+
+        @Override
+        public int spellId() {
+            return 13023;
+        }
+    }),
+    BLOOD_BARRAGE(new CombatAncientSpell() {
+        @Override
+        public void spellEffect(Entity cast, Entity castOn) {
+            if (Misc.getRandom().nextInt(4) == 0) {
+                if (cast.isPlayer()) {
+                    Player player = (Player) cast;
+                    player.getSkills()[Misc.HITPOINTS].increaseLevel(Misc.getRandom().nextInt(20), 99);
+                    SkillManager.refresh(player, SkillConstant.HITPOINTS);
+                }
+            }
+        }
+
+        @Override
+        public int spellRadius() {
+            return 3;
+        }
+
+        @Override
+        public Animation castAnimation() {
+            return new Animation(1979);
+        }
+
+        @Override
+        public Projectile castProjectile(Entity cast, Entity castOn) {
+            return null;
+        }
+
+        @Override
+        public Gfx endGfx() {
+            return new Gfx(377);
+        }
+
+        @Override
+        public int maximumStrength() {
+            return 29;
+        }
+
+        @Override
+        public Gfx startGfx() {
+            return null;
+        }
+
+        @Override
+        public int baseExperience() {
+            return 51;
+        }
+
+        @Override
+        public Item[] itemsRequired(Player player) {
+            return new Item[] { new Item(560, 4), new Item(566, 1), new Item(565, 4) };
+        }
+
+        @Override
+        public int levelRequired() {
+            return 92;
+        }
+
+        @Override
+        public int spellId() {
+            return 12929;
+        }
+    }),
+    ICE_BARRAGE(new CombatAncientSpell() {
+        @Override
+        public void spellEffect(Entity cast, Entity castOn) {
+            castOn.getMovementQueue().lockMovementFor(15, WorkRate.APPROXIMATE_SECOND);
+        }
+
+        @Override
+        public int spellRadius() {
+            return 3;
+        }
+
+        @Override
+        public Animation castAnimation() {
+            return new Animation(1979);
+        }
+
+        @Override
+        public Projectile castProjectile(Entity cast, Entity castOn) {
+            return null;
+        }
+
+        @Override
+        public Gfx endGfx() {
+            return new Gfx(369);
+        }
+
+        @Override
+        public int maximumStrength() {
+            return 30;
+        }
+
+        @Override
+        public Gfx startGfx() {
+            return null;
+        }
+
+        @Override
+        public int baseExperience() {
+            return 52;
+        }
+
+        @Override
+        public Item[] itemsRequired(Player player) {
+            return new Item[] { new Item(555, 6), new Item(565, 2), new Item(560, 4) };
+        }
+
+        @Override
+        public int levelRequired() {
+            return 94;
+        }
+
+        @Override
+        public int spellId() {
+            return 12891;
+        }
+    });
+
+    /** The combat spell that can be casted. */
+    private CombatSpell spell;
+
+    /**
+     * Create a new {@link CombatMagicSpells}.
+     * 
+     * @param spell
+     *        the combat spell that can be casted.
+     */
+    private CombatMagicSpells(CombatSpell spell) {
         this.spell = spell;
     }
 
-    public Spell getSpell() {
+    /**
+     * Gets the combat spell that can be casted.
+     * 
+     * @return the combat spell that can be casted.
+     */
+    public CombatSpell getSpell() {
         return spell;
     }
 
+    /**
+     * Gets the spell constant by its spell id.
+     * 
+     * @param spellId
+     *        the spell to retrieve.
+     * @return the spell constant with that spell id.
+     */
     public static CombatMagicSpells getSpell(int spellId) {
         for (CombatMagicSpells spell : CombatMagicSpells.values()) {
             if (spell.getSpell() == null) {

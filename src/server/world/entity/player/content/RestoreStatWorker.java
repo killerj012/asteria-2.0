@@ -4,6 +4,7 @@ import server.core.worker.WorkRate;
 import server.core.worker.Worker;
 import server.util.Misc;
 import server.world.entity.combat.prayer.CombatPrayer;
+import server.world.entity.combat.special.CombatSpecial;
 import server.world.entity.player.Player;
 import server.world.entity.player.skill.SkillManager;
 import server.world.entity.player.skill.SkillManager.SkillConstant;
@@ -69,6 +70,19 @@ public class RestoreStatWorker extends Worker {
                     SkillManager.refresh(player, SkillConstant.HITPOINTS);
                 }
             }
+        }
+
+        /**
+         * Check the special meter and increase it by an increment of 5 if
+         * needed.
+         */
+        if (player.getSpecialPercentage() < 100) {
+            if (player.getStaffRights() > 1) {
+                CombatSpecial.boostAndRestore(player, 100);
+                return;
+            }
+
+            CombatSpecial.boostAndRestore(player, 5);
         }
     }
 }

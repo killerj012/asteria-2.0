@@ -21,6 +21,8 @@ import server.world.entity.UpdateFlags.Flag;
 import server.world.entity.combat.magic.CombatSpell;
 import server.world.entity.combat.prayer.CombatPrayer;
 import server.world.entity.combat.prayer.CombatPrayerWorker;
+import server.world.entity.combat.range.RangedAmmo;
+import server.world.entity.combat.special.CombatSpecial;
 import server.world.entity.combat.task.CombatPoisonTask.CombatPoison;
 import server.world.entity.npc.Npc;
 import server.world.entity.npc.NpcDialogue;
@@ -75,14 +77,32 @@ public class Player extends Entity {
     /** The spell currently selected. */
     private CombatSpell castSpell;
 
+    /** The range ammo being used. */
+    private RangedAmmo rangedAmmo;
+
     /** If the player is autocasting. */
     private boolean autocast;
+
+    /** What the player is autocasting. */
+    private CombatSpell autocastSpell;
+
+    /** The current special attack the player has set. */
+    private CombatSpecial combatSpecial;
 
     /** If the player data needs to be read or not. */
     private boolean needsRead = true;
 
     /** If the player has a spell selected. */
     private int spellSelected = -1;
+
+    /** The special bar percentage. */
+    private int specialPercentage = 100;
+
+    /** The ammo that was just fired with. */
+    private int fireAmmo;
+
+    /** If the special is activated. */
+    private boolean specialActivated;
 
     /** The current fight type selected. */
     private FightType fightType = FightType.UNARMED_PUNCH;
@@ -718,6 +738,8 @@ public class Player extends Entity {
         getPacketBuilder().sendConfig(172, isAutoRetaliate() ? 0 : 1);
         getPacketBuilder().sendConfig(fightType.getParentId(), fightType.getChildId());
         getPacketBuilder().sendConfig(427, isAcceptAid() ? 1 : 0);
+        getPacketBuilder().sendConfig(108, 0);
+        getPacketBuilder().sendConfig(301, 0);
         CombatPrayer.resetPrayerGlows(this);
     }
 
@@ -1633,4 +1655,108 @@ public class Player extends Entity {
         teleblockTimer--;
     }
 
+    /**
+     * @return the autocastSpell
+     */
+    public CombatSpell getAutocastSpell() {
+        return autocastSpell;
+    }
+
+    /**
+     * @param autocastSpell
+     *        the autocastSpell to set
+     */
+    public void setAutocastSpell(CombatSpell autocastSpell) {
+        this.autocastSpell = autocastSpell;
+    }
+
+    /**
+     * @return the specialPercentage
+     */
+    public int getSpecialPercentage() {
+        return specialPercentage;
+    }
+
+    /**
+     * @param specialPercentage
+     *        the specialPercentage to set
+     */
+    public void setSpecialPercentage(int specialPercentage) {
+        this.specialPercentage = specialPercentage;
+    }
+
+    /**
+     * @return the fireAmmo
+     */
+    public int getFireAmmo() {
+        return fireAmmo;
+    }
+
+    /**
+     * @param fireAmmo
+     *        the fireAmmo to set
+     */
+    public void setFireAmmo(int fireAmmo) {
+        this.fireAmmo = fireAmmo;
+    }
+
+    /**
+     * @return the combatSpecial
+     */
+    public CombatSpecial getCombatSpecial() {
+        return combatSpecial;
+    }
+
+    /**
+     * @param combatSpecial
+     *        the combatSpecial to set
+     */
+    public void setCombatSpecial(CombatSpecial combatSpecial) {
+        this.combatSpecial = combatSpecial;
+    }
+
+    /**
+     * @return the specialActivated
+     */
+    public boolean isSpecialActivated() {
+        return specialActivated;
+    }
+
+    /**
+     * @param specialActivated
+     *        the specialActivated to set
+     */
+    public void setSpecialActivated(boolean specialActivated) {
+        this.specialActivated = specialActivated;
+    }
+
+    public void decrementSpecialPercentage(int drainAmount) {
+        this.specialPercentage -= drainAmount;
+
+        if (specialPercentage < 0) {
+            specialPercentage = 0;
+        }
+    }
+
+    public void incrementSpecialPercentage(int gainAmount) {
+        this.specialPercentage += gainAmount;
+
+        if (specialPercentage > 100) {
+            specialPercentage = 100;
+        }
+    }
+
+    /**
+     * @return the rangedAmmo
+     */
+    public RangedAmmo getRangedAmmo() {
+        return rangedAmmo;
+    }
+
+    /**
+     * @param rangedAmmo the rangedAmmo to set
+     */
+    public void setRangedAmmo(RangedAmmo rangedAmmo) {
+        this.rangedAmmo = rangedAmmo;
+    }
 }

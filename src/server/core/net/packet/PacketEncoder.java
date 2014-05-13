@@ -40,6 +40,43 @@ public final class PacketEncoder {
     }
 
     /**
+     * Shows or hides a layer on an interface.
+     * 
+     * @param interfaceIndex
+     *        the layer to show or hide.
+     * @param hidden
+     *        true if the layor should be hidden.
+     * @return this packet encoder.
+     */
+    public PacketEncoder sendHideInterfaceLayer(int interfaceIndex, boolean hidden) {
+        WriteBuffer out = PacketBuffer.newWriteBuffer(4);
+        out.writeHeader(171);
+        out.writeByte(hidden ? 1 : 0);
+        out.writeShort(interfaceIndex);
+        player.getSession().encode(out);
+        return this;
+    }
+
+    /**
+     * Updates the special bar meter.
+     * 
+     * @param amount
+     *        the amount to update it with.
+     * @param barId
+     *        the id of the bar.
+     * @return this packet encoder.
+     */
+    public PacketEncoder updateSpecialBar(int amount, int barId) {
+        WriteBuffer out = PacketBuffer.newWriteBuffer(7);
+        out.writeHeader(70);
+        out.writeShort(amount);
+        out.writeShort(0, PacketBuffer.ByteOrder.LITTLE);
+        out.writeShort(barId, PacketBuffer.ByteOrder.LITTLE);
+        player.getSession().encode(out);
+        return this;
+    }
+
+    /**
      * Displays a string on an empty chatbox interface.
      * 
      * @param s
@@ -271,7 +308,9 @@ public final class PacketEncoder {
                     PaletteTile tile = palette.getTile(x, y, z);
                     out.writeBits(1, tile != null ? 1 : 0);
                     if (tile != null) {
-                        out.writeBits(26, tile.getX() << 14 | tile.getY() << 3 | tile.getZ() << 24 | tile.getRotation() << 1);
+                        out.writeBits(26, tile.getX() << 14 | tile.getY() << 3 | tile.getZ() << 24); // |
+                        // tile.getRotation()
+                        // << 1
                     }
                 }
             }

@@ -139,6 +139,11 @@ public class CombatBuilder {
                 /** Increment the amount of loops made. */
                 loopCount++;
 
+                /** If we are starting a fresh combat session attack right away. */
+                if (entity.getLastFight().elapsed() > 10000) {
+                    attackTimer = 0;
+                }
+
                 /** Start combat once we are in the correct distance. */
                 return !entity.getPosition().withinDistance(victim.getPosition(), currentStrategy.getDistance(entity));
             }
@@ -152,11 +157,6 @@ public class CombatBuilder {
                 /** Change targets if needed. */
                 if (currentTarget != null && combatWorker.isRunning()) {
                     currentTarget = victim;
-                    return;
-                }
-
-                /** Prepare to attack using this strategy. */
-                if (!currentStrategy.prepareAttack(entity)) {
                     return;
                 }
 

@@ -6,9 +6,8 @@ import server.core.net.buffer.PacketBuffer.ValueType;
 import server.core.net.packet.PacketDecoder;
 import server.core.net.packet.PacketOpcodeHeader;
 import server.world.World;
-import server.world.entity.Spell;
-import server.world.entity.combat.magic.CombatSpell;
 import server.world.entity.combat.magic.CombatMagicSpells;
+import server.world.entity.combat.magic.CombatSpell;
 import server.world.entity.npc.Npc;
 import server.world.entity.npc.NpcDefinition;
 import server.world.entity.player.Player;
@@ -68,7 +67,7 @@ public class DecodeNpcActionPacket extends PacketDecoder {
                 index = in.readShort(true, ValueType.A, ByteOrder.LITTLE);
                 int spellId = in.readShort(true, ValueType.A);
                 final Npc attackMagic = World.getNpcs().get(index);
-                Spell spell = CombatMagicSpells.getSpell(spellId).getSpell();
+                CombatSpell spell = CombatMagicSpells.getSpell(spellId).getSpell();
 
                 if (attackMagic == null) {
                     return;
@@ -93,7 +92,10 @@ public class DecodeNpcActionPacket extends PacketDecoder {
                     return;
                 }
 
-                player.setCastSpell((CombatSpell) spell);
+                player.setAutocastSpell(null);
+                player.setAutocast(false);
+                player.getPacketBuilder().sendConfig(108, 0);
+                player.setCastSpell(spell);
                 player.getCombatBuilder().attack(attackMagic);
                 break;
             case FIRST_CLICK:

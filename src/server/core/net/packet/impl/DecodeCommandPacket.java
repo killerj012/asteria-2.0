@@ -176,6 +176,7 @@ public class DecodeCommandPacket extends PacketDecoder {
         } else if (cmd[0].equals("dummynpc")) {
             final Npc mob = new Npc(1, player.getPosition());
             mob.setCurrentHealth(100000);
+            mob.setAutoRetaliate(false);
             World.getNpcs().add(mob);
         } else if (cmd[0].equals("music")) {
             final int id = Integer.parseInt(cmd[1]);
@@ -197,7 +198,7 @@ public class DecodeCommandPacket extends PacketDecoder {
             for (int z = 0; z < 4; z++) {
                 for (int x = 0; x < 13; x++) {
                     for (int y = 0; y < 13; y++) {
-                        p.setTile(x, y, z, new PaletteTile(3222, 3222, 0));
+                        p.setTile(x, y, z, new PaletteTile(3222, 3222, 0, Palette.DIRECTION_CW_90));
                     }
                 }
             }

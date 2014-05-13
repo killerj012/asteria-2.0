@@ -490,6 +490,7 @@ public final class PlayerUpdate {
      *        the packet to write to.
      */
     private static void appendPrimaryHit(Player player, PacketBuffer.WriteBuffer out) {
+        System.out.println(player.getPrimaryHit().getDamage() + "+");
         out.writeByte(player.getPrimaryHit().getDamage());
         out.writeByte(player.getPrimaryHit().getType().getId(), ValueType.A);
 
@@ -519,6 +520,7 @@ public final class PlayerUpdate {
      *        the packet to write to.
      */
     private static void appendSecondaryHit(Player player, PacketBuffer.WriteBuffer out) {
+        System.out.println(player.getSecondaryHit().getDamage() + "-");
         out.writeByte(player.getSecondaryHit().getDamage());
         out.writeByte(player.getSecondaryHit().getType().getId(), ValueType.S);
 

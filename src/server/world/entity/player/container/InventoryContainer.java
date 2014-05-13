@@ -1,5 +1,7 @@
 package server.world.entity.player.container;
 
+import java.util.Collection;
+
 import server.world.entity.player.Player;
 import server.world.item.Item;
 import server.world.item.ItemContainer;
@@ -39,6 +41,7 @@ public class InventoryContainer {
      *        the interface to write this inventory on.
      */
     public void refresh(int writeInterface) {
+        checkForZero();
         Item[] inv = container.toArray();
         player.getPacketBuilder().sendUpdateItems(writeInterface, inv);
     }
@@ -88,6 +91,22 @@ public class InventoryContainer {
     public void addItemSet(Item[] item) {
         for (Item addItem : item) {
             if (item == null) {
+                continue;
+            }
+
+            addItem(addItem);
+        }
+    }
+
+    /**
+     * Adds a collection of items into the inventory.
+     * 
+     * @param item
+     *        the set of items to add.
+     */
+    public void addItemCollection(Collection<Item> collection) {
+        for (Item addItem : collection) {
+            if (collection == null) {
                 continue;
             }
 
@@ -225,6 +244,27 @@ public class InventoryContainer {
     public void exchangeItemSlot(int initialSlot, int exchangeSlot) {
         container.swap(initialSlot, exchangeSlot);
         refresh(3214);
+    }
+
+    /**
+     * Checks if the bank has any items with a value of 0 and removes them if
+     * so.
+     */
+    public void checkForZero() {
+
+        /** Loop through the items in this container. */
+        for (int i = 0; i < container.toArray().length; i++) {
+
+            /** Ignore empty slots. */
+            if (container.toArray()[i] == null) {
+                continue;
+            }
+
+            /** Free up slots with items that have an amount below 1. */
+            if (container.toArray()[i].getAmount() < 1) {
+                container.toArray()[i] = null;
+            }
+        }
     }
 
     /**

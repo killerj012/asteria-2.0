@@ -1,11 +1,15 @@
 package server.world.entity.combat.task;
 
 import server.core.worker.Worker;
+import server.util.Misc;
+import server.world.World;
 import server.world.entity.Entity;
 import server.world.entity.Gfx;
 import server.world.entity.Hit;
 import server.world.entity.combat.CombatType;
 import server.world.entity.player.Player;
+import server.world.item.Item;
+import server.world.item.ground.GroundItem;
 
 /**
  * A {@link Worker} implementation that deals a series of inaccurate hits to an
@@ -63,6 +67,16 @@ public class CombatAccuracyHitTask extends Worker {
         /** Send the inaccurate hits based on the combat type. */
         switch (combatType) {
             case MELEE:
+                if (hitCount == 0 || hitCount == 1) {
+                    target.dealDamage(new Hit(0));
+                } else if (hitCount == 2) {
+                    target.dealDoubleDamage(new Hit(0), new Hit(0));
+                } else if (hitCount == 3) {
+                    target.dealTripleDamage(new Hit(0), new Hit(0), new Hit(0));
+                } else if (hitCount == 4) {
+                    target.dealQuadrupleDamage(new Hit(0), new Hit(0), new Hit(0), new Hit(0));
+                }
+                break;
             case RANGE:
                 if (hitCount == 0 || hitCount == 1) {
                     target.dealDamage(new Hit(0));
@@ -72,6 +86,17 @@ public class CombatAccuracyHitTask extends Worker {
                     target.dealTripleDamage(new Hit(0), new Hit(0), new Hit(0));
                 } else if (hitCount == 4) {
                     target.dealQuadrupleDamage(new Hit(0), new Hit(0), new Hit(0), new Hit(0));
+                }
+
+                if (Misc.getRandom().nextInt(3) != 0) {
+                    if (attacker.isPlayer()) {
+                        Player player = (Player) attacker;
+
+                        if (player.getFireAmmo() != 0) {
+                            World.getGroundItems().registerAndStack(new GroundItem(new Item(player.getFireAmmo(), 1), target.getPosition(), player));
+                            player.setFireAmmo(0);
+                        }
+                    }
                 }
                 break;
             case MAGIC:

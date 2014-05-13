@@ -166,6 +166,7 @@ public class EquipmentContainer {
         }
 
         if (item.getDefinition().getEquipmentSlot() == Misc.EQUIPMENT_SLOT_WEAPON) {
+
             /** Assign the new sidebar interface based on the weapon. */
             AssignWeaponInterface.assignInterface(player, item);
 
@@ -183,6 +184,7 @@ public class EquipmentContainer {
         refresh();
         player.getFlags().flag(Flag.APPEARANCE);
         player.setAutocast(false);
+        player.getPacketBuilder().sendConfig(108, 0);
     }
 
     /**
@@ -235,6 +237,7 @@ public class EquipmentContainer {
         player.getInventory().refresh(3214);
         player.getFlags().flag(Flag.APPEARANCE);
         player.setAutocast(false);
+        player.getPacketBuilder().sendConfig(108, 0);
     }
 
     /**

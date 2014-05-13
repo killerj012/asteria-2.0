@@ -5,10 +5,14 @@ import java.util.logging.Logger;
 import server.core.net.buffer.PacketBuffer;
 import server.core.net.packet.PacketDecoder;
 import server.core.net.packet.PacketOpcodeHeader;
+import server.core.worker.TaskFactory;
+import server.core.worker.Worker;
 import server.util.Misc;
+import server.world.entity.combat.magic.CombatMagicSpells;
 import server.world.entity.combat.prayer.CombatPrayer;
 import server.world.entity.npc.NpcDialogue;
 import server.world.entity.player.Player;
+import server.world.entity.player.content.Spellbook;
 import server.world.entity.player.content.AssignWeaponInterface.FightType;
 import server.world.entity.player.content.AssignWeaponInterface.WeaponInterface;
 import server.world.entity.player.content.TradeSession.TradeStage;
@@ -27,8 +31,9 @@ public class DecodeClickButtonPacket extends PacketDecoder {
     /** A {@link Logger} for printing debugging info. */
     private static Logger logger = Logger.getLogger(DecodeClickButtonPacket.class.getSimpleName());
 
+    @SuppressWarnings("fallthrough")
     @Override
-    public void decode(Player player, PacketBuffer.ReadBuffer in) {
+    public void decode(final Player player, PacketBuffer.ReadBuffer in) {
         int buttonId = Misc.hexToInt(in.readBytes(2));
 
         switch (buttonId) {
@@ -547,6 +552,271 @@ public class DecodeClickButtonPacket extends PacketDecoder {
                 player.setFightType(FightType.WHIP_DEFLECT);
                 break;
 
+            case 24017:
+            case 7212:
+                player.getPacketBuilder().sendSidebarInterface(0, player.getWeapon().getInterfaceId());
+                break;
+
+            case 1093:
+            case 1094:
+            case 1097:
+                if (player.isAutocast()) {
+                    player.setAutocastSpell(null);
+                    player.setAutocast(false);
+                    player.getPacketBuilder().sendConfig(108, 0);
+                } else if (!player.isAutocast()) {
+                    if (player.getEquipment().getContainer().getIdBySlot(Misc.EQUIPMENT_SLOT_WEAPON) == 4675) {
+                        if (player.getSpellbook() != Spellbook.ANCIENT) {
+                            player.getPacketBuilder().sendMessage("You can only autocast ancient magics with this staff.");
+                            return;
+                        }
+
+                        player.getPacketBuilder().sendSidebarInterface(0, 1689);
+                    } else {
+                        if (player.getSpellbook() != Spellbook.NORMAL) {
+                            player.getPacketBuilder().sendMessage("You can only autocast standard magics with this staff.");
+                            return;
+                        }
+
+                        player.getPacketBuilder().sendSidebarInterface(0, 1829);
+                    }
+                }
+                break;
+
+            case 51133:
+                player.setAutocastSpell(CombatMagicSpells.SMOKE_RUSH.getSpell());
+                player.setAutocast(true);
+                player.getPacketBuilder().sendSidebarInterface(0, player.getWeapon().getInterfaceId());
+                player.getPacketBuilder().sendConfig(108, 3);
+                break;
+            case 51185:
+                player.setAutocastSpell(CombatMagicSpells.SHADOW_RUSH.getSpell());
+                player.setAutocast(true);
+                player.getPacketBuilder().sendSidebarInterface(0, player.getWeapon().getInterfaceId());
+                player.getPacketBuilder().sendConfig(108, 3);
+                break;
+            case 51091:
+                player.setAutocastSpell(CombatMagicSpells.BLOOD_RUSH.getSpell());
+                player.setAutocast(true);
+                player.getPacketBuilder().sendSidebarInterface(0, player.getWeapon().getInterfaceId());
+                player.getPacketBuilder().sendConfig(108, 3);
+                break;
+            case 24018:
+                player.setAutocastSpell(CombatMagicSpells.ICE_RUSH.getSpell());
+                player.setAutocast(true);
+                player.getPacketBuilder().sendSidebarInterface(0, player.getWeapon().getInterfaceId());
+                player.getPacketBuilder().sendConfig(108, 3);
+                break;
+            case 51159:
+                player.setAutocastSpell(CombatMagicSpells.SMOKE_BURST.getSpell());
+                player.setAutocast(true);
+                player.getPacketBuilder().sendSidebarInterface(0, player.getWeapon().getInterfaceId());
+                player.getPacketBuilder().sendConfig(108, 3);
+                break;
+            case 51211:
+                player.setAutocastSpell(CombatMagicSpells.SHADOW_BURST.getSpell());
+                player.setAutocast(true);
+                player.getPacketBuilder().sendSidebarInterface(0, player.getWeapon().getInterfaceId());
+                player.getPacketBuilder().sendConfig(108, 3);
+                break;
+            case 51111:
+                player.setAutocastSpell(CombatMagicSpells.BLOOD_BURST.getSpell());
+                player.setAutocast(true);
+                player.getPacketBuilder().sendSidebarInterface(0, player.getWeapon().getInterfaceId());
+                player.getPacketBuilder().sendConfig(108, 3);
+                break;
+            case 51069:
+                player.setAutocastSpell(CombatMagicSpells.ICE_BURST.getSpell());
+                player.setAutocast(true);
+                player.getPacketBuilder().sendSidebarInterface(0, player.getWeapon().getInterfaceId());
+                player.getPacketBuilder().sendConfig(108, 3);
+                break;
+            case 51146:
+                player.setAutocastSpell(CombatMagicSpells.SMOKE_BLITZ.getSpell());
+                player.setAutocast(true);
+                player.getPacketBuilder().sendSidebarInterface(0, player.getWeapon().getInterfaceId());
+                player.getPacketBuilder().sendConfig(108, 3);
+                break;
+            case 51198:
+                player.setAutocastSpell(CombatMagicSpells.SHADOW_BLITZ.getSpell());
+                player.setAutocast(true);
+                player.getPacketBuilder().sendSidebarInterface(0, player.getWeapon().getInterfaceId());
+                player.getPacketBuilder().sendConfig(108, 3);
+                break;
+            case 51102:
+                player.setAutocastSpell(CombatMagicSpells.BLOOD_BLITZ.getSpell());
+                player.setAutocast(true);
+                player.getPacketBuilder().sendSidebarInterface(0, player.getWeapon().getInterfaceId());
+                player.getPacketBuilder().sendConfig(108, 3);
+                break;
+            case 51058:
+                player.setAutocastSpell(CombatMagicSpells.ICE_BLITZ.getSpell());
+                player.setAutocast(true);
+                player.getPacketBuilder().sendSidebarInterface(0, player.getWeapon().getInterfaceId());
+                player.getPacketBuilder().sendConfig(108, 3);
+                break;
+            case 51172:
+                player.setAutocastSpell(CombatMagicSpells.SMOKE_BARRAGE.getSpell());
+                player.setAutocast(true);
+                player.getPacketBuilder().sendSidebarInterface(0, player.getWeapon().getInterfaceId());
+                player.getPacketBuilder().sendConfig(108, 3);
+                break;
+            case 51224:
+                player.setAutocastSpell(CombatMagicSpells.SHADOW_BARRAGE.getSpell());
+                player.setAutocast(true);
+                player.getPacketBuilder().sendSidebarInterface(0, player.getWeapon().getInterfaceId());
+                player.getPacketBuilder().sendConfig(108, 3);
+                break;
+            case 51122:
+                player.setAutocastSpell(CombatMagicSpells.BLOOD_BARRAGE.getSpell());
+                player.setAutocast(true);
+                player.getPacketBuilder().sendSidebarInterface(0, player.getWeapon().getInterfaceId());
+                player.getPacketBuilder().sendConfig(108, 3);
+                break;
+            case 51080:
+                player.setAutocastSpell(CombatMagicSpells.ICE_BARRAGE.getSpell());
+                player.setAutocast(true);
+                player.getPacketBuilder().sendSidebarInterface(0, player.getWeapon().getInterfaceId());
+                player.getPacketBuilder().sendConfig(108, 3);
+                break;
+            case 7038:
+                player.setAutocastSpell(CombatMagicSpells.WIND_STRIKE.getSpell());
+                player.setAutocast(true);
+                player.getPacketBuilder().sendSidebarInterface(0, player.getWeapon().getInterfaceId());
+                player.getPacketBuilder().sendConfig(108, 3);
+                break;
+            case 7039:
+                player.setAutocastSpell(CombatMagicSpells.WATER_STRIKE.getSpell());
+                player.setAutocast(true);
+                player.getPacketBuilder().sendSidebarInterface(0, player.getWeapon().getInterfaceId());
+                player.getPacketBuilder().sendConfig(108, 3);
+                break;
+            case 7040:
+                player.setAutocastSpell(CombatMagicSpells.EARTH_STRIKE.getSpell());
+                player.setAutocast(true);
+                player.getPacketBuilder().sendSidebarInterface(0, player.getWeapon().getInterfaceId());
+                player.getPacketBuilder().sendConfig(108, 3);
+                break;
+            case 7041:
+                player.setAutocastSpell(CombatMagicSpells.FIRE_STRIKE.getSpell());
+                player.setAutocast(true);
+                player.getPacketBuilder().sendSidebarInterface(0, player.getWeapon().getInterfaceId());
+                player.getPacketBuilder().sendConfig(108, 3);
+                break;
+            case 7042:
+                player.setAutocastSpell(CombatMagicSpells.WIND_BOLT.getSpell());
+                player.setAutocast(true);
+                player.getPacketBuilder().sendSidebarInterface(0, player.getWeapon().getInterfaceId());
+                player.getPacketBuilder().sendConfig(108, 3);
+                break;
+            case 7043:
+                player.setAutocastSpell(CombatMagicSpells.WATER_BOLT.getSpell());
+                player.setAutocast(true);
+                player.getPacketBuilder().sendSidebarInterface(0, player.getWeapon().getInterfaceId());
+                player.getPacketBuilder().sendConfig(108, 3);
+                break;
+            case 7044:
+                player.setAutocastSpell(CombatMagicSpells.EARTH_BOLT.getSpell());
+                player.setAutocast(true);
+                player.getPacketBuilder().sendSidebarInterface(0, player.getWeapon().getInterfaceId());
+                player.getPacketBuilder().sendConfig(108, 3);
+                break;
+            case 7045:
+                player.setAutocastSpell(CombatMagicSpells.FIRE_BOLT.getSpell());
+                player.setAutocast(true);
+                player.getPacketBuilder().sendSidebarInterface(0, player.getWeapon().getInterfaceId());
+                player.getPacketBuilder().sendConfig(108, 3);
+                break;
+            case 7046:
+                player.setAutocastSpell(CombatMagicSpells.WIND_BLAST.getSpell());
+                player.setAutocast(true);
+                player.getPacketBuilder().sendSidebarInterface(0, player.getWeapon().getInterfaceId());
+                player.getPacketBuilder().sendConfig(108, 3);
+                break;
+            case 7047:
+                player.setAutocastSpell(CombatMagicSpells.WATER_BLAST.getSpell());
+                player.setAutocast(true);
+                player.getPacketBuilder().sendSidebarInterface(0, player.getWeapon().getInterfaceId());
+                player.getPacketBuilder().sendConfig(108, 3);
+                break;
+            case 7048:
+                player.setAutocastSpell(CombatMagicSpells.EARTH_BLAST.getSpell());
+                player.setAutocast(true);
+                player.getPacketBuilder().sendSidebarInterface(0, player.getWeapon().getInterfaceId());
+                player.getPacketBuilder().sendConfig(108, 3);
+                break;
+            case 7049:
+                player.setAutocastSpell(CombatMagicSpells.FIRE_BLAST.getSpell());
+                player.setAutocast(true);
+                player.getPacketBuilder().sendSidebarInterface(0, player.getWeapon().getInterfaceId());
+                player.getPacketBuilder().sendConfig(108, 3);
+                break;
+            case 7050:
+                player.setAutocastSpell(CombatMagicSpells.WIND_WAVE.getSpell());
+                player.setAutocast(true);
+                player.getPacketBuilder().sendSidebarInterface(0, player.getWeapon().getInterfaceId());
+                player.getPacketBuilder().sendConfig(108, 3);
+                break;
+            case 7051:
+                player.setAutocastSpell(CombatMagicSpells.WATER_WAVE.getSpell());
+                player.setAutocast(true);
+                player.getPacketBuilder().sendSidebarInterface(0, player.getWeapon().getInterfaceId());
+                player.getPacketBuilder().sendConfig(108, 3);
+                break;
+            case 7052:
+                player.setAutocastSpell(CombatMagicSpells.EARTH_WAVE.getSpell());
+                player.setAutocast(true);
+                player.getPacketBuilder().sendSidebarInterface(0, player.getWeapon().getInterfaceId());
+                player.getPacketBuilder().sendConfig(108, 3);
+                break;
+            case 7053:
+                player.setAutocastSpell(CombatMagicSpells.FIRE_WAVE.getSpell());
+                player.setAutocast(true);
+                player.getPacketBuilder().sendSidebarInterface(0, player.getWeapon().getInterfaceId());
+                player.getPacketBuilder().sendConfig(108, 3);
+                break;
+            case 29138:
+            case 29038:
+            case 29063:
+            case 29113:
+            case 29163:
+            case 29188:
+            case 29213:
+            case 29238:
+            case 30007:
+            case 48023:
+            case 33033:
+            case 30108:
+                if (player.getCombatSpecial() == null) {
+                    player.getPacketBuilder().sendMessage("This weapon does not have a special attack. Please contact developers ASAP.");
+                    return;
+                }
+
+                if (player.isSpecialActivated()) {
+                    player.getPacketBuilder().sendConfig(301, 0);
+                    player.setSpecialActivated(false);
+                } else {
+                    if (player.getSpecialPercentage() < player.getCombatSpecial().getSpecialAmount()) {
+                        player.getPacketBuilder().sendMessage("You do not have enough special energy!");
+                        return;
+                    }
+
+                    player.getPacketBuilder().sendConfig(301, 1);
+                    player.setSpecialActivated(true);
+
+                    TaskFactory.getFactory().submit(new Worker(1, false) {
+                        @Override
+                        public void fire() {
+                            if (!player.isSpecialActivated()) {
+                                this.cancel();
+                                return;
+                            }
+
+                            player.getCombatSpecial().getSpecialStrategy().onActivation(player, player.getCombatBuilder().getCurrentTarget());
+                        }
+                    }.attach(player));
+                }
+                break;
             default:
                 logger.info("Unhandled button: " + buttonId);
                 break;

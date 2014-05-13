@@ -1,6 +1,7 @@
 package server.world.item.ground;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 import server.world.entity.player.Player;
@@ -120,6 +121,32 @@ public class RegisterableGroundItem {
     }
 
     public void register(GroundItem registerable) {
+
+        /** Fire the item's registration event. */
+        registerable.fireOnRegister();
+
+        /** Add the item in the database. */
+        itemList.add(registerable);
+    }
+
+    public void registerAndStack(GroundItem registerable) {
+        int itemCount = 0;
+
+        for (Iterator<GroundItem> iterator = itemList.iterator(); iterator.hasNext();) {
+            GroundItem item = iterator.next();
+
+            if (item == null) {
+                continue;
+            }
+
+            if (item.getItem().getId() == registerable.getItem().getId() && item.getPosition().equals(registerable.getPosition()) && item.getPlayer().getUsername().equals(registerable.getPlayer().getUsername())) {
+                itemCount += item.getItem().getAmount();
+                item.fireOnUnregister();
+                iterator.remove();
+            }
+        }
+
+        registerable.getItem().incrementAmountBy(itemCount);
 
         /** Fire the item's registration event. */
         registerable.fireOnRegister();

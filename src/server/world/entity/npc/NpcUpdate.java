@@ -239,7 +239,7 @@ public class NpcUpdate {
             }
         }
 
-        out.writeByte(npc.getPrimaryHit().getDamage(), ValueType.A);
+        out.writeByte(npc.getSecondaryHit().getDamage(), ValueType.A);
         out.writeByte(npc.getSecondaryHit().getType().getId(), ValueType.C);
         out.writeByte(npc.getCurrentHP(), ValueType.A);
         out.writeByte(npc.getMaxHealth());

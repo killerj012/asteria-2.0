@@ -38,30 +38,35 @@ public class DefaultMeleeCombatStrategy implements CombatStrategy {
             npc.animation(new Animation(npc.getDefinition().getAttackAnimation()));
         } else if (entity.isPlayer()) {
             Player player = (Player) entity;
-            Item item = player.getEquipment().getContainer().getItem(Misc.EQUIPMENT_SLOT_WEAPON);
 
-            if (item != null) {
-                if (item.getDefinition().getItemName().startsWith("Dharoks")) {
-                    if (player.getFightType() == FightType.BATTLEAXE_SMASH) {
-                        player.animation(new Animation(2067));
+            if (!player.isSpecialActivated()) {
+                Item item = player.getEquipment().getContainer().getItem(Misc.EQUIPMENT_SLOT_WEAPON);
+
+                if (item != null) {
+                    if (item.getDefinition().getItemName().startsWith("Dharoks")) {
+                        if (player.getFightType() == FightType.BATTLEAXE_SMASH) {
+                            player.animation(new Animation(2067));
+                        } else {
+                            player.animation(new Animation(2066));
+                        }
+                    } else if (item.getDefinition().getItemName().equals("Granite maul")) {
+                        player.animation(new Animation(1665));
+                    } else if (item.getDefinition().getItemName().equals("Tzhaar-ket-om")) {
+                        player.animation(new Animation(2661));
+                    } else if (item.getDefinition().getItemName().endsWith("wand")) {
+                        player.animation(new Animation(FightType.UNARMED_KICK.getAnimation()));
+                    } else if (item.getDefinition().getItemName().startsWith("Torags")) {
+                        player.animation(new Animation(2068));
+                    } else if (item.getDefinition().getItemName().startsWith("Veracs")) {
+                        player.animation(new Animation(2062));
                     } else {
-                        player.animation(new Animation(2066));
+                        player.animation(new Animation(player.getFightType().getAnimation()));
                     }
-                } else if (item.getDefinition().getItemName().equals("Granite maul")) {
-                    player.animation(new Animation(1665));
-                } else if (item.getDefinition().getItemName().equals("Tzhaar-ket-om")) {
-                    player.animation(new Animation(2661));
-                } else if (item.getDefinition().getItemName().endsWith("wand")) {
-                    player.animation(new Animation(FightType.UNARMED_KICK.getAnimation()));
-                } else if (item.getDefinition().getItemName().startsWith("Torags")) {
-                    player.animation(new Animation(2068));
-                } else if (item.getDefinition().getItemName().startsWith("Veracs")) {
-                    player.animation(new Animation(2062));
                 } else {
                     player.animation(new Animation(player.getFightType().getAnimation()));
                 }
             } else {
-                player.animation(new Animation(player.getFightType().getAnimation()));
+                return player.getCombatSpecial().getSpecialStrategy().calculateHit(player, victim);
             }
         }
 
@@ -69,6 +74,7 @@ public class DefaultMeleeCombatStrategy implements CombatStrategy {
         if (CombatFactory.hitAccuracy(entity, victim, CombatType.MELEE, 1)) {
             return new CombatHit(new Hit[] { CombatFactory.getMeleeHit(entity) }, CombatType.MELEE);
         }
+
         return null;
     }
 

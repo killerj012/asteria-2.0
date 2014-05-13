@@ -90,6 +90,10 @@ public class CombatFactory {
                 strengthLevel *= 1.15;
             }
 
+            if (player.isSpecialActivated() && player.getCombatSpecial().getSpecialStrategy().combatType() == CombatType.MELEE) {
+                strengthLevel *= player.getCombatSpecial().getStrengthBonus();
+            }
+
             int styleBonus = 0;
 
             if (player.getFightType().getStyle() == FightStyle.AGGRESSIVE) {
@@ -141,6 +145,10 @@ public class CombatFactory {
             Player player = (Player) entity;
             int rangedLevel = player.getSkills()[Misc.RANGED].getLevel();
 
+            if (player.isSpecialActivated() && player.getCombatSpecial().getSpecialStrategy().combatType() == CombatType.RANGE) {
+                rangedLevel *= player.getCombatSpecial().getStrengthBonus();
+            }
+
             double styleBonus = 0;
 
             if (player.getFightType().getStyle() == FightStyle.ACCURATE)
@@ -171,7 +179,12 @@ public class CombatFactory {
             ((Player) entity).getPacketBuilder().sendMessage("Maximum hit possible this turn: " + CombatFactory.calculateMaxMeleeHit(entity));
         }
 
-        return new Hit(Misc.getRandom().nextInt(CombatFactory.calculateMaxMeleeHit(entity)));
+        int calculate = Misc.getRandom().nextInt(CombatFactory.calculateMaxMeleeHit(entity));
+
+        if (calculate < 1) {
+            calculate = 1;
+        }
+        return new Hit(calculate);
     }
 
     /**
@@ -198,21 +211,34 @@ public class CombatFactory {
      *        the entity to calculate for.
      * @return the effective accuracy level.
      */
-    private static double getEffectiveAccuracy(Entity entity) {
+    private static double getEffectiveAccuracy(Entity entity, CombatType type) {
         double attackBonus = 0;
         double baseAttack = 0;
 
         if (entity.isPlayer()) {
             Player player = (Player) entity;
-            baseAttack = player.getSkills()[Misc.ATTACK].getLevel();
-            attackBonus = player.getPlayerBonus()[player.getFightType().getBonusType()];
 
-            if (CombatPrayer.isPrayerActivated(player, CombatPrayer.CLARITY_OF_THOUGHT)) {
-                baseAttack *= 1.05;
-            } else if (CombatPrayer.isPrayerActivated(player, CombatPrayer.IMPROVED_REFLEXES)) {
-                baseAttack *= 1.1;
-            } else if (CombatPrayer.isPrayerActivated(player, CombatPrayer.INCREDIBLE_REFLEXES)) {
-                baseAttack *= 1.15;
+            if (type == CombatType.MELEE) {
+                baseAttack = player.getSkills()[Misc.ATTACK].getLevel();
+                attackBonus = player.getPlayerBonus()[player.getFightType().getBonusType()];
+
+                if (CombatPrayer.isPrayerActivated(player, CombatPrayer.CLARITY_OF_THOUGHT)) {
+                    baseAttack *= 1.05;
+                } else if (CombatPrayer.isPrayerActivated(player, CombatPrayer.IMPROVED_REFLEXES)) {
+                    baseAttack *= 1.1;
+                } else if (CombatPrayer.isPrayerActivated(player, CombatPrayer.INCREDIBLE_REFLEXES)) {
+                    baseAttack *= 1.15;
+                }
+            } else if (type == CombatType.RANGE) {
+                baseAttack = player.getSkills()[Misc.RANGED].getLevel();
+                attackBonus = player.getPlayerBonus()[Misc.ATTACK_RANGE];
+            } else if (type == CombatType.MAGIC) {
+                baseAttack = player.getSkills()[Misc.MAGIC].getLevel();
+                attackBonus = player.getPlayerBonus()[Misc.ATTACK_MAGIC];
+            }
+
+            if (player.isSpecialActivated()) {
+                baseAttack *= player.getCombatSpecial().getAccuracyBonus();
             }
         } else if (entity.isNpc()) {
             Npc npc = (Npc) entity;
@@ -298,10 +324,10 @@ public class CombatFactory {
      *        the entity to calculate for.
      * @return the attack roll.
      */
-    private static double getAttackRoll(Entity attacker) {
+    private static double getAttackRoll(Entity attacker, CombatType type) {
 
         double specAccuracy = 1;
-        double effectiveAccuracy = getEffectiveAccuracy(attacker);
+        double effectiveAccuracy = getEffectiveAccuracy(attacker, type);
 
         int styleBonusAttack = 0;
 
@@ -407,7 +433,7 @@ public class CombatFactory {
         }
 
         double defence = CombatFactory.getDefenceRoll(victim, type);
-        double accuracy = CombatFactory.getAttackRoll(attacker);
+        double accuracy = CombatFactory.getAttackRoll(attacker, type);
         double chance = CombatFactory.getChance(accuracy, defence);
         boolean accurate = CombatFactory.isAccurateHit(chance);
 
@@ -452,7 +478,20 @@ public class CombatFactory {
      *        the player to determine the combat strategy for.
      */
     public static void determinePlayerStrategy(Player player) {
-        if (player.getCastSpell() != null) {
+        if (player.isSpecialActivated()) {
+            if (player.getCombatSpecial().getSpecialStrategy().combatType() == CombatType.MELEE) {
+                player.getCombatBuilder().setCurrentStrategy(CombatFactory.newDefaultMeleeStrategy());
+            } else if (player.getCombatSpecial().getSpecialStrategy().combatType() == CombatType.RANGE) {
+                player.getCombatBuilder().setCurrentStrategy(CombatFactory.newDefaultRangedStrategy());
+            }
+            return;
+        }
+
+        if (player.getCastSpell() != null || player.getAutocastSpell() != null) {
+            if (player.isAutocast()) {
+                player.setCastSpell(player.getAutocastSpell());
+            }
+
             player.getCombatBuilder().setCurrentStrategy(CombatFactory.newDefaultMagicStrategy());
         } else if (player.getWeapon() == WeaponInterface.SHORTBOW || player.getWeapon() == WeaponInterface.LONGBOW || player.getWeapon() == WeaponInterface.CROSSBOW || player.getWeapon() == WeaponInterface.DART || player.getWeapon() == WeaponInterface.JAVELIN || player.getWeapon() == WeaponInterface.THROWNAXE || player.getWeapon() == WeaponInterface.KNIFE) {
             player.getCombatBuilder().setCurrentStrategy(CombatFactory.newDefaultRangedStrategy());

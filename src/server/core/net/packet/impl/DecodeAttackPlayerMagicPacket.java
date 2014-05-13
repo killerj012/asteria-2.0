@@ -6,7 +6,6 @@ import server.core.net.buffer.PacketBuffer.ValueType;
 import server.core.net.packet.PacketDecoder;
 import server.core.net.packet.PacketOpcodeHeader;
 import server.world.World;
-import server.world.entity.Spell;
 import server.world.entity.combat.CombatFactory;
 import server.world.entity.combat.magic.CombatMagicSpells;
 import server.world.entity.combat.magic.CombatSpell;
@@ -28,7 +27,7 @@ public class DecodeAttackPlayerMagicPacket extends PacketDecoder {
         int index = in.readShort(true, ValueType.A);
         int spellId = in.readShort(true, ByteOrder.LITTLE);
         Player attacked = World.getPlayers().get(index);
-        Spell spell = CombatMagicSpells.getSpell(spellId).getSpell();
+        CombatSpell spell = CombatMagicSpells.getSpell(spellId).getSpell();
 
         if (attacked == null) {
             return;
@@ -70,7 +69,10 @@ public class DecodeAttackPlayerMagicPacket extends PacketDecoder {
         }
 
         /** Start combat! */
-        player.setCastSpell((CombatSpell) spell);
+        player.setAutocastSpell(null);
+        player.setAutocast(false);
+        player.getPacketBuilder().sendConfig(108, 0);
+        player.setCastSpell(spell);
         player.getCombatBuilder().attack(attacked);
     }
 }
