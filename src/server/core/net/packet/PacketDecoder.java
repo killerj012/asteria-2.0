@@ -1,6 +1,5 @@
 package server.core.net.packet;
 
-import server.core.net.buffer.PacketBuffer;
 import server.world.entity.player.Player;
 
 /**

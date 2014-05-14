@@ -3,9 +3,9 @@ package server.core.net;
 import java.io.IOException;
 import java.nio.channels.SelectionKey;
 import java.nio.channels.SocketChannel;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import server.core.Service;
-import server.core.net.security.HostGateway;
 
 /**
  * A service carried out by the <code>networkPool</code> that will accept
@@ -16,7 +16,7 @@ import server.core.net.security.HostGateway;
 public class SessionService implements Service {
 
     /** Used to keep track of how many connections we've accepted. */
-    private int eventCount;
+    private AtomicInteger eventCount = new AtomicInteger();
 
     /** The maximum amount of connections that will be accepted in this event. */
     private static final int MAXIMUM_ACCEPT_EVENT = 5;
@@ -26,7 +26,7 @@ public class SessionService implements Service {
         SocketChannel socket;
 
         try {
-            while ((socket = EventSelector.getServerSocketChannel().accept()) != null || eventCount != MAXIMUM_ACCEPT_EVENT) {
+            while ((socket = EventSelector.getServerSocketChannel().accept()) != null || eventCount.get() != MAXIMUM_ACCEPT_EVENT) {
 
                 /** Block if the connection is invalid. */
                 if (socket == null) {
@@ -43,7 +43,7 @@ public class SessionService implements Service {
                 socket.configureBlocking(false);
                 SelectionKey newKey = socket.register(EventSelector.getSelector(), SelectionKey.OP_READ);
                 newKey.attach(new Session(newKey));
-                eventCount++;
+                eventCount.incrementAndGet();
             }
         } catch (IOException e) {
             e.printStackTrace();

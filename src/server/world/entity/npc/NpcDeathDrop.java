@@ -11,6 +11,9 @@ import server.world.item.Item;
  */
 public class NpcDeathDrop {
 
+    // XXX: Was going to re-write the way that this was structured in the json
+    // file but meh.
+
     /** An array of drop tables for each npc. */
     private static NpcDeathDrop[] dropDefinitions = new NpcDeathDrop[6102];
 

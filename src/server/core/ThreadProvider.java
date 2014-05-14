@@ -5,7 +5,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * A dynamic {@link ThreadFactory} used for the creation of all threads used
- * throughout the engine.
+ * throughout the server.
  * 
  * @author lare96
  */

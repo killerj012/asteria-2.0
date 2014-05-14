@@ -1,4 +1,4 @@
-package server.core.net.security;
+package server.util;
 
 /**
  * <p>

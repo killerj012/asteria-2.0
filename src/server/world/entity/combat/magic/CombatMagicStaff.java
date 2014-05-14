@@ -5,7 +5,7 @@ package server.world.entity.combat.magic;
  * 
  * @author lare96
  */
-public enum MagicRuneStaff {
+public enum CombatMagicStaff {
 
     AIR(new int[] { 1381, 1397, 1405 }, new int[] { 556 }),
     WATER(new int[] { 1383, 1395, 1403 }, new int[] { 555 }),
@@ -21,14 +21,14 @@ public enum MagicRuneStaff {
     private int[] runeIds;
 
     /**
-     * Create a new {@link MagicRuneStaff}.
+     * Create a new {@link CombatMagicStaff}.
      * 
      * @param itemIds
      *        the item ids of the staves that can be used in place of runes.
      * @param runeIds
      *        the item ids of the runes that the staves can be used for.
      */
-    private MagicRuneStaff(int[] itemIds, int[] runeIds) {
+    private CombatMagicStaff(int[] itemIds, int[] runeIds) {
         this.itemIds = itemIds;
         this.runeIds = runeIds;
     }

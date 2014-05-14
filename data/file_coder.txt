@@ -1,4 +1,3 @@
-#dialogue server.world.entity.npc.dialogue.AnnoyingDialogue
 #dialogue server.world.entity.npc.dialogue.NiceWizardDialogue
 
 #packet server.core.net.packet.impl.DecodeAttackPlayerPacket

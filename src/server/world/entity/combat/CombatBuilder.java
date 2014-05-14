@@ -247,7 +247,6 @@ public class CombatBuilder {
         attackTimer = 0;
         currentStrategy = null;
         cooldownEffect = false;
-        lastAttacker = null;
         cooldown = 5;
     }
 
@@ -341,7 +340,7 @@ public class CombatBuilder {
      * @return true if this entity is being attacked by another entity.
      */
     public boolean isBeingAttacked() {
-        return lastAttacker != null;
+        return entity.getLastCombat().elapsed() < 5000;
     }
 
     /**

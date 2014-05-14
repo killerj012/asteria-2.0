@@ -21,8 +21,8 @@ public class AssignWeaponInterface {
     private static WeaponInterface[] weaponInterface = new WeaponInterface[7956];
 
     /**
-     * Whenever the singleton instance is created, every weapon in the game and
-     * the corresponding data for the interface will be loaded into a map.
+     * Whenever the class is created, every weapon in the game and the
+     * corresponding data for the interface will be loaded into a map.
      */
     static {
 
@@ -241,36 +241,13 @@ public class AssignWeaponInterface {
      * @author lare96
      */
     public enum TrainType {
-        ATTACK(Misc.ATTACK),
-        STRENGTH(Misc.STRENGTH),
-        DEFENCE(Misc.DEFENCE),
-        RANGED(Misc.RANGED),
-        MAGIC(Misc.MAGIC),
-        ATTACK_STRENGTH_DEFENCE(Misc.ATTACK, Misc.STRENGTH, Misc.DEFENCE),
-        RANGE_DEFENCE(Misc.RANGED, Misc.DEFENCE),
-        MAGIC_DEFENCE(Misc.MAGIC, Misc.DEFENCE);
-
-        /** The skills this train type trains. */
-        private int[] trainSkills;
-
-        /**
-         * Create a new {@link TrainType}.
-         * 
-         * @param trainSkills
-         *        the skills this train type trains.
-         */
-        private TrainType(int... trainSkills) {
-            this.trainSkills = trainSkills;
-        }
-
-        /**
-         * Gets the skills this train type trains.
-         * 
-         * @return the train skills.
-         */
-        public int[] getTrainSkills() {
-            return trainSkills;
-        }
+        ATTACK,
+        STRENGTH,
+        DEFENCE,
+        RANGED,
+        MAGIC,
+        ATTACK_STRENGTH_DEFENCE,
+        RANGED_DEFENCE
     }
 
     public enum FightStyle {
@@ -299,13 +276,13 @@ public class AssignWeaponInterface {
         BATTLEAXE_BLOCK(1833, TrainType.DEFENCE, 43, 3, Misc.ATTACK_SLASH, FightStyle.DEFENSIVE),
         CROSSBOW_ACCURATE(427, TrainType.RANGED, 43, 0, Misc.ATTACK_RANGE, FightStyle.ACCURATE),
         CROSSBOW_RAPID(427, TrainType.RANGED, 43, 1, Misc.ATTACK_RANGE, FightStyle.AGGRESSIVE),
-        CROSSBOW_LONGRANGE(427, TrainType.RANGE_DEFENCE, 43, 2, Misc.ATTACK_RANGE, FightStyle.DEFENSIVE),
+        CROSSBOW_LONGRANGE(427, TrainType.RANGED_DEFENCE, 43, 2, Misc.ATTACK_RANGE, FightStyle.DEFENSIVE),
         SHORTBOW_ACCURATE(426, TrainType.RANGED, 43, 0, Misc.ATTACK_RANGE, FightStyle.ACCURATE),
         SHORTBOW_RAPID(426, TrainType.RANGED, 43, 1, Misc.ATTACK_RANGE, FightStyle.AGGRESSIVE),
-        SHORTBOW_LONGRANGE(426, TrainType.RANGE_DEFENCE, 43, 2, Misc.ATTACK_RANGE, FightStyle.DEFENSIVE),
+        SHORTBOW_LONGRANGE(426, TrainType.RANGED_DEFENCE, 43, 2, Misc.ATTACK_RANGE, FightStyle.DEFENSIVE),
         LONGBOW_ACCURATE(426, TrainType.RANGED, 43, 0, Misc.ATTACK_RANGE, FightStyle.ACCURATE),
         LONGBOW_RAPID(426, TrainType.RANGED, 43, 1, Misc.ATTACK_RANGE, FightStyle.AGGRESSIVE),
-        LONGBOW_LONGRANGE(426, TrainType.RANGE_DEFENCE, 43, 2, Misc.ATTACK_RANGE, FightStyle.DEFENSIVE),
+        LONGBOW_LONGRANGE(426, TrainType.RANGED_DEFENCE, 43, 2, Misc.ATTACK_RANGE, FightStyle.DEFENSIVE),
         DAGGER_STAB(402, TrainType.ATTACK, 43, 0, Misc.ATTACK_STAB, FightStyle.ACCURATE),
         DAGGER_LUNGE(402, TrainType.STRENGTH, 43, 1, Misc.ATTACK_STAB, FightStyle.AGGRESSIVE),
         DAGGER_SLASH(451, TrainType.STRENGTH, 43, 2, Misc.ATTACK_STAB, FightStyle.AGGRESSIVE),
@@ -328,7 +305,7 @@ public class AssignWeaponInterface {
         MACE_BLOCK(401, TrainType.DEFENCE, 43, 3, Misc.ATTACK_CRUSH, FightStyle.DEFENSIVE),
         KNIFE_ACCURATE(806, TrainType.RANGED, 43, 0, Misc.ATTACK_RANGE, FightStyle.ACCURATE),
         KNIFE_RAPID(806, TrainType.RANGED, 43, 1, Misc.ATTACK_RANGE, FightStyle.AGGRESSIVE),
-        KNIFE_LONGRANGE(806, TrainType.RANGE_DEFENCE, 43, 2, Misc.ATTACK_RANGE, FightStyle.DEFENSIVE),
+        KNIFE_LONGRANGE(806, TrainType.RANGED_DEFENCE, 43, 2, Misc.ATTACK_RANGE, FightStyle.DEFENSIVE),
         SPEAR_LUNGE(2080, TrainType.ATTACK_STRENGTH_DEFENCE, 43, 0, Misc.ATTACK_STAB, FightStyle.CONTROLLED),
         SPEAR_SWIPE(2081, TrainType.ATTACK_STRENGTH_DEFENCE, 43, 1, Misc.ATTACK_SLASH, FightStyle.CONTROLLED),
         SPEAR_POUND(2082, TrainType.ATTACK_STRENGTH_DEFENCE, 43, 2, Misc.ATTACK_CRUSH, FightStyle.CONTROLLED),
@@ -356,13 +333,13 @@ public class AssignWeaponInterface {
         WHIP_DEFLECT(1658, TrainType.DEFENCE, 43, 2, Misc.ATTACK_SLASH, FightStyle.DEFENSIVE),
         THROWNAXE_ACCURATE(806, TrainType.RANGED, 43, 0, Misc.ATTACK_RANGE, FightStyle.ACCURATE),
         THROWNAXE_RAPID(806, TrainType.RANGED, 43, 1, Misc.ATTACK_RANGE, FightStyle.AGGRESSIVE),
-        THROWNAXE_LONGRANGE(806, TrainType.RANGE_DEFENCE, 43, 2, Misc.ATTACK_RANGE, FightStyle.DEFENSIVE),
+        THROWNAXE_LONGRANGE(806, TrainType.RANGED_DEFENCE, 43, 2, Misc.ATTACK_RANGE, FightStyle.DEFENSIVE),
         DART_ACCURATE(806, TrainType.RANGED, 43, 0, Misc.ATTACK_RANGE, FightStyle.ACCURATE),
         DART_RAPID(806, TrainType.RANGED, 43, 1, Misc.ATTACK_RANGE, FightStyle.AGGRESSIVE),
-        DART_LONGRANGE(806, TrainType.RANGE_DEFENCE, 43, 2, Misc.ATTACK_RANGE, FightStyle.DEFENSIVE),
+        DART_LONGRANGE(806, TrainType.RANGED_DEFENCE, 43, 2, Misc.ATTACK_RANGE, FightStyle.DEFENSIVE),
         JAVELIN_ACCURATE(806, TrainType.RANGED, 43, 0, Misc.ATTACK_RANGE, FightStyle.ACCURATE),
         JAVELIN_RAPID(806, TrainType.RANGED, 43, 2, Misc.ATTACK_RANGE, FightStyle.AGGRESSIVE),
-        JAVELIN_LONGRANGE(806, TrainType.RANGE_DEFENCE, 43, 3, Misc.ATTACK_RANGE, FightStyle.DEFENSIVE);
+        JAVELIN_LONGRANGE(806, TrainType.RANGED_DEFENCE, 43, 3, Misc.ATTACK_RANGE, FightStyle.DEFENSIVE);
 
         /** The animation this fight type holds. */
         private int animation;

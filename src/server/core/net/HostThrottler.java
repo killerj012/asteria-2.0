@@ -1,4 +1,4 @@
-package server.core.net.security;
+package server.core.net;
 
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Logger;
@@ -30,6 +30,11 @@ public class HostThrottler {
      * milliseconds).
      */
     private static final int THROTTLE_TIME_INTERVAL = 1000;
+
+    /** So this class cannot be instantiated. */
+    private HostThrottler() {
+
+    }
 
     /**
      * Makes sure the host can only connect a certain amount of times in a

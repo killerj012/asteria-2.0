@@ -1,4 +1,4 @@
-package server.world.entity.player.container;
+package server.world.item.container;
 
 import server.util.Misc;
 import server.world.entity.UpdateFlags.Flag;

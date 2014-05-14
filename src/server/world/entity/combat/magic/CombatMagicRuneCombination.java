@@ -6,7 +6,7 @@ package server.world.entity.combat.magic;
  * 
  * @author lare96
  */
-public enum MagicRuneCombination {
+public enum CombatMagicRuneCombination {
 
     STEAM(4694, 555, 554),
     MIST(4695, 555, 556),
@@ -25,7 +25,7 @@ public enum MagicRuneCombination {
     private int secondRune;
 
     /**
-     * Create a new {@link MagicRuneCombination}.
+     * Create a new {@link CombatMagicRuneCombination}.
      * 
      * @param combinationRune
      *        the combination rune.
@@ -34,7 +34,7 @@ public enum MagicRuneCombination {
      * @param secondRune
      *        the second substitute rune
      */
-    private MagicRuneCombination(int combinationRune, int firstRune, int secondRune) {
+    private CombatMagicRuneCombination(int combinationRune, int firstRune, int secondRune) {
         this.combinationRune = combinationRune;
         this.firstRune = firstRune;
         this.secondRune = secondRune;

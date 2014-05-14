@@ -143,10 +143,10 @@ public class Skill {
     public void setLevel(int level) {
         this.level = level;
 
-        if (level < 0) {
-            level = 0;
-        } else if (level > 120) {
-            level = 120;
+        if (this.level < 0) {
+            this.level = 0;
+        } else if (this.level > 120) {
+            this.level = 120;
         }
     }
 

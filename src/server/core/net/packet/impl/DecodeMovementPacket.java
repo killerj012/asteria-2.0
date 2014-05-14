@@ -1,6 +1,6 @@
 package server.core.net.packet.impl;
 
-import server.core.net.buffer.PacketBuffer;
+import server.core.net.packet.PacketBuffer;
 import server.core.net.packet.PacketDecoder;
 import server.core.net.packet.PacketOpcodeHeader;
 import server.world.entity.npc.NpcDialogue;

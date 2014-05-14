@@ -7,13 +7,12 @@ import java.nio.channels.SocketChannel;
 import java.security.SecureRandom;
 import java.util.logging.Logger;
 
-import server.core.net.buffer.PacketBuffer;
-import server.core.net.buffer.PacketBuffer.ReadBuffer;
-import server.core.net.buffer.PacketBuffer.WriteBuffer;
+import server.core.net.packet.PacketBuffer;
 import server.core.net.packet.PacketEncoder;
-import server.core.net.security.HostGateway;
-import server.core.net.security.ISAACCipher;
+import server.core.net.packet.PacketBuffer.ReadBuffer;
+import server.core.net.packet.PacketBuffer.WriteBuffer;
 import server.core.worker.TaskFactory;
+import server.util.ISAACCipher;
 import server.util.Misc;
 import server.util.Misc.Stopwatch;
 import server.world.World;
@@ -148,14 +147,14 @@ public final class Session {
 
         key.attach(null);
         key.cancel();
-        stage = Stage.LOGGED_OUT;
-        disconnected = true;
 
         try {
             if (player != null) {
                 player.logout();
             }
 
+            disconnected = true;
+            stage = Stage.LOGGED_OUT;
             socketChannel.close();
             HostGateway.exit(host);
         } catch (Exception ex) {

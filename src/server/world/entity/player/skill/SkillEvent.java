@@ -56,7 +56,7 @@ public abstract class SkillEvent {
      *        the amount to add.
      */
     public void exp(Player player, int amount) {
-        SkillManager.addExperience(player, amount, skillConstant().ordinal());
+        SkillManager.addExperience(player, amount, skillConstant());
     }
 
     /**

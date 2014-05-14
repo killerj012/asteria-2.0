@@ -11,7 +11,7 @@ import java.util.logging.Logger;
 import server.Main;
 import server.core.Rs2Engine;
 import server.core.net.Session.Stage;
-import server.core.net.buffer.PacketBuffer;
+import server.core.net.packet.PacketBuffer;
 import server.core.net.packet.PacketDecoder;
 import server.util.Misc;
 
@@ -63,8 +63,8 @@ public final class EventSelector {
     /**
      * Determines which clients are ready for networking events and handles
      * those events straight away for them. Accept events are dispatched to the
-     * <code>networkPool</code> and read and write events are handled right on
-     * the game thread.
+     * <code>networkPool</code> and read/write events are handled right on the
+     * game thread.
      */
     public static void tick() {
         try {

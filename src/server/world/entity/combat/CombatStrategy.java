@@ -29,7 +29,7 @@ public interface CombatStrategy {
      *        the defending entity in this combat session.
      * @return the hit that will be dealt to the defender during this turn.
      */
-    public CombatHit attack(Entity entity, Entity victim);
+    public CombatHitContainer attack(Entity entity, Entity victim);
 
     /**
      * How long the attacker must wait in intervals to attack.

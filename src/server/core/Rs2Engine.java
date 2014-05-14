@@ -10,8 +10,8 @@ import server.core.worker.TaskFactory;
 import server.world.World;
 
 /**
- * The 'heart' of the the server that fires tickable game logic at 600ms
- * intervals and gives access to important core components of this application.
+ * The 'heart' of the the server that fires game logic at 600ms intervals and
+ * gives access to the important core components of this server.
  * 
  * @author lare96
  */
@@ -64,7 +64,6 @@ public final class Rs2Engine implements Runnable {
 
     /** So this class cannot be instantiated. */
     private Rs2Engine() {
-
     }
 
     /**
@@ -96,6 +95,9 @@ public final class Rs2Engine implements Runnable {
     @Override
     public void run() {
         try {
+            // XXX: Please do not add multiple task systems... Asteria already
+            // comes with one! trying to keep as little overhead as possible.
+
             TaskFactory.getFactory().tick();
             EventSelector.tick();
             World.tick();

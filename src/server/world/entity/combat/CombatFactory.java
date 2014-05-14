@@ -6,12 +6,10 @@ import server.world.entity.Entity;
 import server.world.entity.Hit;
 import server.world.entity.UpdateFlags.Flag;
 import server.world.entity.combat.prayer.CombatPrayer;
-import server.world.entity.combat.range.RangedAmmo;
+import server.world.entity.combat.range.CombatRangedAmmo;
 import server.world.entity.combat.strategy.DefaultMagicCombatStrategy;
 import server.world.entity.combat.strategy.DefaultMeleeCombatStrategy;
 import server.world.entity.combat.strategy.DefaultRangedCombatStrategy;
-import server.world.entity.combat.task.CombatAccuracyHitTask;
-import server.world.entity.combat.task.CombatHitTask;
 import server.world.entity.combat.task.CombatPoisonTask;
 import server.world.entity.combat.task.CombatSkullTask;
 import server.world.entity.combat.task.CombatPoisonTask.CombatPoison;
@@ -27,10 +25,37 @@ import server.world.entity.player.content.AssignWeaponInterface.WeaponInterface;
  */
 public class CombatFactory {
 
-    /**
-     * So this class cannot be instantiated.
-     */
+    // XXX: Just a heads up, some of the formulas could use some work.
+
+    /** So this class cannot be instantiated. */
     private CombatFactory() {
+    }
+
+    /**
+     * Constructs the default melee combat strategy.
+     * 
+     * @return the default melee combat strategy.
+     */
+    public static CombatStrategy newDefaultMeleeStrategy() {
+        return new DefaultMeleeCombatStrategy();
+    }
+
+    /**
+     * Constructs the default magic combat strategy.
+     * 
+     * @return the default magic combat strategy.
+     */
+    public static CombatStrategy newDefaultMagicStrategy() {
+        return new DefaultMagicCombatStrategy();
+    }
+
+    /**
+     * Constructs the default ranged combat strategy.
+     * 
+     * @return the default ranged combat strategy.
+     */
+    public static CombatStrategy newDefaultRangedStrategy() {
+        return new DefaultRangedCombatStrategy();
     }
 
     /**
@@ -140,7 +165,7 @@ public class CombatFactory {
      *        the ammo being used.
      * @return the max range hit.
      */
-    public static int calculateMaxRangeHit(Entity entity, RangedAmmo table) {
+    public static int calculateMaxRangeHit(Entity entity, CombatRangedAmmo table) {
         if (entity.isPlayer()) {
             Player player = (Player) entity;
             int rangedLevel = player.getSkills()[Misc.RANGED].getLevel();
@@ -175,10 +200,6 @@ public class CombatFactory {
      * @return the melee hit.
      */
     public static Hit getMeleeHit(Entity entity) {
-        if (entity.isPlayer()) {
-            ((Player) entity).getPacketBuilder().sendMessage("Maximum hit possible this turn: " + CombatFactory.calculateMaxMeleeHit(entity));
-        }
-
         int calculate = Misc.getRandom().nextInt(CombatFactory.calculateMaxMeleeHit(entity));
 
         if (calculate < 1) {
@@ -196,12 +217,14 @@ public class CombatFactory {
      *        the ammo being used.
      * @return the range hit.
      */
-    public static Hit getRangeHit(Entity entity, RangedAmmo table) {
-        if (entity.isPlayer()) {
-            ((Player) entity).getPacketBuilder().sendMessage("Maximum hit possible this turn: " + CombatFactory.calculateMaxRangeHit(entity, table));
+    public static Hit getRangeHit(Entity entity, CombatRangedAmmo table) {
+        int calculate = Misc.getRandom().nextInt(CombatFactory.calculateMaxRangeHit(entity, table));
+
+        if (calculate < 1) {
+            calculate = 1;
         }
 
-        return new Hit(Misc.getRandom().nextInt(CombatFactory.calculateMaxRangeHit(entity, table)));
+        return new Hit(calculate);
     }
 
     /**
@@ -209,6 +232,8 @@ public class CombatFactory {
      * 
      * @param entity
      *        the entity to calculate for.
+     * @param type
+     *        the type of combat being used.
      * @return the effective accuracy level.
      */
     private static double getEffectiveAccuracy(Entity entity, CombatType type) {
@@ -322,6 +347,8 @@ public class CombatFactory {
      * 
      * @param attacker
      *        the entity to calculate for.
+     * @param type
+     *        the type of combat being used.
      * @return the attack roll.
      */
     private static double getAttackRoll(Entity attacker, CombatType type) {
@@ -350,6 +377,8 @@ public class CombatFactory {
      * 
      * @param victim
      *        the victim to calculate for.
+     * @param type
+     *        the type of combat being used.
      * @return the defence roll.
      */
     private static double getDefenceRoll(Entity victim, CombatType type) {
@@ -414,8 +443,7 @@ public class CombatFactory {
     }
 
     /**
-     * Determines if the player will hit or not and any miscellaneous weapon and
-     * armor effects are activated here.
+     * Determines if the player will hit or not.
      * 
      * @param attacker
      *        the entity attacking.
@@ -423,52 +451,10 @@ public class CombatFactory {
      *        the entity being attacked.
      * @param type
      *        the type of combat being used.
-     * @param hitCount
-     *        the amount of hits being dealt.
      * @return if the hit was successful.
      */
-    public static boolean hitAccuracy(Entity attacker, Entity victim, CombatType type, int hitCount) {
-        if (hitCount > 4) {
-            throw new IllegalArgumentException("Illegal number of hits! Maximum: 4");
-        }
-
-        double defence = CombatFactory.getDefenceRoll(victim, type);
-        double accuracy = CombatFactory.getAttackRoll(attacker, type);
-        double chance = CombatFactory.getChance(accuracy, defence);
-        boolean accurate = CombatFactory.isAccurateHit(chance);
-
-        if (attacker.isPlayer()) {
-            ((Player) attacker).getPacketBuilder().sendMessage("Chance to hit: " + (int) (chance * 100) + "%");
-        }
-        if (victim.isPlayer() && attacker.isNpc()) {
-            ((Player) victim).getPacketBuilder().sendMessage("Chance of npc hitting you: " + (int) (chance * 100) + "%");
-        }
-
-        if (type == CombatType.MAGIC) {
-            if (attacker.getCurrentlyCasting().maximumStrength() == -1) {
-                if (!accurate) {
-                    TaskFactory.getFactory().submit(new CombatAccuracyHitTask(attacker, victim, type, hitCount, 3, false));
-                } else {
-                    TaskFactory.getFactory().submit(new CombatHitTask(attacker, victim, null, type, 0, 3, false));
-                }
-                return accurate;
-            }
-        }
-
-        if (!accurate) {
-            switch (type) {
-                case MELEE:
-                    TaskFactory.getFactory().submit(new CombatAccuracyHitTask(attacker, victim, type, hitCount, 1, true));
-                    break;
-                case RANGE:
-                    TaskFactory.getFactory().submit(new CombatAccuracyHitTask(attacker, victim, type, hitCount, 2, false));
-                    break;
-                case MAGIC:
-                    TaskFactory.getFactory().submit(new CombatAccuracyHitTask(attacker, victim, type, hitCount, 3, false));
-                    break;
-            }
-        }
-        return accurate;
+    public static boolean hitAccuracy(Entity attacker, Entity victim, CombatType type) {
+        return CombatFactory.isAccurateHit(CombatFactory.getChance(CombatFactory.getAttackRoll(attacker, type), CombatFactory.getDefenceRoll(victim, type)));
     }
 
     /**
@@ -629,32 +615,5 @@ public class CombatFactory {
      */
     private static boolean isAccurateHit(double chance) {
         return Misc.getRandom().nextDouble() <= chance;
-    }
-
-    /**
-     * Constructs the default melee combat strategy.
-     * 
-     * @return the default melee combat strategy.
-     */
-    public static CombatStrategy newDefaultMeleeStrategy() {
-        return new DefaultMeleeCombatStrategy();
-    }
-
-    /**
-     * Constructs the default magic combat strategy.
-     * 
-     * @return the default magic combat strategy.
-     */
-    public static CombatStrategy newDefaultMagicStrategy() {
-        return new DefaultMagicCombatStrategy();
-    }
-
-    /**
-     * Constructs the default ranged combat strategy.
-     * 
-     * @return the default ranged combat strategy.
-     */
-    public static CombatStrategy newDefaultRangedStrategy() {
-        return new DefaultRangedCombatStrategy();
     }
 }

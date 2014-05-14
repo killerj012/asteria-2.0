@@ -9,8 +9,7 @@ import server.world.entity.Projectile;
 import server.world.entity.Spell;
 
 /**
- * A {@link Spell} implemenation primarily used for combat and fast action
- * spells.
+ * A {@link Spell} implemenation primarily used for combat spells.
  * 
  * @author lare96
  */

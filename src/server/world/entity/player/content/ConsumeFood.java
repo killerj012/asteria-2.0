@@ -28,7 +28,7 @@ public class ConsumeFood {
      * @author lare96
      */
     public enum Food {
-        // XXX: GenericAction<Player> can be used here to make it so certain
+        // XXX: GenericAction<?> can be used here to make it so certain
         // foods have special effects!
 
         ANCHOVIES(319, 3, true),

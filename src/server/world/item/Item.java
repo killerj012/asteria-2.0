@@ -15,7 +15,7 @@ public class Item {
     private int amount;
 
     /**
-     * Construct a new {@link Item} with the specified amount.
+     * Create a new {@link Item} with the specified amount.
      * 
      * @param id
      *        the id of the item.
@@ -28,7 +28,7 @@ public class Item {
     }
 
     /**
-     * Construct a new {@link Item} with the specified amount as 1.
+     * Create a new {@link Item} with the specified amount as 1.
      * 
      * @param id
      *        the id of the item.

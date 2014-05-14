@@ -33,6 +33,19 @@ public class Location {
     }
 
     /**
+     * Create a new {@link Location}.
+     * 
+     * @param source
+     *        the center of the location.
+     * @param radius
+     *        how big the location will be.
+     */
+    public Location(Position source, int radius) {
+        this.southWest = new Position(source.getX() - radius, source.getY() - radius);
+        this.northEast = new Position(source.getX() + radius, source.getY() + radius);
+    }
+
+    /**
      * Checks if a {@link Position} is within this location.
      * 
      * @param position

@@ -8,9 +8,9 @@ import java.util.concurrent.TimeUnit;
 
 /**
  * An {@link Executor} implementation that is used to carry out prioritized
- * services throughout the application. When these pools are not in use for a
- * certain period of time they will automatically go 'idle' therefore consuming
- * less resources.
+ * services throughout the server. When these pools are not in use for a certain
+ * period of time they will automatically go 'idle' therefore consuming less
+ * resources.
  * 
  * @author lare96
  */

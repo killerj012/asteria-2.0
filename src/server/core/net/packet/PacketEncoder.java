@@ -3,11 +3,10 @@ package server.core.net.packet;
 import java.nio.channels.SocketChannel;
 
 import server.core.net.Session;
-import server.core.net.buffer.PacketBuffer;
-import server.core.net.buffer.PacketBuffer.AccessType;
-import server.core.net.buffer.PacketBuffer.ByteOrder;
-import server.core.net.buffer.PacketBuffer.ValueType;
-import server.core.net.buffer.PacketBuffer.WriteBuffer;
+import server.core.net.packet.PacketBuffer.AccessType;
+import server.core.net.packet.PacketBuffer.ByteOrder;
+import server.core.net.packet.PacketBuffer.ValueType;
+import server.core.net.packet.PacketBuffer.WriteBuffer;
 import server.world.World;
 import server.world.entity.player.Player;
 import server.world.item.Item;
@@ -30,7 +29,7 @@ public final class PacketEncoder {
     private Player player;
 
     /**
-     * Construct a new {@link PacketEncoder}.
+     * Create a new {@link PacketEncoder}.
      * 
      * @param player
      *        the player sending these packets.
@@ -295,6 +294,14 @@ public final class PacketEncoder {
         return this;
     }
 
+    /**
+     * Creates a custom map region made up tiles from anywhere in the game
+     * world.
+     * 
+     * @param palette
+     *        the instance of the region to create.
+     * @return this packet builder.
+     */
     public PacketEncoder sendCustomMapRegion(Palette palette) {
         this.sendMapRegion();
         PacketBuffer.WriteBuffer out = PacketBuffer.newWriteBuffer(100);
@@ -308,9 +315,7 @@ public final class PacketEncoder {
                     PaletteTile tile = palette.getTile(x, y, z);
                     out.writeBits(1, tile != null ? 1 : 0);
                     if (tile != null) {
-                        out.writeBits(26, tile.getX() << 14 | tile.getY() << 3 | tile.getZ() << 24); // |
-                        // tile.getRotation()
-                        // << 1
+                        out.writeBits(26, tile.getX() << 14 | tile.getY() << 3 | tile.getZ() << 24 | tile.getRotation() << 1);
                     }
                 }
             }
@@ -344,8 +349,6 @@ public final class PacketEncoder {
      * @return this packet encoder.
      */
     public PacketEncoder flashSelectedSidebar(int id) {
-        // XXX: try negative values
-
         PacketBuffer.WriteBuffer out = PacketBuffer.newWriteBuffer(2);
         out.writeHeader(24).writeByte(id, ValueType.A);
         player.getSession().encode(out);
@@ -372,10 +375,6 @@ public final class PacketEncoder {
      * @return this packet encoder.
      */
     public PacketEncoder sendMapState(int state) {
-        // States:
-        // 0 - Active: Clickable and viewable
-        // 1 - Locked: viewable but not clickable
-        // 2 - Blacked-out: Minimap is replaced with black background
         PacketBuffer.WriteBuffer out = PacketBuffer.newWriteBuffer(2);
         out.writeHeader(99).writeByte(state);
         player.getSession().encode(out);
@@ -388,8 +387,6 @@ public final class PacketEncoder {
      * @return this packet encoder.
      */
     public PacketEncoder sendResetCameraRotation() {
-        // XXX: disconnects the player when used?
-
         PacketBuffer.WriteBuffer out = PacketBuffer.newWriteBuffer(1);
         out.writeHeader(108);
         player.getSession().encode(out);
@@ -492,7 +489,6 @@ public final class PacketEncoder {
      * @return this packet encoder.
      */
     public PacketEncoder systemUpdate(int time) {
-        // XXX: 101 = 1:00? 201 = 2:00? 50 = 0:29? Figure it out.
         PacketBuffer.WriteBuffer out = PacketBuffer.newWriteBuffer(3);
         out.writeHeader(114).writeShort(time, ByteOrder.LITTLE);
         player.getSession().encode(out);

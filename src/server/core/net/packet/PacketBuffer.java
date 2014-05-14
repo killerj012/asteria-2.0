@@ -1,4 +1,4 @@
-package server.core.net.buffer;
+package server.core.net.packet;
 
 import java.nio.ByteBuffer;
 

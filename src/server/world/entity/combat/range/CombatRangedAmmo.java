@@ -5,11 +5,11 @@ import server.world.entity.player.Player;
 import server.world.entity.player.content.AssignWeaponInterface.WeaponInterface;
 
 /**
- * A fixed table that holds data for ranged ammo.
+ * A table that holds data for all ranged ammo that be fired in game.
  * 
  * @author lare96
  */
-public enum RangedAmmo {
+public enum CombatRangedAmmo {
 
     /** A collection of arrows. */
     BRONZE_ARROW("Bronze arrow", 7, 10, 44, 3, 43, 31, 19),
@@ -76,7 +76,7 @@ public enum RangedAmmo {
     private int graphicId;
 
     /**
-     * Create a new {@link RangedAmmo}.
+     * Create a new {@link CombatRangedAmmo}.
      * 
      * @param name
      *        the name of this ammo.
@@ -95,7 +95,7 @@ public enum RangedAmmo {
      * @param graphicId
      *        the graphic id of this ammo.
      */
-    private RangedAmmo(String name, int rangedStrength, int projectileId, int delay, int speed, int startHeight, int endHeight, int graphicId) {
+    private CombatRangedAmmo(String name, int rangedStrength, int projectileId, int delay, int speed, int startHeight, int endHeight, int graphicId) {
         this.name = name;
         this.rangedStrength = rangedStrength;
         this.projectileId = projectileId;
@@ -113,15 +113,15 @@ public enum RangedAmmo {
      *        the player to calculate for.
      * @return the ammo being used.
      */
-    public static RangedAmmo getAmmo(Player player) {
+    public static CombatRangedAmmo getAmmo(Player player) {
         if (player.getWeapon() == WeaponInterface.SHORTBOW || player.getWeapon() == WeaponInterface.LONGBOW || player.getWeapon() == WeaponInterface.CROSSBOW) {
-            for (RangedAmmo tableItem : RangedAmmo.values()) {
+            for (CombatRangedAmmo tableItem : CombatRangedAmmo.values()) {
                 if (player.getEquipment().getContainer().getItem(Misc.EQUIPMENT_SLOT_ARROWS).getDefinition().getItemName().startsWith(tableItem.getName())) {
                     return tableItem;
                 }
             }
         } else {
-            for (RangedAmmo tableItem : RangedAmmo.values()) {
+            for (CombatRangedAmmo tableItem : CombatRangedAmmo.values()) {
                 if (player.getEquipment().getContainer().getItem(Misc.EQUIPMENT_SLOT_WEAPON).getDefinition().getItemName().startsWith(tableItem.getName())) {
                     return tableItem;
                 }

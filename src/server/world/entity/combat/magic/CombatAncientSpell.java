@@ -18,6 +18,8 @@ public abstract class CombatAncientSpell extends CombatSpell {
 
     @Override
     public void endCast(Entity cast, Entity castOn, boolean spellAccurate) {
+
+        /** Multitarget support with the proper radius. */
         if (spellAccurate) {
             if (this.spellRadius() == 0) {
                 spellEffect(cast, castOn);
@@ -33,7 +35,7 @@ public abstract class CombatAncientSpell extends CombatSpell {
                     if (npc.getPosition().withinDistance(castOn.getPosition(), spellRadius()) && npc != cast && npc.getDefinition().isAttackable()) {
                         npc.gfx(cast.getCurrentlyCasting().endGfx());
                         int damage = Misc.getRandom().nextInt(this.maximumStrength());
-                        npc.dealDamage(new Hit(Misc.getRandom().nextInt(this.maximumStrength())));
+                        npc.dealDamage(new Hit(damage));
                         npc.getCombatBuilder().addDamage(cast, damage);
                         spellEffect(cast, npc);
                     }
@@ -63,8 +65,21 @@ public abstract class CombatAncientSpell extends CombatSpell {
         return null;
     }
 
+    /**
+     * The effect this spell has on the target(s).
+     * 
+     * @param cast
+     *        the entity casting this spell.
+     * @param castOn
+     *        the person being hit by this spell.
+     */
     public abstract void spellEffect(Entity cast, Entity castOn);
 
+    /**
+     * The radius of this spell.
+     * 
+     * @return how far from the target this spell can hit.
+     */
     public abstract int spellRadius();
 
 }

@@ -62,6 +62,12 @@ public class RegisterableWorldObject {
         }
     }
 
+    /**
+     * Registers a new object to the database.
+     * 
+     * @param registerable
+     *        the new object to register to the database.
+     */
     public void register(WorldObject registerable) {
 
         /**
@@ -91,6 +97,12 @@ public class RegisterableWorldObject {
         }
     }
 
+    /**
+     * Removes an existing object from the database.
+     * 
+     * @param registerable
+     *        the existing object from the database.
+     */
     public void unregister(WorldObject registerable) {
 
         /** Can't remove an object that isn't there. */
@@ -117,6 +129,12 @@ public class RegisterableWorldObject {
         }
     }
 
+    /**
+     * Fired when the player loads a new region.
+     * 
+     * @param player
+     *        the player loading a new region.
+     */
     public void loadNewRegion(Player player) {
 
         /** Update existing objects for player in region. */

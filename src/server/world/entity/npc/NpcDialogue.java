@@ -12,9 +12,6 @@ import server.world.entity.player.Player;
  */
 public abstract class NpcDialogue {
 
-    // TODO: implementation for npcs so you don't even have to add the dialogues
-    // for npcs
-
     /** A map of the all of the dialogues. */
     private static Map<Integer, NpcDialogue> dialogueMap = new HashMap<Integer, NpcDialogue>();
 
@@ -65,7 +62,7 @@ public abstract class NpcDialogue {
          * @param expressionId
          *        the id of the expression to create.
          */
-        Expression(int expressionId) {
+        private Expression(int expressionId) {
             this.expressionId = expressionId;
         }
 

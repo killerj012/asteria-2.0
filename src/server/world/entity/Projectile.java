@@ -108,6 +108,24 @@ public class Projectile {
 
             if (start.isViewableFrom(player.getPosition())) {
                 player.getPacketBuilder().sendProjectile(start, offset, 0, speed, projectileId, startHeight, endHeight, lockon, delay);
+
+            }
+        }
+    }
+
+    /**
+     * Sends two projectiles using the values set when the {@link Projectile}
+     * was constructed.
+     */
+    public void sendDuplicates() {
+        for (Player player : World.getPlayers()) {
+            if (player == null) {
+                continue;
+            }
+
+            if (start.isViewableFrom(player.getPosition())) {
+                player.getPacketBuilder().sendProjectile(start, offset, 0, speed, projectileId, startHeight, endHeight, lockon, delay);
+                player.getPacketBuilder().sendProjectile(start, offset, 0, speed, projectileId, startHeight, endHeight, lockon, delay);
             }
         }
     }

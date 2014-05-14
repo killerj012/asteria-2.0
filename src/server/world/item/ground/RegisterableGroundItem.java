@@ -120,6 +120,12 @@ public class RegisterableGroundItem {
         }
     }
 
+    /**
+     * Registers a new ground item to the game world.
+     * 
+     * @param registerable
+     *        the ground item to register.
+     */
     public void register(GroundItem registerable) {
 
         /** Fire the item's registration event. */
@@ -129,6 +135,13 @@ public class RegisterableGroundItem {
         itemList.add(registerable);
     }
 
+    /**
+     * Registers a new ground item and stacks it on top of any existing ground
+     * items with the same id.
+     * 
+     * @param registerable
+     *        the ground item to register and stack if applicable.
+     */
     public void registerAndStack(GroundItem registerable) {
         int itemCount = 0;
 
@@ -155,6 +168,12 @@ public class RegisterableGroundItem {
         itemList.add(registerable);
     }
 
+    /**
+     * Unregisters an existing ground item from the game world.
+     * 
+     * @param registerable
+     *        the ground item to unregister.
+     */
     public void unregister(GroundItem registerable) {
 
         /** Fire the item's unregistration event. */
@@ -164,6 +183,12 @@ public class RegisterableGroundItem {
         itemList.remove(registerable);
     }
 
+    /**
+     * Fired when the player loads a new region.
+     * 
+     * @param player
+     *        the player loading a new region.
+     */
     public void loadNewRegion(Player player) {
 
         /** First remove all items. */

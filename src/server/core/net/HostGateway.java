@@ -1,4 +1,4 @@
-package server.core.net.security;
+package server.core.net;
 
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
@@ -24,6 +24,11 @@ public class HostGateway {
 
     /** Used to keep track of unfriendly hosts. */
     private static CopyOnWriteArrayList<String> disabledHosts = new CopyOnWriteArrayList<String>();
+
+    /** So this class cannot be instantiated. */
+    private HostGateway() {
+
+    }
 
     /**
      * Checks the host into the gateway.

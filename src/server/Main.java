@@ -9,8 +9,7 @@ import server.util.Misc.Stopwatch;
 import server.world.World;
 
 /**
- * The 'origin' class which contains the main method of this application and
- * miscellaneous constants for control over the core of the server.
+ * The 'origin' class which contains the main method of this server.
  * 
  * @author lare96
  */
@@ -27,7 +26,6 @@ public final class Main {
 
     /** So this class cannot be instantiated. */
     private Main() {
-
     }
 
     /**

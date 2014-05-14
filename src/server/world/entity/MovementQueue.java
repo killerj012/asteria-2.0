@@ -78,6 +78,7 @@ public class MovementQueue {
 
             entity.getPosition().move(x, y);
             entity.setPrimaryDirection(walkPoint.getDirection());
+            entity.setLastDirection(walkPoint.getDirection());
 
             if (entity instanceof Player) {
                 Player player = (Player) entity;
@@ -109,6 +110,7 @@ public class MovementQueue {
 
             entity.getPosition().move(x, y);
             entity.setSecondaryDirection(runPoint.getDirection());
+            entity.setLastDirection(runPoint.getDirection());
         }
 
         /** Check for region changes. */

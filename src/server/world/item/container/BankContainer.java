@@ -1,4 +1,4 @@
-package server.world.entity.player.container;
+package server.world.item.container;
 
 import server.world.entity.player.Player;
 import server.world.item.Item;

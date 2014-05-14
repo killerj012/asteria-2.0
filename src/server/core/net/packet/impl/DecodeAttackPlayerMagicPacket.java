@@ -1,10 +1,10 @@
 package server.core.net.packet.impl;
 
-import server.core.net.buffer.PacketBuffer.ByteOrder;
-import server.core.net.buffer.PacketBuffer.ReadBuffer;
-import server.core.net.buffer.PacketBuffer.ValueType;
 import server.core.net.packet.PacketDecoder;
 import server.core.net.packet.PacketOpcodeHeader;
+import server.core.net.packet.PacketBuffer.ByteOrder;
+import server.core.net.packet.PacketBuffer.ReadBuffer;
+import server.core.net.packet.PacketBuffer.ValueType;
 import server.world.World;
 import server.world.entity.combat.CombatFactory;
 import server.world.entity.combat.magic.CombatMagicSpells;

@@ -2,9 +2,9 @@ package server.world.entity.npc;
 
 import java.util.Iterator;
 
-import server.core.net.buffer.PacketBuffer;
-import server.core.net.buffer.PacketBuffer.ByteOrder;
-import server.core.net.buffer.PacketBuffer.ValueType;
+import server.core.net.packet.PacketBuffer;
+import server.core.net.packet.PacketBuffer.ByteOrder;
+import server.core.net.packet.PacketBuffer.ValueType;
 import server.core.worker.TaskFactory;
 import server.util.Misc;
 import server.world.World;
@@ -129,7 +129,6 @@ public class NpcUpdate {
             out.writeBits(2, 1);
             out.writeBits(3, npc.getPrimaryDirection());
 
-            // XXX: could be the issue
             if (npc.getFlags().isUpdateRequired()) {
                 out.writeBit(true);
             } else {

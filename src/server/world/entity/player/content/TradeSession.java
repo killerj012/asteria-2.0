@@ -1,6 +1,6 @@
 package server.world.entity.player.content;
 
-import server.core.net.buffer.PacketBuffer;
+import server.core.net.packet.PacketBuffer;
 import server.util.Misc;
 import server.world.entity.player.Player;
 import server.world.item.Item;

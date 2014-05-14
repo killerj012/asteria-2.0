@@ -8,6 +8,7 @@ import java.util.logging.Logger;
 
 import server.Main;
 import server.core.net.Session;
+import server.core.net.Session.Stage;
 import server.core.net.packet.PacketEncoder;
 import server.core.worker.TaskFactory;
 import server.core.worker.Worker;
@@ -21,14 +22,11 @@ import server.world.entity.UpdateFlags.Flag;
 import server.world.entity.combat.magic.CombatSpell;
 import server.world.entity.combat.prayer.CombatPrayer;
 import server.world.entity.combat.prayer.CombatPrayerWorker;
-import server.world.entity.combat.range.RangedAmmo;
+import server.world.entity.combat.range.CombatRangedAmmo;
 import server.world.entity.combat.special.CombatSpecial;
 import server.world.entity.combat.task.CombatPoisonTask.CombatPoison;
 import server.world.entity.npc.Npc;
 import server.world.entity.npc.NpcDialogue;
-import server.world.entity.player.container.BankContainer;
-import server.world.entity.player.container.EquipmentContainer;
-import server.world.entity.player.container.InventoryContainer;
 import server.world.entity.player.content.AssignWeaponInterface;
 import server.world.entity.player.content.PrivateMessage;
 import server.world.entity.player.content.Spellbook;
@@ -44,6 +42,9 @@ import server.world.entity.player.skill.SkillEvent;
 import server.world.entity.player.skill.SkillManager;
 import server.world.entity.player.skill.SkillManager.SkillConstant;
 import server.world.item.Item;
+import server.world.item.container.BankContainer;
+import server.world.item.container.EquipmentContainer;
+import server.world.item.container.InventoryContainer;
 import server.world.item.ground.GroundItem;
 import server.world.item.ground.StaticGroundItem;
 import server.world.map.Location;
@@ -78,7 +79,7 @@ public class Player extends Entity {
     private CombatSpell castSpell;
 
     /** The range ammo being used. */
-    private RangedAmmo rangedAmmo;
+    private CombatRangedAmmo rangedAmmo;
 
     /** If the player is autocasting. */
     private boolean autocast;
@@ -91,9 +92,6 @@ public class Player extends Entity {
 
     /** If the player data needs to be read or not. */
     private boolean needsRead = true;
-
-    /** If the player has a spell selected. */
-    private int spellSelected = -1;
 
     /** The special bar percentage. */
     private int specialPercentage = 100;
@@ -143,12 +141,6 @@ public class Player extends Entity {
     /** The shop you currently have open. */
     private int openShopId;
 
-    /** The amount of food you are cooking. */
-    private int cookAmount;
-
-    /** Amount of logs the tree you're cutting holds. */
-    private int woodcuttingLogAmount;
-
     /** Skill event firing flags. */
     private boolean[] skillEvent = new boolean[15];
 
@@ -173,21 +165,11 @@ public class Player extends Entity {
     /** The player's run energy. */
     private int runEnergy = 100;
 
-    /** The npc teleporting the player. */
-    private Npc runecraftingNpc;
-
     /** Handles a trading session with another player. */
     private TradeSession tradeSession = new TradeSession(this);
 
     /** A collection of anti-massing timers. */
-    private Stopwatch eatingTimer = new Stopwatch().reset(),
-            buryTimer = new Stopwatch().reset(),
-            altarTimer = new Stopwatch().reset(),
-            npcTheftTimer = new Stopwatch().reset(),
-            objectTheftTimer = new Stopwatch().reset();
-
-    /** The last delay when stealing. */
-    private long lastTheftDelay;
+    private Stopwatch eatingTimer = new Stopwatch().reset();
 
     /** The username. */
     private String username;
@@ -206,9 +188,6 @@ public class Player extends Entity {
 
     /** The stage in the conversation the player is in. */
     private int conversationStage;
-
-    /** If this is the first packet recieved. Used for global items. */
-    private boolean firstPacket;
 
     /** A list of local players. */
     private final List<Player> players = new LinkedList<Player>();
@@ -264,9 +243,6 @@ public class Player extends Entity {
     /** Private messaging for this player. */
     private PrivateMessage privateMessage = new PrivateMessage(this);
 
-    /** Field that determines if you are using a stove for cooking. */
-    private boolean usingStove;
-
     /**
      * Creates a new {@link Player}.
      * 
@@ -299,6 +275,9 @@ public class Player extends Entity {
 
     @Override
     public void pulse() throws Exception {
+        // XXX: Equal to the "process()" method, the only thing that should be
+        // in here is movement... nothing else! Use workers for delayed actions!
+
         getMovementQueue().execute();
     }
 
@@ -440,7 +419,7 @@ public class Player extends Entity {
         setFollowing(false);
         setFollowingEntity(null);
         getPacketBuilder().closeWindows();
-        SkillManager.addExperience(this, spell.baseExperience(), Misc.MAGIC);
+        SkillManager.addExperience(this, spell.baseExperience(), SkillConstant.MAGIC);
 
         switch (spell.type()) {
             case NORMAL_SPELLBOOK_TELEPORT:
@@ -573,7 +552,7 @@ public class Player extends Entity {
             getPacketBuilder().sendLogout();
         }
 
-        if (username != null) {
+        if (username != null && session.getStage() == Stage.LOGGED_IN) {
             World.savePlayer(this);
         }
 
@@ -856,14 +835,7 @@ public class Player extends Entity {
      * Loads interface text on login.
      */
     public void loadText() {
-        getPacketBuilder().sendString("Teleport Home", 1300);
-        getPacketBuilder().sendString("Teleports you to Draynor Village.", 1301);
-        getPacketBuilder().sendString("Teleport Home", 13037);
-        getPacketBuilder().sendString("Teleports you to Draynor Village.", 13038);
-        getPacketBuilder().sendString("Minigame Teleport", 1325);
-        getPacketBuilder().sendString("A selection of teleports.", 1326);
-        getPacketBuilder().sendString("Minigame Teleport", 13047);
-        getPacketBuilder().sendString("A selection of teleports.", 13048);
+
     }
 
     /**
@@ -993,21 +965,6 @@ public class Player extends Entity {
     }
 
     /**
-     * @return the firstPacket
-     */
-    public boolean isFirstPacket() {
-        return firstPacket;
-    }
-
-    /**
-     * @param firstPacket
-     *        the firstPacket to set
-     */
-    public void setFirstPacket(boolean firstPacket) {
-        this.firstPacket = firstPacket;
-    }
-
-    /**
      * @return the privateMessage
      */
     public PrivateMessage getPrivateMessage() {
@@ -1049,21 +1006,6 @@ public class Player extends Entity {
      */
     public boolean[] getSkillEvent() {
         return skillEvent;
-    }
-
-    /**
-     * @return the usingStove
-     */
-    public boolean isUsingStove() {
-        return usingStove;
-    }
-
-    /**
-     * @param usingStove
-     *        the usingStove to set
-     */
-    public void setUsingStove(boolean usingStove) {
-        this.usingStove = usingStove;
     }
 
     /**
@@ -1156,13 +1098,6 @@ public class Player extends Entity {
     }
 
     /**
-     * @return the buryTimer
-     */
-    public Stopwatch getBuryTimer() {
-        return buryTimer;
-    }
-
-    /**
      * @return the option
      */
     public int getOption() {
@@ -1175,40 +1110,6 @@ public class Player extends Entity {
      */
     public void setOption(int option) {
         this.option = option;
-    }
-
-    /**
-     * @return the runecraftingNpc
-     */
-    public Npc getRunecraftingNpc() {
-        return runecraftingNpc;
-    }
-
-    /**
-     * @param runecraftingNpc
-     *        the runecraftingNpc to set
-     */
-    public void setRunecraftingNpc(Npc runecraftingNpc) {
-        this.runecraftingNpc = runecraftingNpc;
-    }
-
-    /**
-     * @return the cookAmount
-     */
-    public int getCookAmount() {
-        return cookAmount;
-    }
-
-    /**
-     * @param cookAmount
-     *        the cookAmount to set
-     */
-    public void setCookAmount(int cookAmount) {
-        this.cookAmount = cookAmount;
-    }
-
-    public void addCookAmount() {
-        cookAmount++;
     }
 
     /**
@@ -1257,13 +1158,6 @@ public class Player extends Entity {
     }
 
     /**
-     * @return the altarTimer
-     */
-    public Stopwatch getAltarTimer() {
-        return altarTimer;
-    }
-
-    /**
      * @return the spellbook
      */
     public Spellbook getSpellbook() {
@@ -1276,25 +1170,6 @@ public class Player extends Entity {
      */
     public void setSpellbook(Spellbook spellbook) {
         this.spellbook = spellbook;
-    }
-
-    /**
-     * @return the woodcuttingLogAmount
-     */
-    public int getWoodcuttingLogAmount() {
-        return woodcuttingLogAmount;
-    }
-
-    /**
-     * @param woodcuttingLogAmount
-     *        the woodcuttingLogAmount to set
-     */
-    public void setWoodcuttingLogAmount(int woodcuttingLogAmount) {
-        this.woodcuttingLogAmount = woodcuttingLogAmount;
-    }
-
-    public void decrementWoodcuttingLogAmount() {
-        this.woodcuttingLogAmount--;
     }
 
     /**
@@ -1403,28 +1278,6 @@ public class Player extends Entity {
     }
 
     /**
-     * @return the lastTheftDelay
-     */
-    public long getLastTheftDelay() {
-        return lastTheftDelay;
-    }
-
-    /**
-     * @param lastTheftDelay
-     *        the lastTheftDelay to set
-     */
-    public void setLastTheftDelay(long lastTheftDelay) {
-        this.lastTheftDelay = lastTheftDelay;
-    }
-
-    /**
-     * @return the theftTimer
-     */
-    public Stopwatch getNpcTheftTimer() {
-        return npcTheftTimer;
-    }
-
-    /**
      * @return the isBanned
      */
     public boolean isBanned() {
@@ -1437,13 +1290,6 @@ public class Player extends Entity {
      */
     public void setBanned(boolean isBanned) {
         this.isBanned = isBanned;
-    }
-
-    /**
-     * @return the objectTheftTimer
-     */
-    public Stopwatch getObjectTheftTimer() {
-        return objectTheftTimer;
     }
 
     /**
@@ -1540,21 +1386,6 @@ public class Player extends Entity {
      */
     public void setNeedsRead(boolean needsRead) {
         this.needsRead = needsRead;
-    }
-
-    /**
-     * @return the spellSelected
-     */
-    public int getSpellSelected() {
-        return spellSelected;
-    }
-
-    /**
-     * @param spellSelected
-     *        the spellSelected to set
-     */
-    public void setSpellSelected(int spellSelected) {
-        this.spellSelected = spellSelected;
     }
 
     /**
@@ -1749,14 +1580,15 @@ public class Player extends Entity {
     /**
      * @return the rangedAmmo
      */
-    public RangedAmmo getRangedAmmo() {
+    public CombatRangedAmmo getRangedAmmo() {
         return rangedAmmo;
     }
 
     /**
-     * @param rangedAmmo the rangedAmmo to set
+     * @param rangedAmmo
+     *        the rangedAmmo to set
      */
-    public void setRangedAmmo(RangedAmmo rangedAmmo) {
+    public void setRangedAmmo(CombatRangedAmmo rangedAmmo) {
         this.rangedAmmo = rangedAmmo;
     }
 }

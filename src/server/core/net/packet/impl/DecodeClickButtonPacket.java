@@ -2,7 +2,7 @@ package server.core.net.packet.impl;
 
 import java.util.logging.Logger;
 
-import server.core.net.buffer.PacketBuffer;
+import server.core.net.packet.PacketBuffer;
 import server.core.net.packet.PacketDecoder;
 import server.core.net.packet.PacketOpcodeHeader;
 import server.core.worker.TaskFactory;
@@ -527,7 +527,7 @@ public class DecodeClickButtonPacket extends PacketDecoder {
             case 33018: // halberd
                 player.setFightType(FightType.HALBERD_JAB);
                 break;
-            case 33017:
+            case 33020:
                 player.setFightType(FightType.HALBERD_SWIPE);
                 break;
             case 33016:
@@ -561,6 +561,7 @@ public class DecodeClickButtonPacket extends PacketDecoder {
             case 1094:
             case 1097:
                 if (player.isAutocast()) {
+                    player.setCastSpell(null);
                     player.setAutocastSpell(null);
                     player.setAutocast(false);
                     player.getPacketBuilder().sendConfig(108, 0);

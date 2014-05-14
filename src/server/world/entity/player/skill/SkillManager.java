@@ -13,11 +13,8 @@ import server.world.entity.player.Player;
 public class SkillManager {
 
     /**
-     * How much the current exp rate will be multiplied by. The current
-     * experience rates are identical to those in runescape. So in other words:
-     * <br>
-     * <br>
-     * <code>EXP_RATE_MULTIPLIER*RS EXPERIENCE</code>
+     * How much the current exp rate will be multiplied by. The higher this
+     * number, the more exp given.
      */
     public static final int EXP_RATE_MULTIPLIER = 1;
 
@@ -219,7 +216,46 @@ public class SkillManager {
      * @param skill
      *        the skill this experience is being given to.
      */
-    public static void addExperience(Player player, int amount, int skill) {
+    public static void addExperience(Player player, int amount, SkillConstant skill) {
+        if (amount + player.getSkills()[skill.ordinal()].getExperience() < 0 || player.getSkills()[skill.ordinal()].getExperience() > 2000000000) {
+            return;
+        }
+
+        int oldLevel = player.getSkills()[skill.ordinal()].getLevelForExperience();
+        int experience = player.getSkills()[skill.ordinal()].getExperience();
+        amount *= EXP_RATE_MULTIPLIER;
+
+        player.getSkills()[skill.ordinal()].setExperience(experience + amount);
+
+        if (oldLevel < player.getSkills()[skill.ordinal()].getLevelForExperience()) {
+            if (skill.ordinal() != 3) {
+                player.getSkills()[skill.ordinal()].setLevel(player.getSkills()[skill.ordinal()].getLevelForExperience());
+            } else {
+                int old = player.getSkills()[skill.ordinal()].getLevel();
+
+                player.getSkills()[skill.ordinal()].setLevel(old + 1);
+            }
+            levelUp(player, skill);
+            player.gfx(new Gfx(199));
+            player.getFlags().flag(Flag.APPEARANCE);
+        }
+
+        player.getPacketBuilder().sendSkill(skill.ordinal(), player.getSkills()[skill.ordinal()].getLevel(), player.getSkills()[skill.ordinal()].getExperience());
+        SkillManager.refresh(player, skill);
+    }
+
+    /**
+     * Adds the specified amount of experience to a certain skill for a player
+     * without taking the multiplier into effect.
+     * 
+     * @param player
+     *        the player being granted the experience.
+     * @param amount
+     *        the amount of experience being given.
+     * @param skill
+     *        the skill this experience is being given to.
+     */
+    public static void addExperienceNoMultiplier(Player player, int amount, int skill) {
         if (amount + player.getSkills()[skill].getExperience() < 0 || player.getSkills()[skill].getExperience() > 2000000000) {
             return;
         }

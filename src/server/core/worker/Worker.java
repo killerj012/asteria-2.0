@@ -63,14 +63,11 @@ public abstract class Worker {
     public abstract void fire();
 
     /**
-     * Method called when this task is stopped. Implementation is optional.
+     * Workers can override this method to fire more logic once it has been
+     * canceled.
      */
     public void fireOnCancel() {
 
-        /**
-         * Workers can override this method to fire more logic once it has been
-         * canceled.
-         */
     }
 
     /**

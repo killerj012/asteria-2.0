@@ -14,5 +14,6 @@ public abstract class CombatFightSpell extends CombatSpell {
     @Override
     public void endCast(Entity cast, Entity castOn, boolean spellAccurate) {
 
+        /** Normal combat spells have no effects. */
     }
 }

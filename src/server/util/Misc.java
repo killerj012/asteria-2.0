@@ -10,8 +10,8 @@ import java.lang.reflect.Modifier;
 import java.util.Random;
 import java.util.Scanner;
 
+import server.core.net.HostGateway;
 import server.core.net.packet.PacketDecoder;
-import server.core.net.security.HostGateway;
 import server.world.World;
 import server.world.entity.npc.Npc;
 import server.world.entity.npc.NpcDeathDrop;

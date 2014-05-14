@@ -56,9 +56,6 @@ public class Npc extends Entity {
     /** The respawn ticks. */
     private int respawnTicks;
 
-    /** This npc itself. */
-    private Npc thisNpc = this;
-
     /**
      * Creates a new {@link Npc}.
      * 
@@ -81,6 +78,9 @@ public class Npc extends Entity {
 
     @Override
     public void pulse() throws Exception {
+        // XXX: Equal to the "process()" method, the only thing that should be
+        // in here is movement... nothing else! Use workers for delayed actions!
+
         movementCoordinator.coordinate();
         getMovementQueue().execute();
     }
@@ -112,16 +112,8 @@ public class Npc extends Entity {
 
                     /** Respawn the npc when a set amount of time has elapsed. */
                     if (respawnTicks == getRespawnTime()) {
-                        getCombatBuilder().resetDamage();
-                        getPosition().setAs(getOriginalPosition());
-                        setCurrentHealth(getMaxHealth());
-                        statsWeakened[0] = false;
-                        statsWeakened[1] = false;
-                        statsWeakened[2] = false;
-                        statsBadlyWeakened[0] = false;
-                        statsBadlyWeakened[1] = false;
-                        statsBadlyWeakened[2] = false;
-                        World.getNpcs().add(thisNpc);
+                        Npc npc = new Npc(npcId, getOriginalPosition());
+                        World.getNpcs().add(npc);
                         this.cancel();
                     } else {
                         respawnTicks++;

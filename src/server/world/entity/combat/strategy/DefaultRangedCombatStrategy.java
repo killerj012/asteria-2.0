@@ -8,10 +8,10 @@ import server.world.entity.Hit;
 import server.world.entity.Projectile;
 import server.world.entity.UpdateFlags.Flag;
 import server.world.entity.combat.CombatFactory;
-import server.world.entity.combat.CombatHit;
+import server.world.entity.combat.CombatHitContainer;
 import server.world.entity.combat.CombatStrategy;
 import server.world.entity.combat.CombatType;
-import server.world.entity.combat.range.RangedAmmo;
+import server.world.entity.combat.range.CombatRangedAmmo;
 import server.world.entity.player.Player;
 import server.world.entity.player.content.AssignWeaponInterface;
 import server.world.entity.player.content.AssignWeaponInterface.FightStyle;
@@ -73,7 +73,7 @@ public class DefaultRangedCombatStrategy implements CombatStrategy {
     }
 
     @Override
-    public CombatHit attack(Entity entity, Entity victim) {
+    public CombatHitContainer attack(Entity entity, Entity victim) {
 
         /**
          * If the entity is a player we need to decrement and fire projectiles
@@ -82,7 +82,7 @@ public class DefaultRangedCombatStrategy implements CombatStrategy {
         if (entity.isPlayer()) {
             Player player = (Player) entity;
             player.animation(new Animation(player.getFightType().getAnimation()));
-            RangedAmmo ammo = RangedAmmo.getAmmo(player);
+            CombatRangedAmmo ammo = CombatRangedAmmo.getAmmo(player);
 
             if (player.getEquipment().getContainer().getItem(Misc.EQUIPMENT_SLOT_WEAPON).getDefinition().getItemName().startsWith("Karils")) {
                 player.animation(new Animation(2075));
@@ -116,13 +116,9 @@ public class DefaultRangedCombatStrategy implements CombatStrategy {
             if (!player.isSpecialActivated()) {
                 player.gfx(new Gfx(ammo.getGraphicId(), 6553600));
                 new Projectile(player, victim, ammo.getProjectileId(), ammo.getDelay(), ammo.getSpeed(), ammo.getStartHeight(), ammo.getEndHeight(), 0).sendProjectile();
-
-                if (CombatFactory.hitAccuracy(entity, victim, CombatType.RANGE, 1)) {
-                    return new CombatHit(new Hit[] { CombatFactory.getRangeHit(entity, ammo) }, CombatType.RANGE);
-                }
-            } else {
-                return player.getCombatSpecial().getSpecialStrategy().calculateHit(player, victim);
+                return new CombatHitContainer(new Hit[] { CombatFactory.getRangeHit(entity, ammo) }, CombatType.RANGE, true);
             }
+            return player.getCombatSpecial().getSpecialStrategy().calculateHit(player, victim);
         }
         return null;
     }

@@ -3,7 +3,7 @@ package server.world.shop;
 import java.util.HashMap;
 import java.util.Map;
 
-import server.core.net.buffer.PacketBuffer;
+import server.core.net.packet.PacketBuffer;
 import server.core.worker.TaskFactory;
 import server.core.worker.Worker;
 import server.util.Misc;

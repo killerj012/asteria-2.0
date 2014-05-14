@@ -69,6 +69,9 @@ public abstract class Entity {
     /** The secondary direction of the entity. */
     private int secondaryDirection = -1;
 
+    /** The last direction of the entity. */
+    private int lastDirection = 0;
+
     /** If this entity needs placement. */
     private boolean needsPlacement;
 
@@ -816,5 +819,20 @@ public abstract class Entity {
      */
     public Stopwatch getLastFight() {
         return lastFight;
+    }
+
+    /**
+     * @return the lastDirection
+     */
+    public int getLastDirection() {
+        return lastDirection;
+    }
+
+    /**
+     * @param lastDirection
+     *        the lastDirection to set
+     */
+    public void setLastDirection(int lastDirection) {
+        this.lastDirection = lastDirection;
     }
 }

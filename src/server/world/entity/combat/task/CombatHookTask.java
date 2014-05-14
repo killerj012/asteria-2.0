@@ -3,11 +3,11 @@ package server.world.entity.combat.task;
 import server.core.worker.TaskFactory;
 import server.core.worker.Worker;
 import server.util.Misc;
-import server.world.entity.Hit;
 import server.world.entity.combat.CombatBuilder;
 import server.world.entity.combat.CombatFactory;
-import server.world.entity.combat.CombatHit;
+import server.world.entity.combat.CombatHitContainer;
 import server.world.entity.combat.CombatType;
+import server.world.entity.combat.CombatHitContainer.CombatHit;
 import server.world.entity.combat.prayer.CombatPrayer;
 import server.world.entity.npc.Npc;
 import server.world.entity.player.Player;
@@ -205,13 +205,15 @@ public class CombatHookTask extends Worker {
                 return;
             }
 
-            /** To keep track of the damage dealt. */
-            int totalDamage = 0;
-
             /** Calculate the hit for this hook. */
-            CombatHit combatHit = builder.getCurrentStrategy().attack(builder.getEntity(), builder.getCurrentTarget());
+            CombatHitContainer combatHit = builder.getCurrentStrategy().attack(builder.getEntity(), builder.getCurrentTarget());
 
-            if (combatHit != null && combatHit.getHits() != null) {
+            /** Determines if at least one hit was accurate. */
+            boolean oneHitAccurate = false;
+
+            if (combatHit.getHits() == null) {
+                oneHitAccurate = CombatFactory.hitAccuracy(builder.getEntity(), builder.getCurrentTarget(), combatHit.getHitType());
+            } else if (combatHit.getHits() != null) {
 
                 /**
                  * If the attacker is an npc and protection prayers are active
@@ -223,15 +225,15 @@ public class CombatHookTask extends Worker {
 
                     if (combatHit.getHitType() == CombatType.MELEE && CombatPrayer.isPrayerActivated(player, CombatPrayer.PROTECT_FROM_MELEE)) {
                         for (int i = 0; i < combatHit.getHits().length; i++) {
-                            combatHit.getHits()[i] = new Hit(0);
+                            combatHit.getHits()[i].setSuccessful(false);
                         }
                     } else if (combatHit.getHitType() == CombatType.MAGIC && CombatPrayer.isPrayerActivated(player, CombatPrayer.PROTECT_FROM_MAGIC)) {
                         for (int i = 0; i < combatHit.getHits().length; i++) {
-                            combatHit.getHits()[i] = new Hit(0);
+                            combatHit.getHits()[i].setSuccessful(false);
                         }
                     } else if (combatHit.getHitType() == CombatType.RANGE && CombatPrayer.isPrayerActivated(player, CombatPrayer.PROTECT_FROM_MISSILES)) {
                         for (int i = 0; i < combatHit.getHits().length; i++) {
-                            combatHit.getHits()[i] = new Hit(0);
+                            combatHit.getHits()[i].setSuccessful(false);
                         }
                     }
 
@@ -249,55 +251,57 @@ public class CombatHookTask extends Worker {
                      * If the player is wearing full veracs they will hit
                      * through prayer no matter what.
                      */
-                    if (!CombatFactory.isWearingFullVeracs(player)) {
-                        if (combatHit.getHitType() == CombatType.MELEE && CombatPrayer.isPrayerActivated(target, CombatPrayer.PROTECT_FROM_MELEE)) {
-                            if (Misc.getRandom().nextInt(4) == 0) {
-                                for (int i = 0; i < combatHit.getHits().length; i++) {
-                                    combatHit.getHits()[i] = new Hit(0);
+                    if (combatHit.isCheckAccuracy()) {
+                        if (!CombatFactory.isWearingFullVeracs(player)) {
+                            if (combatHit.getHitType() == CombatType.MELEE && CombatPrayer.isPrayerActivated(target, CombatPrayer.PROTECT_FROM_MELEE)) {
+                                if (Misc.getRandom().nextInt(4) == 0) {
+                                    for (int i = 0; i < combatHit.getHits().length; i++) {
+                                        combatHit.getHits()[i].setSuccessful(false);
+                                    }
                                 }
-                            }
-                        } else if (combatHit.getHitType() == CombatType.MAGIC && CombatPrayer.isPrayerActivated(target, CombatPrayer.PROTECT_FROM_MAGIC)) {
-                            if (Misc.getRandom().nextInt(4) == 0) {
-                                for (int i = 0; i < combatHit.getHits().length; i++) {
-                                    combatHit.getHits()[i] = new Hit(0);
+                            } else if (combatHit.getHitType() == CombatType.MAGIC && CombatPrayer.isPrayerActivated(target, CombatPrayer.PROTECT_FROM_MAGIC)) {
+                                if (Misc.getRandom().nextInt(4) == 0) {
+                                    for (int i = 0; i < combatHit.getHits().length; i++) {
+                                        combatHit.getHits()[i].setSuccessful(false);
+                                    }
                                 }
-                            }
-                        } else if (combatHit.getHitType() == CombatType.RANGE && CombatPrayer.isPrayerActivated(target, CombatPrayer.PROTECT_FROM_MISSILES)) {
-                            if (Misc.getRandom().nextInt(4) == 0) {
-                                for (int i = 0; i < combatHit.getHits().length; i++) {
-                                    combatHit.getHits()[i] = new Hit(0);
+                            } else if (combatHit.getHitType() == CombatType.RANGE && CombatPrayer.isPrayerActivated(target, CombatPrayer.PROTECT_FROM_MISSILES)) {
+                                if (Misc.getRandom().nextInt(4) == 0) {
+                                    for (int i = 0; i < combatHit.getHits().length; i++) {
+                                        combatHit.getHits()[i].setSuccessful(false);
+                                    }
                                 }
                             }
                         }
                     }
                 }
 
-                /** Calculate the total damage that will be dealt to the target. */
-                if (combatHit.getHits().length == 1) {
-                    totalDamage += combatHit.getHits()[0].getDamage();
-                } else if (combatHit.getHits().length == 2) {
-                    totalDamage += combatHit.getHits()[0].getDamage();
-                    totalDamage += combatHit.getHits()[1].getDamage();
-                } else if (combatHit.getHits().length == 3) {
-                    totalDamage += combatHit.getHits()[0].getDamage();
-                    totalDamage += combatHit.getHits()[1].getDamage();
-                    totalDamage += combatHit.getHits()[2].getDamage();
-                } else if (combatHit.getHits().length == 4) {
-                    builder.getCurrentTarget().dealQuadrupleDamage(combatHit.getHits()[0], combatHit.getHits()[1], combatHit.getHits()[2], combatHit.getHits()[3]);
-                    totalDamage += combatHit.getHits()[0].getDamage();
-                    totalDamage += combatHit.getHits()[1].getDamage();
-                    totalDamage += combatHit.getHits()[2].getDamage();
-                    totalDamage += combatHit.getHits()[3].getDamage();
-                }
+                /** Calculate the accuracy for each hit. */
+                if (combatHit.isCheckAccuracy() && combatHit.getHits() != null) {
+                    for (CombatHit hit : combatHit.getHits()) {
+                        if (hit == null || !hit.isSuccessful()) {
+                            continue;
+                        }
 
-                /** Schedule a task based on the combat type. */
-                if (combatHit.getHitType() == CombatType.MELEE) {
-                    TaskFactory.getFactory().submit(new CombatHitTask(builder.getEntity(), builder.getCurrentTarget(), combatHit.getHits(), combatHit.getHitType(), totalDamage, 1, true));
-                } else if (combatHit.getHitType() == CombatType.RANGE) {
-                    TaskFactory.getFactory().submit(new CombatHitTask(builder.getEntity(), builder.getCurrentTarget(), combatHit.getHits(), combatHit.getHitType(), totalDamage, 2, false));
-                } else if (combatHit.getHitType() == CombatType.MAGIC) {
-                    TaskFactory.getFactory().submit(new CombatHitTask(builder.getEntity(), builder.getCurrentTarget(), combatHit.getHits(), combatHit.getHitType(), totalDamage, 3, false));
+                        if (CombatFactory.hitAccuracy(builder.getEntity(), builder.getCurrentTarget(), combatHit.getHitType())) {
+                            hit.setSuccessful(true);
+                            oneHitAccurate = true;
+                        } else {
+                            hit.setSuccessful(false);
+                        }
+                    }
+                } else if (!combatHit.isCheckAccuracy() && combatHit.getHits() != null) {
+                    oneHitAccurate = true;
                 }
+            }
+
+            /** Schedule a task based on the combat type. */
+            if (combatHit.getHitType() == CombatType.MELEE) {
+                TaskFactory.getFactory().submit(new CombatHitTask(builder.getEntity(), builder.getCurrentTarget(), combatHit, oneHitAccurate, 1, true));
+            } else if (combatHit.getHitType() == CombatType.RANGE) {
+                TaskFactory.getFactory().submit(new CombatHitTask(builder.getEntity(), builder.getCurrentTarget(), combatHit, oneHitAccurate, 2, false));
+            } else if (combatHit.getHitType() == CombatType.MAGIC) {
+                TaskFactory.getFactory().submit(new CombatHitTask(builder.getEntity(), builder.getCurrentTarget(), combatHit, oneHitAccurate, 3, false));
             }
 
             /** Reset this combat hook and prepare for the next hook. */

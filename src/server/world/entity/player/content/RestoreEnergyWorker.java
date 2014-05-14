@@ -12,6 +12,8 @@ import server.world.entity.player.Player;
  */
 public class RestoreEnergyWorker extends Worker {
 
+    // XXX: Needs better restoration formula.
+
     /** The player we are restoring run energy for. */
     private Player player;
 

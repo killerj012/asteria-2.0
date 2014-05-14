@@ -5,7 +5,7 @@ import server.world.entity.Animation;
 import server.world.entity.Entity;
 import server.world.entity.Hit;
 import server.world.entity.combat.CombatFactory;
-import server.world.entity.combat.CombatHit;
+import server.world.entity.combat.CombatHitContainer;
 import server.world.entity.combat.CombatStrategy;
 import server.world.entity.combat.CombatType;
 import server.world.entity.npc.Npc;
@@ -16,7 +16,7 @@ import server.world.item.Item;
 
 /**
  * The default combat strategy assigned to an entity during a melee based combat
- * session.
+ * session. This is the combat strategy used by npcs by default.
  * 
  * @author lare96
  */
@@ -30,7 +30,7 @@ public class DefaultMeleeCombatStrategy implements CombatStrategy {
     }
 
     @Override
-    public CombatHit attack(Entity entity, Entity victim) {
+    public CombatHitContainer attack(Entity entity, Entity victim) {
 
         /** Determine the animation that will be used. */
         if (entity.isNpc()) {
@@ -70,12 +70,7 @@ public class DefaultMeleeCombatStrategy implements CombatStrategy {
             }
         }
 
-        /** Determine the damage that will be dealt this turn (if any). */
-        if (CombatFactory.hitAccuracy(entity, victim, CombatType.MELEE, 1)) {
-            return new CombatHit(new Hit[] { CombatFactory.getMeleeHit(entity) }, CombatType.MELEE);
-        }
-
-        return null;
+        return new CombatHitContainer(new Hit[] { CombatFactory.getMeleeHit(entity) }, CombatType.MELEE, true);
     }
 
     @Override

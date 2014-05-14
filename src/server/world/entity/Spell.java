@@ -4,14 +4,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 import server.util.Misc;
-import server.world.entity.combat.magic.MagicRuneCombination;
-import server.world.entity.combat.magic.MagicRuneStaff;
+import server.world.entity.combat.magic.CombatMagicRuneCombination;
+import server.world.entity.combat.magic.CombatMagicStaff;
 import server.world.entity.player.Player;
 import server.world.item.Item;
 
 /**
- * A dynamic class that is primarily used for implemenation, although it can
- * represent any generic castable spell.
+ * A dynamic class that is primarily used for the implemenation of more specific
+ * spells although it can be used for any generic spell.
  * 
  * @author lare96
  */
@@ -39,8 +39,8 @@ public abstract class Spell {
             /** Check the items required. */
             if (this.itemsRequired(player) != null) {
                 Item[] compareItem = this.itemsRequired(player).clone();
-                MagicRuneStaff runeStaff = this.getStaff(player);
-                List<MagicRuneCombination> combinationRune = this.getCombinationRunes(player);
+                CombatMagicStaff runeStaff = this.getStaff(player);
+                List<CombatMagicRuneCombination> combinationRune = this.getCombinationRunes(player);
                 List<Item> removeRune = new ArrayList<Item>();
 
                 if (runeStaff != null) {
@@ -68,7 +68,7 @@ public abstract class Spell {
                             continue;
                         }
 
-                        for (MagicRuneCombination rune : combinationRune) {
+                        for (CombatMagicRuneCombination rune : combinationRune) {
                             if (compareItem[i] == null) {
                                 continue;
                             }
@@ -130,8 +130,8 @@ public abstract class Spell {
      *        the player that will be checked for a staff.
      * @return the staff that the player is currently wielding.
      */
-    public MagicRuneStaff getStaff(Player player) {
-        for (MagicRuneStaff runeStaff : MagicRuneStaff.values()) {
+    public CombatMagicStaff getStaff(Player player) {
+        for (CombatMagicStaff runeStaff : CombatMagicStaff.values()) {
             for (int itemId : runeStaff.getStaffIds()) {
                 if (itemId == player.getEquipment().getContainer().getItemId(Misc.EQUIPMENT_SLOT_WEAPON)) {
                     return runeStaff;
@@ -148,10 +148,10 @@ public abstract class Spell {
      *        the player that will be checked for a staff.
      * @return the staff that the player is currently wielding.
      */
-    public List<MagicRuneCombination> getCombinationRunes(Player player) {
-        List<MagicRuneCombination> combinationRune = new ArrayList<MagicRuneCombination>();
+    public List<CombatMagicRuneCombination> getCombinationRunes(Player player) {
+        List<CombatMagicRuneCombination> combinationRune = new ArrayList<CombatMagicRuneCombination>();
 
-        for (MagicRuneCombination rune : MagicRuneCombination.values()) {
+        for (CombatMagicRuneCombination rune : CombatMagicRuneCombination.values()) {
             if (player.getInventory().getContainer().contains(rune.getCombinationRune())) {
                 combinationRune.add(rune);
             }

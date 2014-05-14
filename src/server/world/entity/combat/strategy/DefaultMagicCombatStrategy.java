@@ -3,8 +3,7 @@ package server.world.entity.combat.strategy;
 import server.util.Misc;
 import server.world.entity.Entity;
 import server.world.entity.Hit;
-import server.world.entity.combat.CombatFactory;
-import server.world.entity.combat.CombatHit;
+import server.world.entity.combat.CombatHitContainer;
 import server.world.entity.combat.CombatStrategy;
 import server.world.entity.combat.CombatType;
 import server.world.entity.player.Player;
@@ -30,7 +29,7 @@ public class DefaultMagicCombatStrategy implements CombatStrategy {
     }
 
     @Override
-    public CombatHit attack(Entity entity, Entity victim) {
+    public CombatHitContainer attack(Entity entity, Entity victim) {
         if (entity.isPlayer()) {
             Player player = (Player) entity;
 
@@ -40,14 +39,10 @@ public class DefaultMagicCombatStrategy implements CombatStrategy {
 
             /** Disabling spells block here because there is no hit. */
             if (player.getCurrentlyCasting().maximumStrength() == -1) {
-                CombatFactory.hitAccuracy(player, victim, CombatType.MAGIC, 1);
-                return null;
+                return new CombatHitContainer(null, CombatType.MAGIC, true);
             }
 
-            /** Actual combat spells here. */
-            if (CombatFactory.hitAccuracy(player, victim, CombatType.MAGIC, 1)) {
-                return new CombatHit(new Hit[] { new Hit(Misc.getRandom().nextInt(player.getCurrentlyCasting().maximumStrength())) }, CombatType.MAGIC);
-            }
+            return new CombatHitContainer(new Hit[] { new Hit(Misc.getRandom().nextInt(player.getCurrentlyCasting().maximumStrength())) }, CombatType.MAGIC, true);
         }
         return null;
     }

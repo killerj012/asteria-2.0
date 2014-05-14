@@ -17,7 +17,7 @@ import server.world.entity.player.skill.SkillManager.SkillConstant;
 import server.world.item.Item;
 
 /**
- * Every single combat spell that can be cast in game.
+ * Holds data for all of the {@link CombatSpell}s that can be cast in game.
  * 
  * @author lare96
  */
