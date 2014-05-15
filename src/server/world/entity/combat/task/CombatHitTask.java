@@ -263,7 +263,7 @@ public class CombatHitTask extends Worker {
                         if (victim.getSkills()[Misc.HITPOINTS].getLevel() < 1) {
                             if (Location.inWilderness(player) || MinigameFactory.inMinigame(player)) {
 
-                                player.gfx(new Gfx(437));
+                                victim.gfx(new Gfx(437));
 
                                 if (Location.inMultiCombat(target)) {
                                     for (Player plr : World.getPlayers()) {
