@@ -517,7 +517,7 @@ public enum CombatMagicSpells {
 
         @Override
         public Gfx endGfx() {
-            return new Gfx(181);
+            return new Gfx(181, 6553600);
         }
 
         @Override
@@ -931,7 +931,7 @@ public enum CombatMagicSpells {
 
         @Override
         public Gfx endGfx() {
-            return new Gfx(180);
+            return new Gfx(180, 6553600);
         }
 
         @Override
@@ -1638,7 +1638,7 @@ public enum CombatMagicSpells {
 
         @Override
         public Gfx endGfx() {
-            return new Gfx(179);
+            return new Gfx(179, 6553600);
         }
 
         @Override

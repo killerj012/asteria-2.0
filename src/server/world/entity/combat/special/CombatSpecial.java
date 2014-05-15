@@ -75,7 +75,7 @@ public enum CombatSpecial {
         @Override
         public CombatHitContainer calculateHit(Player player, Entity target) {
             player.animation(new Animation(1658));
-            target.gfx(new Gfx(341));
+            target.gfx(new Gfx(341, 6553600));
             CombatSpecial.drainAndDeplete(player, CombatSpecial.ABYSSAL_WHIP.getSpecialAmount());
 
             return new CombatHitContainer(new Hit[] { CombatFactory.getMeleeHit(player) }, this.combatType(), false);
