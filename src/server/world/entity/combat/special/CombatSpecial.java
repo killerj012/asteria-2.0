@@ -37,7 +37,7 @@ public enum CombatSpecial {
         @Override
         public CombatHitContainer calculateHit(Player player, Entity target) {
             player.animation(new Animation(1062));
-            player.gfx(new Gfx(252));
+            player.gfx(new Gfx(252, 6553600));
             CombatSpecial.drainAndDeplete(player, CombatSpecial.DRAGON_DAGGER.getSpecialAmount());
 
             return new CombatHitContainer(new Hit[] { CombatFactory.getMeleeHit(player), CombatFactory.getMeleeHit(player) }, this.combatType(), true);
