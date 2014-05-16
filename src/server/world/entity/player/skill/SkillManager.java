@@ -300,7 +300,7 @@ public class SkillManager {
 
         /** Send the player an indication that they have leveled up. */
         player.getPacketBuilder().sendString("Total Lvl: " + totalLevel, 3984);
-        player.getPacketBuilder().sendString(skill.isGrammar() ? "Congratulations, you've just advanced an " + skill.name().toLowerCase().replaceAll("_", " ") + " level!" : "Congratulations, you've just advanced a " + skill.name().toLowerCase().replaceAll("_", " ") + " level!", skill.getFirstLine());
+        player.getPacketBuilder().sendString(skill.isGrammar() ? "@red@Congratulations, you've just advanced an " + skill.name().toLowerCase().replaceAll("_", " ") + " level!" : "@red@Congratulations, you've just advanced a " + skill.name().toLowerCase().replaceAll("_", " ") + " level!", skill.getFirstLine());
         player.getPacketBuilder().sendString("Your " + skill.name().toLowerCase().replaceAll("_", " ") + " level is now " + player.getSkills()[skill.ordinal()].getLevel() + ".", skill.getSecondLine());
         player.getPacketBuilder().sendMessage(skill.isGrammar() ? "Congratulations, you've just advanced an " + skill.name().toLowerCase().replaceAll("_", " ") + " level!" : "Congratulations, you've just advanced a " + skill.name().toLowerCase().replaceAll("_", " ") + " level!");
         player.getPacketBuilder().sendChatInterface(skill.getSendChatbox());
