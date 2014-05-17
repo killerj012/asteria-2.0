@@ -49,6 +49,11 @@ public class MovementQueue {
      * Handle movement processing for this entity.
      */
     public void execute() {
+
+        if (lockMovement) {
+            return;
+        }
+
         Point walkPoint = null;
         Point runPoint = null;
 

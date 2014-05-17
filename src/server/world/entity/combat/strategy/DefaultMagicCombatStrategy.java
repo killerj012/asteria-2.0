@@ -22,6 +22,10 @@ public class DefaultMagicCombatStrategy implements CombatStrategy {
         if (entity.isPlayer()) {
             Player player = (Player) entity;
 
+            if (player.getCastSpell() == null) {
+                return false;
+            }
+
             /** Prepare the cast effectively. */
             return player.getCastSpell().prepareCast(player, null);
         }

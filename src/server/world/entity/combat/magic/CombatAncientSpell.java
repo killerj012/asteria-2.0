@@ -21,8 +21,9 @@ public abstract class CombatAncientSpell extends CombatSpell {
 
         /** Multitarget support with the proper radius. */
         if (spellAccurate) {
+            spellEffect(cast, castOn);
+
             if (this.spellRadius() == 0) {
-                spellEffect(cast, castOn);
                 return;
             }
 
@@ -32,7 +33,7 @@ public abstract class CombatAncientSpell extends CombatSpell {
                         continue;
                     }
 
-                    if (npc.getPosition().withinDistance(castOn.getPosition(), spellRadius()) && npc != cast && npc.getDefinition().isAttackable()) {
+                    if (npc.getPosition().withinDistance(castOn.getPosition(), spellRadius()) && npc != cast && npc.getSlot() != castOn.getSlot() && npc.getDefinition().isAttackable()) {
                         npc.gfx(cast.getCurrentlyCasting().endGfx());
                         int damage = Misc.getRandom().nextInt(this.maximumStrength());
                         npc.dealDamage(new Hit(damage));
@@ -46,7 +47,7 @@ public abstract class CombatAncientSpell extends CombatSpell {
                         continue;
                     }
 
-                    if (player.getPosition().withinDistance(castOn.getPosition(), spellRadius()) && player != cast) {
+                    if (player.getPosition().withinDistance(castOn.getPosition(), spellRadius()) && player != cast && player.getSlot() != castOn.getSlot()) {
                         player.gfx(cast.getCurrentlyCasting().endGfx());
                         int damage = Misc.getRandom().nextInt(this.maximumStrength());
                         player.dealDamage(new Hit(damage));

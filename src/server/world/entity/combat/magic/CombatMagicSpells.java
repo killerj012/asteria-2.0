@@ -2505,7 +2505,7 @@ public enum CombatMagicSpells {
 
         @Override
         public Item[] itemsRequired(Player player) {
-            return new Item[] { new Item(556, 2), new Item(554, 2), new Item(565, 2), new Item(560, 2) };
+            return new Item[] { new Item(555, 3), new Item(565, 2), new Item(560, 2) };
         }
 
         @Override
