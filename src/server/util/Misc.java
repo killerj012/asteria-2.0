@@ -309,6 +309,7 @@ public final class Misc {
 
             Npc npc = new Npc(id, position);
             npc.getMovementCoordinator().setCoordinator(coordinator);
+            npc.setRespawn(true);
             World.getNpcs().add(npc);
         }
     }
