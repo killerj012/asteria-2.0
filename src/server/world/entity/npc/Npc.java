@@ -113,6 +113,7 @@ public class Npc extends Entity {
                     /** Respawn the npc when a set amount of time has elapsed. */
                     if (respawnTicks == getRespawnTime()) {
                         Npc npc = new Npc(npcId, getOriginalPosition());
+                        npc.setRespawn(true);
                         World.getNpcs().add(npc);
                         this.cancel();
                     } else {
