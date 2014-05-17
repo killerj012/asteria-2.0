@@ -310,7 +310,12 @@ public class CombatHookTask extends Worker {
             builder.getCurrentTarget().getLastCombat().reset();
             builder.getEntity().getLastFight().reset();
             builder.getCurrentTarget().getCombatBuilder().resetCooldown();
-            builder.getEntity().facePosition(builder.getCurrentTarget().getPosition());
+
+            if (builder.getCurrentTarget().isPlayer()) {
+                builder.getEntity().faceEntity(builder.getCurrentTarget().getSlot() + 32768);
+            } else if (builder.getCurrentTarget().isNpc()) {
+                builder.getEntity().faceEntity(builder.getCurrentTarget().getSlot());
+            }
         }
     }
 }

@@ -542,26 +542,45 @@ public class AssignWeaponInterface {
         player.getPacketBuilder().sendConfig(player.getFightType().getParentId(), player.getFightType().getChildId());
     }
 
+    /**
+     * A single weapon that has a special attack.
+     * 
+     * @author lare96
+     */
     private static class SpecialWeapon {
 
+        /** The weapon that has the special attack. */
         private int itemId;
 
+        /** The actual special attack. */
         private CombatSpecial combatSpecial;
 
+        /**
+         * Create a new {@link SpecialWeapon}.
+         * 
+         * @param itemId
+         *        the weapon that has the special attack.
+         * @param combatSpecial
+         *        the actual special attack.
+         */
         public SpecialWeapon(int itemId, CombatSpecial combatSpecial) {
             this.itemId = itemId;
             this.combatSpecial = combatSpecial;
         }
 
         /**
-         * @return the itemId
+         * Gets the weapon that has the special attack.
+         * 
+         * @return the weapon that has the special attack.
          */
         public int getItemId() {
             return itemId;
         }
 
         /**
-         * @return the combatSpecial
+         * Gets the actual special attack.
+         * 
+         * @return the actual special attack.
          */
         public CombatSpecial getCombatSpecial() {
             return combatSpecial;
