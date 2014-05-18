@@ -45,7 +45,7 @@ public class CombatBuilder {
     private boolean cooldownEffect;
 
     /** The amount of cooldown ticks left. */
-    private int cooldown = 5;
+    private int cooldown = 10;
 
     /**
      * Create a new {@link CombatBuilder}.
@@ -67,6 +67,13 @@ public class CombatBuilder {
 
         /** Start following the victim. */
         entity.getMovementQueue().follow(victim);
+
+        /** Face the victim regardless. */
+        if (victim.isPlayer()) {
+            entity.faceEntity(victim.getSlot() + 32768);
+        } else if (victim.isNpc()) {
+            entity.faceEntity(victim.getSlot());
+        }
 
         /** Check if we are already attacking this target. */
         if (currentTarget != null) {
@@ -183,7 +190,7 @@ public class CombatBuilder {
      * Resets the cooldown;
      */
     public void resetCooldown() {
-        cooldown = 5;
+        cooldown = 10;
     }
 
     /**
@@ -247,7 +254,7 @@ public class CombatBuilder {
         attackTimer = 0;
         currentStrategy = null;
         cooldownEffect = false;
-        cooldown = 5;
+        cooldown = 10;
     }
 
     /**
