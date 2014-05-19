@@ -82,6 +82,12 @@ public class CombatBuilder {
                 cooldown = 5;
                 return;
             }
+
+            /** Change targets if needed. */
+            if (combatWorker.isRunning()) {
+                currentTarget = victim;
+                return;
+            }
         }
 
         /** A dummy instance of this combat builder. */
@@ -128,6 +134,22 @@ public class CombatBuilder {
                     return true;
                 }
 
+                /** Checks if the npc needs to retreat. */
+                if (builder.getEntity().isNpc()) {
+                    Npc npc = (Npc) builder.getEntity();
+
+                    if (!npc.getPosition().withinDistance(npc.getOriginalPosition(), 5)) {
+                        npc.getCombatBuilder().reset();
+                        npc.faceEntity(65535);
+                        npc.getFollowWorker().cancel();
+                        npc.setFollowing(false);
+                        npc.setFollowingEntity(null);
+                        npc.getMovementQueue().walk(npc.getOriginalPosition());
+                        this.cancel();
+                        return true;
+                    }
+                }
+
                 /** Set the attack timer. */
                 if (loopCount == 0) {
                     cooldownEffect = false;
@@ -146,12 +168,13 @@ public class CombatBuilder {
                 /** Increment the amount of loops made. */
                 loopCount++;
 
-                /** If we are starting a fresh combat session attack right away. */
-                if (entity.getLastFight().elapsed() > 10000) {
-                    attackTimer = 0;
-                }
+                /** So we can attack right away. */
+                attackTimer = 0;
 
                 /** Start combat once we are in the correct distance. */
+                System.out.println(entity);
+                System.out.println(victim);
+
                 return !entity.getPosition().withinDistance(victim.getPosition(), currentStrategy.getDistance(entity));
             }
 
@@ -288,7 +311,9 @@ public class CombatBuilder {
             return null;
         }
 
-        /** The value we are searching for - the highest value in the damage map. */
+        /**
+         * The value we are searching for - the highest value in the damage map.
+         */
         int searchValue = Collections.max(damageMap.values()).intValue();
 
         /** Search for the value and return the key for that value (the killer). */

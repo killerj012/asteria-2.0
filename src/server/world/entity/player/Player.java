@@ -27,14 +27,14 @@ import server.world.entity.combat.special.CombatSpecial;
 import server.world.entity.combat.task.CombatPoisonTask.CombatPoison;
 import server.world.entity.npc.Npc;
 import server.world.entity.npc.NpcDialogue;
+import server.world.entity.player.content.AssignWeaponAnimation.WeaponAnimationIndex;
 import server.world.entity.player.content.AssignWeaponInterface;
+import server.world.entity.player.content.AssignWeaponInterface.FightType;
+import server.world.entity.player.content.AssignWeaponInterface.WeaponInterface;
 import server.world.entity.player.content.PrivateMessage;
 import server.world.entity.player.content.Spellbook;
 import server.world.entity.player.content.TeleportSpell;
 import server.world.entity.player.content.TradeSession;
-import server.world.entity.player.content.AssignWeaponAnimation.WeaponAnimationIndex;
-import server.world.entity.player.content.AssignWeaponInterface.FightType;
-import server.world.entity.player.content.AssignWeaponInterface.WeaponInterface;
 import server.world.entity.player.minigame.Minigame;
 import server.world.entity.player.minigame.MinigameFactory;
 import server.world.entity.player.skill.Skill;
@@ -791,7 +791,7 @@ public class Player extends Entity {
             }
         } else {
             this.getPacketBuilder().sendMultiCombatInterface(0);
-            this.setWildernessInterface(false);
+            this.setMultiCombatInterface(false);
         }
     }
 

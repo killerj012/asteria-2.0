@@ -6,8 +6,8 @@ import server.util.Misc;
 import server.world.entity.combat.CombatBuilder;
 import server.world.entity.combat.CombatFactory;
 import server.world.entity.combat.CombatHitContainer;
-import server.world.entity.combat.CombatType;
 import server.world.entity.combat.CombatHitContainer.CombatHit;
+import server.world.entity.combat.CombatType;
 import server.world.entity.combat.prayer.CombatPrayer;
 import server.world.entity.npc.Npc;
 import server.world.entity.player.Player;
@@ -132,18 +132,47 @@ public class CombatHookTask extends Worker {
 
         /**
          * Checks if this attacker is an npc and if it needs to retreat back to
-         * its home position.
+         * its home position or if its trying to attack an entity already in
+         * combat.
          */
         if (builder.getEntity().isNpc()) {
             Npc npc = (Npc) builder.getEntity();
 
-            if (npc.getCombatBuilder().getCurrentTarget().getCombatBuilder().isCooldownEffect() && !npc.getPosition().withinDistance(npc.getOriginalPosition(), 5) && npc.getDefinition().isRetreats() || !builder.getCurrentTarget().getCombatBuilder().isBeingAttacked() && !npc.getPosition().withinDistance(npc.getOriginalPosition(), 5) && npc.getDefinition().isRetreats()) {
+            if (npc.getCombatBuilder().getCurrentTarget().getCombatBuilder().isCooldownEffect() && !npc.getPosition().withinDistance(npc.getOriginalPosition(), 5) || !builder.getCurrentTarget().getCombatBuilder().isBeingAttacked() && !npc.getPosition().withinDistance(npc.getOriginalPosition(), 5)) {
                 npc.getCombatBuilder().reset();
                 npc.faceEntity(65535);
                 npc.getFollowWorker().cancel();
                 npc.setFollowing(false);
                 npc.setFollowingEntity(null);
                 npc.getMovementQueue().walk(npc.getOriginalPosition());
+                this.cancel();
+                return;
+            }
+
+            /**
+             * Checks if they are trying to attack another entity while in
+             * combat.
+             */
+            if (!Location.inMultiCombat(builder.getCurrentTarget()) && npc.getCombatBuilder().isBeingAttacked() && npc.getCombatBuilder().getCurrentTarget() != npc.getCombatBuilder().getLastAttacker()) {
+                builder.reset();
+                builder.getEntity().faceEntity(65535);
+                builder.getEntity().getFollowWorker().cancel();
+                builder.getEntity().setFollowing(false);
+                builder.getEntity().setFollowingEntity(null);
+                this.cancel();
+                return;
+            }
+
+            /**
+             * Checks if they are trying to attack another entity who is in
+             * combat.
+             */
+            if (!Location.inMultiCombat(builder.getCurrentTarget()) && builder.getCurrentTarget().getCombatBuilder().isBeingAttacked() && builder.getCurrentTarget().getCombatBuilder().getLastAttacker() != builder.getEntity()) {
+                builder.reset();
+                builder.getEntity().faceEntity(65535);
+                builder.getEntity().getFollowWorker().cancel();
+                builder.getEntity().setFollowing(false);
+                builder.getEntity().setFollowingEntity(null);
                 this.cancel();
                 return;
             }
