@@ -90,7 +90,7 @@ public class InventoryContainer {
      */
     public void addItemSet(Item[] item) {
         for (Item addItem : item) {
-            if (item == null) {
+            if (addItem == null) {
                 continue;
             }
 
@@ -106,7 +106,7 @@ public class InventoryContainer {
      */
     public void addItemCollection(Collection<Item> collection) {
         for (Item addItem : collection) {
-            if (collection == null) {
+            if (addItem == null) {
                 continue;
             }
 
@@ -173,7 +173,7 @@ public class InventoryContainer {
      */
     public void deleteItemSet(Item[] item) {
         for (Item deleteItem : item) {
-            if (item == null) {
+            if (deleteItem == null) {
                 continue;
             }
 

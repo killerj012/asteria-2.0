@@ -197,6 +197,7 @@ public class CombatHookTask extends Worker {
             builder.getEntity().getFollowWorker().cancel();
             builder.getEntity().setFollowing(false);
             builder.getEntity().setFollowingEntity(null);
+            builder.getEntity().getLastCombat().headStart(5000);
             this.cancel();
             return;
         }

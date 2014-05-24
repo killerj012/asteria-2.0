@@ -12,9 +12,9 @@ import server.world.entity.combat.magic.CombatMagicSpells;
 import server.world.entity.combat.prayer.CombatPrayer;
 import server.world.entity.npc.NpcDialogue;
 import server.world.entity.player.Player;
-import server.world.entity.player.content.Spellbook;
 import server.world.entity.player.content.AssignWeaponInterface.FightType;
 import server.world.entity.player.content.AssignWeaponInterface.WeaponInterface;
+import server.world.entity.player.content.Spellbook;
 import server.world.entity.player.content.TradeSession.TradeStage;
 import server.world.entity.player.minigame.Minigame;
 import server.world.entity.player.minigame.MinigameFactory;
@@ -25,20 +25,19 @@ import server.world.map.Position;
  * 
  * @author lare96
  */
-@PacketOpcodeHeader( { 185 })
+@PacketOpcodeHeader({ 185 })
 public class DecodeClickButtonPacket extends PacketDecoder {
 
     /** A {@link Logger} for printing debugging info. */
     private static Logger logger = Logger.getLogger(DecodeClickButtonPacket.class.getSimpleName());
 
-    @SuppressWarnings("fallthrough")
     @Override
     public void decode(final Player player, PacketBuffer.ReadBuffer in) {
         int buttonId = Misc.hexToInt(in.readBytes(2));
 
         switch (buttonId) {
 
-            /** Teleports. */
+        /** Teleports. */
             case 50235:
             case 4140:
                 player.teleport(new Position(3094, 3243));

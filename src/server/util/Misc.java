@@ -15,9 +15,9 @@ import server.core.net.packet.PacketDecoder;
 import server.world.World;
 import server.world.entity.npc.Npc;
 import server.world.entity.npc.NpcDeathDrop;
+import server.world.entity.npc.NpcDeathDrop.DeathDrop;
 import server.world.entity.npc.NpcDefinition;
 import server.world.entity.npc.NpcDialogue;
-import server.world.entity.npc.NpcDeathDrop.DeathDrop;
 import server.world.entity.npc.NpcMovementCoordinator.Coordinator;
 import server.world.entity.player.minigame.Minigame;
 import server.world.entity.player.minigame.MinigameFactory;
@@ -45,6 +45,7 @@ import com.google.gson.JsonSyntaxException;
  * @author blakeman8192
  * @author lare96
  */
+@SuppressWarnings("unused")
 public final class Misc {
 
     /** An instance of the random class for arithmetic operations. */

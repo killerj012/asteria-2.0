@@ -300,18 +300,11 @@ public class MovementQueue {
                         return;
                     }
 
-                    if (entity.getCombatBuilder().isAttacking() && entity.getPosition().withinDistance(entity.getCombatBuilder().getCurrentTarget().getPosition(), entity.getCombatBuilder().getCurrentStrategy().getDistance(entity))) {
-                        entity.getMovementQueue().reset();
-                        return;
-                    }
-
                     if (leader.isPlayer()) {
                         entity.faceEntity(leader.getSlot() + 32768);
                     } else if (leader.isNpc()) {
                         entity.faceEntity(leader.getSlot());
                     }
-
-                    entity.faceEntity(entity.getFaceIndex());
 
                     if (entity.getMovementQueue().isLockMovement()) {
                         return;
@@ -347,6 +340,11 @@ public class MovementQueue {
                                 }
                                 break;
                         }
+                        return;
+                    }
+
+                    if (entity.getCombatBuilder().isAttacking() && entity.getPosition().withinDistance(entity.getCombatBuilder().getCurrentTarget().getPosition(), entity.getCombatBuilder().getCurrentStrategy().getDistance(entity))) {
+                        entity.getMovementQueue().reset();
                         return;
                     }
 
