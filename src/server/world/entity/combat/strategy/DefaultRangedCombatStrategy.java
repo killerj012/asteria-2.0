@@ -43,27 +43,52 @@ public class DefaultRangedCombatStrategy implements CombatStrategy {
 
                 if (arrowItem == null) {
                     player.getPacketBuilder().sendMessage("You do not have any ammo in your quiver.");
+                    player.getCombatBuilder().reset();
+                    player.faceEntity(65535);
+                    player.getFollowWorker().cancel();
+                    player.setFollowing(false);
+                    player.setFollowingEntity(null);
                     return false;
                 }
 
                 if (!arrowItem.getDefinition().getItemName().endsWith("arrow") && !arrowItem.getDefinition().getItemName().endsWith("arrow(p)") && !arrowItem.getDefinition().getItemName().endsWith("arrow(p+)") && !arrowItem.getDefinition().getItemName().endsWith("arrow(p++)")) {
                     player.getPacketBuilder().sendMessage("You need to use arrows with your bow.");
+                    player.getCombatBuilder().reset();
+                    player.faceEntity(65535);
+                    player.getFollowWorker().cancel();
+                    player.setFollowing(false);
+                    player.setFollowingEntity(null);
                     return false;
                 }
             } else if (player.getWeapon() == WeaponInterface.CROSSBOW) {
                 if (arrowItem == null) {
                     player.getPacketBuilder().sendMessage("You do not have any ammo in your quiver.");
+                    player.getCombatBuilder().reset();
+                    player.faceEntity(65535);
+                    player.getFollowWorker().cancel();
+                    player.setFollowing(false);
+                    player.setFollowingEntity(null);
                     return false;
                 }
 
                 if (!player.getEquipment().getContainer().getItem(Misc.EQUIPMENT_SLOT_WEAPON).getDefinition().getItemName().startsWith("Karils")) {
                     if (!arrowItem.getDefinition().getItemName().endsWith("bolts") && !arrowItem.getDefinition().getItemName().endsWith("bolts(p)") && !arrowItem.getDefinition().getItemName().endsWith("bolts(p+)") && !arrowItem.getDefinition().getItemName().endsWith("bolts(p++)")) {
                         player.getPacketBuilder().sendMessage("You need to use bolts with your crossbow.");
+                        player.getCombatBuilder().reset();
+                        player.faceEntity(65535);
+                        player.getFollowWorker().cancel();
+                        player.setFollowing(false);
+                        player.setFollowingEntity(null);
                         return false;
                     }
                 } else {
                     if (!arrowItem.getDefinition().getItemName().endsWith("rack")) {
                         player.getPacketBuilder().sendMessage("You need to use bolt racks with this crossbow.");
+                        player.getCombatBuilder().reset();
+                        player.faceEntity(65535);
+                        player.getFollowWorker().cancel();
+                        player.setFollowing(false);
+                        player.setFollowingEntity(null);
                         return false;
                     }
                 }

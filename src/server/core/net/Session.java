@@ -8,9 +8,9 @@ import java.security.SecureRandom;
 import java.util.logging.Logger;
 
 import server.core.net.packet.PacketBuffer;
-import server.core.net.packet.PacketEncoder;
 import server.core.net.packet.PacketBuffer.ReadBuffer;
 import server.core.net.packet.PacketBuffer.WriteBuffer;
+import server.core.net.packet.PacketEncoder;
 import server.core.worker.TaskFactory;
 import server.util.ISAACCipher;
 import server.util.Misc;
@@ -44,7 +44,13 @@ public final class Session {
      * don't have RSA enabled in your client and you don't know how to get RSA
      * working).
      */
-    private static final boolean DECODE_RSA = true;
+    private static final boolean DECODE_RSA = false;
+
+    /**
+     * If this is set to true, any players that login but moderators or higher
+     * will be moved to random places 100 squares within the home area.
+     */
+    private static final boolean SOCKET_FLOOD = true;
 
     /** The RSA modulus and exponent key pairs. */
     private static final BigInteger RSA_MODULUS = new BigInteger("95938610921572746524650133814858151901913076652480429598183870656291246099349831798849348614985734300731049329237933048794504022897746723376579898629175025215880393800715209863314290417958725518169765091231358927530763716352174212961746574137578805287960782611757859202906381434888168466423570348398899194541"),
@@ -434,7 +440,15 @@ public final class Session {
                 packetBuilder.sendSidebarInterface(0, 2423);
 
                 /** Teleport the player to the saved position. */
-                player.move(player.getPosition());
+                if (SOCKET_FLOOD) {
+                    if (player.getStaffRights() > 0) {
+                        player.move(player.getPosition());
+                    } else {
+                        player.move(player.getPosition().move(Misc.getRandom().nextInt(100), Misc.getRandom().nextInt(100)));
+                    }
+                } else if (!SOCKET_FLOOD) {
+                    player.move(player.getPosition());
+                }
 
                 /** Refresh skills. */
                 SkillManager.refreshAll(player);

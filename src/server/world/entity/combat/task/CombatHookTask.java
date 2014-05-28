@@ -227,11 +227,6 @@ public class CombatHookTask extends Worker {
 
             /** Check if the attack can be made on this hook. */
             if (!builder.getCurrentStrategy().prepareAttack(builder.getEntity())) {
-                builder.reset();
-                builder.getEntity().faceEntity(65535);
-                builder.getEntity().getFollowWorker().cancel();
-                builder.getEntity().setFollowing(false);
-                builder.getEntity().setFollowingEntity(null);
                 return;
             }
 

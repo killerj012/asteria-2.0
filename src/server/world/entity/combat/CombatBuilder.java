@@ -65,6 +65,11 @@ public class CombatBuilder {
      */
     public void attack(final Entity victim) {
 
+        /** Check if the victim is valid. */
+        if (victim == null) {
+            return;
+        }
+
         /** Start following the victim. */
         entity.getMovementQueue().follow(victim);
 

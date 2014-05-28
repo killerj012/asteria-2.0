@@ -102,7 +102,14 @@ public abstract class Spell {
 
                 if (!player.getInventory().getContainer().contains(compareItem)) {
                     player.getPacketBuilder().sendMessage("You do not have the required items to cast this spell.");
-                    cast.getCombatBuilder().reset();
+
+                    if (cast.getCombatBuilder().isAttacking() || cast.getCombatBuilder().isBeingAttacked()) {
+                        player.setAutocastSpell(null);
+                        player.setAutocast(false);
+                        player.getPacketBuilder().sendConfig(108, 0);
+                        player.setCastSpell(null);
+                    }
+
                     player.getInventory().addItemCollection(removeRune);
                     return false;
                 }
@@ -114,7 +121,13 @@ public abstract class Spell {
             if (this.equipmentRequired(player) != null) {
                 if (!player.getEquipment().getContainer().contains(this.equipmentRequired(player))) {
                     player.getPacketBuilder().sendMessage("You do not have the required equipment to cast this spell.");
-                    cast.getCombatBuilder().reset();
+
+                    if (cast.getCombatBuilder().isAttacking() || cast.getCombatBuilder().isBeingAttacked()) {
+                        player.setAutocastSpell(null);
+                        player.setAutocast(false);
+                        player.getPacketBuilder().sendConfig(108, 0);
+                        player.setCastSpell(null);
+                    }
                     return false;
                 }
             }
