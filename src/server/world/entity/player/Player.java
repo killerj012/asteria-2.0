@@ -510,11 +510,6 @@ public class Player extends Entity {
         setResetMovementQueue(true);
         setNeedsPlacement(true);
         getPacketBuilder().sendMapRegion();
-
-        if (position.getZ() != 0) {
-            World.getGroundItems().searchDatabaseHeightChange(this);
-            World.getObjects().removeOnHeight(this);
-        }
     }
 
     @Override

@@ -17,50 +17,10 @@ import server.world.map.Position;
 public class RegisterableWorldObject {
 
     /**
-     * A {@link HashSet} to keep track of all of the {@link WorldObject}s in
-     * the game.
+     * A {@link HashSet} to keep track of all of the {@link WorldObject}s in the
+     * game.
      */
     private static Set<WorldObject> objectSet = new HashSet<WorldObject>();
-
-    /**
-     * Removes any {@link WorldObject}s for a {@link Player} that aren't on the
-     * same height level as they are.
-     * 
-     * @param player
-     *        the player to remove the objects for.
-     */
-    public void removeOnHeight(Player player) {
-        for (final WorldObject object : objectSet) {
-            if (player.getPosition().getZ() != object.getPosition().getZ()) {
-                player.getPacketBuilder().removeObject(object);
-            }
-        }
-    }
-
-    /**
-     * Removes the object on the specified position.
-     * 
-     * @param position
-     *        the position to remove an object on.
-     */
-    public void removeOnPosition(Position position) {
-        for (Iterator<WorldObject> iter = objectSet.iterator(); iter.hasNext();) {
-            WorldObject object = iter.next();
-
-            if (object.getPosition().equals(position)) {
-
-                for (Player player : World.getPlayers()) {
-                    if (player == null) {
-                        continue;
-                    }
-
-                    player.getPacketBuilder().removeObject(object);
-                }
-
-                iter.remove();
-            }
-        }
-    }
 
     /**
      * Registers a new object to the database.
@@ -130,6 +90,22 @@ public class RegisterableWorldObject {
     }
 
     /**
+     * Gets the object on the speicified position.
+     * 
+     * @param position
+     *        the position to get the object on.
+     * @return the object on the position.
+     */
+    public WorldObject getObjectOnPosition(Position position) {
+        for (WorldObject object : objectSet) {
+            if (position.equals(object.getPosition())) {
+                return object;
+            }
+        }
+        return null;
+    }
+
+    /**
      * Fired when the player loads a new region.
      * 
      * @param player
@@ -143,7 +119,9 @@ public class RegisterableWorldObject {
                 continue;
             }
 
-            if (object.getPosition().withinDistance(player.getPosition(), 60)) {
+            player.getPacketBuilder().removeObject(object);
+
+            if (object.getPosition().isViewableFrom(player.getPosition())) {
                 player.getPacketBuilder().sendObject(object);
             }
         }
