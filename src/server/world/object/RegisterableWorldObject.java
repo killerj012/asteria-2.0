@@ -121,7 +121,7 @@ public class RegisterableWorldObject {
 
             player.getPacketBuilder().removeObject(object);
 
-            if (object.getPosition().isViewableFrom(player.getPosition())) {
+            if (object.getPosition().withinDistance(player.getPosition(), 60)) {
                 player.getPacketBuilder().sendObject(object);
             }
         }

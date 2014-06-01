@@ -102,7 +102,9 @@ public class GroundItem {
                         continue;
                     }
 
-                    p.getPacketBuilder().removeGroundItem(this);
+                    if (p.getPosition().withinDistance(getPosition(), 60)) {
+                        p.getPacketBuilder().removeGroundItem(this);
+                    }
                 }
                 break;
             case SEEN_BY_OWNER:
@@ -119,7 +121,7 @@ public class GroundItem {
     protected void fireOnProcess() {
         switch (state) {
 
-            /** Change the state. */
+        /** Change the state. */
             case SEEN_BY_OWNER:
                 state = ItemState.SEEN_BY_EVERYONE;
 
@@ -134,7 +136,9 @@ public class GroundItem {
                         continue;
                     }
 
-                    p.getPacketBuilder().sendGroundItem(new GroundItem(item, position, player));
+                    if (p.getPosition().withinDistance(getPosition(), 60)) {
+                        p.getPacketBuilder().sendGroundItem(new GroundItem(item, position, player));
+                    }
                 }
 
                 player = null;

@@ -137,13 +137,13 @@ public class RegisterableGroundItem {
 
             player.getPacketBuilder().removeGroundItem(databaseItem);
 
-            if (databaseItem.getState() == ItemState.SEEN_BY_NO_ONE || databaseItem.getState() == null && databaseItem.getPosition().isViewableFrom(player.getPosition())) {
+            if (databaseItem.getState() == ItemState.SEEN_BY_NO_ONE || databaseItem.getState() == null && databaseItem.getPosition().withinDistance(player.getPosition(), 60)) {
                 player.getPacketBuilder().sendGroundItem(databaseItem);
                 continue;
             }
 
             if (databaseItem.getPlayer() != null) {
-                if (databaseItem.getPlayer().getUsername().equals(player.getUsername()) && databaseItem.getPosition().isViewableFrom(player.getPosition())) {
+                if (databaseItem.getPlayer().getUsername().equals(player.getUsername()) && databaseItem.getPosition().withinDistance(player.getPosition(), 60)) {
                     player.getPacketBuilder().sendGroundItem(databaseItem);
                     continue;
                 }

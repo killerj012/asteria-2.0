@@ -66,7 +66,9 @@ public class StaticGroundItem extends GroundItem {
                 continue;
             }
 
-            p.getPacketBuilder().sendGroundItem(this);
+            if (p.getPosition().withinDistance(getPosition(), 60)) {
+                p.getPacketBuilder().sendGroundItem(this);
+            }
         }
 
         /** Start the <code>processor</code> if needed. */
@@ -87,7 +89,9 @@ public class StaticGroundItem extends GroundItem {
                 continue;
             }
 
-            p.getPacketBuilder().removeGroundItem(this);
+            if (p.getPosition().withinDistance(getPosition(), 60)) {
+                p.getPacketBuilder().removeGroundItem(this);
+            }
         }
     }
 
@@ -109,7 +113,9 @@ public class StaticGroundItem extends GroundItem {
                     continue;
                 }
 
-                p.getPacketBuilder().sendGroundItem(this);
+                if (p.getPosition().withinDistance(getPosition(), 60)) {
+                    p.getPacketBuilder().sendGroundItem(this);
+                }
             }
 
             World.getGroundItems().getItemList().add(this);
@@ -130,7 +136,9 @@ public class StaticGroundItem extends GroundItem {
                     continue;
                 }
 
-                p.getPacketBuilder().removeGroundItem(this);
+                if (p.getPosition().withinDistance(getPosition(), 60)) {
+                    p.getPacketBuilder().removeGroundItem(this);
+                }
             }
 
             /** Remove the item from the database. */
