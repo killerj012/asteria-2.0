@@ -108,17 +108,14 @@ public class PrivateMessage {
 
         /** Add the name to your friends list. */
         player.getFriends().add(name);
-        player.getPacketBuilder().loadPrivateMessage(name, 1);
 
-        long playerName = Misc.nameToLong(player.getUsername());
+        /** Update the friends list with online/offline. */
+        Player load = World.getPlayer(Misc.longToName(name));
 
-        for (Player players : World.getPlayers()) {
-            if (players == null)
-                continue;
-
-            if (players.getFriends().contains(playerName)) {
-                players.getPacketBuilder().loadPrivateMessage(playerName, 1);
-            }
+        if (load != null) {
+            player.getPacketBuilder().loadPrivateMessage(name, 1);
+        } else {
+            player.getPacketBuilder().loadPrivateMessage(name, 0);
         }
     }
 
