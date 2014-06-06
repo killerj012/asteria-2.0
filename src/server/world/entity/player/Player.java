@@ -332,8 +332,13 @@ public class Player extends Entity {
                     skullTimer = 0;
                     skullIcon = -1;
                     teleblockTimer = 0;
-                    AssignWeaponInterface.reset(player);
-                    AssignWeaponInterface.changeFightType(player);
+                    animation(new Animation(65535));
+
+                    if (staffRights < 2) {
+                        AssignWeaponInterface.reset(player);
+                        AssignWeaponInterface.changeFightType(player);
+                    }
+
                     getPacketBuilder().resetAnimation();
                     getCombatBuilder().resetDamage();
                     getPacketBuilder().sendMessage("Oh dear, you're dead!");
