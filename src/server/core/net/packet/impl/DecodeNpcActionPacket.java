@@ -1,10 +1,10 @@
 package server.core.net.packet.impl;
 
-import server.core.net.packet.PacketDecoder;
-import server.core.net.packet.PacketOpcodeHeader;
 import server.core.net.packet.PacketBuffer.ByteOrder;
 import server.core.net.packet.PacketBuffer.ReadBuffer;
 import server.core.net.packet.PacketBuffer.ValueType;
+import server.core.net.packet.PacketDecoder;
+import server.core.net.packet.PacketOpcodeHeader;
 import server.world.World;
 import server.world.entity.combat.magic.CombatMagicSpells;
 import server.world.entity.combat.magic.CombatSpell;
@@ -23,7 +23,7 @@ import server.world.shop.Shop;
  * 
  * @author lare96
  */
-@PacketOpcodeHeader( { 72, 131, 155, 17 })
+@PacketOpcodeHeader({ 72, 131, 155, 17 })
 public class DecodeNpcActionPacket extends PacketDecoder {
 
     /** The various packet opcodes. */
@@ -111,6 +111,7 @@ public class DecodeNpcActionPacket extends PacketDecoder {
                     public void run() {
                         if (player.getPosition().withinDistance(new Position(firstClickMob.getPosition().getX(), firstClickMob.getPosition().getY(), firstClickMob.getPosition().getZ()), 1)) {
                             player.facePosition(firstClickMob.getPosition());
+                            firstClickMob.facePosition(player.getPosition());
 
                             switch (firstClickMob.getNpcId()) {
                                 case 460:
@@ -138,6 +139,7 @@ public class DecodeNpcActionPacket extends PacketDecoder {
                     public void run() {
                         if (player.getPosition().withinDistance(new Position(secondClickNpc.getPosition().getX(), secondClickNpc.getPosition().getY(), secondClickNpc.getPosition().getZ()), 1)) {
                             player.facePosition(secondClickNpc.getPosition());
+                            secondClickNpc.facePosition(player.getPosition());
 
                             switch (secondClickNpc.getNpcId()) {
 
