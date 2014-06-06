@@ -177,9 +177,6 @@ public class CombatBuilder {
                 attackTimer = 0;
 
                 /** Start combat once we are in the correct distance. */
-                System.out.println(entity);
-                System.out.println(victim);
-
                 return !entity.getPosition().withinDistance(victim.getPosition(), currentStrategy.getDistance(entity));
             }
 
