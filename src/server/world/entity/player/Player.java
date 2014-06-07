@@ -3,7 +3,7 @@ package server.world.entity.player;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.LinkedHashSet;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 import java.util.logging.Logger;
@@ -192,10 +192,10 @@ public class Player extends Entity {
     private int conversationStage;
 
     /** A list of local players. */
-    private final Set<Player> players = new LinkedHashSet<Player>();
+    private final List<Player> players = new LinkedList<Player>();
 
     /** A list of local npcs. */
-    private final Set<Npc> npcs = new LinkedHashSet<Npc>();
+    private final List<Npc> npcs = new LinkedList<Npc>();
 
     /** The players rights. */
     private int staffRights = 0;
@@ -880,11 +880,11 @@ public class Player extends Entity {
         return password;
     }
 
-    public Set<Player> getPlayers() {
+    public List<Player> getPlayers() {
         return players;
     }
 
-    public Set<Npc> getNpcs() {
+    public List<Npc> getNpcs() {
         return npcs;
     }
 
