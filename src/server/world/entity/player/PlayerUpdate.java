@@ -6,6 +6,7 @@ import server.core.net.Session;
 import server.core.net.packet.PacketBuffer;
 import server.core.net.packet.PacketBuffer.ByteOrder;
 import server.core.net.packet.PacketBuffer.ValueType;
+import server.core.net.packet.PacketBuffer.WriteBuffer;
 import server.core.worker.TaskFactory;
 import server.util.Misc;
 import server.world.World;
@@ -41,7 +42,7 @@ public final class PlayerUpdate {
         PlayerUpdate.updateLocalPlayerMovement(player, out);
 
         if (player.getFlags().isUpdateRequired()) {
-            PlayerUpdate.updateState(player, block, false, true);
+            PlayerUpdate.updateState(player, player, block, false, true);
         }
 
         /** Update other local players. */
@@ -51,7 +52,7 @@ public final class PlayerUpdate {
             if (other.getPosition().isViewableFrom(player.getPosition()) && other.getSession().getStage() == Session.Stage.LOGGED_IN && !other.isNeedsPlacement() && other.isVisible()) {
                 PlayerUpdate.updateOtherPlayerMovement(other, out);
                 if (other.getFlags().isUpdateRequired()) {
-                    PlayerUpdate.updateState(other, block, false, false);
+                    PlayerUpdate.updateState(other, player, block, false, false);
                 }
             } else {
                 out.writeBit(true);
@@ -77,7 +78,7 @@ public final class PlayerUpdate {
                 added++;
                 player.getPlayers().add(other);
                 PlayerUpdate.addPlayer(out, player, other);
-                PlayerUpdate.updateState(other, block, true, false);
+                PlayerUpdate.updateState(other, player, block, true, false);
             }
         }
 
@@ -349,10 +350,27 @@ public final class PlayerUpdate {
      * 
      * @param player
      *        the player to update state for.
+     * @param thisPlayer
+     *        the player controlling.
      * @param block
      *        the update block.
      */
-    public static void updateState(Player player, PacketBuffer.WriteBuffer block, boolean forceAppearance, boolean noChat) {
+    public static void updateState(Player player, Player thisPlayer, PacketBuffer.WriteBuffer block, boolean forceAppearance, boolean noChat) {
+
+        /** Block if no update is required. */
+        if (!player.getFlags().isUpdateRequired() && !forceAppearance) {
+            return;
+        }
+
+        /** Send the cached update block if we are able to. */
+        if (player.getCachedUpdateBlock() != null && player != thisPlayer && !forceAppearance && !noChat) {
+            block.getBuffer().put(player.getCachedUpdateBlock().array());
+            return;
+        }
+
+        /** Create the buffer we are going to cache. */
+        WriteBuffer cachedBuffer = PacketBuffer.newWriteBuffer(300);
+
         /** First we must prepare the mask. */
         int mask = 0x0;
 
@@ -387,48 +405,57 @@ public final class PlayerUpdate {
         /** Now, we write the actual mask. */
         if (mask >= 0x100) {
             mask |= 0x40;
-            block.writeShort(mask, PacketBuffer.ByteOrder.LITTLE);
+            cachedBuffer.writeShort(mask, PacketBuffer.ByteOrder.LITTLE);
         } else {
-            block.writeByte(mask);
+            cachedBuffer.writeByte(mask);
         }
 
         /** Finally, we append the attributes blocks. */
         // Graphics
         if (player.getFlags().get(Flag.GRAPHICS)) {
-            appendGfx(player, block);
+            appendGfx(player, cachedBuffer);
         }
         // Animation
         if (player.getFlags().get(Flag.ANIMATION)) {
-            appendAnimation(player, block);
+            appendAnimation(player, cachedBuffer);
         }
         // Forced chat
         if (player.getFlags().get(Flag.FORCED_CHAT)) {
-            appendForcedChat(player, block);
+            appendForcedChat(player, cachedBuffer);
         }
         // Regular chat
         if (player.getFlags().get(Flag.CHAT) && !noChat) {
-            appendChat(player, block);
+            appendChat(player, cachedBuffer);
         }
         // Face entity
         if (player.getFlags().get(Flag.FACE_ENTITY)) {
-            appendFaceEntity(player, block);
+            appendFaceEntity(player, cachedBuffer);
         }
         // Appearance
         if (player.getFlags().get(Flag.APPEARANCE) || forceAppearance) {
-            appendAppearance(player, block);
+            appendAppearance(player, cachedBuffer);
         }
         // Face coordinates
         if (player.getFlags().get(Flag.FACE_COORDINATE)) {
-            appendFaceCoordinate(player, block);
+            appendFaceCoordinate(player, cachedBuffer);
         }
         // Primary hit
         if (player.getFlags().get(Flag.HIT)) {
-            appendPrimaryHit(player, block);
+            appendPrimaryHit(player, cachedBuffer);
         }
         // Secondary hit
         if (player.getFlags().get(Flag.HIT_2)) {
-            appendSecondaryHit(player, block);
+            appendSecondaryHit(player, cachedBuffer);
         }
+
+        /** Cache the block if possible. */
+        if (player != thisPlayer && !forceAppearance && !noChat) {
+            player.setCachedUpdateBlock(cachedBuffer.getBuffer());
+
+        }
+
+        /** Add the cached block to the update block. */
+        block.writeBytes(cachedBuffer.getBuffer());
     }
 
     /**

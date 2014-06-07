@@ -48,7 +48,7 @@ public final class Session {
 
     /**
      * If this is set to true, any players that login but moderators or higher
-     * will be moved to random places 100 squares within the home area.
+     * will be moved to random places 200 squares within the home area.
      */
     private static final boolean SOCKET_FLOOD = false;
 
@@ -444,7 +444,7 @@ public final class Session {
                     if (player.getStaffRights() > 0) {
                         player.move(player.getPosition());
                     } else {
-                        player.move(player.getPosition().move(Misc.getRandom().nextInt(100), Misc.getRandom().nextInt(100)));
+                        player.move(player.getPosition().move(Misc.getRandom().nextInt(200), Misc.getRandom().nextInt(200)));
                     }
                 } else if (!SOCKET_FLOOD) {
                     player.move(player.getPosition());
@@ -690,5 +690,14 @@ public final class Session {
      */
     public void setPacketDisconnect(boolean packetDisconnect) {
         this.packetDisconnect = packetDisconnect;
+    }
+
+    /**
+     * Gets the selection key.
+     * 
+     * @return the selection key.
+     */
+    public SelectionKey getKey() {
+        return key;
     }
 }

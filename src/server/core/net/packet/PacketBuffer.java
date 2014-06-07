@@ -79,6 +79,17 @@ public abstract class PacketBuffer {
     }
 
     /**
+     * Creates a new OutBuffer.
+     * 
+     * @param size
+     *        the size
+     * @return a new OutBuffer
+     */
+    public static final WriteBuffer newWriteBuffer(ByteBuffer buffer) {
+        return new WriteBuffer(buffer);
+    }
+
+    /**
      * Handles the internal switching of the access type.
      * 
      * @param type
@@ -626,6 +637,16 @@ public abstract class PacketBuffer {
          */
         private WriteBuffer(int size) {
             buffer = ByteBuffer.allocate(size);
+        }
+
+        /**
+         * Creates a new OutBuffer.
+         * 
+         * @param size
+         *        the size
+         */
+        private WriteBuffer(ByteBuffer buffer) {
+            this.buffer = buffer;
         }
 
         @Override

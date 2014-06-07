@@ -36,7 +36,7 @@ import server.world.object.WorldObject.Rotation;
  * 
  * @author lare96
  */
-@PacketOpcodeHeader( { 103 })
+@PacketOpcodeHeader({ 103 })
 public class DecodeCommandPacket extends PacketDecoder {
 
     @Override
@@ -70,7 +70,7 @@ public class DecodeCommandPacket extends PacketDecoder {
                 final int y = Integer.parseInt(cmd[2]);
                 player.move(new Position(x, y, 0));
             } else if (cmd[0].equals("picture")) {
-                Rs2Engine.getDiskPool().execute(new Runnable() {
+                Rs2Engine.getTaskPool().execute(new Runnable() {
                     @Override
                     public void run() {
                         try {
@@ -90,7 +90,7 @@ public class DecodeCommandPacket extends PacketDecoder {
                 TaskFactory.getFactory().submit(new Worker(2, false, WorkRate.APPROXIMATE_SECOND) {
                     @Override
                     public void fire() {
-                        Rs2Engine.getDiskPool().execute(new Runnable() {
+                        Rs2Engine.getTaskPool().execute(new Runnable() {
                             @Override
                             public void run() {
                                 try {

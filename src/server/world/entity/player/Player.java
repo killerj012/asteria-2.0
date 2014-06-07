@@ -1,9 +1,11 @@
 package server.world.entity.player;
 
+import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.LinkedList;
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.logging.Logger;
 
 import server.Main;
@@ -190,10 +192,10 @@ public class Player extends Entity {
     private int conversationStage;
 
     /** A list of local players. */
-    private final List<Player> players = new LinkedList<Player>();
+    private final Set<Player> players = new LinkedHashSet<Player>();
 
     /** A list of local npcs. */
-    private final List<Npc> npcs = new LinkedList<Npc>();
+    private final Set<Npc> npcs = new LinkedHashSet<Npc>();
 
     /** The players rights. */
     private int staffRights = 0;
@@ -242,6 +244,9 @@ public class Player extends Entity {
 
     /** Private messaging for this player. */
     private PrivateMessage privateMessage = new PrivateMessage(this);
+
+    /** The cached update block. */
+    private ByteBuffer cachedUpdateBlock;
 
     /**
      * Creates a new {@link Player}.
@@ -339,7 +344,6 @@ public class Player extends Entity {
                         AssignWeaponInterface.changeFightType(player);
                     }
 
-                    getPacketBuilder().resetAnimation();
                     getCombatBuilder().resetDamage();
                     getPacketBuilder().sendMessage("Oh dear, you're dead!");
                     getPacketBuilder().walkableInterface(65535);
@@ -876,11 +880,11 @@ public class Player extends Entity {
         return password;
     }
 
-    public List<Player> getPlayers() {
+    public Set<Player> getPlayers() {
         return players;
     }
 
-    public List<Npc> getNpcs() {
+    public Set<Npc> getNpcs() {
         return npcs;
     }
 
@@ -1590,5 +1594,24 @@ public class Player extends Entity {
      */
     public void setRangedAmmo(CombatRangedAmmo rangedAmmo) {
         this.rangedAmmo = rangedAmmo;
+    }
+
+    /**
+     * Gets the cached update block.
+     * 
+     * @return the cached update block.
+     */
+    public ByteBuffer getCachedUpdateBlock() {
+        return cachedUpdateBlock;
+    }
+
+    /**
+     * Sets the cached update block.
+     * 
+     * @param cachedUpdateBlock
+     *        the cached update block.
+     */
+    public void setCachedUpdateBlock(ByteBuffer cachedUpdateBlock) {
+        this.cachedUpdateBlock = cachedUpdateBlock;
     }
 }

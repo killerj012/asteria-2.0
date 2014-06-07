@@ -59,7 +59,9 @@ public class PlayerParallelUpdateService implements Service {
                 logger.warning(player + " error while updating concurrently!");
                 player.getSession().disconnect();
 
-                /** Arrive at the phaser regardless if there was an error or not. */
+                /**
+                 * Arrive at the phaser regardless if there was an error or not.
+                 */
             } finally {
                 phaser.arrive();
             }

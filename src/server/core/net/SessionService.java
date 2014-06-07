@@ -26,9 +26,10 @@ public class SessionService implements Service {
         SocketChannel socket;
 
         try {
-            while ((socket = EventSelector.getServerSocketChannel().accept()) != null || eventCount.get() != MAXIMUM_ACCEPT_EVENT) {
+            /** Accept the connection. */
+            while ((socket = EventSelector.getServerSocketChannel().accept()) != null || eventCount.get() <= MAXIMUM_ACCEPT_EVENT) {
 
-                /** Block if the connection is invalid. */
+                /** Check if the connection is valid. */
                 if (socket == null) {
                     continue;
                 }

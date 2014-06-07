@@ -24,9 +24,9 @@ public final class Rs2Engine implements Runnable {
      * The amount of time in minutes for this server to become 'idle'. When the
      * server becomes idle threads are terminated accordingly in order to
      * preserve resources. The server can only become idle after the
-     * <code>networkPool</code>, </code>updatePool</code>, or the <code>diskPool</code>
-     * stop receiving tasks and have waited for the specified timeout value
-     * (default 3). Also note that specific parts of the server can become idle;
+     * </code>updatePool</code> or the <code>taskPool</code> stop receiving
+     * tasks and have waited for the specified timeout value (default 3
+     * minutes). Also note that specific parts of the server can become idle;
      * for instance, if there are players online being updated but no one has
      * logged in for over (default) 3 minutes the network becomes idle.
      */
@@ -41,14 +41,11 @@ public final class Rs2Engine implements Runnable {
      */
     public static final boolean INITIALLY_IDLE = true;
 
-    /** A low priority {@link PriorityServicePool} that takes care of disk IO. */
-    private static PriorityServicePool diskPool;
-
     /**
-     * An above-average priority {@link PriorityServicePool} that handles
-     * incoming connections.
+     * An average priority {@link PriorityServicePool} that handles short lived
+     * asynchronous game related tasks.
      */
-    private static PriorityServicePool networkPool;
+    private static PriorityServicePool taskPool;
 
     /**
      * A high priority {@link PriorityServicePool} that updates players in
@@ -78,8 +75,7 @@ public final class Rs2Engine implements Runnable {
         logger = Logger.getLogger(Rs2Engine.class.getSimpleName());
 
         /** Create the priority pools. */
-        diskPool = new PriorityServicePool("DiskThread", 1, Thread.MIN_PRIORITY);
-        networkPool = new PriorityServicePool("NetworkThread", 1, Thread.NORM_PRIORITY + 1);
+        taskPool = new PriorityServicePool("TaskThread", 1, Thread.MIN_PRIORITY);
         updatePool = new PriorityServicePool("UpdateThread", Runtime.getRuntime().availableProcessors(), Thread.MAX_PRIORITY);
 
         /** Create the game executor. */
@@ -108,21 +104,12 @@ public final class Rs2Engine implements Runnable {
     }
 
     /**
-     * Gets the pool that handles disk IO.
+     * Gets the pool that handles short lived asynchronous tasks.
      * 
-     * @return the disk pool.
+     * @return the game task pool.
      */
-    public static PriorityServicePool getDiskPool() {
-        return diskPool;
-    }
-
-    /**
-     * Gets the pool that accepts incoming connections.
-     * 
-     * @return the network pool.
-     */
-    public static PriorityServicePool getNetworkPool() {
-        return networkPool;
+    public static PriorityServicePool getTaskPool() {
+        return taskPool;
     }
 
     /**

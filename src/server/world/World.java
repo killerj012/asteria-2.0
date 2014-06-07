@@ -138,6 +138,7 @@ public final class World {
 
                 try {
                     player.reset();
+                    player.setCachedUpdateBlock(null);
                 } catch (Exception ex) {
                     ex.printStackTrace();
                     logger.warning(player + " error while resetting for the next game tick!");
@@ -224,14 +225,14 @@ public final class World {
         cachedPlayers.add(player.getUsername());
 
         /** Save the actual file whenever the thread is available to. */
-        Rs2Engine.getDiskPool().execute(new Service() {
+        Rs2Engine.getTaskPool().execute(new Service() {
             @Override
             public void run() {
                 synchronized (player) {
                     WritePlayerFileEvent save = new WritePlayerFileEvent(player);
                     save.run();
                     cachedPlayers.remove(player.getUsername());
-                    logger.info(player + " game successfully saved by the disk pool!");
+                    logger.info(player + " game successfully saved by the network thread!");
                 }
             }
 

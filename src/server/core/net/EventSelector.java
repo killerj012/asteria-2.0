@@ -81,7 +81,7 @@ public final class EventSelector {
 
                     /** Accept the key concurrently if needed. */
                 } else if (key.isAcceptable()) {
-                    Rs2Engine.getNetworkPool().execute(new SessionService());
+                    Rs2Engine.getTaskPool().execute(new SessionService());
                     iterator.remove();
 
                     /** Decode packets for the key if needed. */
