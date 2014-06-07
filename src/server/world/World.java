@@ -232,7 +232,7 @@ public final class World {
                     WritePlayerFileEvent save = new WritePlayerFileEvent(player);
                     save.run();
                     cachedPlayers.remove(player.getUsername());
-                    logger.info(player + " game successfully saved by the network thread!");
+                    logger.info(player + " game successfully saved by the task pool!");
                 }
             }
 

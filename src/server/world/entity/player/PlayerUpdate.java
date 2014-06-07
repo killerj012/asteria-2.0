@@ -349,9 +349,9 @@ public final class PlayerUpdate {
      * Updates the state of a player.
      * 
      * @param player
-     *        the player to update state for.
+     *        the player being constructed.
      * @param thisPlayer
-     *        the player controlling.
+     *        the player being constructed for.
      * @param block
      *        the update block.
      */
@@ -369,6 +369,7 @@ public final class PlayerUpdate {
         }
 
         /** Create the buffer we are going to cache. */
+        // XXX: Increase the buffer size if you get overflows!
         WriteBuffer cachedBuffer = PacketBuffer.newWriteBuffer(300);
 
         /** First we must prepare the mask. */
