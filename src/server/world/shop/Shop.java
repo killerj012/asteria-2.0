@@ -3,7 +3,6 @@ package server.world.shop;
 import java.util.HashMap;
 import java.util.Map;
 
-import server.core.net.packet.PacketBuffer;
 import server.core.worker.TaskFactory;
 import server.core.worker.Worker;
 import server.util.Misc;
@@ -101,30 +100,7 @@ public class Shop {
      *        the player to update the images of the items for.
      */
     protected void updateShopItems(Player player) {
-        PacketBuffer.WriteBuffer out = PacketBuffer.newWriteBuffer(2048);
-        out.writeVariableShortPacketHeader(53);
-        out.writeShort(3900);
-        out.writeShort(getShopItemAmount());
-
-        for (Item item : container.toArray()) {
-            if (item == null) {
-                continue;
-            }
-
-            if (item.getId() > 0) {
-                if (item.getAmount() > 254) {
-                    out.writeByte(255);
-                    out.writeInt(item.getAmount(), PacketBuffer.ByteOrder.INVERSE_MIDDLE);
-                } else {
-                    out.writeByte(item.getAmount());
-                }
-
-                out.writeShort(item.getId() + 1, PacketBuffer.ValueType.A, PacketBuffer.ByteOrder.LITTLE);
-            }
-        }
-
-        out.finishVariableShortPacketHeader();
-        player.getSession().encode(out);
+	player.getPacketBuilder().sendUpdateItems(3900, container.toArray(), getShopItemAmount());
     }
 
     /**

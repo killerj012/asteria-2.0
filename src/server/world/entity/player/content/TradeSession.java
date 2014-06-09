@@ -1,6 +1,5 @@
 package server.world.entity.player.content;
 
-import server.core.net.packet.PacketBuffer;
 import server.util.Misc;
 import server.world.entity.player.Player;
 import server.world.item.Item;
@@ -379,60 +378,14 @@ public class TradeSession {
      * Updates the trading interface with the items from this player.
      */
     public void updateThisTrade() {
-        PacketBuffer.WriteBuffer out = PacketBuffer.newWriteBuffer(2048);
-        out.writeVariableShortPacketHeader(53);
-        out.writeShort(3415);
-        out.writeShort(this.getThisTradeAmount());
-
-        for (Item item : this.getOffering().toArray()) {
-            if (item == null) {
-                continue;
-            }
-
-            if (item.getId() > 0) {
-                if (item.getAmount() > 254) {
-                    out.writeByte(255);
-                    out.writeInt(item.getAmount(), PacketBuffer.ByteOrder.INVERSE_MIDDLE);
-                } else {
-                    out.writeByte(item.getAmount());
-                }
-
-                out.writeShort(item.getId() + 1, PacketBuffer.ValueType.A, PacketBuffer.ByteOrder.LITTLE);
-            }
-        }
-
-        out.finishVariableShortPacketHeader();
-        player.getSession().encode(out);
+	player.getPacketBuilder().sendUpdateItems(3415, getOffering().toArray(), getThisTradeAmount());
     }
 
     /**
      * Updates the trading interface with the items from the trading partner.
      */
     public void updateOtherTrade() {
-        PacketBuffer.WriteBuffer out = PacketBuffer.newWriteBuffer(2048);
-        out.writeVariableShortPacketHeader(53);
-        out.writeShort(3416);
-        out.writeShort(this.getOtherTradeAmount());
-
-        for (Item item : partner.getTradeSession().getOffering().toArray()) {
-            if (item == null) {
-                continue;
-            }
-
-            if (item.getId() > 0) {
-                if (item.getAmount() > 254) {
-                    out.writeByte(255);
-                    out.writeInt(item.getAmount(), PacketBuffer.ByteOrder.INVERSE_MIDDLE);
-                } else {
-                    out.writeByte(item.getAmount());
-                }
-
-                out.writeShort(item.getId() + 1, PacketBuffer.ValueType.A, PacketBuffer.ByteOrder.LITTLE);
-            }
-        }
-
-        out.finishVariableShortPacketHeader();
-        player.getSession().encode(out);
+	player.getPacketBuilder().sendUpdateItems(3416, partner.getTradeSession().getOffering().toArray(), getOtherTradeAmount());
     }
 
     /**

@@ -30,9 +30,8 @@ public final class PlayerUpdate {
      *        the player to update.
      */
     public static void update(Player player) {
-        // XXX: The buffer sizes may need to be tuned.
-        PacketBuffer.WriteBuffer out = PacketBuffer.newWriteBuffer(16384); // 8192
-        PacketBuffer.WriteBuffer block = PacketBuffer.newWriteBuffer(8192); // 4096
+        PacketBuffer.WriteBuffer out = PacketBuffer.newWriteBuffer();
+        PacketBuffer.WriteBuffer block = PacketBuffer.newWriteBuffer();
 
         /** Initialize the update packet. */
         out.writeVariableShortPacketHeader(81);
@@ -86,7 +85,7 @@ public final class PlayerUpdate {
         if (block.getBuffer().position() > 0) {
             out.writeBits(11, 2047);
             out.setAccessType(PacketBuffer.AccessType.BYTE_ACCESS);
-            out.writeBytes(block.getBuffer());
+            out.writeBytes(block.getBuffer().array());
         } else {
             out.setAccessType(PacketBuffer.AccessType.BYTE_ACCESS);
         }
@@ -120,7 +119,7 @@ public final class PlayerUpdate {
      *        the buffer.
      */
     public static void appendAppearance(Player player, PacketBuffer.WriteBuffer out) {
-        PacketBuffer.WriteBuffer block = PacketBuffer.newWriteBuffer(128);
+        PacketBuffer.WriteBuffer block = PacketBuffer.newWriteBuffer();
 
         /** Gender. */
         block.writeByte(player.getGender()); // Gender
@@ -250,7 +249,7 @@ public final class PlayerUpdate {
 
         /** Append the block length and the block to the packet. */
         out.writeByte(block.getBuffer().position(), PacketBuffer.ValueType.C);
-        out.writeBytes(block.getBuffer());
+        out.writeBytes(block.getBuffer().array());
     }
 
     /**
@@ -369,8 +368,7 @@ public final class PlayerUpdate {
         }
 
         /** Create the buffer we are going to cache. */
-        // XXX: Increase the buffer size if you get overflows!
-        WriteBuffer cachedBuffer = PacketBuffer.newWriteBuffer(300);
+        WriteBuffer cachedBuffer = PacketBuffer.newWriteBuffer();
 
         /** First we must prepare the mask. */
         int mask = 0x0;
@@ -456,7 +454,7 @@ public final class PlayerUpdate {
         }
 
         /** Add the cached block to the update block. */
-        block.writeBytes(cachedBuffer.getBuffer());
+        block.writeBytes(cachedBuffer.getBuffer().array());
     }
 
     /**

@@ -27,9 +27,8 @@ public class NpcUpdate {
      *        the argued player.
      */
     public static void update(Player player) {
-        // XXX: The buffer sizes may need to be tuned.
-        PacketBuffer.WriteBuffer out = PacketBuffer.newWriteBuffer(2048);
-        PacketBuffer.WriteBuffer block = PacketBuffer.newWriteBuffer(1024);
+        PacketBuffer.WriteBuffer out = PacketBuffer.newWriteBuffer();
+        PacketBuffer.WriteBuffer block = PacketBuffer.newWriteBuffer();
 
         /** Initialize the update packet. */
         out.writeVariableShortPacketHeader(65);
@@ -78,7 +77,7 @@ public class NpcUpdate {
         if (block.getBuffer().position() > 0) {
             out.writeBits(14, 16383);
             out.setAccessType(PacketBuffer.AccessType.BYTE_ACCESS);
-            out.writeBytes(block.getBuffer());
+            out.writeBytes(block.getBuffer().array());
         } else {
             out.setAccessType(PacketBuffer.AccessType.BYTE_ACCESS);
         }
