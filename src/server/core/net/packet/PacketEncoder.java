@@ -48,7 +48,7 @@ public final class PacketEncoder {
      * @return this packet encoder.
      */
     public PacketEncoder sendHideInterfaceLayer(int interfaceIndex, boolean hidden) {
-        WriteBuffer out = PacketBuffer.newWriteBuffer();
+        WriteBuffer out = PacketBuffer.newWriteBuffer(4);
         out.writeHeader(171);
         out.writeByte(hidden ? 1 : 0);
         out.writeShort(interfaceIndex);
@@ -66,7 +66,7 @@ public final class PacketEncoder {
      * @return this packet encoder.
      */
     public PacketEncoder updateSpecialBar(int amount, int barId) {
-        WriteBuffer out = PacketBuffer.newWriteBuffer();
+        WriteBuffer out = PacketBuffer.newWriteBuffer(7);
         out.writeHeader(70);
         out.writeShort(amount);
         out.writeShort(0, PacketBuffer.ByteOrder.LITTLE);
@@ -104,7 +104,7 @@ public final class PacketEncoder {
      */
     public PacketEncoder sendObjectAnimation(Position position, int animation, int type, int orientation) {
         sendCoordinates(position);
-        WriteBuffer out = PacketBuffer.newWriteBuffer();
+        WriteBuffer out = PacketBuffer.newWriteBuffer(5);
         out.writeHeader(160);
         out.writeByte(((0 & 7) << 4) + (0 & 7), ValueType.S);
         out.writeByte((type << 2) + (orientation & 3), ValueType.S);
@@ -152,7 +152,7 @@ public final class PacketEncoder {
      */
     public PacketEncoder sendGraphic(int id, Position position, int level) {
         sendCoordinates(position);
-        PacketBuffer.WriteBuffer out = PacketBuffer.newWriteBuffer();
+        PacketBuffer.WriteBuffer out = PacketBuffer.newWriteBuffer(7);
         out.writeHeader(4).writeByte(0).writeShort(id).writeByte(level).writeShort(0);
         player.getSession().encode(out);
         return this;
@@ -194,7 +194,7 @@ public final class PacketEncoder {
      * @return this packet encoder.
      */
     public PacketEncoder sendSound(int id, int type, int delay) {
-        PacketBuffer.WriteBuffer out = PacketBuffer.newWriteBuffer();
+        PacketBuffer.WriteBuffer out = PacketBuffer.newWriteBuffer(8);
         out.writeHeader(174).writeShort(id).writeByte(type).writeShort(delay);
         player.getSession().encode(out);
         return this;
@@ -216,7 +216,7 @@ public final class PacketEncoder {
      * @return this packet encoder.
      */
     public PacketEncoder sendWelcomeInterface(int recoveryChange, boolean memberWarning, int messages, int lastLoginIP, int lastLogin) {
-        PacketBuffer.WriteBuffer out = PacketBuffer.newWriteBuffer();
+        PacketBuffer.WriteBuffer out = PacketBuffer.newWriteBuffer(20);
         out.writeHeader(176).writeByte(recoveryChange, ValueType.C).writeShort(messages, ValueType.A).writeByte(memberWarning ? 1 : 0).writeInt(lastLoginIP, ByteOrder.INVERSE_MIDDLE).writeShort(lastLogin);
         player.getSession().encode(out);
         return this;
@@ -232,7 +232,7 @@ public final class PacketEncoder {
      * @return this packet encoder.
      */
     public PacketEncoder interfaceAnimation(int interfaceId, int animation) {
-        PacketBuffer.WriteBuffer out = PacketBuffer.newWriteBuffer();
+        PacketBuffer.WriteBuffer out = PacketBuffer.newWriteBuffer(5);
         out.writeHeader(200).writeShort(interfaceId).writeShort(animation);
         player.getSession().encode(out);
         return this;
@@ -246,7 +246,7 @@ public final class PacketEncoder {
      * @return this packet encoder.
      */
     public PacketEncoder sendMultiCombatInterface(int state) {
-        PacketBuffer.WriteBuffer out = PacketBuffer.newWriteBuffer();
+        PacketBuffer.WriteBuffer out = PacketBuffer.newWriteBuffer(2);
         out.writeHeader(61).writeByte(state);
         player.getSession().encode(out);
         return this;
@@ -264,7 +264,7 @@ public final class PacketEncoder {
      * @return this packet encoder.
      */
     public PacketEncoder sendItemOnInterfaceSlot(int frame, Item item, int slot) {
-        PacketBuffer.WriteBuffer out = PacketBuffer.newWriteBuffer();
+        PacketBuffer.WriteBuffer out = PacketBuffer.newWriteBuffer(32);
         out.writeVariableShortPacketHeader(34).writeShort(frame).writeByte(slot).writeShort(item.getId() + 1);
 
         if (item.getAmount() > 254) {
@@ -288,7 +288,7 @@ public final class PacketEncoder {
      * @return this packet encoder.
      */
     public PacketEncoder sendMobHeadModel(int id, int size) {
-        PacketBuffer.WriteBuffer out = PacketBuffer.newWriteBuffer();
+        PacketBuffer.WriteBuffer out = PacketBuffer.newWriteBuffer(5);
         out.writeHeader(75).writeShort(id, ValueType.A, ByteOrder.LITTLE).writeShort(size, ValueType.A, ByteOrder.LITTLE);
         player.getSession().encode(out);
         return this;
@@ -304,7 +304,7 @@ public final class PacketEncoder {
      */
     public PacketEncoder sendCustomMapRegion(Palette palette) {
         this.sendMapRegion();
-        PacketBuffer.WriteBuffer out = PacketBuffer.newWriteBuffer();
+        PacketBuffer.WriteBuffer out = PacketBuffer.newWriteBuffer(100);
         out.writeVariableShortPacketHeader(241);
         out.writeShort(player.getPosition().getRegionY() + 6, ValueType.A);
         out.setAccessType(AccessType.BIT_ACCESS);
@@ -335,7 +335,7 @@ public final class PacketEncoder {
      * @return this packet encoder.
      */
     public PacketEncoder sendPlayerHeadModel(int size) {
-        PacketBuffer.WriteBuffer out = PacketBuffer.newWriteBuffer();
+        PacketBuffer.WriteBuffer out = PacketBuffer.newWriteBuffer(3);
         out.writeHeader(185).writeShort(size, ValueType.A, ByteOrder.LITTLE);
         player.getSession().encode(out);
         return this;
@@ -349,7 +349,7 @@ public final class PacketEncoder {
      * @return this packet encoder.
      */
     public PacketEncoder flashSelectedSidebar(int id) {
-        PacketBuffer.WriteBuffer out = PacketBuffer.newWriteBuffer();
+        PacketBuffer.WriteBuffer out = PacketBuffer.newWriteBuffer(2);
         out.writeHeader(24).writeByte(id, ValueType.A);
         player.getSession().encode(out);
         return this;
@@ -361,7 +361,7 @@ public final class PacketEncoder {
      * @return this packet encoder.
      */
     public PacketEncoder enterName() {
-        PacketBuffer.WriteBuffer out = PacketBuffer.newWriteBuffer();
+        PacketBuffer.WriteBuffer out = PacketBuffer.newWriteBuffer(1);
         out.writeHeader(187);
         player.getSession().encode(out);
         return this;
@@ -375,7 +375,7 @@ public final class PacketEncoder {
      * @return this packet encoder.
      */
     public PacketEncoder sendMapState(int state) {
-        PacketBuffer.WriteBuffer out = PacketBuffer.newWriteBuffer();
+        PacketBuffer.WriteBuffer out = PacketBuffer.newWriteBuffer(2);
         out.writeHeader(99).writeByte(state);
         player.getSession().encode(out);
         return this;
@@ -387,7 +387,7 @@ public final class PacketEncoder {
      * @return this packet encoder.
      */
     public PacketEncoder sendResetCameraRotation() {
-        PacketBuffer.WriteBuffer out = PacketBuffer.newWriteBuffer();
+        PacketBuffer.WriteBuffer out = PacketBuffer.newWriteBuffer(1);
         out.writeHeader(108);
         player.getSession().encode(out);
         return this;
@@ -409,7 +409,7 @@ public final class PacketEncoder {
      * @return this packet encoder.
      */
     public PacketEncoder sendCameraSpin(int x, int y, int height, int speed, int angle) {
-        PacketBuffer.WriteBuffer out = PacketBuffer.newWriteBuffer();
+        PacketBuffer.WriteBuffer out = PacketBuffer.newWriteBuffer(7);
         out.writeHeader(177).writeByte(x / 64).writeByte(y / 64).writeShort(height).writeByte(speed).writeByte(angle);
         player.getSession().encode(out);
         return this;
@@ -431,7 +431,7 @@ public final class PacketEncoder {
      * @return this packet encoder.
      */
     public PacketEncoder sendCameraMovement(int x, int y, int height, int speed, int angle) {
-        PacketBuffer.WriteBuffer out = PacketBuffer.newWriteBuffer();
+        PacketBuffer.WriteBuffer out = PacketBuffer.newWriteBuffer(7);
         out.writeHeader(166).writeByte(x / 64).writeByte(y / 64).writeShort(height).writeByte(speed).writeByte(angle);
         player.getSession().encode(out);
         return this;
@@ -449,7 +449,7 @@ public final class PacketEncoder {
             throw new IllegalArgumentException("Intensity must be below 5!");
         }
 
-        PacketBuffer.WriteBuffer out = PacketBuffer.newWriteBuffer();
+        PacketBuffer.WriteBuffer out = PacketBuffer.newWriteBuffer(5);
         out.writeHeader(35).writeByte(intensity).writeByte(intensity).writeByte(intensity).writeByte(intensity);
         player.getSession().encode(out);
         return this;
@@ -461,7 +461,7 @@ public final class PacketEncoder {
      * @return this packet encoder.
      */
     public PacketEncoder sendResetCamera() {
-        PacketBuffer.WriteBuffer out = PacketBuffer.newWriteBuffer();
+        PacketBuffer.WriteBuffer out = PacketBuffer.newWriteBuffer(7);
         out.writeHeader(107);
         player.getSession().encode(out);
         return this;
@@ -475,7 +475,7 @@ public final class PacketEncoder {
      * @return this packet encoder.
      */
     public PacketEncoder sendMusic(int id) {
-        PacketBuffer.WriteBuffer out = PacketBuffer.newWriteBuffer();
+        PacketBuffer.WriteBuffer out = PacketBuffer.newWriteBuffer(3);
         out.writeHeader(74).writeShort(id, ByteOrder.LITTLE);
         player.getSession().encode(out);
         return this;
@@ -489,7 +489,7 @@ public final class PacketEncoder {
      * @return this packet encoder.
      */
     public PacketEncoder systemUpdate(int time) {
-        PacketBuffer.WriteBuffer out = PacketBuffer.newWriteBuffer();
+        PacketBuffer.WriteBuffer out = PacketBuffer.newWriteBuffer(3);
         out.writeHeader(114).writeShort(time, ByteOrder.LITTLE);
         player.getSession().encode(out);
         return this;
@@ -505,7 +505,7 @@ public final class PacketEncoder {
      * @return this packer builder.
      */
     public PacketEncoder changeColorOnInterface(int interfaceId, int color) {
-        PacketBuffer.WriteBuffer out = PacketBuffer.newWriteBuffer();
+        PacketBuffer.WriteBuffer out = PacketBuffer.newWriteBuffer(5);
         out.writeHeader(122).writeShort(interfaceId, ValueType.A, ByteOrder.LITTLE).writeShort(color, ValueType.A, ByteOrder.LITTLE);
         player.getSession().encode(out);
         return this;
@@ -523,7 +523,7 @@ public final class PacketEncoder {
      * @return this packet encoder.
      */
     public PacketEncoder sendItemOnInterface(int id, int zoom, int model) {
-        PacketBuffer.WriteBuffer out = PacketBuffer.newWriteBuffer();
+        PacketBuffer.WriteBuffer out = PacketBuffer.newWriteBuffer(7);
         out.writeHeader(246).writeShort(id, PacketBuffer.ByteOrder.LITTLE).writeShort(zoom).writeShort(model);
         player.getSession().encode(out);
         return this;
@@ -554,7 +554,7 @@ public final class PacketEncoder {
      */
     public PacketEncoder sendProjectile(Position position, Position offset, int angle, int speed, int gfxMoving, int startHeight, int endHeight, int lockon, int time) {
         this.sendCoordinates(position);
-        PacketBuffer.WriteBuffer out = PacketBuffer.newWriteBuffer();
+        PacketBuffer.WriteBuffer out = PacketBuffer.newWriteBuffer(16);
         out.writeHeader(117).writeByte(angle).writeByte(offset.getY()).writeByte(offset.getX()).writeShort(lockon).writeShort(gfxMoving).writeByte(startHeight).writeByte(endHeight).writeShort(time).writeShort(speed).writeByte(16).writeByte(64);
         player.getSession().encode(out);
         return this;
@@ -605,7 +605,7 @@ public final class PacketEncoder {
      * @return this packet encoder.
      */
     public PacketEncoder sendConfig(int id, int state) {
-        PacketBuffer.WriteBuffer out = PacketBuffer.newWriteBuffer();
+        PacketBuffer.WriteBuffer out = PacketBuffer.newWriteBuffer(4);
         out.writeHeader(36);
         out.writeShort(id, ByteOrder.LITTLE).writeByte(state);
         player.getSession().encode(out);
@@ -621,7 +621,7 @@ public final class PacketEncoder {
      */
     public PacketEncoder sendObject(WorldObject object) {
         sendCoordinates(object.getPosition());
-        PacketBuffer.WriteBuffer out = PacketBuffer.newWriteBuffer();
+        PacketBuffer.WriteBuffer out = PacketBuffer.newWriteBuffer(5);
         out.writeHeader(151).writeByte(0, ValueType.S).writeShort(object.getId(), ByteOrder.LITTLE).writeByte((object.getType() << 2) + (object.getRotation().getFaceId() & 3), ValueType.S);
         player.getSession().encode(out);
         return this;
@@ -636,7 +636,7 @@ public final class PacketEncoder {
      */
     public PacketEncoder removeObject(WorldObject object) {
         sendCoordinates(object.getPosition());
-        PacketBuffer.WriteBuffer out = PacketBuffer.newWriteBuffer();
+        PacketBuffer.WriteBuffer out = PacketBuffer.newWriteBuffer(3);
         out.writeHeader(101).writeByte((object.getType() << 2) + (object.getRotation().getFaceId() & 3), ValueType.C).writeByte(0);
         player.getSession().encode(out);
         return this;
@@ -669,7 +669,7 @@ public final class PacketEncoder {
      * @return this packet encoder.
      */
     public PacketEncoder sendSkill(int skillID, int level, int exp) {
-        PacketBuffer.WriteBuffer out = PacketBuffer.newWriteBuffer();
+        PacketBuffer.WriteBuffer out = PacketBuffer.newWriteBuffer(8);
         out.writeHeader(134).writeByte(skillID).writeInt(exp, ByteOrder.MIDDLE).writeByte(level);
         player.getSession().encode(out);
         return this;
@@ -681,7 +681,7 @@ public final class PacketEncoder {
      * @return this packet encoder.
      */
     public PacketEncoder closeWindows() {
-        PacketBuffer.WriteBuffer out = PacketBuffer.newWriteBuffer();
+        PacketBuffer.WriteBuffer out = PacketBuffer.newWriteBuffer(1);
         out.writeHeader(219);
         player.getSession().encode(out);
         return this;
@@ -695,7 +695,7 @@ public final class PacketEncoder {
      * @return this packet encoder.
      */
     public PacketEncoder sendPrivateMessagingList(int i) {
-        PacketBuffer.WriteBuffer out = PacketBuffer.newWriteBuffer();
+        PacketBuffer.WriteBuffer out = PacketBuffer.newWriteBuffer(2);
         out.writeHeader(221).writeByte(i);
         player.getSession().encode(out);
         return this;
@@ -713,7 +713,7 @@ public final class PacketEncoder {
      * @return this packet encoder.
      */
     public PacketEncoder sendChatOptions(int publicChat, int privateChat, int tradeBlock) {
-        PacketBuffer.WriteBuffer out = PacketBuffer.newWriteBuffer();
+        PacketBuffer.WriteBuffer out = PacketBuffer.newWriteBuffer(4);
         out.writeHeader(206).writeByte(publicChat).writeByte(privateChat).writeByte(tradeBlock);
         player.getSession().encode(out);
         return this;
@@ -733,7 +733,7 @@ public final class PacketEncoder {
             world += 9;
         }
 
-        PacketBuffer.WriteBuffer out = PacketBuffer.newWriteBuffer();
+        PacketBuffer.WriteBuffer out = PacketBuffer.newWriteBuffer(10);
         out.writeHeader(50).writeLong(playerName).writeByte(world);
         player.getSession().encode(out);
         return this;
@@ -749,7 +749,7 @@ public final class PacketEncoder {
      * @return this packet encoder.
      */
     public PacketEncoder sendPositionHintArrow(Position coordinates, int position) {
-        PacketBuffer.WriteBuffer out = PacketBuffer.newWriteBuffer();
+        PacketBuffer.WriteBuffer out = PacketBuffer.newWriteBuffer(7);
         out.writeHeader(254).writeByte(position).writeShort(coordinates.getX()).writeShort(coordinates.getY()).writeByte(coordinates.getZ());
         player.getSession().encode(out);
         return this;
@@ -769,7 +769,7 @@ public final class PacketEncoder {
      * @return this packet encoder.
      */
     public PacketEncoder sendPrivateMessage(long name, int rights, byte[] chatMessage, int messageSize) {
-        PacketBuffer.WriteBuffer out = PacketBuffer.newWriteBuffer();
+        PacketBuffer.WriteBuffer out = PacketBuffer.newWriteBuffer(messageSize + 15);
         out.writeVariablePacketHeader(196).writeLong(name).writeInt(player.getPrivateMessage().getLastPrivateMessageId()).writeByte(rights).writeBytes(chatMessage, messageSize).finishVariablePacketHeader();
         player.getSession().encode(out);
         return this;
@@ -785,7 +785,7 @@ public final class PacketEncoder {
      * @return this packet encoder.
      */
     public PacketEncoder sendEntityHintArrow(int type, int id) {
-        PacketBuffer.WriteBuffer out = PacketBuffer.newWriteBuffer();
+        PacketBuffer.WriteBuffer out = PacketBuffer.newWriteBuffer(5);
         out.writeHeader(254).writeByte(type).writeShort(id).writeByte(0);
         player.getSession().encode(out);
         return this;
@@ -799,7 +799,7 @@ public final class PacketEncoder {
      * @return this packet encoder.
      */
     public PacketEncoder sendCoordinates(Position position) {
-        PacketBuffer.WriteBuffer out = PacketBuffer.newWriteBuffer();
+        PacketBuffer.WriteBuffer out = PacketBuffer.newWriteBuffer(3);
         out.writeHeader(85).writeByte(position.getY() - (player.getCurrentRegion().getRegionY() * 8), ValueType.C).writeByte(position.getX() - (player.getCurrentRegion().getRegionX() * 8), ValueType.C);
         player.getSession().encode(out);
         return this;
@@ -813,7 +813,7 @@ public final class PacketEncoder {
      * @return this packet encoder.
      */
     public PacketEncoder walkableInterface(int id) {
-        PacketBuffer.WriteBuffer out = PacketBuffer.newWriteBuffer();
+        PacketBuffer.WriteBuffer out = PacketBuffer.newWriteBuffer(3);
         out.writeHeader(208).writeShort(id, ByteOrder.LITTLE);
         player.getSession().encode(out);
         return this;
@@ -828,7 +828,7 @@ public final class PacketEncoder {
      */
     public PacketEncoder sendGroundItem(GroundItem item) {
         sendCoordinates(item.getPosition());
-        PacketBuffer.WriteBuffer out = PacketBuffer.newWriteBuffer();
+        PacketBuffer.WriteBuffer out = PacketBuffer.newWriteBuffer(6);
         out.writeHeader(44).writeShort(item.getItem().getId(), ValueType.A, ByteOrder.LITTLE).writeShort(item.getItem().getAmount()).writeByte(0);
         player.getSession().encode(out);
         return this;
@@ -843,7 +843,7 @@ public final class PacketEncoder {
      */
     public PacketEncoder removeGroundItem(GroundItem item) {
         sendCoordinates(item.getPosition());
-        PacketBuffer.WriteBuffer out = PacketBuffer.newWriteBuffer();
+        PacketBuffer.WriteBuffer out = PacketBuffer.newWriteBuffer(4);
         out.writeHeader(156).writeByte(0, ValueType.S).writeShort(item.getItem().getId());
         player.getSession().encode(out);
         return this;
@@ -859,7 +859,7 @@ public final class PacketEncoder {
      * @return this packet encoder.
      */
     public PacketEncoder sendPlayerMenu(String option, int slot) {
-        PacketBuffer.WriteBuffer out = PacketBuffer.newWriteBuffer();
+        PacketBuffer.WriteBuffer out = PacketBuffer.newWriteBuffer(option.length() + 6);
         out.writeVariablePacketHeader(104).writeByte(slot, PacketBuffer.ValueType.C).writeByte(0, PacketBuffer.ValueType.A).writeString(option).finishVariablePacketHeader();
         player.getSession().encode(out);
         return this;
@@ -875,7 +875,7 @@ public final class PacketEncoder {
      * @return this packet encoder.
      */
     public PacketEncoder sendString(String text, int id) {
-        PacketBuffer.WriteBuffer out = PacketBuffer.newWriteBuffer();
+        PacketBuffer.WriteBuffer out = PacketBuffer.newWriteBuffer(text.length() + 6);
         out.writeVariableShortPacketHeader(126).writeString(text).writeShort(id, ValueType.A).finishVariableShortPacketHeader();
         player.getSession().encode(out);
         return this;
@@ -893,7 +893,7 @@ public final class PacketEncoder {
      * @return this packet encoder.
      */
     public PacketEncoder sendEquipment(int slot, int itemID, int itemAmount) {
-        PacketBuffer.WriteBuffer out = PacketBuffer.newWriteBuffer();
+        PacketBuffer.WriteBuffer out = PacketBuffer.newWriteBuffer(32);
         out.writeVariableShortPacketHeader(34).writeShort(1688).writeByte(slot).writeShort(itemID + 1);
 
         if (itemAmount > 254) {
@@ -917,28 +917,14 @@ public final class PacketEncoder {
      * @return this packet encoder.
      */
     public PacketEncoder sendUpdateItems(int interfaceId, Item[] items) {
-	return sendUpdateItems(interfaceId, items, items.length);
-    }
-    
-    /**
-     * Updates an array of items on an interface.
-     * 
-     * @param interfaceId
-     *        the interface to send the items on.
-     * @param items
-     *        the items to send.
-     * @param amount The amount of items.
-     * @return this packet encoder.
-     */
-    public PacketEncoder sendUpdateItems(int interfaceId, Item[] items, int amount) {
-        PacketBuffer.WriteBuffer out = PacketBuffer.newWriteBuffer();
+        PacketBuffer.WriteBuffer out = PacketBuffer.newWriteBuffer(2048);
         out.writeVariableShortPacketHeader(53).writeShort(interfaceId);
         if (items == null) {
             out.writeShort(0).writeByte(0).writeShort(0, PacketBuffer.ValueType.A, PacketBuffer.ByteOrder.LITTLE).finishVariableShortPacketHeader();
             player.getSession().encode(out);
             return this;
         }
-        out.writeShort(amount);
+        out.writeShort(items.length);
         for (Item item : items) {
             if (item != null) {
                 if (item.getAmount() > 254) {
@@ -968,7 +954,7 @@ public final class PacketEncoder {
      * @return this packet encoder.
      */
     public PacketEncoder sendInventoryInterface(int interfaceId, int inventoryId) {
-        PacketBuffer.WriteBuffer out = PacketBuffer.newWriteBuffer();
+        PacketBuffer.WriteBuffer out = PacketBuffer.newWriteBuffer(5);
         out.writeHeader(248);
         out.writeShort(interfaceId, PacketBuffer.ValueType.A);
         out.writeShort(inventoryId);
@@ -984,7 +970,7 @@ public final class PacketEncoder {
      * @return this packet encoder.
      */
     public PacketEncoder sendInterface(int interfaceId) {
-        PacketBuffer.WriteBuffer out = PacketBuffer.newWriteBuffer();
+        PacketBuffer.WriteBuffer out = PacketBuffer.newWriteBuffer(3);
         out.writeHeader(97);
         out.writeShort(interfaceId);
         player.getSession().encode(out);
@@ -999,7 +985,7 @@ public final class PacketEncoder {
      * @return this packet encoder.
      */
     public PacketEncoder sendMessage(String message) {
-        PacketBuffer.WriteBuffer out = PacketBuffer.newWriteBuffer();
+        PacketBuffer.WriteBuffer out = PacketBuffer.newWriteBuffer(message.length() + 3);
         out.writeVariablePacketHeader(253);
         out.writeString(message);
         out.finishVariablePacketHeader();
@@ -1017,7 +1003,7 @@ public final class PacketEncoder {
      * @return this packet encoder.
      */
     public PacketEncoder sendSidebarInterface(int menuId, int form) {
-        PacketBuffer.WriteBuffer out = PacketBuffer.newWriteBuffer();
+        PacketBuffer.WriteBuffer out = PacketBuffer.newWriteBuffer(4);
         out.writeHeader(71);
         out.writeShort(form);
         out.writeByte(menuId, PacketBuffer.ValueType.A);
@@ -1033,7 +1019,7 @@ public final class PacketEncoder {
     public PacketEncoder sendMapRegion() {
         player.getCurrentRegion().setAs(player.getPosition());
         player.setNeedsPlacement(true);
-        PacketBuffer.WriteBuffer out = PacketBuffer.newWriteBuffer();
+        PacketBuffer.WriteBuffer out = PacketBuffer.newWriteBuffer(5);
         out.writeHeader(73);
         out.writeShort(player.getPosition().getRegionX() + 6, PacketBuffer.ValueType.A);
         out.writeShort(player.getPosition().getRegionY() + 6);
@@ -1047,7 +1033,7 @@ public final class PacketEncoder {
      * @return this packet encoder.
      */
     public PacketEncoder sendLogout() {
-        PacketBuffer.WriteBuffer out = PacketBuffer.newWriteBuffer();
+        PacketBuffer.WriteBuffer out = PacketBuffer.newWriteBuffer(1);
         out.writeHeader(109);
         player.getSession().encode(out);
         return this;
@@ -1059,7 +1045,7 @@ public final class PacketEncoder {
      * @return this packet builder.
      */
     public PacketEncoder sendDetails() {
-        PacketBuffer.WriteBuffer out = PacketBuffer.newWriteBuffer();
+        PacketBuffer.WriteBuffer out = PacketBuffer.newWriteBuffer(4);
         out.writeHeader(249);
         out.writeByte(1, ValueType.A);
         out.writeShort(player.getSlot(), ValueType.A, ByteOrder.LITTLE);
@@ -1075,7 +1061,7 @@ public final class PacketEncoder {
      * @return this packet encoder.
      */
     public PacketEncoder sendChatInterface(int frame) {
-        PacketBuffer.WriteBuffer out = PacketBuffer.newWriteBuffer();
+        PacketBuffer.WriteBuffer out = PacketBuffer.newWriteBuffer(3);
         out.writeHeader(164);
         out.writeShort(frame, ByteOrder.LITTLE);
         player.getSession().encode(out);
@@ -1088,11 +1074,9 @@ public final class PacketEncoder {
      * @return this packet encoder.
      */
     public PacketEncoder resetAnimation() {
-        PacketBuffer.WriteBuffer out = PacketBuffer.newWriteBuffer();
+        PacketBuffer.WriteBuffer out = PacketBuffer.newWriteBuffer(1);
         out.writeHeader(1);
         player.getSession().encode(out);
         return this;
     }
-   
-
 }

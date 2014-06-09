@@ -237,7 +237,7 @@ public final class Session {
                 }
 
                 /** Write the response. */
-                PacketBuffer.WriteBuffer out = PacketBuffer.newWriteBuffer();
+                PacketBuffer.WriteBuffer out = PacketBuffer.newWriteBuffer(17);
                 out.writeLong(0); // First 8 bytes are ignored by the client.
                 out.writeByte(0); // The response opcode, 0 for logging in.
                 out.writeLong(new SecureRandom().nextLong()); // SSK.
@@ -400,7 +400,7 @@ public final class Session {
                 }
 
                 /** Load player rights and the client response code. */
-                PacketBuffer.WriteBuffer resp = PacketBuffer.newWriteBuffer();
+                PacketBuffer.WriteBuffer resp = PacketBuffer.newWriteBuffer(3);
                 resp.writeByte(invalidCredentials ? Misc.LOGIN_RESPONSE_INVALID_CREDENTIALS : response);
 
                 if (player.getStaffRights() == 3) {
