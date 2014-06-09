@@ -5,13 +5,13 @@ import java.util.concurrent.Phaser;
 import java.util.logging.Logger;
 
 import server.core.Rs2Engine;
-import server.core.Service;
+import server.core.task.Task;
+import server.core.task.impl.PlayerParallelUpdateTask;
 import server.util.Misc;
 import server.util.Misc.Stopwatch;
 import server.world.entity.EntityContainer;
 import server.world.entity.npc.Npc;
 import server.world.entity.player.Player;
-import server.world.entity.player.PlayerParallelUpdateService;
 import server.world.entity.player.content.AssignSkillRequirement;
 import server.world.entity.player.content.AssignWeaponAnimation;
 import server.world.entity.player.content.AssignWeaponInterface;
@@ -122,7 +122,7 @@ public final class World {
                     continue;
                 }
 
-                Rs2Engine.getUpdatePool().execute(new PlayerParallelUpdateService(player, phaser));
+                Rs2Engine.getUpdatePool().execute(new PlayerParallelUpdateTask(player, phaser));
             }
 
             phaser.arriveAndAwaitAdvance();
@@ -225,14 +225,14 @@ public final class World {
         cachedPlayers.add(player.getUsername());
 
         /** Save the actual file whenever the thread is available to. */
-        Rs2Engine.getTaskPool().execute(new Service() {
+        Rs2Engine.pushTask(new Task() {
             @Override
             public void run() {
                 synchronized (player) {
                     WritePlayerFileEvent save = new WritePlayerFileEvent(player);
                     save.run();
                     cachedPlayers.remove(player.getUsername());
-                    logger.info(player + " game successfully saved by the task pool!");
+                    logger.info(player + " game successfully saved by the task engine!");
                 }
             }
 

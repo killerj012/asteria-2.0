@@ -1,20 +1,22 @@
-package server.world.entity.player;
+package server.core.task.impl;
 
 import java.util.concurrent.Phaser;
 import java.util.logging.Logger;
 
-import server.core.Service;
+import server.core.task.Task;
 import server.world.entity.npc.NpcUpdate;
+import server.world.entity.player.Player;
+import server.world.entity.player.PlayerUpdate;
 
 /**
  * A concurrent task that performs updating on a single {@link Player}.
  * 
  * @author lare96
  */
-public class PlayerParallelUpdateService implements Service {
+public class PlayerParallelUpdateTask implements Task {
 
     /** A {@link Logger} for printing debugging info. */
-    private static Logger logger = Logger.getLogger(PlayerParallelUpdateService.class.getSimpleName());
+    private static Logger logger = Logger.getLogger(PlayerParallelUpdateTask.class.getSimpleName());
 
     /** The {@link Player} to perform updating on. */
     private Player player;
@@ -26,7 +28,7 @@ public class PlayerParallelUpdateService implements Service {
     private Phaser phaser;
 
     /**
-     * Create a new {@link PlayerParallelUpdateService}.
+     * Create a new {@link PlayerParallelUpdateTask}.
      * 
      * @param player
      *        the player to perform updating on.
@@ -34,7 +36,7 @@ public class PlayerParallelUpdateService implements Service {
      *        the phaser being used to keep the main game thread in sync with
      *        updating.
      */
-    public PlayerParallelUpdateService(Player player, Phaser phaser) {
+    public PlayerParallelUpdateTask(Player player, Phaser phaser) {
         this.player = player;
         this.phaser = phaser;
     }
@@ -70,6 +72,6 @@ public class PlayerParallelUpdateService implements Service {
 
     @Override
     public String name() {
-        return PlayerParallelUpdateService.class.getSimpleName();
+        return PlayerParallelUpdateTask.class.getSimpleName();
     }
 }
