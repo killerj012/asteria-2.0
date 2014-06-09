@@ -39,6 +39,7 @@ public class SessionService implements Service {
                 /** Block if we fail the security check. */
                 if (!HostGateway.enter(socket.socket().getInetAddress().getHostAddress())) {
                     socket.close();
+                    eventCount.incrementAndGet();
                     continue;
                 }
 

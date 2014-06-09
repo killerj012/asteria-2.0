@@ -375,6 +375,7 @@ public final class Session {
                 /** Set the username and password. */
                 player.setUsername(username);
                 player.setPassword(password);
+                player.setUsernameHash(Misc.nameToLong(username));
 
                 int response = Misc.LOGIN_RESPONSE_OK;
 

@@ -1,5 +1,7 @@
 package server.world.entity;
 
+import java.util.BitSet;
+
 /**
  * Manages update flags for all in-game entities.
  * 
@@ -7,8 +9,8 @@ package server.world.entity;
  */
 public class UpdateFlags {
 
-    /** An array holding the values for the update flags. */
-    private boolean[] flags = new boolean[10];
+    /** An bit set holding the values for the update flags. */
+    private BitSet bits = new BitSet(Flag.values().length);
 
     /**
      * Flag an update flag.
@@ -17,7 +19,7 @@ public class UpdateFlags {
      *        the update flag you are flagging.
      */
     public void flag(Flag flag) {
-        flags[flag.ordinal()] = true;
+        bits.set(flag.ordinal());
     }
 
     /**
@@ -28,7 +30,7 @@ public class UpdateFlags {
      * @return the value of the flag.
      */
     public boolean get(Flag flag) {
-        return flags[flag.ordinal()];
+        return bits.get(flag.ordinal());
     }
 
     /**
@@ -37,21 +39,14 @@ public class UpdateFlags {
      * @return true if an update is required.
      */
     public boolean isUpdateRequired() {
-        for (int i = 0; i < flags.length; i++) {
-            if (flags[i]) {
-                return true;
-            }
-        }
-        return false;
+        return !bits.isEmpty();
     }
 
     /**
      * Resets the update flags.
      */
     public void reset() {
-        for (int i = 0; i < flags.length; i++) {
-            flags[i] = false;
-        }
+        bits.clear();
     }
 
     /**

@@ -64,7 +64,7 @@ public final class PlayerUpdate {
 
         /** Update the local player list. */
         for (int i = 0; i < World.getPlayers().getCapacity(); i++) {
-            if (added == 15 || player.getPlayers().size() >= 220) {
+            if (added == 10 || player.getPlayers().size() >= 220) {
 
                 /** Player limit has been reached. */
                 break;
@@ -243,7 +243,7 @@ public final class PlayerUpdate {
         block.writeShort(player.getUpdateAnimation().getRunningAnimation() == -1 ? PlayerAnimation.getRunEmote() : player.getUpdateAnimation().getRunningAnimation()); // run
 
         /** Player context menus */
-        block.writeLong(Misc.nameToLong(player.getUsername()));
+        block.writeLong(player.getUsernameHash());
         block.writeByte(player.getCombatLevel());
         block.writeShort(0);
 
@@ -370,81 +370,9 @@ public final class PlayerUpdate {
         /** Create the buffer we are going to cache. */
         WriteBuffer cachedBuffer = PacketBuffer.newWriteBuffer();
 
-        /** First we must prepare the mask. */
-        int mask = 0x0;
-
-        if (player.getFlags().get(Flag.GRAPHICS)) {
-            mask |= 0x100;
-        }
-        if (player.getFlags().get(Flag.ANIMATION)) {
-            mask |= 8;
-        }
-        if (player.getFlags().get(Flag.FORCED_CHAT)) {
-            mask |= 4;
-        }
-        if (player.getFlags().get(Flag.CHAT) && !noChat) {
-            mask |= 0x80;
-        }
-        if (player.getFlags().get(Flag.APPEARANCE) || forceAppearance) {
-            mask |= 0x10;
-        }
-        if (player.getFlags().get(Flag.FACE_ENTITY)) {
-            mask |= 1;
-        }
-        if (player.getFlags().get(Flag.FACE_COORDINATE)) {
-            mask |= 2;
-        }
-        if (player.getFlags().get(Flag.HIT)) {
-            mask |= 0x20;
-        }
-        if (player.getFlags().get(Flag.HIT_2)) {
-            mask |= 0x200;
-        }
-
-        /** Now, we write the actual mask. */
-        if (mask >= 0x100) {
-            mask |= 0x40;
-            cachedBuffer.writeShort(mask, PacketBuffer.ByteOrder.LITTLE);
-        } else {
-            cachedBuffer.writeByte(mask);
-        }
-
-        /** Finally, we append the attributes blocks. */
-        // Graphics
-        if (player.getFlags().get(Flag.GRAPHICS)) {
-            appendGfx(player, cachedBuffer);
-        }
-        // Animation
-        if (player.getFlags().get(Flag.ANIMATION)) {
-            appendAnimation(player, cachedBuffer);
-        }
-        // Forced chat
-        if (player.getFlags().get(Flag.FORCED_CHAT)) {
-            appendForcedChat(player, cachedBuffer);
-        }
-        // Regular chat
-        if (player.getFlags().get(Flag.CHAT) && !noChat) {
-            appendChat(player, cachedBuffer);
-        }
-        // Face entity
-        if (player.getFlags().get(Flag.FACE_ENTITY)) {
-            appendFaceEntity(player, cachedBuffer);
-        }
         // Appearance
         if (player.getFlags().get(Flag.APPEARANCE) || forceAppearance) {
             appendAppearance(player, cachedBuffer);
-        }
-        // Face coordinates
-        if (player.getFlags().get(Flag.FACE_COORDINATE)) {
-            appendFaceCoordinate(player, cachedBuffer);
-        }
-        // Primary hit
-        if (player.getFlags().get(Flag.HIT)) {
-            appendPrimaryHit(player, cachedBuffer);
-        }
-        // Secondary hit
-        if (player.getFlags().get(Flag.HIT_2)) {
-            appendSecondaryHit(player, cachedBuffer);
         }
 
         /** Cache the block if possible. */
@@ -455,6 +383,19 @@ public final class PlayerUpdate {
 
         /** Add the cached block to the update block. */
         block.writeBytes(cachedBuffer.getBuffer().array());
+
+        // Face coordinates
+        if (player.getFlags().get(Flag.FACE_COORDINATE)) {
+            appendFaceCoordinate(player, block);
+        }
+        // Primary hit
+        if (player.getFlags().get(Flag.HIT)) {
+            appendPrimaryHit(player, block);
+        }
+        // Secondary hit
+        if (player.getFlags().get(Flag.HIT_2)) {
+            appendSecondaryHit(player, block);
+        }
     }
 
     /**
