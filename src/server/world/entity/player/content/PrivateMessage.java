@@ -52,15 +52,12 @@ public class PrivateMessage {
             }
         }
 
-        /** Updates the list for all your friends. */
-        long name = Misc.nameToLong(player.getUsername());
-
         for (Player players : World.getPlayers()) {
             if (players == null)
                 continue;
 
-            if (players.getFriends().contains(name)) {
-                players.getPacketBuilder().loadPrivateMessage(name, 1);
+            if (players.getFriends().contains(player.getUsernameHash())) {
+                players.getPacketBuilder().loadPrivateMessage(player.getUsernameHash(), 1);
             }
         }
     }
@@ -70,15 +67,12 @@ public class PrivateMessage {
      */
     public void sendPrivateMessageOnLogout() {
 
-        /** Updates the list for all your friends. */
-        long name = Misc.nameToLong(player.getUsername());
-
         for (Player players : World.getPlayers()) {
             if (players == null)
                 continue;
 
-            if (players.getFriends().contains(name)) {
-                players.getPacketBuilder().loadPrivateMessage(name, 0);
+            if (players.getFriends().contains(player.getUsernameHash())) {
+                players.getPacketBuilder().loadPrivateMessage(player.getUsernameHash(), 0);
             }
         }
     }
@@ -187,11 +181,13 @@ public class PrivateMessage {
      *        the total size of the message.
      */
     public void sendPrivateMessage(Player sendingFrom, long sendingTo, byte[] message, int messageSize) {
-        for (Player p : player.getPlayers()) {
-            if (p != null) {
-                if (Misc.nameToLong(p.getUsername()) == sendingTo) {
-                    p.getPacketBuilder().sendPrivateMessage(Misc.nameToLong(sendingFrom.getUsername()), sendingFrom.getStaffRights(), message, messageSize);
-                }
+        for (Player p : World.getPlayers()) {
+            if (p == null) {
+                continue;
+            }
+
+            if (p.getUsernameHash() == sendingTo) {
+                p.getPacketBuilder().sendPrivateMessage(sendingFrom.getUsernameHash(), sendingFrom.getStaffRights(), message, messageSize);
             }
         }
     }

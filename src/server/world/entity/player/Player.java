@@ -5,7 +5,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Set;
 import java.util.logging.Logger;
 
 import server.Main;
@@ -247,6 +246,9 @@ public class Player extends Entity {
 
     /** The cached update block. */
     private ByteBuffer cachedUpdateBlock;
+
+    /** The player's username hash. */
+    private long usernameHash;
 
     /**
      * Creates a new {@link Player}.
@@ -1613,5 +1615,20 @@ public class Player extends Entity {
      */
     public void setCachedUpdateBlock(ByteBuffer cachedUpdateBlock) {
         this.cachedUpdateBlock = cachedUpdateBlock;
+    }
+
+    /**
+     * @return the usernameHash
+     */
+    public long getUsernameHash() {
+        return usernameHash;
+    }
+
+    /**
+     * @param usernameHash
+     *        the usernameHash to set
+     */
+    public void setUsernameHash(long usernameHash) {
+        this.usernameHash = usernameHash;
     }
 }
