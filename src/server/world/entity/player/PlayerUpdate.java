@@ -370,6 +370,67 @@ public final class PlayerUpdate {
         /** Create the buffer we are going to cache. */
         WriteBuffer cachedBuffer = PacketBuffer.newWriteBuffer();
 
+        /** First we must prepare the mask. */
+        int mask = 0x0;
+
+        if (player.getFlags().get(Flag.GRAPHICS)) {
+            mask |= 0x100;
+        }
+        if (player.getFlags().get(Flag.ANIMATION)) {
+            mask |= 8;
+        }
+        if (player.getFlags().get(Flag.FORCED_CHAT)) {
+            mask |= 4;
+        }
+        if (player.getFlags().get(Flag.CHAT) && !noChat) {
+            mask |= 0x80;
+        }
+        if (player.getFlags().get(Flag.APPEARANCE) || forceAppearance) {
+            mask |= 0x10;
+        }
+        if (player.getFlags().get(Flag.FACE_ENTITY)) {
+            mask |= 1;
+        }
+        if (player.getFlags().get(Flag.FACE_COORDINATE)) {
+            mask |= 2;
+        }
+        if (player.getFlags().get(Flag.HIT)) {
+            mask |= 0x20;
+        }
+        if (player.getFlags().get(Flag.HIT_2)) {
+            mask |= 0x200;
+        }
+
+        /** Now, we write the actual mask. */
+        if (mask >= 0x100) {
+            mask |= 0x40;
+            block.writeShort(mask, PacketBuffer.ByteOrder.LITTLE);
+        } else {
+            block.writeByte(mask);
+        }
+
+        /** Finally, we append the attributes blocks. */
+        // Graphics
+        if (player.getFlags().get(Flag.GRAPHICS)) {
+            appendGfx(player, block);
+        }
+        // Animation
+        if (player.getFlags().get(Flag.ANIMATION)) {
+            appendAnimation(player, block);
+        }
+        // Forced chat
+        if (player.getFlags().get(Flag.FORCED_CHAT)) {
+            appendForcedChat(player, block);
+        }
+        // Regular chat
+        if (player.getFlags().get(Flag.CHAT) && !noChat) {
+            appendChat(player, block);
+        }
+        // Face entity
+        if (player.getFlags().get(Flag.FACE_ENTITY)) {
+            appendFaceEntity(player, block);
+        }
+
         // Appearance
         if (player.getFlags().get(Flag.APPEARANCE) || forceAppearance) {
             appendAppearance(player, cachedBuffer);
