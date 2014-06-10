@@ -368,6 +368,10 @@ public final class PlayerUpdate {
             return;
         }
 
+        /** Create the buffer we are going to cache. */
+        // XXX: Increase the buffer size if you get overflows!
+        WriteBuffer cachedBuffer = PacketBuffer.newWriteBuffer(300);
+
         /** First we must prepare the mask. */
         int mask = 0x0;
 
@@ -402,40 +406,47 @@ public final class PlayerUpdate {
         /** Now, we write the actual mask. */
         if (mask >= 0x100) {
             mask |= 0x40;
-            block.writeShort(mask, PacketBuffer.ByteOrder.LITTLE);
+            cachedBuffer.writeShort(mask, PacketBuffer.ByteOrder.LITTLE);
         } else {
-            block.writeByte(mask);
+            cachedBuffer.writeByte(mask);
         }
 
         /** Finally, we append the attributes blocks. */
         // Graphics
         if (player.getFlags().get(Flag.GRAPHICS)) {
-            appendGfx(player, block);
+            appendGfx(player, cachedBuffer);
         }
         // Animation
         if (player.getFlags().get(Flag.ANIMATION)) {
-            appendAnimation(player, block);
+            appendAnimation(player, cachedBuffer);
         }
         // Forced chat
         if (player.getFlags().get(Flag.FORCED_CHAT)) {
-            appendForcedChat(player, block);
+            appendForcedChat(player, cachedBuffer);
         }
         // Regular chat
         if (player.getFlags().get(Flag.CHAT) && !noChat) {
-            appendChat(player, block);
+            appendChat(player, cachedBuffer);
         }
         // Face entity
         if (player.getFlags().get(Flag.FACE_ENTITY)) {
-            appendFaceEntity(player, block);
+            appendFaceEntity(player, cachedBuffer);
         }
-
-        /** Create the buffer we are going to cache. */
-        // XXX: Increase the buffer size if you get overflows!
-        WriteBuffer cachedBuffer = PacketBuffer.newWriteBuffer(300);
-
         // Appearance
         if (player.getFlags().get(Flag.APPEARANCE) || forceAppearance) {
             appendAppearance(player, cachedBuffer);
+        }
+        // Face coordinates
+        if (player.getFlags().get(Flag.FACE_COORDINATE)) {
+            appendFaceCoordinate(player, cachedBuffer);
+        }
+        // Primary hit
+        if (player.getFlags().get(Flag.HIT)) {
+            appendPrimaryHit(player, cachedBuffer);
+        }
+        // Secondary hit
+        if (player.getFlags().get(Flag.HIT_2)) {
+            appendSecondaryHit(player, cachedBuffer);
         }
 
         /** Cache the block if possible. */
@@ -446,19 +457,6 @@ public final class PlayerUpdate {
 
         /** Add the cached block to the update block. */
         block.writeBytes(cachedBuffer.getBuffer());
-
-        // Face coordinates
-        if (player.getFlags().get(Flag.FACE_COORDINATE)) {
-            appendFaceCoordinate(player, block);
-        }
-        // Primary hit
-        if (player.getFlags().get(Flag.HIT)) {
-            appendPrimaryHit(player, block);
-        }
-        // Secondary hit
-        if (player.getFlags().get(Flag.HIT_2)) {
-            appendSecondaryHit(player, block);
-        }
     }
 
     /**
