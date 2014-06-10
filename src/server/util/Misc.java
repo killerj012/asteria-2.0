@@ -160,6 +160,17 @@ public final class Misc {
     }
 
     /**
+     * Picks a random element out of any list type.
+     * 
+     * @param list
+     *        the list to pick the element from.
+     * @return the element chosen.
+     */
+    public static <T> T randomElement(List<T> list) {
+        return list.get((int) (Math.random() * list.size()));
+    }
+
+    /**
      * Executes a method from the specified class by its name, assuming it has
      * no parameters.
      * 
