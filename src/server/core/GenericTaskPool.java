@@ -2,12 +2,10 @@ package server.core;
 
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
-import java.util.concurrent.RejectedExecutionHandler;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
-import server.core.task.Task;
-import server.core.task.TaskDeniedException;
+import server.core.task.TaskDeniedHook;
 
 /**
  * An {@link Executor} implementation that is used to carry out generic
@@ -35,7 +33,7 @@ public final class GenericTaskPool implements Executor {
     public GenericTaskPool(String poolName, int poolSize, int poolPriority) {
         taskPool = (ThreadPoolExecutor) Executors.newFixedThreadPool(poolSize);
         taskPool.setThreadFactory(new ThreadProvider(poolName, poolPriority, true, false));
-        taskPool.setRejectedExecutionHandler(new RejectedTaskExecutionHook());
+        taskPool.setRejectedExecutionHandler(new TaskDeniedHook());
         taskPool.setKeepAliveTime(Rs2Engine.THREAD_IDLE_TIMEOUT, TimeUnit.MINUTES);
         taskPool.allowCoreThreadTimeOut(true);
 
@@ -60,32 +58,5 @@ public final class GenericTaskPool implements Executor {
      */
     public boolean isRunning() {
         return !taskPool.isShutdown();
-    }
-
-    /**
-     * Handles tasks that have been rejected by the underlying task pool.
-     * 
-     * @author lare96
-     */
-    private static class RejectedTaskExecutionHook implements RejectedExecutionHandler {
-
-        @Override
-        public void rejectedExecution(Runnable r, ThreadPoolExecutor executor) {
-            String reason = "reason unknown!";
-            String name = "unknown";
-
-            if (r instanceof Task) {
-                name = ((Task) r).name();
-
-                if (executor.getQueue().remainingCapacity() == 0) {
-                    reason = "no more space in the work queue!";
-                } else if (executor.isShutdown()) {
-                    reason = "the pool is not running!";
-                }
-            }
-
-            // XXX: Redirect tasks to the update pool?
-            throw new TaskDeniedException(name, reason);
-        }
     }
 }
