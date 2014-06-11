@@ -2,7 +2,7 @@ package server.world.entity.player.bot;
 
 import java.net.Socket;
 
-import server.core.GenericTaskPool;
+import server.core.ThreadProvider;
 import server.core.task.impl.BotLoginTask;
 import server.core.worker.Worker;
 import server.util.Misc;
@@ -20,15 +20,6 @@ public class Bot {
 
     /** All of the possible names for bots that can be generated. */
     public static final String[] BOT_NAMES = { "NotABot", "ServerBot", "TestBot", "AutoBot", "WeirdBot", "CoolBot" };
-
-    /**
-     * A {@link GenericTaskPool} that asynchronously logs in bots. We need to
-     * log them in on another thread because read operations from sockets are
-     * blocking which means that if we did it on the game thread, the bot would
-     * never be able to log in (because the network would never get a chance to
-     * push a session task!).
-     */
-    private static GenericTaskPool loginBot = new GenericTaskPool("BotThread", 1, Thread.MIN_PRIORITY);
 
     /** The username of this bot. */
     private String username;
@@ -139,6 +130,15 @@ public class Bot {
     }
 
     /**
+     * Constructs an instance of the thread that will log the bot in.
+     * 
+     * @return the thread task will log the bot in.
+     */
+    public Thread provideLogin() {
+        return new ThreadProvider("BotThread", Thread.MIN_PRIORITY, true, false).newThread(new BotLoginTask(this));
+    }
+
+    /**
      * Logs in this bot using the <code>loginBot</code> executor implementation.
      * 
      * @return this bot for chaining.
@@ -151,7 +151,7 @@ public class Bot {
         }
 
         /** Push the login task. */
-        loginBot.execute(new BotLoginTask(this));
+        provideLogin().start();
         return this;
     }
 

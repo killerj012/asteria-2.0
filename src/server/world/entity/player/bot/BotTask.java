@@ -60,7 +60,6 @@ public enum BotTask {
 
         @Override
         public void stopTask(Bot bot) {
-            System.out.println("??");
             bot.getPlayer().forceChat("I don't feel like walking anymore.");
             bot.getPlayer().getMovementQueue().reset();
             bot.getBotWorker().cancel();
