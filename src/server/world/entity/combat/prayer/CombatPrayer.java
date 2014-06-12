@@ -10,332 +10,153 @@ import server.world.entity.player.Player;
  * Holds data and miscellaneous functions for combat prayers.
  * 
  * @author lare96
+ * @author Ryley Kimmel <ryley.kimmel@ive.com>
  */
 public enum CombatPrayer {
 
-    THICK_SKIN(20, -1, 1, 83, new GenericAction<Player>() {
+    THICK_SKIN(20, -1, 1, 83) {
         @Override
-        public void fireAction(Player player) {
+        public void deactivateConflictingPrayers(Player player) {
             CombatPrayer.ROCK_SKIN.deactivatePrayer(player, false);
             CombatPrayer.STEEL_SKIN.deactivatePrayer(player, false);
-            player.getPrayerActive()[CombatPrayer.THICK_SKIN.ordinal()] = true;
-            player.getPacketBuilder().sendConfig(CombatPrayer.THICK_SKIN.getPrayerGlow(), 1);
         }
-    }, new GenericAction<Player>() {
-        @Override
-        public void fireAction(Player player) {
-            player.getPrayerActive()[CombatPrayer.THICK_SKIN.ordinal()] = false;
-            player.getPacketBuilder().sendConfig(CombatPrayer.THICK_SKIN.getPrayerGlow(), 0);
-        }
-    }),
+    },
 
-    BURST_OF_STRENGTH(20, -1, 4, 84, new GenericAction<Player>() {
+    BURST_OF_STRENGTH(20, -1, 4, 84) {
         @Override
-        public void fireAction(Player player) {
+        public void deactivateConflictingPrayers(Player player) {
             CombatPrayer.SUPERHUMAN_STRENGTH.deactivatePrayer(player, false);
             CombatPrayer.ULTIMATE_STRENGTH.deactivatePrayer(player, false);
-            player.getPrayerActive()[CombatPrayer.BURST_OF_STRENGTH.ordinal()] = true;
-            player.getPacketBuilder().sendConfig(CombatPrayer.BURST_OF_STRENGTH.getPrayerGlow(), 1);
         }
-    }, new GenericAction<Player>() {
-        @Override
-        public void fireAction(Player player) {
-            player.getPrayerActive()[CombatPrayer.BURST_OF_STRENGTH.ordinal()] = false;
-            player.getPacketBuilder().sendConfig(CombatPrayer.BURST_OF_STRENGTH.getPrayerGlow(), 0);
-        }
-    }),
+    },
 
-    CLARITY_OF_THOUGHT(20, -1, 7, 85, new GenericAction<Player>() {
+    CLARITY_OF_THOUGHT(20, -1, 7, 85) {
         @Override
-        public void fireAction(Player player) {
+        public void deactivateConflictingPrayers(Player player) {
             CombatPrayer.IMPROVED_REFLEXES.deactivatePrayer(player, false);
             CombatPrayer.INCREDIBLE_REFLEXES.deactivatePrayer(player, false);
-            player.getPrayerActive()[CombatPrayer.CLARITY_OF_THOUGHT.ordinal()] = true;
-            player.getPacketBuilder().sendConfig(CombatPrayer.CLARITY_OF_THOUGHT.getPrayerGlow(), 1);
         }
-    }, new GenericAction<Player>() {
-        @Override
-        public void fireAction(Player player) {
-            player.getPrayerActive()[CombatPrayer.CLARITY_OF_THOUGHT.ordinal()] = false;
-            player.getPacketBuilder().sendConfig(CombatPrayer.CLARITY_OF_THOUGHT.getPrayerGlow(), 0);
-        }
-    }),
+    },
 
-    ROCK_SKIN(10, -1, 10, 86, new GenericAction<Player>() {
+    ROCK_SKIN(10, -1, 10, 86) {
         @Override
-        public void fireAction(Player player) {
+        public void deactivateConflictingPrayers(Player player) {
             CombatPrayer.STEEL_SKIN.deactivatePrayer(player, false);
             CombatPrayer.THICK_SKIN.deactivatePrayer(player, false);
-            player.getPrayerActive()[CombatPrayer.ROCK_SKIN.ordinal()] = true;
-            player.getPacketBuilder().sendConfig(CombatPrayer.ROCK_SKIN.getPrayerGlow(), 1);
         }
-    }, new GenericAction<Player>() {
-        @Override
-        public void fireAction(Player player) {
-            player.getPrayerActive()[CombatPrayer.ROCK_SKIN.ordinal()] = false;
-            player.getPacketBuilder().sendConfig(CombatPrayer.ROCK_SKIN.getPrayerGlow(), 0);
-        }
-    }),
+    },
 
-    SUPERHUMAN_STRENGTH(10, -1, 13, 87, new GenericAction<Player>() {
+    SUPERHUMAN_STRENGTH(10, -1, 13, 87) {
         @Override
-        public void fireAction(Player player) {
+        public void deactivateConflictingPrayers(Player player) {
             CombatPrayer.BURST_OF_STRENGTH.deactivatePrayer(player, false);
             CombatPrayer.ULTIMATE_STRENGTH.deactivatePrayer(player, false);
-            player.getPrayerActive()[CombatPrayer.SUPERHUMAN_STRENGTH.ordinal()] = true;
-            player.getPacketBuilder().sendConfig(CombatPrayer.SUPERHUMAN_STRENGTH.getPrayerGlow(), 1);
         }
-    }, new GenericAction<Player>() {
-        @Override
-        public void fireAction(Player player) {
-            player.getPrayerActive()[CombatPrayer.SUPERHUMAN_STRENGTH.ordinal()] = false;
-            player.getPacketBuilder().sendConfig(CombatPrayer.SUPERHUMAN_STRENGTH.getPrayerGlow(), 0);
-        }
-    }),
+    },
 
-    IMPROVED_REFLEXES(10, -1, 16, 88, new GenericAction<Player>() {
+    IMPROVED_REFLEXES(10, -1, 16, 88) {
         @Override
-        public void fireAction(Player player) {
+        public void deactivateConflictingPrayers(Player player) {
             CombatPrayer.CLARITY_OF_THOUGHT.deactivatePrayer(player, false);
             CombatPrayer.INCREDIBLE_REFLEXES.deactivatePrayer(player, false);
-            player.getPrayerActive()[CombatPrayer.IMPROVED_REFLEXES.ordinal()] = true;
-            player.getPacketBuilder().sendConfig(CombatPrayer.IMPROVED_REFLEXES.getPrayerGlow(), 1);
         }
-    }, new GenericAction<Player>() {
-        @Override
-        public void fireAction(Player player) {
-            player.getPrayerActive()[CombatPrayer.IMPROVED_REFLEXES.ordinal()] = false;
-            player.getPacketBuilder().sendConfig(CombatPrayer.IMPROVED_REFLEXES.getPrayerGlow(), 0);
-        }
-    }),
+    },
 
-    RAPID_RESTORE(29, -1, 19, 89, new GenericAction<Player>() {
-        @Override
-        public void fireAction(Player player) {
-            player.getPrayerActive()[CombatPrayer.RAPID_RESTORE.ordinal()] = true;
-            player.getPacketBuilder().sendConfig(CombatPrayer.RAPID_RESTORE.getPrayerGlow(), 1);
-        }
-    }, new GenericAction<Player>() {
-        @Override
-        public void fireAction(Player player) {
-            player.getPrayerActive()[CombatPrayer.RAPID_RESTORE.ordinal()] = false;
-            player.getPacketBuilder().sendConfig(CombatPrayer.RAPID_RESTORE.getPrayerGlow(), 0);
-        }
-    }),
+    RAPID_RESTORE(29, -1, 19, 89),
 
-    RAPID_HEAL(29, -1, 22, 90, new GenericAction<Player>() {
-        @Override
-        public void fireAction(Player player) {
-            player.getPrayerActive()[CombatPrayer.RAPID_HEAL.ordinal()] = true;
-            player.getPacketBuilder().sendConfig(CombatPrayer.RAPID_HEAL.getPrayerGlow(), 1);
-        }
-    }, new GenericAction<Player>() {
-        @Override
-        public void fireAction(Player player) {
-            player.getPrayerActive()[CombatPrayer.RAPID_HEAL.ordinal()] = false;
-            player.getPacketBuilder().sendConfig(CombatPrayer.RAPID_HEAL.getPrayerGlow(), 0);
-        }
-    }),
+    RAPID_HEAL(29, -1, 22, 90),
 
-    PROTECT_ITEM(29, -1, 25, 91, new GenericAction<Player>() {
-        @Override
-        public void fireAction(Player player) {
-            player.getPrayerActive()[CombatPrayer.PROTECT_ITEM.ordinal()] = true;
-            player.getPacketBuilder().sendConfig(CombatPrayer.PROTECT_ITEM.getPrayerGlow(), 1);
-        }
-    }, new GenericAction<Player>() {
-        @Override
-        public void fireAction(Player player) {
-            player.getPrayerActive()[CombatPrayer.PROTECT_ITEM.ordinal()] = false;
-            player.getPacketBuilder().sendConfig(CombatPrayer.PROTECT_ITEM.getPrayerGlow(), 0);
-        }
-    }),
+    PROTECT_ITEM(29, -1, 25, 91),
 
-    STEEL_SKIN(5, -1, 28, 92, new GenericAction<Player>() {
+    STEEL_SKIN(5, -1, 28, 92) {
         @Override
-        public void fireAction(Player player) {
+        public void deactivateConflictingPrayers(Player player) {
             CombatPrayer.THICK_SKIN.deactivatePrayer(player, false);
             CombatPrayer.ROCK_SKIN.deactivatePrayer(player, false);
-            player.getPrayerActive()[CombatPrayer.STEEL_SKIN.ordinal()] = true;
-            player.getPacketBuilder().sendConfig(CombatPrayer.STEEL_SKIN.getPrayerGlow(), 1);
         }
-    }, new GenericAction<Player>() {
-        @Override
-        public void fireAction(Player player) {
-            player.getPrayerActive()[CombatPrayer.STEEL_SKIN.ordinal()] = false;
-            player.getPacketBuilder().sendConfig(CombatPrayer.STEEL_SKIN.getPrayerGlow(), 0);
-        }
-    }),
+    },
 
-    ULTIMATE_STRENGTH(5, -1, 31, 93, new GenericAction<Player>() {
+    ULTIMATE_STRENGTH(5, -1, 31, 93) {
         @Override
-        public void fireAction(Player player) {
+        public void deactivateConflictingPrayers(Player player) {
             CombatPrayer.BURST_OF_STRENGTH.deactivatePrayer(player, false);
             CombatPrayer.SUPERHUMAN_STRENGTH.deactivatePrayer(player, false);
-            player.getPrayerActive()[CombatPrayer.ULTIMATE_STRENGTH.ordinal()] = true;
-            player.getPacketBuilder().sendConfig(CombatPrayer.ULTIMATE_STRENGTH.getPrayerGlow(), 1);
         }
-    }, new GenericAction<Player>() {
-        @Override
-        public void fireAction(Player player) {
-            player.getPrayerActive()[CombatPrayer.ULTIMATE_STRENGTH.ordinal()] = false;
-            player.getPacketBuilder().sendConfig(CombatPrayer.ULTIMATE_STRENGTH.getPrayerGlow(), 0);
-        }
-    }),
+    },
 
-    INCREDIBLE_REFLEXES(5, -1, 34, 94, new GenericAction<Player>() {
+    INCREDIBLE_REFLEXES(5, -1, 34, 94) {
         @Override
-        public void fireAction(Player player) {
+        public void deactivateConflictingPrayers(Player player) {
             CombatPrayer.IMPROVED_REFLEXES.deactivatePrayer(player, false);
             CombatPrayer.CLARITY_OF_THOUGHT.deactivatePrayer(player, false);
-            player.getPrayerActive()[CombatPrayer.INCREDIBLE_REFLEXES.ordinal()] = true;
-            player.getPacketBuilder().sendConfig(CombatPrayer.INCREDIBLE_REFLEXES.getPrayerGlow(), 1);
         }
-    }, new GenericAction<Player>() {
-        @Override
-        public void fireAction(Player player) {
-            player.getPrayerActive()[CombatPrayer.INCREDIBLE_REFLEXES.ordinal()] = false;
-            player.getPacketBuilder().sendConfig(CombatPrayer.INCREDIBLE_REFLEXES.getPrayerGlow(), 0);
-        }
-    }),
+    },
 
-    PROTECT_FROM_MAGIC(5, 2, 37, 95, new GenericAction<Player>() {
+    PROTECT_FROM_MAGIC(5, 2, 37, 95) {
         @Override
-        public void fireAction(Player player) {
+        public void deactivateConflictingPrayers(Player player) {
             CombatPrayer.PROTECT_FROM_MISSILES.deactivatePrayer(player, false);
             CombatPrayer.PROTECT_FROM_MELEE.deactivatePrayer(player, false);
             CombatPrayer.REDEMPTION.deactivatePrayer(player, false);
             CombatPrayer.RETRIBUTION.deactivatePrayer(player, false);
             CombatPrayer.SMITE.deactivatePrayer(player, false);
-            player.getPrayerActive()[CombatPrayer.PROTECT_FROM_MAGIC.ordinal()] = true;
-            player.setHeadIcon(CombatPrayer.PROTECT_FROM_MAGIC.getHeadIcon());
-            player.getPacketBuilder().sendConfig(CombatPrayer.PROTECT_FROM_MAGIC.getPrayerGlow(), 1);
-            player.getFlags().flag(Flag.APPEARANCE);
         }
-    }, new GenericAction<Player>() {
-        @Override
-        public void fireAction(Player player) {
-            player.getPrayerActive()[CombatPrayer.PROTECT_FROM_MAGIC.ordinal()] = false;
-            player.setHeadIcon(-1);
-            player.getPacketBuilder().sendConfig(CombatPrayer.PROTECT_FROM_MAGIC.getPrayerGlow(), 0);
-            player.getFlags().flag(Flag.APPEARANCE);
-        }
-    }),
+    },
 
-    PROTECT_FROM_MISSILES(5, 1, 40, 96, new GenericAction<Player>() {
+    PROTECT_FROM_MISSILES(5, 1, 40, 96) {
         @Override
-        public void fireAction(Player player) {
+        public void deactivateConflictingPrayers(Player player) {
             CombatPrayer.REDEMPTION.deactivatePrayer(player, false);
             CombatPrayer.PROTECT_FROM_MAGIC.deactivatePrayer(player, false);
             CombatPrayer.PROTECT_FROM_MELEE.deactivatePrayer(player, false);
             CombatPrayer.RETRIBUTION.deactivatePrayer(player, false);
             CombatPrayer.SMITE.deactivatePrayer(player, false);
-            player.getPrayerActive()[CombatPrayer.PROTECT_FROM_MISSILES.ordinal()] = true;
-            player.setHeadIcon(CombatPrayer.PROTECT_FROM_MISSILES.getHeadIcon());
-            player.getPacketBuilder().sendConfig(CombatPrayer.PROTECT_FROM_MISSILES.getPrayerGlow(), 1);
-            player.getFlags().flag(Flag.APPEARANCE);
         }
-    }, new GenericAction<Player>() {
-        @Override
-        public void fireAction(Player player) {
-            player.getPrayerActive()[CombatPrayer.PROTECT_FROM_MISSILES.ordinal()] = false;
-            player.setHeadIcon(-1);
-            player.getPacketBuilder().sendConfig(CombatPrayer.PROTECT_FROM_MISSILES.getPrayerGlow(), 0);
-            player.getFlags().flag(Flag.APPEARANCE);
-        }
-    }),
+    },
 
-    PROTECT_FROM_MELEE(5, 0, 43, 97, new GenericAction<Player>() {
+    PROTECT_FROM_MELEE(5, 0, 43, 97) {
         @Override
-        public void fireAction(Player player) {
+        public void deactivateConflictingPrayers(Player player) {
             CombatPrayer.PROTECT_FROM_MISSILES.deactivatePrayer(player, false);
             CombatPrayer.PROTECT_FROM_MAGIC.deactivatePrayer(player, false);
             CombatPrayer.REDEMPTION.deactivatePrayer(player, false);
             CombatPrayer.RETRIBUTION.deactivatePrayer(player, false);
             CombatPrayer.SMITE.deactivatePrayer(player, false);
-            player.getPrayerActive()[CombatPrayer.PROTECT_FROM_MELEE.ordinal()] = true;
-            player.setHeadIcon(CombatPrayer.PROTECT_FROM_MELEE.getHeadIcon());
-            player.getPacketBuilder().sendConfig(CombatPrayer.PROTECT_FROM_MELEE.getPrayerGlow(), 1);
-            player.getFlags().flag(Flag.APPEARANCE);
         }
-    }, new GenericAction<Player>() {
-        @Override
-        public void fireAction(Player player) {
-            player.getPrayerActive()[CombatPrayer.PROTECT_FROM_MELEE.ordinal()] = false;
-            player.setHeadIcon(-1);
-            player.getPacketBuilder().sendConfig(CombatPrayer.PROTECT_FROM_MELEE.getPrayerGlow(), 0);
-            player.getFlags().flag(Flag.APPEARANCE);
-        }
-    }),
+    },
 
-    RETRIBUTION(17, 3, 46, 98, new GenericAction<Player>() {
+    RETRIBUTION(17, 3, 46, 98) {
         @Override
-        public void fireAction(Player player) {
+        public void deactivateConflictingPrayers(Player player) {
             CombatPrayer.PROTECT_FROM_MISSILES.deactivatePrayer(player, false);
             CombatPrayer.PROTECT_FROM_MAGIC.deactivatePrayer(player, false);
             CombatPrayer.PROTECT_FROM_MELEE.deactivatePrayer(player, false);
             CombatPrayer.REDEMPTION.deactivatePrayer(player, false);
             CombatPrayer.SMITE.deactivatePrayer(player, false);
-            player.getPrayerActive()[CombatPrayer.RETRIBUTION.ordinal()] = true;
-            player.setHeadIcon(CombatPrayer.RETRIBUTION.getHeadIcon());
-            player.getPacketBuilder().sendConfig(CombatPrayer.RETRIBUTION.getPrayerGlow(), 1);
-            player.getFlags().flag(Flag.APPEARANCE);
         }
-    }, new GenericAction<Player>() {
-        @Override
-        public void fireAction(Player player) {
-            player.getPrayerActive()[CombatPrayer.RETRIBUTION.ordinal()] = false;
-            player.setHeadIcon(-1);
-            player.getPacketBuilder().sendConfig(CombatPrayer.RETRIBUTION.getPrayerGlow(), 0);
-            player.getFlags().flag(Flag.APPEARANCE);
-        }
-    }),
+    },
 
-    REDEMPTION(6, 5, 49, 99, new GenericAction<Player>() {
+    REDEMPTION(6, 5, 49, 99) {
         @Override
-        public void fireAction(Player player) {
+        public void deactivateConflictingPrayers(Player player) {
             CombatPrayer.PROTECT_FROM_MISSILES.deactivatePrayer(player, false);
             CombatPrayer.PROTECT_FROM_MAGIC.deactivatePrayer(player, false);
             CombatPrayer.PROTECT_FROM_MELEE.deactivatePrayer(player, false);
             CombatPrayer.RETRIBUTION.deactivatePrayer(player, false);
             CombatPrayer.SMITE.deactivatePrayer(player, false);
-            player.getPrayerActive()[CombatPrayer.REDEMPTION.ordinal()] = true;
-            player.setHeadIcon(CombatPrayer.REDEMPTION.getHeadIcon());
-            player.getPacketBuilder().sendConfig(CombatPrayer.REDEMPTION.getPrayerGlow(), 1);
-            player.getFlags().flag(Flag.APPEARANCE);
         }
-    }, new GenericAction<Player>() {
-        @Override
-        public void fireAction(Player player) {
-            player.getPrayerActive()[CombatPrayer.REDEMPTION.ordinal()] = false;
-            player.setHeadIcon(-1);
-            player.getPacketBuilder().sendConfig(CombatPrayer.REDEMPTION.getPrayerGlow(), 0);
-            player.getFlags().flag(Flag.APPEARANCE);
-        }
-    }),
+    },
 
-    SMITE(7, 4, 52, 100, new GenericAction<Player>() {
+    SMITE(7, 4, 52, 100) {
         @Override
-        public void fireAction(Player player) {
+        public void deactivateConflictingPrayers(Player player) {
             CombatPrayer.PROTECT_FROM_MISSILES.deactivatePrayer(player, false);
             CombatPrayer.PROTECT_FROM_MAGIC.deactivatePrayer(player, false);
             CombatPrayer.PROTECT_FROM_MELEE.deactivatePrayer(player, false);
             CombatPrayer.RETRIBUTION.deactivatePrayer(player, false);
             CombatPrayer.REDEMPTION.deactivatePrayer(player, false);
-            player.getPrayerActive()[CombatPrayer.SMITE.ordinal()] = true;
-            player.setHeadIcon(CombatPrayer.SMITE.getHeadIcon());
-            player.getPacketBuilder().sendConfig(CombatPrayer.SMITE.getPrayerGlow(), 1);
-            player.getFlags().flag(Flag.APPEARANCE);
         }
-    }, new GenericAction<Player>() {
-        @Override
-        public void fireAction(Player player) {
-            player.getPrayerActive()[CombatPrayer.SMITE.ordinal()] = false;
-            player.setHeadIcon(-1);
-            player.getPacketBuilder().sendConfig(CombatPrayer.SMITE.getPrayerGlow(), 0);
-            player.getFlags().flag(Flag.APPEARANCE);
-        }
-    });
+    };
 
     /** Drain the prayer by 1 every <number> ticks. */
     private int drainRate;
@@ -348,12 +169,56 @@ public enum CombatPrayer {
 
     /** The prayer glow config. */
     private int prayerGlow;
+    
+    /**
+     * Deactivates conflicting prayers.
+     * 
+     * @param player The player to deactivate the conflicting prayers for.
+     * 
+     * <p>
+     * If protect form melee is on and you turn on protect from mage, protect
+     * from melee will now be turned off.
+     * </p>
+     */
+    protected void deactivateConflictingPrayers(Player player) {
+	/* Method intended to be overridden. */
+    }
 
     /** The effect this prayer has on activation. */
-    private GenericAction<Player> activate;
+    private final GenericAction<Player> activate = (Player player) -> {
+	/* Deactivate conflicting prayers. */
+	deactivateConflictingPrayers(player);
+	/* Activate this prayer. */
+        player.getPrayerActive()[ordinal()] = true;
+        /* Send the prayer glow. */
+        player.getPacketBuilder().sendConfig(prayerGlow, 1);
+         
+        /* If the prayer has a head icon. */
+        if (headIcon != -1) {
+            /* Set it. */
+            player.setHeadIcon(headIcon);
+            /* Update this players appearance. */
+            player.getFlags().flag(Flag.APPEARANCE);
+        }
+        return true;
+    };
 
     /** The effect this prayer has on deactivation. */
-    private GenericAction<Player> deactivate;
+    private final GenericAction<Player> deactivate = (Player player) -> {
+	/* Deactivate the prayer. */
+        player.getPrayerActive()[ordinal()] = false;
+        /* Remove the prayer glow. */
+        player.getPacketBuilder().sendConfig(prayerGlow, 0);
+        
+        /* If the prayer has a head icon */
+	if (headIcon != -1) {
+	    /* Remove it. */
+	    player.setHeadIcon(-1);
+	    /* Update this players appearance. */
+	    player.getFlags().flag(Flag.APPEARANCE);
+	}
+	return true;
+    };
 
     /**
      * Create a new combat prayer.
@@ -371,13 +236,11 @@ public enum CombatPrayer {
      * @param deactivate
      *        the action on deactivation.
      */
-    private CombatPrayer(int drainRate, int headIcon, int levelRequired, int prayerGlow, GenericAction<Player> activate, GenericAction<Player> deactivate) {
+    private CombatPrayer(int drainRate, int headIcon, int levelRequired, int prayerGlow) {
         this.drainRate = drainRate;
         this.headIcon = headIcon;
         this.levelRequired = levelRequired;
         this.prayerGlow = prayerGlow;
-        this.activate = activate;
-        this.deactivate = deactivate;
     }
 
     /**
@@ -502,15 +365,6 @@ public enum CombatPrayer {
      */
     public int getDrainRate() {
         return drainRate;
-    }
-
-    /**
-     * Gets the head icon of this prayer.
-     * 
-     * @return the head icon of this prayer.
-     */
-    public int getHeadIcon() {
-        return headIcon;
     }
 
     /**
