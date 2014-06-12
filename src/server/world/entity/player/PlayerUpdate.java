@@ -369,8 +369,7 @@ public final class PlayerUpdate {
         }
 
         /** Create the buffer we are going to cache. */
-        // XXX: Increase the buffer size if you get overflows!
-        WriteBuffer cachedBuffer = PacketBuffer.newWriteBuffer(300);
+        WriteBuffer cachedBuffer = PacketBuffer.newWriteBuffer();
 
         /** First we must prepare the mask. */
         int mask = 0x0;

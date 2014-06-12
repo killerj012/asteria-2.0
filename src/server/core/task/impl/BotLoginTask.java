@@ -53,13 +53,13 @@ public class BotLoginTask implements Task {
             InputStream in = bot.getSocket().getInputStream();
 
             /** Send the initial request. */
-            WriteBuffer outBuffer = PacketBuffer.newWriteBuffer(20);
+            WriteBuffer outBuffer = PacketBuffer.newWriteBuffer();
             outBuffer.writeByte(14);
             outBuffer.writeByte(rand.nextInt());
             out.write(outBuffer.getBuffer().array(), 0, outBuffer.getBuffer().position());
 
             /** Read the initial response. **/
-            ReadBuffer inBuffer = PacketBuffer.newReadBuffer(ByteBuffer.allocate(80));
+            ReadBuffer inBuffer = PacketBuffer.newReadBuffer(80);
             in.read(inBuffer.getBuffer().array(), 0, 17);
             inBuffer.readLong();
 
@@ -77,7 +77,7 @@ public class BotLoginTask implements Task {
             seed[3] = inBuffer.readInt();
 
             /** Prepare the secure block. **/
-            WriteBuffer block = PacketBuffer.newWriteBuffer(700);
+            WriteBuffer block = PacketBuffer.newWriteBuffer();
             block.writeByte(10); // RSA opcode.
             block.writeInt(seed[0]);
             block.writeInt(seed[1]);
@@ -88,7 +88,7 @@ public class BotLoginTask implements Task {
             block.writeString(bot.getPassword());
 
             /** Write the client information. */
-            outBuffer = PacketBuffer.newWriteBuffer(700);
+            outBuffer = PacketBuffer.newWriteBuffer();
             outBuffer.writeByte(16);
             outBuffer.writeByte(block.getBuffer().position() + 40);
             outBuffer.writeByte(255);
