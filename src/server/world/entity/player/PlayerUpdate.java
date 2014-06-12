@@ -30,9 +30,8 @@ public final class PlayerUpdate {
      *        the player to update.
      */
     public static void update(Player player) {
-        // XXX: The buffer sizes may need to be tuned.
-        PacketBuffer.WriteBuffer out = PacketBuffer.newWriteBuffer(16384); // 8192
-        PacketBuffer.WriteBuffer block = PacketBuffer.newWriteBuffer(8192); // 4096
+        PacketBuffer.WriteBuffer out = PacketBuffer.newWriteBuffer(16384);
+        PacketBuffer.WriteBuffer block = PacketBuffer.newWriteBuffer(8192);
 
         /** Initialize the update packet. */
         out.writeVariableShortPacketHeader(81);

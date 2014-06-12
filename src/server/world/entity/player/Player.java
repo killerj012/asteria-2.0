@@ -178,6 +178,9 @@ public class Player extends Entity {
     /** The password. */
     private String password;
 
+    /** The points for the example currency. */
+    private int examplePoints = 10;
+
     /** If this player is new. */
     private boolean newPlayer = true;
 
@@ -1630,5 +1633,20 @@ public class Player extends Entity {
      */
     public void setUsernameHash(long usernameHash) {
         this.usernameHash = usernameHash;
+    }
+
+    /**
+     * @return the examplePoints
+     */
+    public int getExamplePoints() {
+        return examplePoints;
+    }
+
+    /**
+     * @param examplePoints
+     *        the examplePoints to set
+     */
+    public void setExamplePoints(int examplePoints) {
+        this.examplePoints = examplePoints;
     }
 }

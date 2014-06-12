@@ -1,5 +1,7 @@
 package server.world.shop;
 
+import server.world.entity.player.Player;
+
 /**
  * All of the different types of tangible currencies that can be used in shops.
  * 
@@ -8,30 +10,64 @@ package server.world.shop;
 public enum Currency {
 
     /** The default currency. */
-    COINS(995),
+    COINS(new TangibleCurrency() {
+        @Override
+        public int itemId() {
+            return 995;
+        }
+    }),
 
     /** Usually used in TzHaar shops. */
-    TOKKUL(6529);
+    TOKKUL(new TangibleCurrency() {
+        @Override
+        public int itemId() {
+            return 6529;
+        }
+    }),
 
-    /** The item id of this currency. */
-    private int itemId;
+    /** An example of how points can be done. */
+    POINTS(new GenericCurrency() {
+        @Override
+        public void giveCurrency(Player player, int amount) {
+            player.setExamplePoints(player.getExamplePoints() - amount);
+        }
+
+        @Override
+        public void recieveCurrency(Player player, int amount) {
+            player.setExamplePoints(player.getExamplePoints() + amount);
+        }
+
+        @Override
+        public int getCurrencyAmount(Player player) {
+            return player.getExamplePoints();
+        }
+
+        @Override
+        public boolean inventoryFull(Player player) {
+            return true;
+        }
+    });
+
+    /** Holds the functions for this particular currency. */
+    private GenericCurrency currency;
 
     /**
-     * Construct a new {@link Currency}.
+     * Create a new {@link Currency}.
      * 
-     * @param itemId
-     *        the item id of this currency.
+     * @param currency
+     *        holds the functions for this particular currency.
      */
-    Currency(int itemId) {
-        this.itemId = itemId;
+    private Currency(GenericCurrency currency) {
+        this.currency = currency;
     }
 
     /**
-     * Gets the item id of this currency.
+     * Gets the instance that holds the functions for this particular currency.
      * 
-     * @return the item id.
+     * @return the instance that holds the functions for this particular
+     *         currency.
      */
-    public int getItemId() {
-        return itemId;
+    public GenericCurrency getCurrency() {
+        return currency;
     }
 }

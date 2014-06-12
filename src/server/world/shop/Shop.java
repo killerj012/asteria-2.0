@@ -128,7 +128,8 @@ public class Shop {
     }
 
     /**
-     * Purchases an {@link Item} from this shop for the specified {@link Player}.
+     * Purchases an {@link Item} from this shop for the specified {@link Player}
+     * .
      * 
      * @param player
      *        the player purchasing the item.
@@ -155,12 +156,12 @@ public class Shop {
          * buy this item.
          */
         if (currency == Currency.COINS) {
-            if (!(player.getInventory().getContainer().getCount(currency.getItemId()) >= (item.getDefinition().getGeneralStorePrice() * item.getAmount()))) {
+            if (!(currency.getCurrency().getCurrencyAmount(player) >= (item.getDefinition().getGeneralStorePrice() * item.getAmount()))) {
                 player.getPacketBuilder().sendMessage("You do not have enough coins to buy this item.");
                 return;
             }
         } else {
-            if (!(player.getInventory().getContainer().getCount(currency.getItemId()) >= (item.getDefinition().getSpecialStorePrice() * item.getAmount()))) {
+            if (!(currency.getCurrency().getCurrencyAmount(player) >= (item.getDefinition().getSpecialStorePrice() * item.getAmount()))) {
                 player.getPacketBuilder().sendMessage("You do not have enough " + currency.name().toLowerCase().replaceAll("_", " ") + " to buy this item.");
                 return;
             }
@@ -197,9 +198,9 @@ public class Shop {
             }
 
             if (currency == Currency.COINS) {
-                player.getInventory().deleteItem(new Item(currency.getItemId(), item.getAmount() * item.getDefinition().getGeneralStorePrice()));
+                currency.getCurrency().giveCurrency(player, item.getAmount() * item.getDefinition().getGeneralStorePrice());
             } else {
-                player.getInventory().deleteItem(new Item(currency.getItemId(), item.getAmount() * item.getDefinition().getSpecialStorePrice()));
+                currency.getCurrency().giveCurrency(player, item.getAmount() * item.getDefinition().getSpecialStorePrice());
             }
 
             player.getInventory().addItem(item);
@@ -283,7 +284,7 @@ public class Shop {
          * Checks if you have enough space in your inventory to receive the
          * currency.
          */
-        if (player.getInventory().getContainer().freeSlots() == 0 && !player.getInventory().getContainer().contains(currency.getItemId())) {
+        if (player.getInventory().getContainer().freeSlots() == 0 && !currency.getCurrency().inventoryFull(player)) {
             player.getPacketBuilder().sendMessage("You do not have enough space in your inventory to sell this item!");
             return;
         }
@@ -300,7 +301,7 @@ public class Shop {
 
         /** Actually sell the item. */
         player.getInventory().deleteItemSlot(item, fromSlot);
-        player.getInventory().addItem(new Item(currency.getItemId(), item.getAmount() * calculateSellingPrice(item)));
+        currency.getCurrency().recieveCurrency(player, item.getAmount() * calculateSellingPrice(item));
 
         /**
          * Add on to the item if its in the shop already or add it to a whole

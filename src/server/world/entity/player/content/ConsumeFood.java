@@ -1,8 +1,5 @@
 package server.world.entity.player.content;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import server.util.Misc;
 import server.world.entity.Animation;
 import server.world.entity.player.Player;
@@ -60,18 +57,6 @@ public class ConsumeFood {
         private boolean grammarCheck;
 
         /**
-         * A map that allows us to get a {@link Food} constant by its id.
-         */
-        private static Map<Integer, Food> food = new HashMap<Integer, Food>();
-
-        /** Fill the map with data. */
-        static {
-            for (Food f : Food.values()) {
-                food.put(f.getItemId(), f);
-            }
-        }
-
-        /**
          * Create a new {@link Food}.
          * 
          * @param itemId
@@ -122,7 +107,12 @@ public class ConsumeFood {
          * @return the instance.
          */
         public static Food forId(int id) {
-            return food.get(id);
+            for (Food f : Food.values()) {
+                if (f.getItemId() == id) {
+                    return f;
+                }
+            }
+            return null;
         }
     }
 
