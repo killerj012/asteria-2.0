@@ -951,8 +951,9 @@ public final class Misc {
          * 
          * @param type
          *        the type that will be used as the parameter.
+         * @return {@code true} if and only if the action executed successfully, otherwise {@code false}.
          */
-        public void fireAction(final T type);
+        public boolean fireAction(final T type);
     }
 
     /**
