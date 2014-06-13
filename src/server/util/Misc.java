@@ -973,8 +973,7 @@ public final class Misc {
      * 
      * @param range The exclusive range.
      * @return The pseudo-random {@code int}.
-     * @throws IllegalArgumentException If the specified range is less than or
-     *             equal to <tt>0</tt>
+     * @throws IllegalArgumentException If the specified range is less <tt>0</tt>
      * 
      *             <p>
      *             We use {@link ThreadLocalRandom#current()} to produce this
@@ -984,8 +983,8 @@ public final class Misc {
      *             </p>
      */
     public static int random(int range) {
-	if (range <= 0) {
-	    throw new IllegalArgumentException("range <= 0");
+	if (range < 0) {
+	    throw new IllegalArgumentException("range < 0");
 	}
 
 	return RANDOM.nextInt(range);
@@ -998,8 +997,7 @@ public final class Misc {
      * @param min The minimum inclusive number.
      * @param max The maximum inclusive number.
      * @return The pseudo-random {@code int}.
-     * @throws IllegalArgumentException If {@code max - min + 1} is less than or
-     *             equal to <tt>0</tt>.
+     * @throws IllegalArgumentException If {@code max - min + 1} is less than <tt>0</tt>.
      * @see {@link #random(int)}.
      */
     public static int inclusiveRandom(int min, int max) {
@@ -1014,8 +1012,7 @@ public final class Misc {
      * @param min The minimum inclusive number.
      * @param max The maximum inclusive number.
      * @return The pseudo-random {@code int}.
-     * @throws IllegalArgumentException If {@code max - min + 1} is less than or
-     *             equal to <tt>0</tt>.
+     * @throws IllegalArgumentException If {@code max - min + 1} is less than <tt>0</tt>.
      * @see {@link #inclusiveRandom(int, int)}.
      */
     public static int inclusiveRandomExcludes(int min, int max, int... exclude) {
@@ -1024,28 +1021,6 @@ public final class Misc {
 	int result = inclusiveRandom(min, max);
 	while (Arrays.binarySearch(exclude, result) >= 0) {
 	    result = inclusiveRandom(min, max);
-	}
-	
-	return result;
-    }
-
-    /**
-     * Returns a pseudo-random {@code int} value between inclusive <tt>0</tt>
-     * and exclusive <code>range</code> excluding the specified numbers within
-     * the {@code excludes} array.
-     * 
-     * @param range The maximum exclusive range.
-     * @return The pseudo-random {@code int}.
-     * @throws IllegalArgumentException If {@code max - min + 1} is less than or
-     *             equal to <tt>0</tt>.
-     * @see {@link #random(int)}.
-     */
-    public static int inclusiveRandomExcludes(int range, int... exclude) {
-	Arrays.sort(exclude);
-	 
-	int result = random(range);
-	while (Arrays.binarySearch(exclude, result) >= 0) {
-	    result = random(range);
 	}
 	
 	return result;
@@ -1061,8 +1036,7 @@ public final class Misc {
      * 
      * @param range The exclusive range.
      * @return The pseudo-random {@code float}.
-     * @throws IllegalArgumentException If the specified range is less than or
-     *             equal to <tt>0</tt>
+     * @throws IllegalArgumentException If the specified range is less than <tt>0</tt>
      * 
      *             <p>
      *             We use {@link ThreadLocalRandom#current()} to produce this
@@ -1072,7 +1046,7 @@ public final class Misc {
      *             </p>
      */
     public static float random(float range) {
-	if (range <= 0F) {
+	if (range < 0F) {
 	    throw new IllegalArgumentException("range <= 0");
 	}
 
