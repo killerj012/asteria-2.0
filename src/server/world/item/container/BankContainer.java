@@ -38,7 +38,7 @@ public class BankContainer {
         Item[] bankItems = container.toArray();
         Item[] inventoryItems = player.getInventory().getContainer().toArray();
         player.getPacketBuilder().sendUpdateItems(5382, bankItems);
-        player.getPacketBuilder().sendUpdateItems(5064, inventoryItems);
+        player.getPacketBuilder().sendUpdateItems(InventoryContainer.BANK_INVENTORY_CONTAINER_ID, inventoryItems);
     }
 
     /**
@@ -87,7 +87,7 @@ public class BankContainer {
             player.getInventory().deleteItemSlot(item, slot);
             container.getItem(container.getSlotById(item.getId())).incrementAmountBy(item.getAmount());
             checkForZero();
-            player.getInventory().refresh(5064);
+            player.getInventory().refresh(InventoryContainer.BANK_INVENTORY_CONTAINER_ID);
             Item[] bankItems = container.toArray();
             player.getPacketBuilder().sendUpdateItems(5382, bankItems);
             return;
@@ -108,7 +108,7 @@ public class BankContainer {
 
         /** Refresh the bank and inventory. */
         checkForZero();
-        player.getInventory().refresh(5064);
+        player.getInventory().refresh(InventoryContainer.BANK_INVENTORY_CONTAINER_ID);
         Item[] bankItems = container.toArray();
         player.getPacketBuilder().sendUpdateItems(5382, bankItems);
     }
@@ -138,7 +138,7 @@ public class BankContainer {
         } else if (freeBankingSlots == -1 && container.contains(item.getId())) {
             container.getItem(container.getSlotById(item.getId())).incrementAmountBy(item.getAmount());
             checkForZero();
-            player.getInventory().refresh(5064);
+            player.getInventory().refresh(InventoryContainer.BANK_INVENTORY_CONTAINER_ID);
             Item[] bankItems = container.toArray();
             player.getPacketBuilder().sendUpdateItems(5382, bankItems);
             return;
@@ -223,7 +223,7 @@ public class BankContainer {
         checkForZero();
         container.compact();
         Item[] bankItems = container.toArray();
-        player.getInventory().refresh(5064);
+        player.getInventory().refresh(InventoryContainer.BANK_INVENTORY_CONTAINER_ID);
         player.getPacketBuilder().sendUpdateItems(5382, bankItems);
     }
 

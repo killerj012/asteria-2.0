@@ -25,9 +25,14 @@ public class EquipmentContainer {
      * container.
      */
     private Player player;
-
+    
     /** The container that will hold this player's equipped items. */
     private ItemContainer container = new ItemContainer(ContainerPolicy.NORMAL_POLICY, 14);
+    
+    /**
+     * The default interface id of this container.
+     */
+    private static final int DEFAULT_EQUIPMENT_CONTAINER_ID = 1688;
 
     /**
      * Create a new {@link EquipmentContainer}.
@@ -45,7 +50,7 @@ public class EquipmentContainer {
      */
     public void refresh() {
         Item[] items = container.toArray();
-        player.getPacketBuilder().sendUpdateItems(1688, items);
+        player.getPacketBuilder().sendUpdateItems(DEFAULT_EQUIPMENT_CONTAINER_ID, items);
     }
 
     /**
@@ -234,7 +239,7 @@ public class EquipmentContainer {
 
         /** Refresh everything. */
         refresh();
-        player.getInventory().refresh(3214);
+        player.getInventory().refresh();
         player.getFlags().flag(Flag.APPEARANCE);
         player.setAutocast(false);
         player.getPacketBuilder().sendConfig(108, 0);

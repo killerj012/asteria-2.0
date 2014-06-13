@@ -176,7 +176,7 @@ public class DecodeItemInterfacePacket extends PacketDecoder {
 
                     case 3214:
                         player.getInventory().exchangeItemSlot(fromSlot, toSlot);
-                        player.getInventory().refresh(3214);
+                        player.getInventory().refresh();
                         break;
 
                     case 5382:

@@ -14,6 +14,16 @@ import server.world.item.ItemContainer.ContainerPolicy;
  * @author Vix
  */
 public class InventoryContainer {
+    
+    /**
+     * The id of the inventory container
+     */
+    public static final int DEFAULT_INVENTORY_CONTAINER_ID = 3214;
+    
+    /**
+     * The id of the inventory when you have the bank open.
+     */
+    public static final int BANK_INVENTORY_CONTAINER_ID = 5064;
 
     /** The player's inventory being managed. */
     private Player player;
@@ -35,15 +45,19 @@ public class InventoryContainer {
     }
 
     /**
-     * Sends the items on this inventory to an interface.
-     * 
-     * @param writeInterface
-     *        the interface to write this inventory on.
+     * Sends the items on this inventory to the specified interface.
+     * @param interfaceId The interface id.
      */
-    public void refresh(int writeInterface) {
+    public void refresh(int interfaceId) {
         checkForZero();
-        Item[] inv = container.toArray();
-        player.getPacketBuilder().sendUpdateItems(writeInterface, inv);
+        player.getPacketBuilder().sendUpdateItems(interfaceId, container.toArray());
+    }
+    
+    /**
+     * Sends the items on this inventory to the default container.
+     */
+    public void refresh() {
+	refresh(DEFAULT_INVENTORY_CONTAINER_ID);
     }
 
     /**
@@ -79,7 +93,7 @@ public class InventoryContainer {
         container.add(item);
 
         /** Refresh the container. */
-        refresh(3214);
+        refresh();
     }
 
     /**
@@ -133,7 +147,7 @@ public class InventoryContainer {
         container.set(slot, item);
 
         /** Refresh the container. */
-        refresh(3214);
+        refresh();
     }
 
     /**
@@ -162,7 +176,7 @@ public class InventoryContainer {
         }
 
         /** Refresh this container. */
-        refresh(3214);
+        refresh();
     }
 
     /**
@@ -230,7 +244,7 @@ public class InventoryContainer {
         container.remove(item, slot);
 
         /** Refresh the inventory. */
-        refresh(3214);
+        refresh();
     }
 
     /**
@@ -243,7 +257,7 @@ public class InventoryContainer {
      */
     public void exchangeItemSlot(int initialSlot, int exchangeSlot) {
         container.swap(initialSlot, exchangeSlot);
-        refresh(3214);
+        refresh();
     }
 
     /**
