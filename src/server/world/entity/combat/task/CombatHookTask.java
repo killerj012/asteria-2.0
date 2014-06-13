@@ -279,19 +279,19 @@ public class CombatHookTask extends Worker {
                     if (combatHit.isCheckAccuracy()) {
                         if (!CombatFactory.isWearingFullVeracs(player)) {
                             if (combatHit.getHitType() == CombatType.MELEE && CombatPrayer.isPrayerActivated(target, CombatPrayer.PROTECT_FROM_MELEE)) {
-                                if (Misc.getRandom().nextInt(4) == 0) {
+                                if (Misc.random(4) == 0) {
                                     for (int i = 0; i < combatHit.getHits().length; i++) {
                                         combatHit.getHits()[i].setSuccessful(false);
                                     }
                                 }
                             } else if (combatHit.getHitType() == CombatType.MAGIC && CombatPrayer.isPrayerActivated(target, CombatPrayer.PROTECT_FROM_MAGIC)) {
-                                if (Misc.getRandom().nextInt(4) == 0) {
+                                if (Misc.random(4) == 0) {
                                     for (int i = 0; i < combatHit.getHits().length; i++) {
                                         combatHit.getHits()[i].setSuccessful(false);
                                     }
                                 }
                             } else if (combatHit.getHitType() == CombatType.RANGE && CombatPrayer.isPrayerActivated(target, CombatPrayer.PROTECT_FROM_MISSILES)) {
-                                if (Misc.getRandom().nextInt(4) == 0) {
+                                if (Misc.random(4) == 0) {
                                     for (int i = 0; i < combatHit.getHits().length; i++) {
                                         combatHit.getHits()[i].setSuccessful(false);
                                     }

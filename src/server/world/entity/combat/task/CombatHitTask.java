@@ -159,17 +159,17 @@ public class CombatHitTask extends Worker {
             if (oneHitAccurate) {
 
                 /** Various armor and weapon effects. */
-                if (Misc.getRandom().nextInt(4) == 0) {
+                if (Misc.random(4) == 0) {
                     if (combatHit.getHitType() == CombatType.MELEE) {
                         if (attacker.isPlayer() && target.isPlayer()) {
                             Player player = (Player) attacker;
                             Player victim = (Player) target;
 
                             if (CombatFactory.isWearingFullTorags(player)) {
-                                victim.decrementRunEnergy(Misc.getRandom().nextInt(19) + 1);
+                                victim.decrementRunEnergy(Misc.random(19) + 1);
                                 victim.gfx(new Gfx(399));
                             } else if (CombatFactory.isWearingFullAhrims(player)) {
-                                victim.getSkills()[Misc.STRENGTH].decreaseLevel(Misc.getRandom().nextInt(4) + 1);
+                                victim.getSkills()[Misc.STRENGTH].decreaseLevel(Misc.random(4) + 1);
                                 SkillManager.refresh(victim, SkillConstant.STRENGTH);
                                 victim.gfx(new Gfx(400));
                             } else if (CombatFactory.isWearingFullGuthans(player)) {
@@ -193,7 +193,7 @@ public class CombatHitTask extends Worker {
 
                             if (CombatFactory.isWearingFullKarils(player)) {
                                 victim.gfx(new Gfx(401));
-                                victim.getSkills()[Misc.AGILITY].decreaseLevel(Misc.getRandom().nextInt(4) + 1);
+                                victim.getSkills()[Misc.AGILITY].decreaseLevel(Misc.random(4) + 1);
                                 SkillManager.refresh(victim, SkillConstant.AGILITY);
                             }
                         }
@@ -203,7 +203,7 @@ public class CombatHitTask extends Worker {
                             Player victim = (Player) target;
 
                             if (CombatFactory.isWearingFullAhrims(player)) {
-                                victim.getSkills()[Misc.STRENGTH].decreaseLevel(Misc.getRandom().nextInt(4) + 1);
+                                victim.getSkills()[Misc.STRENGTH].decreaseLevel(Misc.random(4) + 1);
                                 SkillManager.refresh(victim, SkillConstant.STRENGTH);
                                 victim.gfx(new Gfx(400));
                             }
@@ -272,11 +272,11 @@ public class CombatHitTask extends Worker {
                                         }
 
                                         if (!plr.getUsername().equals(victim.getUsername()) && plr.getPosition().withinDistance(target.getPosition().clone(), 5)) {
-                                            plr.dealDamage(new Hit(Misc.getRandom().nextInt(15)));
+                                            plr.dealDamage(new Hit(Misc.random(15)));
                                         }
                                     }
                                 } else {
-                                    player.dealDamage(new Hit(Misc.getRandom().nextInt(9)));
+                                    player.dealDamage(new Hit(Misc.random(9)));
                                 }
                             }
                         }
@@ -301,7 +301,7 @@ public class CombatHitTask extends Worker {
             /** Redemption prayer check here. */
             if (CombatPrayer.isPrayerActivated(player, CombatPrayer.REDEMPTION)) {
                 if (player.getSkills()[Misc.HITPOINTS].getLevel() <= (player.getSkills()[Misc.HITPOINTS].getLevelForExperience() / 10)) {
-                    player.getSkills()[Misc.HITPOINTS].increaseLevel(Misc.getRandom().nextInt((player.getSkills()[Misc.HITPOINTS].getLevelForExperience() - player.getSkills()[Misc.HITPOINTS].getLevel())));
+                    player.getSkills()[Misc.HITPOINTS].increaseLevel(Misc.random((player.getSkills()[Misc.HITPOINTS].getLevelForExperience() - player.getSkills()[Misc.HITPOINTS].getLevel())));
                     player.gfx(new Gfx(436));
                     player.getSkills()[Misc.PRAYER].setLevel(0);
                     player.getPacketBuilder().sendMessage("You've run out of prayer points!");
@@ -343,7 +343,7 @@ public class CombatHitTask extends Worker {
             }
 
             if (attacker.isPlayer()) {
-                if (Misc.getRandom().nextInt(3) != 0) {
+                if (Misc.random(3) != 0) {
 
                     Player player = (Player) attacker;
 

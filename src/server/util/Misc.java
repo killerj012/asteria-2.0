@@ -7,6 +7,8 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
+import java.util.Arrays;
+import java.util.Random;
 import java.util.Scanner;
 import java.util.concurrent.ThreadLocalRandom;
 
@@ -959,7 +961,7 @@ public final class Misc {
      * as there is no unnecessary wait on the backing <code>AtomicLong</code>
      * within {@link Random}.
      */
-    private static final ThreadLocalRandom RANDOM = ThreadLocalRandom.current();
+    private static final Random RANDOM = ThreadLocalRandom.current();
 
     /**
      * Returns a pseudo-random {@code int} value between inclusive <tt>0</tt>
@@ -991,9 +993,10 @@ public final class Misc {
 
     /**
      * Returns a pseudo-random {@code int} value between inclusive
-     * <code>min</code> and exclusive <code>max</code>.
+     * <code>min</code> and inclusive <code>max</code>.
      * 
-     * @param range The exclusive range.
+     * @param min The minimum inclusive number.
+     * @param max The maximum inclusive number.
      * @return The pseudo-random {@code int}.
      * @throws IllegalArgumentException If {@code max - min + 1} is less than or
      *             equal to <tt>0</tt>.
@@ -1002,7 +1005,52 @@ public final class Misc {
     public static int inclusiveRandom(int min, int max) {
 	return random((max - min) + 1) + min;
     }
-    
+
+    /**
+     * Returns a pseudo-random {@code int} value between inclusive
+     * <code>min</code> and inclusive <code>max</code> excluding the specified
+     * numbers within the {@code excludes} array.
+     * 
+     * @param min The minimum inclusive number.
+     * @param max The maximum inclusive number.
+     * @return The pseudo-random {@code int}.
+     * @throws IllegalArgumentException If {@code max - min + 1} is less than or
+     *             equal to <tt>0</tt>.
+     * @see {@link #inclusiveRandom(int, int)}.
+     */
+    public static int inclusiveRandomExcludes(int min, int max, int... exclude) {
+	Arrays.sort(exclude);
+	 
+	int result = inclusiveRandom(min, max);
+	while (Arrays.binarySearch(exclude, result) >= 0) {
+	    result = inclusiveRandom(min, max);
+	}
+	
+	return result;
+    }
+
+    /**
+     * Returns a pseudo-random {@code int} value between inclusive <tt>0</tt>
+     * and exclusive <code>range</code> excluding the specified numbers within
+     * the {@code excludes} array.
+     * 
+     * @param range The maximum exclusive range.
+     * @return The pseudo-random {@code int}.
+     * @throws IllegalArgumentException If {@code max - min + 1} is less than or
+     *             equal to <tt>0</tt>.
+     * @see {@link #random(int)}.
+     */
+    public static int inclusiveRandomExcludes(int range, int... exclude) {
+	Arrays.sort(exclude);
+	 
+	int result = random(range);
+	while (Arrays.binarySearch(exclude, result) >= 0) {
+	    result = random(range);
+	}
+	
+	return result;
+    }
+
     /**
      * Returns a pseudo-random {@code float} between inclusive <tt>0</tt> and
      * exclusive <code>range</code>
