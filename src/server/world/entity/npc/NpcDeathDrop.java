@@ -89,7 +89,7 @@ public class NpcDeathDrop {
             }
 
             /** Do calculations based on the drop chance. */
-            if ((Misc.getRandom().nextInt(100) + 1) <= drops[slot].getChance().getPercentage()) {
+            if ((Misc.random(100) + 1) <= drops[slot].getChance().getPercentage()) {
 
                 /**
                  * If the drop chance calculation was successful (the item was

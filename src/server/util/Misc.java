@@ -7,8 +7,8 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
-import java.util.Random;
 import java.util.Scanner;
+import java.util.concurrent.ThreadLocalRandom;
 
 import server.core.net.HostGateway;
 import server.core.net.packet.PacketDecoder;
@@ -47,9 +47,6 @@ import com.google.gson.JsonSyntaxException;
  */
 @SuppressWarnings("unused")
 public final class Misc {
-
-    /** An instance of the random class for arithmetic operations. */
-    private static Random random = new Random();
 
     /** Difference in X coordinates for directions array. */
     public static final byte[] DIRECTION_DELTA_X = new byte[] { -1, 0, 1, -1, 1, -1, 0, 1 };
@@ -914,7 +911,7 @@ public final class Misc {
         public int calculate() {
             int difference = end - start;
 
-            return (start + Misc.getRandom().nextInt(difference));
+            return (start + random(difference));
         }
 
         /**
@@ -957,6 +954,84 @@ public final class Misc {
     }
 
     /**
+     * Thread local random instance, used to generate pseudo-random primitive types.
+     * Thread local random is faster than your traditional random implementation
+     * as there is no unnecessary wait on the backing <code>AtomicLong</code>
+     * within {@link Random}.
+     */
+    private static final ThreadLocalRandom RANDOM = ThreadLocalRandom.current();
+
+    /**
+     * Returns a pseudo-random {@code int} value between inclusive <tt>0</tt>
+     * and exclusive <code>range</code>.
+     * 
+     * <br>
+     * <br>
+     * This method is thread-safe. </br>
+     * 
+     * @param range The exclusive range.
+     * @return The pseudo-random {@code int}.
+     * @throws IllegalArgumentException If the specified range is less than or
+     *             equal to <tt>0</tt>
+     * 
+     *             <p>
+     *             We use {@link ThreadLocalRandom#current()} to produce this
+     *             random {@code int}, it is faster than a standard
+     *             {@link Random} instance as we do not have to wait on
+     *             {@code AtomicLong}.
+     *             </p>
+     */
+    public static int random(int range) {
+	if (range <= 0) {
+	    throw new IllegalArgumentException("range <= 0");
+	}
+
+	return RANDOM.nextInt(range);
+    }
+
+    /**
+     * Returns a pseudo-random {@code int} value between inclusive
+     * <code>min</code> and exclusive <code>max</code>.
+     * 
+     * @param range The exclusive range.
+     * @return The pseudo-random {@code int}.
+     * @throws IllegalArgumentException If {@code max - min + 1} is less than or
+     *             equal to <tt>0</tt>.
+     * @see {@link #random(int)}.
+     */
+    public static int inclusiveRandom(int min, int max) {
+	return random((max - min) + 1) + min;
+    }
+    
+    /**
+     * Returns a pseudo-random {@code float} between inclusive <tt>0</tt> and
+     * exclusive <code>range</code>
+     * 
+     * <br>
+     * <br>
+     * This method is thread-safe. </br>
+     * 
+     * @param range The exclusive range.
+     * @return The pseudo-random {@code float}.
+     * @throws IllegalArgumentException If the specified range is less than or
+     *             equal to <tt>0</tt>
+     * 
+     *             <p>
+     *             We use {@link ThreadLocalRandom#current()} to produce this
+     *             random {@code float}, it is faster than a standard
+     *             {@link Random} instance as we do not have to wait on
+     *             {@code AtomicLong}.
+     *             </p>
+     */
+    public static float random(float range) {
+	if (range <= 0F) {
+	    throw new IllegalArgumentException("range <= 0");
+	}
+
+	return RANDOM.nextFloat() * range;
+    }
+
+    /**
      * Gets the array of platebodies.
      * 
      * @return the array of platebodies.
@@ -983,12 +1058,4 @@ public final class Misc {
         return is2H;
     }
 
-    /**
-     * Gets the random instance.
-     * 
-     * @return the random instance.
-     */
-    public static Random getRandom() {
-        return random;
-    }
 }

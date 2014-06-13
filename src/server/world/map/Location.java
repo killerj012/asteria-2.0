@@ -71,8 +71,8 @@ public class Location {
         int y = Math.min(southWest.getY(), northEast.getY());
         int y2 = Math.max(southWest.getY(), northEast.getY());
 
-        int randomX = Misc.getRandom().nextInt(x2 - x + 1) + x;
-        int randomY = Misc.getRandom().nextInt(y2 - y + 1) + y;
+        int randomX = Misc.random(x2 - x + 1) + x;
+        int randomY = Misc.random(y2 - y + 1) + y;
 
         return new Position(randomX, randomY, 0);
     }

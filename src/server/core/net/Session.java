@@ -445,7 +445,7 @@ public final class Session {
                     if (player.getStaffRights() > 0) {
                         player.move(player.getPosition());
                     } else {
-                        player.move(player.getPosition().move(Misc.getRandom().nextInt(200), Misc.getRandom().nextInt(200)));
+                        player.move(player.getPosition().move(Misc.random(200), Misc.random(200)));
                     }
                 } else if (!SOCKET_FLOOD) {
                     player.move(player.getPosition());
@@ -458,7 +458,7 @@ public final class Session {
                 player.getEquipment().refresh();
 
                 /** Refresh inventory. */
-                player.getInventory().refresh(3214);
+                player.getInventory().refresh();
 
                 /** Send the bonuses. */
                 player.writeBonus();

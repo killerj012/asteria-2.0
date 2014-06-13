@@ -200,7 +200,7 @@ public class CombatFactory {
      * @return the melee hit.
      */
     public static Hit getMeleeHit(Entity entity) {
-        int calculate = Misc.getRandom().nextInt(CombatFactory.calculateMaxMeleeHit(entity));
+        int calculate = Misc.random(CombatFactory.calculateMaxMeleeHit(entity));
 
         if (calculate < 1) {
             calculate = 1;
@@ -218,7 +218,7 @@ public class CombatFactory {
      * @return the range hit.
      */
     public static Hit getRangeHit(Entity entity, CombatRangedAmmo table) {
-        int calculate = Misc.getRandom().nextInt(CombatFactory.calculateMaxRangeHit(entity, table));
+        int calculate = Misc.random(CombatFactory.calculateMaxRangeHit(entity, table));
 
         if (calculate < 1) {
             calculate = 1;
@@ -614,6 +614,6 @@ public class CombatFactory {
      * @return true if the hit was successful.
      */
     private static boolean isAccurateHit(double chance) {
-        return Misc.getRandom().nextDouble() <= chance;
+        return Math.random() <= chance;
     }
 }

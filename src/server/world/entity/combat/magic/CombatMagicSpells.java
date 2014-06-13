@@ -1925,10 +1925,10 @@ public enum CombatMagicSpells {
     BLOOD_RUSH(new CombatAncientSpell() {
         @Override
         public void spellEffect(Entity cast, Entity castOn) {
-            if (Misc.getRandom().nextInt(4) == 0) {
+            if (Misc.random(4) == 0) {
                 if (cast.isPlayer()) {
                     Player player = (Player) cast;
-                    player.getSkills()[Misc.HITPOINTS].increaseLevel(Misc.getRandom().nextInt(10), 99);
+                    player.getSkills()[Misc.HITPOINTS].increaseLevel(Misc.random(10), 99);
                     SkillManager.refresh(player, SkillConstant.HITPOINTS);
                 }
             }
@@ -2164,10 +2164,10 @@ public enum CombatMagicSpells {
     BLOOD_BURST(new CombatAncientSpell() {
         @Override
         public void spellEffect(Entity cast, Entity castOn) {
-            if (Misc.getRandom().nextInt(4) == 0) {
+            if (Misc.random(4) == 0) {
                 if (cast.isPlayer()) {
                     Player player = (Player) cast;
-                    player.getSkills()[Misc.HITPOINTS].increaseLevel(Misc.getRandom().nextInt(10), 99);
+                    player.getSkills()[Misc.HITPOINTS].increaseLevel(Misc.random(10), 99);
                     SkillManager.refresh(player, SkillConstant.HITPOINTS);
                 }
             }
@@ -2403,10 +2403,10 @@ public enum CombatMagicSpells {
     BLOOD_BLITZ(new CombatAncientSpell() {
         @Override
         public void spellEffect(Entity cast, Entity castOn) {
-            if (Misc.getRandom().nextInt(4) == 0) {
+            if (Misc.random(4) == 0) {
                 if (cast.isPlayer()) {
                     Player player = (Player) cast;
-                    player.getSkills()[Misc.HITPOINTS].increaseLevel(Misc.getRandom().nextInt(15), 99);
+                    player.getSkills()[Misc.HITPOINTS].increaseLevel(Misc.random(15), 99);
                     SkillManager.refresh(player, SkillConstant.HITPOINTS);
                 }
             }
@@ -2642,10 +2642,10 @@ public enum CombatMagicSpells {
     BLOOD_BARRAGE(new CombatAncientSpell() {
         @Override
         public void spellEffect(Entity cast, Entity castOn) {
-            if (Misc.getRandom().nextInt(4) == 0) {
+            if (Misc.random(4) == 0) {
                 if (cast.isPlayer()) {
                     Player player = (Player) cast;
-                    player.getSkills()[Misc.HITPOINTS].increaseLevel(Misc.getRandom().nextInt(20), 99);
+                    player.getSkills()[Misc.HITPOINTS].increaseLevel(Misc.random(20), 99);
                     SkillManager.refresh(player, SkillConstant.HITPOINTS);
                 }
             }

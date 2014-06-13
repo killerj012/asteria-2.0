@@ -35,7 +35,7 @@ public abstract class CombatAncientSpell extends CombatSpell {
 
                     if (npc.getPosition().withinDistance(castOn.getPosition(), spellRadius()) && npc != cast && npc.getSlot() != castOn.getSlot() && npc.getDefinition().isAttackable()) {
                         npc.gfx(cast.getCurrentlyCasting().endGfx());
-                        int damage = Misc.getRandom().nextInt(this.maximumStrength());
+                        int damage = Misc.random(this.maximumStrength());
                         npc.dealDamage(new Hit(damage));
                         npc.getCombatBuilder().addDamage(cast, damage);
                         spellEffect(cast, npc);
@@ -49,7 +49,7 @@ public abstract class CombatAncientSpell extends CombatSpell {
 
                     if (player.getPosition().withinDistance(castOn.getPosition(), spellRadius()) && player != cast && player.getSlot() != castOn.getSlot()) {
                         player.gfx(cast.getCurrentlyCasting().endGfx());
-                        int damage = Misc.getRandom().nextInt(this.maximumStrength());
+                        int damage = Misc.random(this.maximumStrength());
                         player.dealDamage(new Hit(damage));
                         player.getCombatBuilder().addDamage(cast, damage);
                         spellEffect(cast, player);

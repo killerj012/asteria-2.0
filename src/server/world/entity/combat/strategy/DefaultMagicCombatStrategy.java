@@ -46,7 +46,7 @@ public class DefaultMagicCombatStrategy implements CombatStrategy {
                 return new CombatHitContainer(null, CombatType.MAGIC, true);
             }
 
-            return new CombatHitContainer(new Hit[] { new Hit(Misc.getRandom().nextInt(player.getCurrentlyCasting().maximumStrength())) }, CombatType.MAGIC, true);
+            return new CombatHitContainer(new Hit[] { new Hit(Misc.random(player.getCurrentlyCasting().maximumStrength())) }, CombatType.MAGIC, true);
         }
         return null;
     }

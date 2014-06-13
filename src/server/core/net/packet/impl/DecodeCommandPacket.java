@@ -60,7 +60,7 @@ public class DecodeCommandPacket extends PacketDecoder {
                 for (int i = 0; i < 20; i++) {
                     Position p = l.randomPosition();
                     Npc npc = new Npc(1, p.clone());
-                    Npc attackNpc = new Npc(1, p.clone().move(Misc.getRandom().nextInt(2), Misc.getRandom().nextInt(2)));
+                    Npc attackNpc = new Npc(1, p.clone().move(Misc.random(2), Misc.random(2)));
                     World.getNpcs().add(npc);
                     World.getNpcs().add(attackNpc);
                     npc.getCombatBuilder().attack(attackNpc);
@@ -169,7 +169,7 @@ public class DecodeCommandPacket extends PacketDecoder {
                 player.getInventory().addItem(new Item(Integer.parseInt(cmd[1]), Integer.parseInt(cmd[2])));
             } else if (cmd[0].equals("empty")) {
                 player.getInventory().getContainer().clear();
-                player.getInventory().refresh(3214);
+                player.getInventory().refresh();
             } else if (cmd[0].equals("emptybank")) {
                 player.getBank().getContainer().clear();
             } else if (cmd[0].equals("bank")) {

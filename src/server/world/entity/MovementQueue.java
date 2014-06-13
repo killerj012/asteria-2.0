@@ -317,7 +317,7 @@ public class MovementQueue {
                         int y = entity.getPosition().getY();
                         int z = entity.getPosition().getZ();
 
-                        switch (Misc.getRandom().nextInt(3)) {
+                        switch (Misc.random(3)) {
                             case 0:
                                 if (/* entity.canMove(-1, 0) && */true) {
                                     entity.getMovementQueue().walk(new Position(x - 1, y, z));

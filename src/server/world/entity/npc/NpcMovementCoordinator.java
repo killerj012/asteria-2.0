@@ -59,7 +59,7 @@ public class NpcMovementCoordinator {
         }
 
         /** Periodic coordinate effect. */
-        if (Misc.getRandom().nextInt(13) == 5) {
+        if (Misc.random(13) == 5) {
             switch (coordinateState) {
 
                 /** Coordinate the npc away from its original position. */
@@ -89,23 +89,23 @@ public class NpcMovementCoordinator {
      * @return the generated local position.
      */
     private Position generateLocalPosition(int radius) {
-        switch (Misc.getRandom().nextInt(3)) {
+        switch (Misc.random(3)) {
 
             /** Northwest, north, and west directions. */
             case 0:
-                return new Position(npc.getPosition().getX() + Misc.getRandom().nextInt(radius), npc.getPosition().getY() + Misc.getRandom().nextInt(radius), npc.getPosition().getZ());
+                return new Position(npc.getPosition().getX() + Misc.random(radius), npc.getPosition().getY() + Misc.random(radius), npc.getPosition().getZ());
 
                 /** Southeast, south, and east directions. */
             case 1:
-                return new Position(npc.getPosition().getX() - Misc.getRandom().nextInt(radius), npc.getPosition().getY() - Misc.getRandom().nextInt(radius), npc.getPosition().getZ());
+                return new Position(npc.getPosition().getX() - Misc.random(radius), npc.getPosition().getY() - Misc.random(radius), npc.getPosition().getZ());
 
                 /** Southwest, south, and west directions. */
             case 2:
-                return new Position(npc.getPosition().getX() + Misc.getRandom().nextInt(radius), npc.getPosition().getY() - Misc.getRandom().nextInt(radius), npc.getPosition().getZ());
+                return new Position(npc.getPosition().getX() + Misc.random(radius), npc.getPosition().getY() - Misc.random(radius), npc.getPosition().getZ());
 
                 /** Northeast, north, and east directions. */
             case 3:
-                return new Position(npc.getPosition().getX() - Misc.getRandom().nextInt(radius), npc.getPosition().getY() + Misc.getRandom().nextInt(radius), npc.getPosition().getZ());
+                return new Position(npc.getPosition().getX() - Misc.random(radius), npc.getPosition().getY() + Misc.random(radius), npc.getPosition().getZ());
 
                 /** Invalid number, no directions. */
             default:
