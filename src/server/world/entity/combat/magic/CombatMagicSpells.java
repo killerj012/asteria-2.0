@@ -8,8 +8,8 @@ import server.world.entity.Entity;
 import server.world.entity.Gfx;
 import server.world.entity.Projectile;
 import server.world.entity.combat.CombatFactory;
-import server.world.entity.combat.task.CombatTeleblockTask;
 import server.world.entity.combat.task.CombatPoisonTask.CombatPoison;
+import server.world.entity.combat.task.CombatTeleblockTask;
 import server.world.entity.npc.Npc;
 import server.world.entity.player.Player;
 import server.world.entity.player.skill.SkillManager;
@@ -2113,7 +2113,7 @@ public enum CombatMagicSpells {
 
         @Override
         public int spellRadius() {
-            return 3;
+            return 1;
         }
 
         @Override
@@ -2175,7 +2175,7 @@ public enum CombatMagicSpells {
 
         @Override
         public int spellRadius() {
-            return 3;
+            return 1;
         }
 
         @Override
@@ -2231,7 +2231,7 @@ public enum CombatMagicSpells {
 
         @Override
         public int spellRadius() {
-            return 3;
+            return 1;
         }
 
         @Override
@@ -2526,7 +2526,7 @@ public enum CombatMagicSpells {
 
         @Override
         public int spellRadius() {
-            return 3;
+            return 1;
         }
 
         @Override
@@ -2591,7 +2591,7 @@ public enum CombatMagicSpells {
 
         @Override
         public int spellRadius() {
-            return 3;
+            return 1;
         }
 
         @Override
@@ -2653,7 +2653,7 @@ public enum CombatMagicSpells {
 
         @Override
         public int spellRadius() {
-            return 3;
+            return 1;
         }
 
         @Override
@@ -2709,7 +2709,7 @@ public enum CombatMagicSpells {
 
         @Override
         public int spellRadius() {
-            return 3;
+            return 1;
         }
 
         @Override

@@ -82,5 +82,4 @@ public abstract class CombatAncientSpell extends CombatSpell {
      * @return how far from the target this spell can hit.
      */
     public abstract int spellRadius();
-
 }
