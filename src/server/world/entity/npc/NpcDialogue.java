@@ -130,7 +130,7 @@ public abstract class NpcDialogue {
         player.getPacketBuilder().sendString(NpcDefinition.getNpcDefinition()[mob].getName(), 4889);
         player.getPacketBuilder().sendString(text, 4890);
         player.getPacketBuilder().sendString(text2, 4891);
-        player.getPacketBuilder().sendMobHeadModel(mob, 4901);
+        player.getPacketBuilder().sendMobHeadModel(mob, 4888);
         player.getPacketBuilder().sendChatInterface(4887);
     }
 
