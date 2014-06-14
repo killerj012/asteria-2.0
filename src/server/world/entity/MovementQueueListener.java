@@ -48,6 +48,10 @@ public class MovementQueueListener {
                 listener.cancel();
             }
         }
+        
+        if (entity.isFollowing()) {
+        	entity.setFollowing(false);
+        }
 
         /** And begin listening for a new action. */
         listener = new EventListener() {
