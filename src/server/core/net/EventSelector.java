@@ -19,7 +19,7 @@ import server.util.Misc;
 /**
  * A reactor that handles read and write events as soon as they're recieved and
  * hands over accept events to the <code>networkPool</code> to be carried out
- * concurrently.
+ * asynchronously.
  * 
  * @author lare96
  * @author blakeman8192
