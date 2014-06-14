@@ -52,7 +52,7 @@ public final class Session {
      */
     private static final boolean SOCKET_FLOOD = false;
 
-    /** The RSA modulus and exponent key pairs. */
+    /** The private RSA modulus and exponent key pairs. */
     private static final BigInteger RSA_MODULUS = new BigInteger("95938610921572746524650133814858151901913076652480429598183870656291246099349831798849348614985734300731049329237933048794504022897746723376579898629175025215880393800715209863314290417958725518169765091231358927530763716352174212961746574137578805287960782611757859202906381434888168466423570348398899194541"),
             RSA_EXPONENT = new BigInteger("5378312350669976818157141639620196989298085716789189287634886259536048921510158872529601703029702119732149400119324443005798370082950416736889917871791338756888938417005708590957237003926710452309501641625737520695929480769820807041774825159548922857357239208866414166598649761006651610675718558204518453657");
 
@@ -103,6 +103,9 @@ public final class Session {
 
     /** The host address for this session. */
     private String host;
+
+    /** If the player logging in is a bot. */
+    private boolean botLogin = false;
 
     /**
      * The current connection stage of the session.
@@ -218,6 +221,7 @@ public final class Session {
     /**
      * Handles the login process for this session.
      */
+    @SuppressWarnings("unused")
     public void handleLogin() throws Exception {
         switch (getStage()) {
             case CONNECTED:
@@ -279,7 +283,11 @@ public final class Session {
                 /** Read the login block. */
                 PacketBuffer.ReadBuffer in = PacketBuffer.newReadBuffer(inData);
 
-                in.readByte(); // Skip the magic ID value 255.
+                int magicId = in.readByte();
+
+                if (magicId == 1) {
+                    botLogin = true;
+                }
 
                 /** Validate the client version. */
                 int clientVersion = in.readShort();
@@ -302,7 +310,7 @@ public final class Session {
                 String password = null;
 
                 /** Either decode RSA or ignore it depending on the settings. */
-                if (DECODE_RSA) {
+                if (DECODE_RSA && !botLogin) {
                     byte[] encryptionBytes = new byte[loginEncryptPacketSize];
                     in.getBuffer().get(encryptionBytes);
 
@@ -339,7 +347,7 @@ public final class Session {
                     ReadBuffer readStr = PacketBuffer.newReadBuffer(rsaBuffer);
                     username = readStr.readString();
                     password = readStr.readString();
-                } else if (!DECODE_RSA) {
+                } else {
                     in.getBuffer().get();
 
                     /** Set up the ISAAC ciphers. */

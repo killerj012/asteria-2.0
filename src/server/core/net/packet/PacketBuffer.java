@@ -753,6 +753,7 @@ public abstract class PacketBuffer {
          * @param from
          */
         public WriteBuffer writeBytes(byte[] from, int size) {
+            resizeBuffer(size);
             buffer.put(from, 0, size);
             return this;
         }

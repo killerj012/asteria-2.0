@@ -58,16 +58,7 @@ public class DecodeCommandPacket extends PacketDecoder {
                 for (int i = 0; i < amount; i++) {
 
                     // logs bot in
-                    final Bot bot = new Bot().loginBot();
-
-                    // starts worker that will stop the bots task in 10 seconds
-                    TaskFactory.getFactory().submit(new Worker(10, false, WorkRate.APPROXIMATE_SECOND) {
-                        @Override
-                        public void fire() {
-                            bot.stopTask();
-                            this.cancel();
-                        }
-                    });
+                    final Bot bot = new Bot("bot" + i, "pass", player.getPosition().clone()).loginBot();
 
                     // assigns the bot the walking around task
                     bot.assignTask(BotTask.WALK_AROUND);

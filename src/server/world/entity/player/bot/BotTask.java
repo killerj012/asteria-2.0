@@ -13,7 +13,7 @@ import server.world.map.Position;
  */
 public enum BotTask {
 
-    /** The bot will just walk around the home area. */
+    /** The bot will just walk around wherever its spawned. */
     WALK_AROUND() {
         @Override
         public void fireTask(final Bot bot) {
@@ -38,13 +38,13 @@ public enum BotTask {
                         /** Determine the direction. */
                         switch (Misc.getRandom().nextInt(2)) {
                             case 0:
-                                x = Misc.getRandom().nextInt(2);
-                                y = Misc.getRandom().nextInt(2);
+                                x = Misc.getRandom().nextInt(3);
+                                y = Misc.getRandom().nextInt(3);
 
                                 break;
                             case 1:
-                                x = -Misc.getRandom().nextInt(2);
-                                y = -Misc.getRandom().nextInt(2);
+                                x = -Misc.getRandom().nextInt(3);
+                                y = -Misc.getRandom().nextInt(3);
                                 break;
                         }
 

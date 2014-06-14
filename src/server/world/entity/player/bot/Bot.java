@@ -5,27 +5,30 @@ import java.net.Socket;
 import server.core.ThreadProvider;
 import server.core.task.impl.BotLoginTask;
 import server.core.worker.Worker;
-import server.util.Misc;
 import server.world.World;
 import server.world.entity.player.Player;
+import server.world.map.Position;
 
 /**
- * An entity that is presented as an actual player, but is really controlled by
- * the server. Bots <b>do not</b> currently support the use of RSA, so it will
- * have to be disabled for them to login.
+ * A fake player that is controlled by the server. Bots can be used to do
+ * anything a normal player can do by sending data through its socket instance,
+ * using update masks, and applying various functions meant for a normal player.
  * 
  * @author lare96
  */
 public class Bot {
 
-    /** All of the possible names for bots that can be generated. */
-    public static final String[] BOT_NAMES = { "NotABot", "ServerBot", "TestBot", "AutoBot", "WeirdBot", "CoolBot" };
+    /** Provides threads that will login bots. */
+    private static ThreadProvider provider = new ThreadProvider("BotThread", Thread.MIN_PRIORITY, true, false);
 
     /** The username of this bot. */
     private String username;
 
     /** The password of this bot. */
     private String password;
+
+    /** The position this bot will be moved to. */
+    private Position position;
 
     /** The instance of the player created when this bot logged in. */
     private Player player;
@@ -53,17 +56,10 @@ public class Bot {
      * @param password
      *        the password of this bot.
      */
-    public Bot(String username, String password) {
+    public Bot(String username, String password, Position position) {
         this.username = username;
         this.password = password;
-    }
-
-    /**
-     * Create a new {@link Bot} with a generated username and password.
-     */
-    public Bot() {
-        this.username = Misc.randomElement(BOT_NAMES);
-        this.password = "password";
+        this.position = position;
     }
 
     /**
@@ -77,7 +73,7 @@ public class Bot {
         /** This bot is offline. */
         if (!isOnline()) {
             queuedTask = newTask;
-            throw new IllegalStateException("Bot is offline! Task queued until bot logs in!");
+            return;
         }
 
         /** Stop any current tasks. */
@@ -130,15 +126,6 @@ public class Bot {
     }
 
     /**
-     * Constructs an instance of the thread that will log the bot in.
-     * 
-     * @return the thread task will log the bot in.
-     */
-    public Thread provideLogin() {
-        return new ThreadProvider("BotThread", Thread.MIN_PRIORITY, true, false).newThread(new BotLoginTask(this));
-    }
-
-    /**
      * Logs in this bot using the <code>loginBot</code> executor implementation.
      * 
      * @return this bot for chaining.
@@ -150,8 +137,8 @@ public class Bot {
             throw new IllegalStateException("This bot is already online!");
         }
 
-        /** Push the login task. */
-        provideLogin().start();
+        /** Create the thread and push the login task. */
+        provider.newThread(new BotLoginTask(this)).start();
         return this;
     }
 
@@ -264,5 +251,14 @@ public class Bot {
      */
     public BotTask getQueuedTask() {
         return queuedTask;
+    }
+
+    /**
+     * Gets the position this bot will be moved to.
+     * 
+     * @return the position this bot will be moved to.
+     */
+    public Position getPosition() {
+        return position;
     }
 }

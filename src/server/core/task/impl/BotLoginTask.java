@@ -91,7 +91,7 @@ public class BotLoginTask implements Task {
             outBuffer = PacketBuffer.newWriteBuffer();
             outBuffer.writeByte(16);
             outBuffer.writeByte(block.getBuffer().position() + 40);
-            outBuffer.writeByte(255);
+            outBuffer.writeByte(1);
             outBuffer.writeShort(317);
             outBuffer.writeByte(0);
 
@@ -115,8 +115,11 @@ public class BotLoginTask implements Task {
                 throw new BotLoginException(bot, "login rejected from server, opcode: " + opcode);
             }
 
+            /** Set the player instance. */
             bot.setPlayer(World.getPlayer(bot.getUsername()));
+            bot.getPlayer().move(bot.getPosition());
 
+            /** Start the queued task if we have any. */
             if (bot.getQueuedTask() != null) {
                 bot.assignTask(bot.getQueuedTask());
             }
