@@ -1,11 +1,13 @@
 Introduction
-  Asteria 2.0 is a runescape emulator built off of my previous release [URL="http://www.rune-server.org/runescape-development/rs2-server/downloads/530739-asteria-317-runesource.html"]Asteria[/URL]. Asteria as a whole has been in development for almost a year now, and I've learned so much since starting the project!
+
+Asteria 2.0 is a runescape emulator built off of my previous release Asteria. Asteria as a whole has been in development for almost a year now, and I've learned so much since starting the project!
   
 
 
 
 What's changed?
-  Well, to put it simply: everything. All of the problems that the original Asteria faced have been solved with much research, time, and dedication! Almost everything has been rewritten, and I took the time out to write up the major differences between this version and the last.
+
+Well, to put it simply: everything. All of the problems that the original Asteria faced have been solved with much research, time, and dedication! Almost everything has been rewritten, and I took the time out to write up the major differences between this version and the last.
 
 
 
@@ -22,3 +24,10 @@ Task/Events/Workers: Yeah, no more thread pool... simply because carrying out ge
 
 
 'Idle' States: If any threads but the main game thread haven't been recieving any activity for a certain amount of time they'll automatically terminate themselves and wait for new work without eating up resources. This allows more resources to be dedicated to the threads that do currently have work to carry out.
+
+
+
+
+How can I help?
+
+Submit pull requests and report issues as needed. Any help is greatly appriciated so thank you in advance if you do choose to help!
