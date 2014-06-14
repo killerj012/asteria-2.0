@@ -97,6 +97,8 @@ public abstract class CombatSpell extends Spell {
      *        the target of the spell.
      * @param spellAccurate
      *        if the spell actually hit the player.
+     * @param damageInflicted
+     *        the amount of damage that was inflicted.
      */
-    public abstract void endCast(Entity cast, Entity castOn, boolean spellAccurate);
+    public abstract void endCast(Entity cast, Entity castOn, boolean spellAccurate, int damageInflicted);
 }

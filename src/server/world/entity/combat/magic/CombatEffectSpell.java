@@ -28,7 +28,7 @@ public abstract class CombatEffectSpell extends CombatSpell {
     }
 
     @Override
-    public void endCast(Entity cast, Entity castOn, boolean spellAccurate) {
+    public void endCast(Entity cast, Entity castOn, boolean spellAccurate, int damageInflicted) {
         if (spellAccurate) {
             spellEffect(cast, castOn);
         }

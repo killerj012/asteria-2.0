@@ -1803,7 +1803,7 @@ public enum CombatMagicSpells {
     /** Ancient spellbook spells. */
     SMOKE_RUSH(new CombatAncientSpell() {
         @Override
-        public void spellEffect(Entity cast, Entity castOn) {
+        public void spellEffect(Entity cast, Entity castOn, int damageInflicted) {
             CombatFactory.poisonEntity(castOn, CombatPoison.MILD);
         }
 
@@ -1859,7 +1859,7 @@ public enum CombatMagicSpells {
     }),
     SHADOW_RUSH(new CombatAncientSpell() {
         @Override
-        public void spellEffect(Entity cast, Entity castOn) {
+        public void spellEffect(Entity cast, Entity castOn, int damageInflicted) {
             if (castOn.isPlayer()) {
                 Player player = (Player) castOn;
 
@@ -1924,13 +1924,15 @@ public enum CombatMagicSpells {
     }),
     BLOOD_RUSH(new CombatAncientSpell() {
         @Override
-        public void spellEffect(Entity cast, Entity castOn) {
-            if (Misc.getRandom().nextInt(4) == 0) {
-                if (cast.isPlayer()) {
-                    Player player = (Player) cast;
-                    player.getSkills()[Misc.HITPOINTS].increaseLevel(Misc.getRandom().nextInt(10), 99);
-                    SkillManager.refresh(player, SkillConstant.HITPOINTS);
-                }
+        public void spellEffect(Entity cast, Entity castOn, int damageInflicted) {
+            if (damageInflicted < 1) {
+                return;
+            }
+
+            if (cast.isPlayer()) {
+                Player player = (Player) cast;
+                player.getSkills()[Misc.HITPOINTS].increaseLevel((int) (damageInflicted * 0.25), player.getSkills()[Misc.HITPOINTS].getLevelForExperience());
+                SkillManager.refresh(player, SkillConstant.HITPOINTS);
             }
         }
 
@@ -1986,7 +1988,7 @@ public enum CombatMagicSpells {
     }),
     ICE_RUSH(new CombatAncientSpell() {
         @Override
-        public void spellEffect(Entity cast, Entity castOn) {
+        public void spellEffect(Entity cast, Entity castOn, int damageInflicted) {
             castOn.getMovementQueue().lockMovementFor(10, WorkRate.APPROXIMATE_SECOND);
         }
 
@@ -2042,7 +2044,7 @@ public enum CombatMagicSpells {
     }),
     SMOKE_BURST(new CombatAncientSpell() {
         @Override
-        public void spellEffect(Entity cast, Entity castOn) {
+        public void spellEffect(Entity cast, Entity castOn, int damageInflicted) {
             CombatFactory.poisonEntity(castOn, CombatPoison.MILD);
         }
 
@@ -2098,7 +2100,7 @@ public enum CombatMagicSpells {
     }),
     SHADOW_BURST(new CombatAncientSpell() {
         @Override
-        public void spellEffect(Entity cast, Entity castOn) {
+        public void spellEffect(Entity cast, Entity castOn, int damageInflicted) {
             if (castOn.isPlayer()) {
                 Player player = (Player) castOn;
 
@@ -2163,13 +2165,15 @@ public enum CombatMagicSpells {
     }),
     BLOOD_BURST(new CombatAncientSpell() {
         @Override
-        public void spellEffect(Entity cast, Entity castOn) {
-            if (Misc.getRandom().nextInt(4) == 0) {
-                if (cast.isPlayer()) {
-                    Player player = (Player) cast;
-                    player.getSkills()[Misc.HITPOINTS].increaseLevel(Misc.getRandom().nextInt(10), 99);
-                    SkillManager.refresh(player, SkillConstant.HITPOINTS);
-                }
+        public void spellEffect(Entity cast, Entity castOn, int damageInflicted) {
+            if (damageInflicted < 1) {
+                return;
+            }
+
+            if (cast.isPlayer()) {
+                Player player = (Player) cast;
+                player.getSkills()[Misc.HITPOINTS].increaseLevel((int) (damageInflicted * 0.25), player.getSkills()[Misc.HITPOINTS].getLevelForExperience());
+                SkillManager.refresh(player, SkillConstant.HITPOINTS);
             }
         }
 
@@ -2225,7 +2229,7 @@ public enum CombatMagicSpells {
     }),
     ICE_BURST(new CombatAncientSpell() {
         @Override
-        public void spellEffect(Entity cast, Entity castOn) {
+        public void spellEffect(Entity cast, Entity castOn, int damageInflicted) {
             castOn.getMovementQueue().lockMovementFor(10, WorkRate.APPROXIMATE_SECOND);
         }
 
@@ -2281,7 +2285,7 @@ public enum CombatMagicSpells {
     }),
     SMOKE_BLITZ(new CombatAncientSpell() {
         @Override
-        public void spellEffect(Entity cast, Entity castOn) {
+        public void spellEffect(Entity cast, Entity castOn, int damageInflicted) {
             CombatFactory.poisonEntity(castOn, CombatPoison.STRONG);
         }
 
@@ -2337,7 +2341,7 @@ public enum CombatMagicSpells {
     }),
     SHADOW_BLITZ(new CombatAncientSpell() {
         @Override
-        public void spellEffect(Entity cast, Entity castOn) {
+        public void spellEffect(Entity cast, Entity castOn, int damageInflicted) {
             if (castOn.isPlayer()) {
                 Player player = (Player) castOn;
 
@@ -2402,13 +2406,15 @@ public enum CombatMagicSpells {
     }),
     BLOOD_BLITZ(new CombatAncientSpell() {
         @Override
-        public void spellEffect(Entity cast, Entity castOn) {
-            if (Misc.getRandom().nextInt(4) == 0) {
-                if (cast.isPlayer()) {
-                    Player player = (Player) cast;
-                    player.getSkills()[Misc.HITPOINTS].increaseLevel(Misc.getRandom().nextInt(15), 99);
-                    SkillManager.refresh(player, SkillConstant.HITPOINTS);
-                }
+        public void spellEffect(Entity cast, Entity castOn, int damageInflicted) {
+            if (damageInflicted < 1) {
+                return;
+            }
+
+            if (cast.isPlayer()) {
+                Player player = (Player) cast;
+                player.getSkills()[Misc.HITPOINTS].increaseLevel((int) (damageInflicted * 0.25), player.getSkills()[Misc.HITPOINTS].getLevelForExperience());
+                SkillManager.refresh(player, SkillConstant.HITPOINTS);
             }
         }
 
@@ -2464,7 +2470,7 @@ public enum CombatMagicSpells {
     }),
     ICE_BLITZ(new CombatAncientSpell() {
         @Override
-        public void spellEffect(Entity cast, Entity castOn) {
+        public void spellEffect(Entity cast, Entity castOn, int damageInflicted) {
             castOn.getMovementQueue().lockMovementFor(15, WorkRate.APPROXIMATE_SECOND);
         }
 
@@ -2520,7 +2526,7 @@ public enum CombatMagicSpells {
     }),
     SMOKE_BARRAGE(new CombatAncientSpell() {
         @Override
-        public void spellEffect(Entity cast, Entity castOn) {
+        public void spellEffect(Entity cast, Entity castOn, int damageInflicted) {
             CombatFactory.poisonEntity(castOn, CombatPoison.SEVERE);
         }
 
@@ -2576,7 +2582,7 @@ public enum CombatMagicSpells {
     }),
     SHADOW_BARRAGE(new CombatAncientSpell() {
         @Override
-        public void spellEffect(Entity cast, Entity castOn) {
+        public void spellEffect(Entity cast, Entity castOn, int damageInflicted) {
             if (castOn.isPlayer()) {
                 Player player = (Player) castOn;
 
@@ -2641,13 +2647,15 @@ public enum CombatMagicSpells {
     }),
     BLOOD_BARRAGE(new CombatAncientSpell() {
         @Override
-        public void spellEffect(Entity cast, Entity castOn) {
-            if (Misc.getRandom().nextInt(4) == 0) {
-                if (cast.isPlayer()) {
-                    Player player = (Player) cast;
-                    player.getSkills()[Misc.HITPOINTS].increaseLevel(Misc.getRandom().nextInt(20), 99);
-                    SkillManager.refresh(player, SkillConstant.HITPOINTS);
-                }
+        public void spellEffect(Entity cast, Entity castOn, int damageInflicted) {
+            if (damageInflicted < 1) {
+                return;
+            }
+
+            if (cast.isPlayer()) {
+                Player player = (Player) cast;
+                player.getSkills()[Misc.HITPOINTS].increaseLevel((int) (damageInflicted * 0.25), player.getSkills()[Misc.HITPOINTS].getLevelForExperience());
+                SkillManager.refresh(player, SkillConstant.HITPOINTS);
             }
         }
 
@@ -2703,7 +2711,7 @@ public enum CombatMagicSpells {
     }),
     ICE_BARRAGE(new CombatAncientSpell() {
         @Override
-        public void spellEffect(Entity cast, Entity castOn) {
+        public void spellEffect(Entity cast, Entity castOn, int damageInflicted) {
             castOn.getMovementQueue().lockMovementFor(15, WorkRate.APPROXIMATE_SECOND);
         }
 

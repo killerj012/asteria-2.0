@@ -41,6 +41,9 @@ public class CombatHitTask extends Worker {
     /** Determines if at least one hit was accurate. */
     private boolean oneHitAccurate;
 
+    /** The total damage dealed this turn. */
+    private int totalDamage;
+
     /**
      * Create a new {@link CombatHitTask}.
      * 
@@ -78,7 +81,7 @@ public class CombatHitTask extends Worker {
         if (!oneHitAccurate) {
             if (combatHit.getHitType() == CombatType.MAGIC) {
                 target.gfx(new Gfx(85));
-                attacker.getCurrentlyCasting().endCast(attacker, target, false);
+                attacker.getCurrentlyCasting().endCast(attacker, target, false, 0);
 
                 if (attacker.isPlayer()) {
                     Player player = (Player) attacker;
@@ -94,8 +97,6 @@ public class CombatHitTask extends Worker {
 
         /** Send the hitsplats if needed. */
         if (combatHit.getHits() != null) {
-            int totalDamage = 0;
-
             if (combatHit.getHitType() != CombatType.MAGIC || oneHitAccurate) {
                 if (combatHit.getHits().length == 1) {
                     target.dealDamage(combatHit.getHits()[0].getHit());
@@ -316,7 +317,7 @@ public class CombatHitTask extends Worker {
         if (combatHit.getHitType() == CombatType.MAGIC) {
             if (oneHitAccurate) {
                 target.gfx(attacker.getCurrentlyCasting().endGfx());
-                attacker.getCurrentlyCasting().endCast(attacker, target, true);
+                attacker.getCurrentlyCasting().endCast(attacker, target, true, totalDamage);
 
                 if (attacker.isPlayer()) {
                     Player player = (Player) attacker;
