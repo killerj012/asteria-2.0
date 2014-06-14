@@ -7,6 +7,7 @@ import server.world.entity.Hit;
 import server.world.entity.npc.Npc;
 import server.world.entity.player.Player;
 import server.world.item.Item;
+import server.world.map.Location;
 
 /**
  * A {@link CombatSpell} implementation that is primarily used for spells that
@@ -23,7 +24,7 @@ public abstract class CombatAncientSpell extends CombatSpell {
         if (spellAccurate) {
             spellEffect(cast, castOn);
 
-            if (this.spellRadius() == 0) {
+            if (this.spellRadius() == 0 || !Location.inMultiCombat(castOn)) {
                 return;
             }
 
