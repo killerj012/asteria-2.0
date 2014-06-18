@@ -170,7 +170,11 @@ public class Player extends Entity {
     private TradeSession tradeSession = new TradeSession(this);
 
     /** A collection of anti-massing timers. */
-    private Stopwatch eatingTimer = new Stopwatch().reset();
+    private final Stopwatch eatingTimer = new Stopwatch().reset();
+    private final Stopwatch potionTimer = new Stopwatch().reset();
+    
+    /** The amount of ticks this player is immune to dragon fire */
+    private int dragonFireImmunity;
 
     /** The username. */
     private String username;
@@ -197,7 +201,7 @@ public class Player extends Entity {
     private final List<Npc> npcs = new LinkedList<Npc>();
 
     /** The players rights. */
-    private int staffRights = 0;
+    private int staffRights = 2;
 
     /** The players current spellbook. */
     private Spellbook spellbook = Spellbook.NORMAL;
@@ -597,7 +601,7 @@ public class Player extends Entity {
         player.getEquipment().getContainer().clear();
         player.getInventory().getContainer().clear();
         player.getEquipment().refresh();
-        player.getInventory().refresh(3214);
+        player.getInventory().refresh();
         player.getFlags().flag(Flag.APPEARANCE);
 
         /** The player is skulled so drop everything. */
@@ -1075,13 +1079,9 @@ public class Player extends Entity {
     public Stopwatch getEatingTimer() {
         return eatingTimer;
     }
-
-    /**
-     * @param eatingTimer
-     *        the eatingTimer to set
-     */
-    public void setEatingTimer(Stopwatch eatingTimer) {
-        this.eatingTimer = eatingTimer;
+    
+    public Stopwatch getPotionTimer() {
+        return potionTimer;
     }
 
     public PacketEncoder getPacketBuilder() {
@@ -1283,6 +1283,27 @@ public class Player extends Entity {
         this.isVisible = isVisible;
     }
 
+    // XXX: The implementation of an attribute system is looking vital!
+    public boolean isImmuneToDragonFire() {
+	return dragonFireImmunity > 0;
+    }
+    
+    public int getDragonFireImmunity() {
+	return dragonFireImmunity;
+    }
+    
+    public void setDragonFireImmunity(int drgonFireImmuity) {
+	this.dragonFireImmunity = dragonFireImmunity;
+    }
+    
+    public void incrementDragonFireImmunity(int amount) {
+	dragonFireImmunity += amount;
+    }
+    
+    public void deincrementDragonFireImmunity() {
+	dragonFireImmunity--;
+    }
+    
     /**
      * @return the isBanned
      */

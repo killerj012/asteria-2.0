@@ -785,6 +785,7 @@ public abstract class PacketBuffer {
             int requiredSpace = bytePos - buffer.position() + 1;
             requiredSpace += (amount + 7) / 8;
             if (buffer.remaining() < requiredSpace) {
+        	System.out.println("RESIZE!!");
                 ByteBuffer old = buffer;
                 buffer = ByteBuffer.allocate(old.capacity() + requiredSpace);
                 old.flip();

@@ -39,7 +39,7 @@ public final class Rs2Engine implements Runnable {
      * up. Otherwise this value should be false for more popular servers that
      * get connections the moment they start they server.
      */
-    public static final boolean INITIALLY_IDLE = true;
+    public static final boolean INITIALLY_IDLE = false;
 
     /**
      * An average priority {@link PriorityServicePool} that handles short lived
