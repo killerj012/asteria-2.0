@@ -1,24 +1,27 @@
-package server.core.net;
+package server.core.task.impl;
 
 import java.io.IOException;
 import java.nio.channels.SelectionKey;
 import java.nio.channels.SocketChannel;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import server.core.Service;
+import server.core.net.EventSelector;
+import server.core.net.HostGateway;
+import server.core.net.Session;
+import server.core.task.Task;
 
 /**
- * A service carried out by the <code>networkPool</code> that will accept
- * incoming connections.
+ * An asynchronous task carried out by the <code>taskEngine</code> that will
+ * accept incoming connections.
  * 
  * @author lare96
  */
-public class SessionService implements Service {
+public class BuildSessionTask implements Task {
 
     /** Used to keep track of how many connections we've accepted. */
     private AtomicInteger eventCount = new AtomicInteger();
 
-    /** The maximum amount of connections that will be accepted in this event. */
+    /** The maximum amount of connections that will be accepted in this task. */
     private static final int MAXIMUM_ACCEPT_EVENT = 5;
 
     @Override
@@ -56,6 +59,6 @@ public class SessionService implements Service {
 
     @Override
     public String name() {
-        return SessionService.class.getSimpleName();
+        return BuildSessionTask.class.getSimpleName();
     }
 }

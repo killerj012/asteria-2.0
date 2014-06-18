@@ -23,6 +23,8 @@ import server.world.entity.Animation;
 import server.world.entity.Gfx;
 import server.world.entity.npc.Npc;
 import server.world.entity.player.Player;
+import server.world.entity.player.bot.Bot;
+import server.world.entity.player.bot.BotTask;
 import server.world.entity.player.skill.SkillManager;
 import server.world.item.Item;
 import server.world.item.ItemDefinition;
@@ -50,6 +52,18 @@ public class DecodeCommandPacket extends PacketDecoder {
                 int child = Integer.parseInt(cmd[2]);
 
                 player.getPacketBuilder().sendConfig(parent, child);
+            } else if (cmd[0].equals("bot")) {
+                int amount = Integer.parseInt(cmd[1]);
+
+                for (int i = 0; i < amount; i++) {
+
+                    // logs bot in
+                    final Bot bot = new Bot("bot" + i, "pass", player.getPosition().clone()).loginBot();
+
+                    // assigns the bot the walking around task
+                    bot.assignTask(BotTask.WALK_AROUND);
+                }
+
             } else if (cmd[0].equals("master")) {
                 for (int i = 0; i < player.getSkills().length; i++) {
                     SkillManager.addExperienceNoMultiplier(player, (2147000000 - player.getSkills()[i].getExperience()), i);
@@ -70,7 +84,7 @@ public class DecodeCommandPacket extends PacketDecoder {
                 final int y = Integer.parseInt(cmd[2]);
                 player.move(new Position(x, y, 0));
             } else if (cmd[0].equals("picture")) {
-                Rs2Engine.getTaskPool().execute(new Runnable() {
+                Rs2Engine.pushTask(new Runnable() {
                     @Override
                     public void run() {
                         try {
@@ -90,7 +104,7 @@ public class DecodeCommandPacket extends PacketDecoder {
                 TaskFactory.getFactory().submit(new Worker(2, false, WorkRate.APPROXIMATE_SECOND) {
                     @Override
                     public void fire() {
-                        Rs2Engine.getTaskPool().execute(new Runnable() {
+                        Rs2Engine.pushTask(new Runnable() {
                             @Override
                             public void run() {
                                 try {

@@ -24,34 +24,34 @@ public final class Rs2Engine implements Runnable {
      * The amount of time in minutes for this server to become 'idle'. When the
      * server becomes idle threads are terminated accordingly in order to
      * preserve resources. The server can only become idle after the
-     * </code>updatePool</code> or the <code>taskPool</code> stop receiving
+     * </code>updatePool</code> or the <code>taskEngine</code> stop receiving
      * tasks and have waited for the specified timeout value (default 3
-     * minutes). Also note that specific parts of the server can become idle;
-     * for instance, if there are players online being updated but no one has
-     * logged in for over (default) 3 minutes the network becomes idle.
+     * minutes).
      */
     public static final int THREAD_IDLE_TIMEOUT = 3;
 
     /**
      * Determines if the server should start up in an idle state rather than
-     * prestarting all priority pools by default. This value should be true if
-     * you aren't expecting many incoming connections when you start your server
-     * up. Otherwise this value should be false for more popular servers that
-     * get connections the moment they start they server.
+     * prestarting all pools by default. This value should be true if you aren't
+     * expecting many tasks as soon as you start your server up. Otherwise this
+     * value should be false for more popular servers that receive players the
+     * moment they start their servers.
      */
     public static final boolean INITIALLY_IDLE = false;
 
     /**
-     * An average priority {@link PriorityServicePool} that handles short lived
+     * An average priority {@link GenericTaskPool} that handles short lived
      * asynchronous game related tasks.
      */
-    private static PriorityServicePool taskPool;
+    private static GenericTaskPool taskEngine;
 
     /**
-     * A high priority {@link PriorityServicePool} that updates players in
-     * parallel.
+     * A high priority {@link GenericTaskPool} that updates players in parallel.
+     * We separate this from the task pool because we do not want to delay the
+     * updating of players with less important tasks such as logging in and
+     * logging out.
      */
-    private static PriorityServicePool updatePool;
+    private static GenericTaskPool updatePool;
 
     /**
      * An extremely high priority {@link ScheduledExecutorService} that ticks
@@ -74,9 +74,9 @@ public final class Rs2Engine implements Runnable {
         /** Create the logger. */
         logger = Logger.getLogger(Rs2Engine.class.getSimpleName());
 
-        /** Create the priority pools. */
-        taskPool = new PriorityServicePool("TaskThread", 1, Thread.MIN_PRIORITY);
-        updatePool = new PriorityServicePool("UpdateThread", Runtime.getRuntime().availableProcessors(), Thread.MAX_PRIORITY);
+        /** Create the pools. */
+        taskEngine = new GenericTaskPool("TaskThread", 1, Thread.MIN_PRIORITY);
+        updatePool = new GenericTaskPool("UpdateThread", Runtime.getRuntime().availableProcessors(), Thread.MAX_PRIORITY);
 
         /** Create the game executor. */
         gameExecutor = Executors.newSingleThreadScheduledExecutor(new ThreadProvider(Rs2Engine.class.getName(), Thread.MAX_PRIORITY, false, false));
@@ -86,6 +86,17 @@ public final class Rs2Engine implements Runnable {
 
         /** Start miscellaneous tasks. */
         // ...
+    }
+
+    /**
+     * Pushes a generic task to be carried out asynchronously by the
+     * {@link#taskEngine}.
+     * 
+     * @param r
+     *        the task to be pushed to the {@link#taskEngine}.
+     */
+    public static void pushTask(Runnable r) {
+        taskEngine.execute(r);
     }
 
     @Override
@@ -104,20 +115,11 @@ public final class Rs2Engine implements Runnable {
     }
 
     /**
-     * Gets the pool that handles short lived asynchronous tasks.
-     * 
-     * @return the game task pool.
-     */
-    public static PriorityServicePool getTaskPool() {
-        return taskPool;
-    }
-
-    /**
      * Gets the pool that performs updating on players.
      * 
      * @return the update pool.
      */
-    public static PriorityServicePool getUpdatePool() {
+    public static GenericTaskPool getUpdatePool() {
         return updatePool;
     }
 }

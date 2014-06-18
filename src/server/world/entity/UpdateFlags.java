@@ -9,7 +9,7 @@ import java.util.BitSet;
  */
 public class UpdateFlags {
 
-    /** An bit set holding the values for the update flags. */
+    /** A bit set holding the values for the update flags. */
     private BitSet bits = new BitSet(Flag.values().length);
 
     /**

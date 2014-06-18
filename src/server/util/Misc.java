@@ -8,6 +8,7 @@ import java.io.IOException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Random;
 import java.util.Scanner;
 import java.util.concurrent.ThreadLocalRandom;
@@ -148,25 +149,25 @@ public final class Misc {
     }
 
     /**
-     * Picks a random element from out of an Item[] array.
+     * Picks a random element out of any array type.
      * 
      * @param array
-     *        the Item[] array to pick the element from.
+     *        the array to pick the element from.
      * @return the element chosen.
      */
-    public static Item randomElement(Item[] array) {
+    public static <T> T randomElement(T[] array) {
         return array[(int) (Math.random() * array.length)];
     }
 
     /**
-     * Picks a random element from out of an String[] array.
+     * Picks a random element out of any list type.
      * 
-     * @param array
-     *        the String[] array to pick the element from.
+     * @param list
+     *        the list to pick the element from.
      * @return the element chosen.
      */
-    public static String randomElement(String[] array) {
-        return array[(int) (Math.random() * array.length)];
+    public static <T> T randomElement(List<T> list) {
+        return list.get((int) (Math.random() * list.size()));
     }
 
     /**
@@ -602,18 +603,12 @@ public final class Misc {
         }
 
         /**
-         * Calculates success based on the given percentage.
+         * Calculates success based on the underlying chance.
          * 
-         * @param percentage
-         *        the percentage given.
          * @return true if it was successful.
          */
-        public boolean success(int percentage) {
-            if (percentage > 100 || percentage < 0) {
-                throw new IllegalArgumentException("Percentage out of range!");
-            }
-
-            return percentage < this.percentage;
+        public boolean success() {
+            return (random(100) + 1) <= percentage;
         }
 
         /**

@@ -5,7 +5,8 @@ import java.nio.ByteBuffer;
 /**
  * An abstract parent class for two buffer type objects, one for reading data
  * and one for writing data. Provides static factory methods for initializing
- * these child buffers. This buffer has been edited to write raw packet headers.
+ * these child buffers. This buffer has been edited to write raw packet headers
+ * and automatically resizes itself when needed.
  * 
  * @author blakeman8192
  * @author lare96
@@ -45,9 +46,7 @@ public abstract class PacketBuffer {
         BYTE_ACCESS, BIT_ACCESS
     }
 
-    /**
-     * Bit masks.
-     */
+    /** The bit masks. */
     public static final int[] BIT_MASK = { 0, 0x1, 0x3, 0x7, 0xf, 0x1f, 0x3f, 0x7f, 0xff, 0x1ff, 0x3ff, 0x7ff, 0xfff, 0x1fff, 0x3fff, 0x7fff, 0xffff, 0x1ffff, 0x3ffff, 0x7ffff, 0xfffff, 0x1fffff, 0x3fffff, 0x7fffff, 0xffffff, 0x1ffffff, 0x3ffffff, 0x7ffffff, 0xfffffff, 0x1fffffff, 0x3fffffff, 0x7fffffff, -1 };
 
     /** The current AccessType of the buffer. */
@@ -57,36 +56,56 @@ public abstract class PacketBuffer {
     private int bitPosition = 0;
 
     /**
-     * Creates a new InBuffer.
+     * Create a new {@link ReadBuffer} with the specified backing buffer.
      * 
-     * @param data
-     *        the data
-     * @return a new InBuffer
+     * @param buffer
+     *        the backing buffer to use.
+     * @return the new buffer.
      */
-    public static final ReadBuffer newReadBuffer(ByteBuffer data) {
-        return new ReadBuffer(data);
+    public static final ReadBuffer newReadBuffer(ByteBuffer buffer) {
+        return new ReadBuffer(buffer);
     }
 
     /**
-     * Creates a new OutBuffer.
+     * Create a new {@link ReadBuffer} at the specified size.
      * 
      * @param size
-     *        the size
-     * @return a new OutBuffer
+     *        the size of the buffer.
+     * @return the new buffer.
      */
-    public static final WriteBuffer newWriteBuffer(int size) {
-        return new WriteBuffer(size);
+    public static final ReadBuffer newReadBuffer(int size) {
+        return new ReadBuffer(ByteBuffer.allocate(size));
     }
 
     /**
-     * Creates a new OutBuffer.
+     * Create a new {@link WriteBuffer} with the specified backing buffer.
      * 
-     * @param size
-     *        the size
-     * @return a new OutBuffer
+     * @param buffer
+     *        the backing buffer to use.
+     * @return the new buffer.
      */
     public static final WriteBuffer newWriteBuffer(ByteBuffer buffer) {
         return new WriteBuffer(buffer);
+    }
+
+    /**
+     * Create a new {@link WriteBuffer} at the specified size.
+     * 
+     * @param size
+     *        the size of the buffer.
+     * @return the new buffer.
+     */
+    public static final WriteBuffer newWriteBuffer(int size) {
+        return new WriteBuffer(ByteBuffer.allocate(size));
+    }
+
+    /**
+     * Create a new {@link WriteBuffer} at the default size.
+     * 
+     * @return the new buffer.
+     */
+    public static final WriteBuffer newWriteBuffer() {
+        return new WriteBuffer(ByteBuffer.allocate(16));
     }
 
     /**
@@ -612,7 +631,6 @@ public abstract class PacketBuffer {
         public ByteBuffer getBuffer() {
             return buffer;
         }
-
     }
 
     /**
@@ -628,16 +646,6 @@ public abstract class PacketBuffer {
 
         /** The position of the packet length in the packet header. */
         private int lengthPosition = 0;
-
-        /**
-         * Creates a new OutBuffer.
-         * 
-         * @param size
-         *        the size
-         */
-        private WriteBuffer(int size) {
-            buffer = ByteBuffer.allocate(size);
-        }
 
         /**
          * Creates a new OutBuffer.
@@ -709,6 +717,7 @@ public abstract class PacketBuffer {
          * actual variable length packet is complete.
          */
         public WriteBuffer finishVariablePacketHeader() {
+            resizeBuffer(1);
             buffer.put(lengthPosition, (byte) (buffer.position() - lengthPosition - 1));
             return this;
         }
@@ -719,6 +728,7 @@ public abstract class PacketBuffer {
          * the variable length packet is complete.
          */
         public WriteBuffer finishVariableShortPacketHeader() {
+            resizeBuffer(2);
             buffer.putShort(lengthPosition, (short) (buffer.position() - lengthPosition - 2));
             return this;
         }
@@ -743,6 +753,7 @@ public abstract class PacketBuffer {
          * @param from
          */
         public WriteBuffer writeBytes(byte[] from, int size) {
+            resizeBuffer(size);
             buffer.put(from, 0, size);
             return this;
         }
@@ -833,6 +844,7 @@ public abstract class PacketBuffer {
          *        the value type
          */
         public WriteBuffer writeByte(int value, ValueType type) {
+            resizeBuffer(1);
             if (getAccessType() != AccessType.BYTE_ACCESS) {
                 throw new IllegalStateException("Illegal access type.");
             }
@@ -875,6 +887,7 @@ public abstract class PacketBuffer {
          *        the byte order
          */
         public WriteBuffer writeShort(int value, ValueType type, ByteOrder order) {
+            resizeBuffer(2);
             switch (order) {
                 case BIG:
                     writeByte(value >> 8);
@@ -940,6 +953,7 @@ public abstract class PacketBuffer {
          *        the byte order
          */
         public WriteBuffer writeInt(int value, ValueType type, ByteOrder order) {
+            resizeBuffer(4);
             switch (order) {
                 case BIG:
                     writeByte(value >> 24);
@@ -1017,6 +1031,7 @@ public abstract class PacketBuffer {
          *        the byte order
          */
         public WriteBuffer writeLong(long value, ValueType type, ByteOrder order) {
+            resizeBuffer(8);
             switch (order) {
                 case BIG:
                     writeByte((int) (value >> 56));
@@ -1090,11 +1105,30 @@ public abstract class PacketBuffer {
          *        the string
          */
         public WriteBuffer writeString(String string) {
+            resizeBuffer(string.getBytes().length + 1);
             for (byte value : string.getBytes()) {
                 writeByte(value);
             }
             writeByte(10);
             return this;
+        }
+
+        /**
+         * Checks if this buffer needs to be resized and does so if needed.
+         * 
+         * @param given
+         *        the given amount of bytes.
+         */
+        public void resizeBuffer(int given) {
+            if ((buffer.position() + given + 1) >= buffer.capacity()) {
+                int oldPosition = buffer.position();
+                byte[] oldBuffer = buffer.array();
+                int newLength = (buffer.capacity() * 2);
+                buffer = ByteBuffer.allocate(newLength);
+                buffer.position(oldPosition);
+                System.arraycopy(oldBuffer, 0, buffer.array(), 0, oldBuffer.length);
+                resizeBuffer(given);
+            }
         }
 
         /**
@@ -1105,6 +1139,5 @@ public abstract class PacketBuffer {
         public ByteBuffer getBuffer() {
             return buffer;
         }
-
     }
 }

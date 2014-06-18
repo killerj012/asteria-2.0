@@ -13,12 +13,13 @@ import server.core.Rs2Engine;
 import server.core.net.Session.Stage;
 import server.core.net.packet.PacketBuffer;
 import server.core.net.packet.PacketDecoder;
+import server.core.task.impl.BuildSessionTask;
 import server.util.Misc;
 
 /**
  * A reactor that handles read and write events as soon as they're recieved and
- * hands over accept events to the <code>networkPool</code> to be carried out
- * concurrently.
+ * hands over accept events to the <code>taskEngine</code> to be carried out
+ * asynchronously.
  * 
  * @author lare96
  * @author blakeman8192
@@ -62,9 +63,9 @@ public final class EventSelector {
 
     /**
      * Determines which clients are ready for networking events and handles
-     * those events straight away for them. Accept events are dispatched to the
-     * <code>networkPool</code> and read/write events are handled right on the
-     * game thread.
+     * those events straight away for them. Accept events are pushed to the
+     * <code>taskEngine</code> and read/write events are handled right on the
+     * game thread as soon as they are recieved.
      */
     public static void tick() {
         try {
@@ -81,7 +82,7 @@ public final class EventSelector {
 
                     /** Accept the key concurrently if needed. */
                 } else if (key.isAcceptable()) {
-                    Rs2Engine.getTaskPool().execute(new SessionService());
+                    Rs2Engine.pushTask(new BuildSessionTask());
                     iterator.remove();
 
                     /** Decode packets for the key if needed. */

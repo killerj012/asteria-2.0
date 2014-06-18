@@ -1,12 +1,14 @@
 package server.world.item;
 
+import java.util.Comparator;
+
 /**
  * An in-game item that can be placed on miscellaneous interfaces using a
  * packet.
  * 
  * @author lare96
  */
-public class Item {
+public class Item implements Comparator<Item> {
 
     /** The id of the item. */
     private int id;
@@ -139,5 +141,19 @@ public class Item {
      */
     public ItemDefinition getDefinition() {
         return ItemDefinition.getDefinitions()[id];
+    }
+
+    @Override
+    public int compare(Item o1, Item o2) {
+        if (o1 == null || o2 == null) {
+            throw new IllegalArgumentException("Cannot compare {Item}s with null value.");
+        }
+
+        if (o1.getDefinition().getGeneralStorePrice() > o2.getDefinition().getGeneralStorePrice()) {
+            return 1;
+        } else if (o1.getDefinition().getGeneralStorePrice() < o2.getDefinition().getGeneralStorePrice()) {
+            return -1;
+        }
+        return 0;
     }
 }
