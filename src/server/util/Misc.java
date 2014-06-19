@@ -133,6 +133,10 @@ public final class Misc {
     /** A table of valid characters. */
     public static final char VALID_CHARS[] = { '_', 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '!', '@', '#', '$', '%', '^', '&', '*', '(', ')', '-', '+', '=', ':', ';', '.', '>', '<', ',', '"', '[', ']', '|', '?', '/', '`' };
 
+    /** To prevent instantiation. */
+    private Misc() {
+    }
+
     /**
      * Gets if the player is allowed to click an object based on the position of
      * the object and player

@@ -41,7 +41,7 @@ public class CombatHitTask extends Worker {
     /** Determines if at least one hit was accurate. */
     private boolean oneHitAccurate;
 
-    /** The total damage dealed this turn. */
+    /** The total damage dealt this turn. */
     private int totalDamage;
 
     /**

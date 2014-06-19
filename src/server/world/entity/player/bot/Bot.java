@@ -117,7 +117,7 @@ public class Bot {
      * @return true if this bot is online.
      */
     public boolean isOnline() {
-        return World.getPlayer(username) != null;
+        return World.getPlayers().contains(player);
     }
 
     @Override

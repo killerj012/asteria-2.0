@@ -137,9 +137,6 @@ public final class EventSelector {
                             /** Decode the packet payload. */
                             if (session.getInData().remaining() >= session.getPacketLength()) {
 
-                                /** Reset the timeout counter. */
-                                session.getTimeoutStopwatch().reset();
-
                                 /**
                                  * Gets the buffer's position before this packet
                                  * is read.

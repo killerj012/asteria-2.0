@@ -60,8 +60,8 @@ public class HostThrottler {
 
             /**
              * If the time since the last connection is less than
-             * <code>THROTTLE_TIME_INTERVAL</code> and the amount of
-             * connections is equal to or above the
+             * <code>THROTTLE_TIME_INTERVAL</code> and the amount of connections
+             * is equal to or above the
              * <code>AMOUNT_OF_CONNECTIONS_PER_SECOND</code> then the host is
              * connecting too fast.
              */
@@ -83,7 +83,7 @@ public class HostThrottler {
          * logged in) then the host is added to the connection list with its own
          * timer.
          */
-        timeMap.put(host, new Stopwatch().reset());
+        timeMap.putIfAbsent(host, new Stopwatch().reset());
         return true;
     }
 

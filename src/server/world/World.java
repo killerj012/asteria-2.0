@@ -24,7 +24,6 @@ import server.world.object.RegisterableWorldObject;
  * Manages in-game entities in the game world.
  * 
  * @author lare96
- * @author blakeman8192
  */
 public final class World {
 
