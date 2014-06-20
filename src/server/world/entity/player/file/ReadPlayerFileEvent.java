@@ -2,14 +2,16 @@ package server.world.entity.player.file;
 
 import java.io.File;
 import java.io.FileReader;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.logging.Logger;
 
 import server.util.Misc;
 import server.world.entity.combat.task.CombatPoisonTask.CombatPoison;
 import server.world.entity.player.Player;
 import server.world.entity.player.PlayerFileEvent;
-import server.world.entity.player.content.Spellbook;
 import server.world.entity.player.content.AssignWeaponInterface.FightType;
+import server.world.entity.player.content.Spellbook;
 import server.world.entity.player.skill.Skill;
 import server.world.entity.player.skill.SkillManager;
 import server.world.item.Item;
@@ -28,6 +30,9 @@ import com.google.gson.JsonParser;
  */
 public class ReadPlayerFileEvent extends PlayerFileEvent {
 
+    /** A {@code String} representation of our players directory. */
+    private static final String DIR = "data/players";
+
     /** A {@link Logger} for printing debugging info. */
     private static Logger logger = Logger.getLogger(ReadPlayerFileEvent.class.getName());
 
@@ -42,21 +47,25 @@ public class ReadPlayerFileEvent extends PlayerFileEvent {
      */
     public ReadPlayerFileEvent(Player player) {
         super(player);
-
-        if (!file().exists()) {
-            SkillManager.login(player);
-            logger.info(player + " is logging in for the first time!");
-            returnCode = Misc.LOGIN_RESPONSE_OK;
-            player.setNeedsRead(false);
-        }
     }
 
     @Override
     public void run() {
         try {
+            Path path = Paths.get(DIR, getPlayer().getUsername() + ".json");
+            File file = path.toFile();
+
+            if (!file.exists()) {
+                SkillManager.login(getPlayer());
+                logger.info(getPlayer() + " is logging in for the first time!");
+                returnCode = Misc.LOGIN_RESPONSE_OK;
+                getPlayer().setNeedsRead(false);
+                return;
+            }
+
             final JsonParser fileParser = new JsonParser();
             final Gson builder = new GsonBuilder().create();
-            final Object object = fileParser.parse(new FileReader(file()));
+            final Object object = fileParser.parse(new FileReader(file));
             final JsonObject reader = (JsonObject) object;
 
             final String username = reader.get("username").getAsString();
@@ -131,11 +140,6 @@ public class ReadPlayerFileEvent extends PlayerFileEvent {
             logger.info("Error while reading data for " + getPlayer());
             returnCode = Misc.LOGIN_RESPONSE_COULD_NOT_COMPLETE_LOGIN;
         }
-    }
-
-    @Override
-    public File file() {
-        return new File("./data/players/" + getPlayer().getUsername() + ".json");
     }
 
     /**

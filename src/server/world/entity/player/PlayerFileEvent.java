@@ -1,7 +1,5 @@
 package server.world.entity.player;
 
-import java.io.File;
-
 /**
  * Used for reading and writing events to player files.
  * 
@@ -26,13 +24,6 @@ public abstract class PlayerFileEvent {
      * The event that will be performed on the file.
      */
     public abstract void run();
-
-    /**
-     * Gets the file that the event will be performed on.
-     * 
-     * @return the file that the event will be performed on.
-     */
-    public abstract File file();
 
     /**
      * Gets player taking part in this event.
