@@ -164,23 +164,24 @@ public final class World {
     }
 
     /**
-     * Gets the instance of a player by their online name.
+     * Returns an instance of a {@link Player} object for the specified username.
+     * hash.
      * 
-     * @param username
-     *        the username to get the player instance of.
-     * @return the instance of the player with the specified username.
+     * @param username The username hash.
+     * @return The <code>Player</code> object representing the player or
+     *         {@code null} if no such player exists.
      */
-    public static Player getPlayer(String username) {
-        for (Player player : players) {
-            if (player == null) {
-                continue;
-            }
+    public static Player getPlayer(long username) {
+	for (Player player : players) {
+	    if (player == null) {
+		continue;
+	    }
 
-            if (player.getUsername().equals(username)) {
-                return player;
-            }
-        }
-        return null;
+	    if (player.getUsernameHash() == username) {
+		return player;
+	    }
+	}
+	return null;
     }
 
     /**

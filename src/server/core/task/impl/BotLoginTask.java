@@ -13,6 +13,7 @@ import server.core.net.packet.PacketBuffer;
 import server.core.net.packet.PacketBuffer.ReadBuffer;
 import server.core.net.packet.PacketBuffer.WriteBuffer;
 import server.core.task.Task;
+import server.util.Misc;
 import server.world.World;
 import server.world.entity.player.bot.Bot;
 import server.world.entity.player.bot.BotLoginException;
@@ -116,7 +117,7 @@ public class BotLoginTask implements Task {
             }
 
             /** Set the player instance. */
-            bot.setPlayer(World.getPlayer(bot.getUsername()));
+            bot.setPlayer(World.getPlayer(Misc.nameToLong(bot.getUsername())));
             bot.getPlayer().move(bot.getPosition());
 
             /** Start the queued task if we have any. */

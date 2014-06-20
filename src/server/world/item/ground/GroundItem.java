@@ -108,7 +108,7 @@ public class GroundItem {
                 }
                 break;
             case SEEN_BY_OWNER:
-                World.getPlayer(player.getUsername()).getPacketBuilder().removeGroundItem(this);
+                World.getPlayer(player.getUsernameHash()).getPacketBuilder().removeGroundItem(this);
                 break;
         }
     }

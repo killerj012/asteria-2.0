@@ -38,17 +38,17 @@ public class PrivateMessage {
         player.getPacketBuilder().sendPrivateMessagingList(2);
 
         /** Updates the list with all your friends. */
-        for (long l : player.getFriends()) {
-            if (l == 0) {
+        for (long name : player.getFriends()) {
+            if (name == 0) {
                 continue;
             }
 
-            Player load = World.getPlayer(Misc.longToName(l));
+            Player load = World.getPlayer(name);
 
             if (load != null) {
-                player.getPacketBuilder().loadPrivateMessage(l, 1);
+                player.getPacketBuilder().loadPrivateMessage(name, 1);
             } else {
-                player.getPacketBuilder().loadPrivateMessage(l, 0);
+                player.getPacketBuilder().loadPrivateMessage(name, 0);
             }
         }
 
@@ -104,13 +104,9 @@ public class PrivateMessage {
         player.getFriends().add(name);
 
         /** Update the friends list with online/offline. */
-        Player load = World.getPlayer(Misc.longToName(name));
+        Player load = World.getPlayer(name);
 
-        if (load != null) {
-            player.getPacketBuilder().loadPrivateMessage(name, 1);
-        } else {
-            player.getPacketBuilder().loadPrivateMessage(name, 0);
-        }
+        player.getPacketBuilder().loadPrivateMessage(name, load == null ? 0 : 1);
     }
 
     /**

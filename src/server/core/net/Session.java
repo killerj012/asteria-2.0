@@ -6,6 +6,8 @@ import java.nio.channels.SelectionKey;
 import java.nio.channels.SocketChannel;
 import java.security.SecureRandom;
 import java.util.logging.Logger;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import server.core.net.packet.PacketBuffer;
 import server.core.net.packet.PacketBuffer.ReadBuffer;
@@ -36,8 +38,14 @@ import server.world.entity.player.skill.SkillManager;
  * 
  * @author blakeman8192
  * @author lare96
+ * @author Ryley Kimmel <ryley.kimmel@live.com>
  */
 public final class Session {
+    
+    /**
+     * The regex pattern used to determine valid credentials.
+     */
+    private static final Pattern PATTERN = Pattern.compile("\\w(\\w| (?! )){2,10}\\w");
 
     /**
      * If RSA should be decoded in the login block (set this to false if you
@@ -371,15 +379,6 @@ public final class Session {
                     password = in.readString();
                 }
 
-                /** Make sure the account credentials are valid. */
-                boolean invalidCredentials = false;
-
-                if (username.isEmpty() || password.isEmpty()) {
-                    username = "invalid";
-                    password = "invalid";
-                    invalidCredentials = true;
-                }
-
                 /** Set the username and password. */
                 player.setUsername(username);
                 player.setPassword(password);
@@ -388,7 +387,7 @@ public final class Session {
                 int response = Misc.LOGIN_RESPONSE_OK;
 
                 /** Check if the player is already logged in. */
-                if (World.getPlayer(player.getUsername()) != null) {
+                if (World.getPlayer(player.getUsernameHash()) != null) {
                     response = Misc.LOGIN_RESPONSE_ACCOUNT_ONLINE;
                 }
 
@@ -409,7 +408,7 @@ public final class Session {
 
                 /** Load player rights and the client response code. */
                 PacketBuffer.WriteBuffer resp = PacketBuffer.newWriteBuffer(3);
-                resp.writeByte(invalidCredentials ? Misc.LOGIN_RESPONSE_INVALID_CREDENTIALS : response);
+                resp.writeByte(badCredentials(username, password) ? Misc.LOGIN_RESPONSE_INVALID_CREDENTIALS : response);
 
                 if (player.getStaffRights() == 3) {
                     resp.writeByte(2);
@@ -545,6 +544,23 @@ public final class Session {
         }
     }
 
+    /**
+     * Returns a flag to determine if a username and password are bad.
+     * @param username The username to check.
+     * @param password The password to check.
+     * @return {@code true} if and only if the credentials are bad, otherwise {@code falase}.
+     */
+    private boolean badCredentials(String username, String password) {
+	Matcher usernameMatcher = PATTERN.matcher(username);
+	Matcher passwordMatcher = PATTERN.matcher(password);
+
+	if (usernameMatcher.matches() && passwordMatcher.matches()) {
+	    return false;
+	}
+	
+	return true;
+    }
+    
     /**
      * Gets the remote host of the client.
      * 
