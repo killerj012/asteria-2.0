@@ -345,8 +345,8 @@ public final class Session {
                     rsaBuffer.getInt();
 
                     ReadBuffer readStr = PacketBuffer.newReadBuffer(rsaBuffer);
-                    username = readStr.readString();
-                    password = readStr.readString();
+                    username = readStr.readString().toLowerCase();
+                    password = readStr.readString().toLowerCase();
                 } else {
                     in.getBuffer().get();
 
@@ -367,8 +367,8 @@ public final class Session {
 
                     /** Read the user authentication. */
                     in.getBuffer().getInt(); // Skip the user ID.
-                    username = in.readString();
-                    password = in.readString();
+                    username = in.readString().toLowerCase();
+                    password = in.readString().toLowerCase();
                 }
 
                 /** Make sure the account credentials are valid. */
