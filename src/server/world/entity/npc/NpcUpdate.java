@@ -53,9 +53,8 @@ public class NpcUpdate {
         }
 
         /** Update the local NPC list itself. */
-        for (int i = 0; i < World.getNpcs().getCapacity(); i++) {
-            Npc npc = World.getNpcs().get(i);
-
+        // XXX: Check for limits.
+        for (Npc npc : World.getNpcs()) {
             if (npc == null || player.getNpcs().contains(npc) || !npc.isVisible()) {
                 continue;
             }

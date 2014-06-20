@@ -12,8 +12,8 @@ import server.world.entity.player.Player;
 import server.world.item.Item;
 import server.world.item.ground.GroundItem;
 import server.world.map.Palette;
-import server.world.map.Position;
 import server.world.map.Palette.PaletteTile;
+import server.world.map.Position;
 import server.world.object.WorldObject;
 import server.world.object.WorldObject.Rotation;
 
@@ -1040,7 +1040,8 @@ public final class PacketEncoder {
     }
 
     /**
-     * Sends the slot to the client. Used for
+     * Sends the slot to the client. Used for player following and other thing
+     * that require the slot.
      * 
      * @return this packet builder.
      */
