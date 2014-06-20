@@ -45,6 +45,7 @@ public class HostGateway {
          * check it.
          */
         if (host.equals("127.0.0.1") || host.equals("localhost")) {
+            logger.info("Session request from " + host + "<unlimited> accepted.");
             return true;
         }
 
@@ -55,7 +56,7 @@ public class HostGateway {
 
         /** Reject if this host is banned. */
         if (disabledHosts.contains(host)) {
-            logger.warning("Session request from IP banned host(" + host + ") rejected.");
+            logger.warning("Session request from IP banned host<" + host + "> rejected.");
             return false;
         }
 
@@ -63,19 +64,19 @@ public class HostGateway {
 
         /** If the host was not in the map, they're clear to go. */
         if (amount == null) {
-            logger.info("Session request from " + host + "(1) accepted.");
+            logger.info("Session request from " + host + "<1> accepted.");
             return true;
         }
 
         /** If they've reached the connection limit, return false. */
         if (amount == MAX_CONNECTIONS_PER_HOST) {
-            logger.warning("Session request from " + host + "(" + amount + ") over connection limit, rejected.");
+            logger.warning("Session request from " + host + "<" + amount + "> over connection limit, rejected.");
             return false;
         }
 
         /** Otherwise, replace the key with the next value if it was present. */
         hostMap.putIfAbsent(host, amount + 1);
-        logger.info("Session request from " + host + "(" + hostMap.get(host) + ") accepted.");
+        logger.info("Session request from " + host + "<" + hostMap.get(host) + "> accepted.");
         return true;
     }
 

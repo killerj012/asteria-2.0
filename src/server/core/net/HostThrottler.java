@@ -79,8 +79,8 @@ public class HostThrottler {
         }
 
         /**
-         * If the host is connecting for the first time (has no other clients
-         * logged in) then the host is added to the connection list with its own
+         * If the host is connecting forme (has no other clients logged in) then
+         * the host is added to the the first ti connection list with its own
          * timer.
          */
         timeMap.putIfAbsent(host, new Stopwatch().reset());

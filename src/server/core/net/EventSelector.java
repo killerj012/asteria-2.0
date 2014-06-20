@@ -33,7 +33,7 @@ public final class EventSelector {
     private static Selector selector;
 
     /** A server socket channel that will accept incoming connections. */
-    private static ServerSocketChannel serverSocketChannel;
+    private static ServerSocketChannel server;
 
     /** So this class cannot be instantiated. */
     private EventSelector() {
@@ -53,12 +53,12 @@ public final class EventSelector {
 
         /** Initialize the networking objects. */
         selector = Selector.open();
-        serverSocketChannel = ServerSocketChannel.open();
+        server = ServerSocketChannel.open();
 
         /** ... and configure them! */
-        serverSocketChannel.configureBlocking(false);
-        serverSocketChannel.socket().bind(new InetSocketAddress("127.0.0.1", Main.PORT));
-        serverSocketChannel.register(selector, SelectionKey.OP_ACCEPT);
+        server.configureBlocking(false);
+        server.socket().bind(new InetSocketAddress("127.0.0.1", Main.PORT));
+        server.register(selector, SelectionKey.OP_ACCEPT);
     }
 
     /**
@@ -68,168 +68,185 @@ public final class EventSelector {
      * as they are recieved.
      */
     public static void tick() {
+
+        /** Selects the keys ready for network events. */
         try {
-
-            /** Selects the keys ready for network events. */
             selector.selectNow();
+        } catch (IOException io) {
+            io.printStackTrace();
 
-            for (Iterator<SelectionKey> iterator = getSelector().selectedKeys().iterator(); iterator.hasNext();) {
-                SelectionKey key = iterator.next();
+            /**
+             * Selector is closed or something happened while selecting, attempt
+             * to restart!
+             */
+            try {
+                selector.close();
+                server.close();
+                selector = null;
+                server = null;
+                init();
+            } catch (Exception ex) {
 
-                /** Remove the key if its invalid. */
-                if (!key.isValid()) {
+                /** Unable to restart! So throw an exception. */
+                ex.printStackTrace();
+                throw new IllegalStateException("Unable to restart reactor after shutdown!");
+            }
+        }
+
+        for (Iterator<SelectionKey> iterator = getSelector().selectedKeys().iterator(); iterator.hasNext();) {
+            SelectionKey key = iterator.next();
+
+            /** Remove the key if its invalid. */
+            if (!key.isValid()) {
+                iterator.remove();
+
+                /** Accept the key concurrently if needed. */
+            } else if (key.isAcceptable()) {
+                try {
+                    Rs2Engine.pushTask(new BuildSessionTask());
+                } finally {
                     iterator.remove();
+                }
+                /** Decode packets for the key if needed. */
+            } else if (key.isReadable()) {
+                Session session = (Session) key.attachment();
 
-                    /** Accept the key concurrently if needed. */
-                } else if (key.isAcceptable()) {
-                    try {
-                        Rs2Engine.pushTask(new BuildSessionTask());
-                    } finally {
-                        iterator.remove();
-                    }
-                    /** Decode packets for the key if needed. */
-                } else if (key.isReadable()) {
-                    Session session = (Session) key.attachment();
+                /** Check if the session is valid. */
+                if (session == null) {
+                    continue;
+                }
 
-                    /** Check if the session is valid. */
-                    if (session == null) {
+                try {
+
+                    /** Read the incoming data. */
+                    if (session.getSocketChannel().read(session.getInData()) == -1) {
+                        session.disconnect();
                         continue;
                     }
 
-                    try {
+                    /** Handle the received data. */
+                    session.getInData().flip();
 
-                        /** Read the incoming data. */
-                        if (session.getSocketChannel().read(session.getInData()) == -1) {
-                            session.disconnect();
-                            continue;
+                    while (session.getInData().hasRemaining()) {
+
+                        /** Handle login if we need to. */
+                        if (session.getStage() != Stage.LOGGED_IN) {
+                            session.handleLogin();
+                            break;
                         }
 
-                        /** Handle the received data. */
-                        session.getInData().flip();
+                        /** Decode the packet opcode. */
+                        if (session.getPacketOpcode() == -1) {
+                            session.setPacketOpcode(session.getInData().get() & 0xff);
+                            session.setPacketOpcode(session.getPacketOpcode() - session.getDecryptor().getKey() & 0xff);
+                        }
 
-                        while (session.getInData().hasRemaining()) {
+                        /** Decode the packet length. */
+                        if (session.getPacketLength() == -1) {
+                            session.setPacketLength(Misc.packetLengths[session.getPacketOpcode()]);
 
-                            /** Handle login if we need to. */
-                            if (session.getStage() != Stage.LOGGED_IN) {
-                                session.handleLogin();
-                                break;
-                            }
-
-                            /** Decode the packet opcode. */
-                            if (session.getPacketOpcode() == -1) {
-                                session.setPacketOpcode(session.getInData().get() & 0xff);
-                                session.setPacketOpcode(session.getPacketOpcode() - session.getDecryptor().getKey() & 0xff);
-                            }
-
-                            /** Decode the packet length. */
                             if (session.getPacketLength() == -1) {
-                                session.setPacketLength(Misc.packetLengths[session.getPacketOpcode()]);
-
-                                if (session.getPacketLength() == -1) {
-                                    if (!session.getInData().hasRemaining()) {
-                                        session.getInData().flip();
-                                        session.getInData().compact();
-                                        break;
-                                    }
-
-                                    session.setPacketLength(session.getInData().get() & 0xff);
-                                }
-                            }
-
-                            /** Decode the packet payload. */
-                            if (session.getInData().remaining() >= session.getPacketLength()) {
-
-                                /**
-                                 * Gets the buffer's position before this packet
-                                 * is read.
-                                 */
-                                int positionBefore = session.getInData().position();
-
-                                /**
-                                 * Creates a new buffer for reading packets
-                                 * backed by the set data.
-                                 */
-                                PacketBuffer.ReadBuffer in = PacketBuffer.newReadBuffer(session.getInData());
-
-                                /**
-                                 * Decode and handle the packet with the
-                                 * previously created buffer.
-                                 */
-                                try {
-                                    if (PacketDecoder.getPackets()[session.getPacketOpcode()] != null) {
-                                        PacketDecoder.getPackets()[session.getPacketOpcode()].decode(session.getPlayer(), in);
-                                    } else {
-                                        logger.info(session.getPlayer() + " unhandled packet " + session.getPacketOpcode());
-                                    }
-
-                                    /**
-                                     * Take care of any errors that may have
-                                     * occurred.
-                                     */
-                                } catch (Exception ex) {
-                                    ex.printStackTrace();
-
-                                    /**
-                                     * Make sure we have finished reading all of
-                                     * this packet.
-                                     */
-                                } finally {
-                                    int read = session.getInData().position() - positionBefore;
-
-                                    for (int i = read; i < session.getPacketLength(); i++) {
-                                        session.getInData().get();
-                                    }
+                                if (!session.getInData().hasRemaining()) {
+                                    session.getInData().flip();
+                                    session.getInData().compact();
+                                    break;
                                 }
 
-                                /** Reset for the next packet. */
-                                session.setPacketOpcode(-1);
-                                session.setPacketLength(-1);
-                            } else {
-                                session.getInData().flip();
-                                session.getInData().compact();
-                                break;
+                                session.setPacketLength(session.getInData().get() & 0xff);
                             }
                         }
 
-                        /** Clear everything for the next read. */
-                        session.getInData().clear();
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                        session.disconnect();
-                    } finally {
-                        iterator.remove();
-                    }
+                        /** Decode the packet payload. */
+                        if (session.getInData().remaining() >= session.getPacketLength()) {
 
-                    /** Send any queued data if needed. */
-                } else if (key.isWritable()) {
-                    Session session = (Session) key.attachment();
+                            /**
+                             * Gets the buffer's position before this packet is
+                             * read.
+                             */
+                            int positionBefore = session.getInData().position();
 
-                    try {
-                        /** Prepare the buffer. */
-                        session.getOutData().flip();
+                            /**
+                             * Creates a new buffer for reading packets backed
+                             * by the set data.
+                             */
+                            PacketBuffer.ReadBuffer in = PacketBuffer.newReadBuffer(session.getInData());
 
-                        /** Write the data. */
-                        session.getSocketChannel().write(session.getOutData());
+                            /**
+                             * Decode and handle the packet with the previously
+                             * created buffer.
+                             */
+                            try {
+                                if (PacketDecoder.getPackets()[session.getPacketOpcode()] != null) {
+                                    PacketDecoder.getPackets()[session.getPacketOpcode()].decode(session.getPlayer(), in);
+                                } else {
+                                    logger.info(session.getPlayer() + " unhandled packet " + session.getPacketOpcode());
+                                }
 
-                        /** Check if all the data was sent. */
-                        if (!session.getOutData().hasRemaining()) {
+                                /**
+                                 * Take care of any errors that may have
+                                 * occurred.
+                                 */
+                            } catch (Exception ex) {
+                                ex.printStackTrace();
 
-                            /** And clear the buffer. */
-                            session.getOutData().clear();
+                                /**
+                                 * Make sure we have finished reading all of
+                                 * this packet.
+                                 */
+                            } finally {
+                                int read = session.getInData().position() - positionBefore;
+
+                                for (int i = read; i < session.getPacketLength(); i++) {
+                                    session.getInData().get();
+                                }
+                            }
+
+                            /** Reset for the next packet. */
+                            session.setPacketOpcode(-1);
+                            session.setPacketLength(-1);
                         } else {
-                            /** Not all data was sent - compact it! */
-                            session.getOutData().compact();
+                            session.getInData().flip();
+                            session.getInData().compact();
+                            break;
                         }
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                        session.disconnect();
-                    } finally {
-                        iterator.remove();
                     }
+
+                    /** Clear everything for the next read. */
+                    session.getInData().clear();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    session.disconnect();
+                } finally {
+                    iterator.remove();
+                }
+
+                /** Send any queued data if needed. */
+            } else if (key.isWritable()) {
+                Session session = (Session) key.attachment();
+
+                try {
+                    /** Prepare the buffer. */
+                    session.getOutData().flip();
+
+                    /** Write the data. */
+                    session.getSocketChannel().write(session.getOutData());
+
+                    /** Check if all the data was sent. */
+                    if (!session.getOutData().hasRemaining()) {
+
+                        /** And clear the buffer. */
+                        session.getOutData().clear();
+                    } else {
+                        /** Not all data was sent - compact it! */
+                        session.getOutData().compact();
+                    }
+                } catch (IOException e) {
+                    e.printStackTrace();
+                    session.disconnect();
+                } finally {
+                    iterator.remove();
                 }
             }
-        } catch (Exception e) {
-            e.printStackTrace();
         }
     }
 
@@ -247,7 +264,7 @@ public final class EventSelector {
      * 
      * @return the server socket channel.
      */
-    public static ServerSocketChannel getServerSocketChannel() {
-        return EventSelector.serverSocketChannel;
+    public static ServerSocketChannel getServer() {
+        return EventSelector.server;
     }
 }

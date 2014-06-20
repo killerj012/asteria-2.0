@@ -30,7 +30,7 @@ public class BuildSessionTask extends SequentialTask {
         try {
 
             /** Accept the connection. */
-            while ((socket = EventSelector.getServerSocketChannel().accept()) != null || eventCount.get() <= MAXIMUM_ACCEPT_EVENT) {
+            while ((socket = EventSelector.getServer().accept()) != null || eventCount.get() <= MAXIMUM_ACCEPT_EVENT) {
 
                 /** Check if the connection is valid. */
                 if (socket == null) {

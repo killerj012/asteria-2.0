@@ -3,7 +3,6 @@ package server.core;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
-import java.util.logging.Logger;
 
 import server.core.net.EventSelector;
 import server.core.task.Task;
@@ -17,9 +16,6 @@ import server.world.World;
  * @author lare96
  */
 public final class Rs2Engine implements Runnable {
-
-    /** A logger for printing information. */
-    private static Logger logger;
 
     /**
      * The amount of time in minutes for this server to become 'idle'. When the
@@ -58,13 +54,10 @@ public final class Rs2Engine implements Runnable {
      */
     public static void init() throws Exception {
 
-        /** Create the logger. */
-        logger = Logger.getLogger(Rs2Engine.class.getSimpleName());
-
         /** Create the game executor. */
         gameExecutor = Executors.newSingleThreadScheduledExecutor(new ThreadProvider(Rs2Engine.class.getName(), Thread.MAX_PRIORITY, false, false));
 
-        /** Start the world! */
+        /** Start ticking the game executor */
         gameExecutor.scheduleAtFixedRate(new Rs2Engine(), 0, 600, TimeUnit.MILLISECONDS);
     }
 
@@ -90,7 +83,8 @@ public final class Rs2Engine implements Runnable {
             EventSelector.tick();
             World.tick();
         } catch (Exception e) {
-            logger.warning("Error while ticking the " + Rs2Engine.class.getSimpleName() + "!");
+
+            /** Nothing we can do, print error and continue processing. */
             e.printStackTrace();
         }
     }

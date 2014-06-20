@@ -44,10 +44,6 @@ public final class GenericTaskPool implements Executor {
 
     @Override
     public void execute(Runnable command) {
-        if (command == null) {
-            throw new IllegalArgumentException("Invalid task specified!");
-        }
-
         taskPool.execute(command);
     }
 
