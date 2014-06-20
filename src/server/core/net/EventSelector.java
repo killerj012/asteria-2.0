@@ -17,9 +17,8 @@ import server.core.task.impl.BuildSessionTask;
 import server.util.Misc;
 
 /**
- * A reactor that handles read and write events as soon as they're recieved and
- * hands over accept events to the <code>taskEngine</code> to be carried out
- * asynchronously.
+ * A reactor that uses a selector to determine when connected client sessions
+ * are ready to connect, send network data, and receive networking data.
  * 
  * @author lare96
  * @author blakeman8192
