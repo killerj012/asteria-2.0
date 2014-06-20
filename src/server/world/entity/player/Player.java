@@ -557,6 +557,7 @@ public class Player extends Entity {
      * Logs the player out.
      */
     public void logout() {
+        player.getPacketBuilder().sendLogout();
         session.disconnect();
     }
 

@@ -243,7 +243,7 @@ public class DecodeClickButtonPacket extends PacketDecoder {
                     return;
                 }
 
-                player.getSession().disconnect();
+                player.logout();
                 break;
             case 153:
                 if (player.getRunEnergy() == 0) {
