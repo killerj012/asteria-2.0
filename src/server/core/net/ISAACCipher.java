@@ -1,4 +1,4 @@
-package server.util;
+package server.core.net;
 
 /**
  * <p>

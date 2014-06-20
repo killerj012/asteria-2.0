@@ -82,9 +82,11 @@ public final class EventSelector {
 
                     /** Accept the key concurrently if needed. */
                 } else if (key.isAcceptable()) {
-                    Rs2Engine.pushTask(new BuildSessionTask());
-                    iterator.remove();
-
+                    try {
+                        Rs2Engine.pushTask(new BuildSessionTask());
+                    } finally {
+                        iterator.remove();
+                    }
                     /** Decode packets for the key if needed. */
                 } else if (key.isReadable()) {
                     Session session = (Session) key.attachment();
@@ -195,8 +197,9 @@ public final class EventSelector {
                         e.printStackTrace();
                         session.setPacketDisconnect(true);
                         session.disconnect();
+                    } finally {
+                        iterator.remove();
                     }
-                    iterator.remove();
 
                     /** Send any queued data if needed. */
                 } else if (key.isWritable()) {
@@ -222,8 +225,9 @@ public final class EventSelector {
                         e.printStackTrace();
                         session.setPacketDisconnect(true);
                         session.disconnect();
+                    } finally {
+                        iterator.remove();
                     }
-                    iterator.remove();
                 }
             }
         } catch (Exception e) {

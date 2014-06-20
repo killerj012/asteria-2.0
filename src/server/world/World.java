@@ -5,7 +5,7 @@ import java.util.concurrent.Phaser;
 import java.util.logging.Logger;
 
 import server.core.Rs2Engine;
-import server.core.task.Task;
+import server.core.task.SequentialTask;
 import server.core.task.impl.PlayerParallelUpdateTask;
 import server.util.Misc;
 import server.util.Misc.Stopwatch;
@@ -121,7 +121,7 @@ public final class World {
                     continue;
                 }
 
-                Rs2Engine.getUpdatePool().execute(new PlayerParallelUpdateTask(player, phaser));
+                Rs2Engine.pushTask(new PlayerParallelUpdateTask(player, phaser));
             }
 
             phaser.arriveAndAwaitAdvance();
@@ -164,24 +164,25 @@ public final class World {
     }
 
     /**
-     * Returns an instance of a {@link Player} object for the specified username.
-     * hash.
+     * Returns an instance of a {@link Player} object for the specified
+     * username. hash.
      * 
-     * @param username The username hash.
+     * @param username
+     *        The username hash.
      * @return The <code>Player</code> object representing the player or
      *         {@code null} if no such player exists.
      */
     public static Player getPlayer(long username) {
-	for (Player player : players) {
-	    if (player == null) {
-		continue;
-	    }
+        for (Player player : players) {
+            if (player == null) {
+                continue;
+            }
 
-	    if (player.getUsernameHash() == username) {
-		return player;
-	    }
-	}
-	return null;
+            if (player.getUsernameHash() == username) {
+                return player;
+            }
+        }
+        return null;
     }
 
     /**
@@ -225,7 +226,7 @@ public final class World {
         cachedPlayers.add(player.getUsername());
 
         /** Save the actual file whenever the thread is available to. */
-        Rs2Engine.pushTask(new Task() {
+        Rs2Engine.pushTask(new SequentialTask() {
             @Override
             public void run() {
                 synchronized (player) {
@@ -234,11 +235,6 @@ public final class World {
                     cachedPlayers.remove(player.getUsername());
                     logger.info(player + " game successfully saved by the task engine!");
                 }
-            }
-
-            @Override
-            public String name() {
-                return "Saving file for " + player;
             }
         });
     }

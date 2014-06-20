@@ -8,15 +8,14 @@ import java.util.concurrent.atomic.AtomicInteger;
 import server.core.net.EventSelector;
 import server.core.net.HostGateway;
 import server.core.net.Session;
-import server.core.task.Task;
+import server.core.task.SequentialTask;
 
 /**
- * An asynchronous task carried out by the <code>taskEngine</code> that will
- * accept incoming connections.
+ * An asynchronous task that will accept incoming connections.
  * 
  * @author lare96
  */
-public class BuildSessionTask implements Task {
+public class BuildSessionTask extends SequentialTask {
 
     /** Used to keep track of how many connections we've accepted. */
     private AtomicInteger eventCount = new AtomicInteger();
@@ -55,10 +54,5 @@ public class BuildSessionTask implements Task {
         } catch (IOException e) {
             e.printStackTrace();
         }
-    }
-
-    @Override
-    public String name() {
-        return BuildSessionTask.class.getSimpleName();
     }
 }

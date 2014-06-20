@@ -6,6 +6,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.logging.Logger;
 
 import server.core.net.EventSelector;
+import server.core.task.Task;
 import server.core.worker.TaskFactory;
 import server.world.World;
 
@@ -37,21 +38,7 @@ public final class Rs2Engine implements Runnable {
      * value should be false for more popular servers that receive players the
      * moment they start their servers.
      */
-    public static final boolean INITIALLY_IDLE = false;
-
-    /**
-     * An average priority {@link GenericTaskPool} that handles short lived
-     * asynchronous game related tasks.
-     */
-    private static GenericTaskPool taskEngine;
-
-    /**
-     * A high priority {@link GenericTaskPool} that updates players in parallel.
-     * We separate this from the task pool because we do not want to delay the
-     * updating of players with less important tasks such as logging in and
-     * logging out.
-     */
-    private static GenericTaskPool updatePool;
+    public static final boolean INITIALLY_IDLE = true;
 
     /**
      * An extremely high priority {@link ScheduledExecutorService} that ticks
@@ -74,29 +61,23 @@ public final class Rs2Engine implements Runnable {
         /** Create the logger. */
         logger = Logger.getLogger(Rs2Engine.class.getSimpleName());
 
-        /** Create the pools. */
-        taskEngine = new GenericTaskPool("TaskThread", 1, Thread.MIN_PRIORITY);
-        updatePool = new GenericTaskPool("UpdateThread", Runtime.getRuntime().availableProcessors(), Thread.MAX_PRIORITY);
-
         /** Create the game executor. */
         gameExecutor = Executors.newSingleThreadScheduledExecutor(new ThreadProvider(Rs2Engine.class.getName(), Thread.MAX_PRIORITY, false, false));
 
         /** Start the world! */
         gameExecutor.scheduleAtFixedRate(new Rs2Engine(), 0, 600, TimeUnit.MILLISECONDS);
-
-        /** Start miscellaneous tasks. */
-        // ...
     }
 
     /**
-     * Pushes a generic task to be carried out asynchronously by the
-     * {@link#taskEngine}.
+     * Pushes a generic short-lived task to be carried out be the engine. The
+     * task may be executed sequentially, concurrently, or on the calling thread
+     * based on the {@link Task}s <code>context()</code> implementation.
      * 
-     * @param r
+     * @param t
      *        the task to be pushed to the {@link#taskEngine}.
      */
-    public static void pushTask(Runnable r) {
-        taskEngine.execute(r);
+    public static void pushTask(Task t) {
+        t.context();
     }
 
     @Override
@@ -112,14 +93,5 @@ public final class Rs2Engine implements Runnable {
             logger.warning("Error while ticking the " + Rs2Engine.class.getSimpleName() + "!");
             e.printStackTrace();
         }
-    }
-
-    /**
-     * Gets the pool that performs updating on players.
-     * 
-     * @return the update pool.
-     */
-    public static GenericTaskPool getUpdatePool() {
-        return updatePool;
     }
 }

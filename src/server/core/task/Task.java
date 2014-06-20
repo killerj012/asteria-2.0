@@ -10,11 +10,11 @@ import server.core.GenericTaskPool;
 public interface Task extends Runnable {
 
     /**
-     * The name of the task being carried out primarily used for debugging
-     * purposes. If the task does not have a name a {@link Runnable} should be
-     * used instead.
-     * 
-     * @return the name of the task being carried out.
+     * This method defines how the task will be ran. The task can be ran
+     * sequentially, concurrently, or however else the user wants it to.
      */
-    public String name();
+    public void context();
+
+    @Override
+    public String toString();
 }

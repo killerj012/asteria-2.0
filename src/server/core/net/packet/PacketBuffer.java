@@ -753,7 +753,6 @@ public abstract class PacketBuffer {
          * @param from
          */
         public WriteBuffer writeBytes(byte[] from, int size) {
-            resizeBuffer(size);
             buffer.put(from, 0, size);
             return this;
         }
@@ -796,7 +795,6 @@ public abstract class PacketBuffer {
             int requiredSpace = bytePos - buffer.position() + 1;
             requiredSpace += (amount + 7) / 8;
             if (buffer.remaining() < requiredSpace) {
-        	System.out.println("RESIZE!!");
                 ByteBuffer old = buffer;
                 buffer = ByteBuffer.allocate(old.capacity() + requiredSpace);
                 old.flip();

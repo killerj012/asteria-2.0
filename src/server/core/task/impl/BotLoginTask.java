@@ -12,7 +12,7 @@ import server.Main;
 import server.core.net.packet.PacketBuffer;
 import server.core.net.packet.PacketBuffer.ReadBuffer;
 import server.core.net.packet.PacketBuffer.WriteBuffer;
-import server.core.task.Task;
+import server.core.task.SequentialTask;
 import server.util.Misc;
 import server.world.World;
 import server.world.entity.player.bot.Bot;
@@ -24,7 +24,7 @@ import server.world.entity.player.bot.BotLoginException;
  * 
  * @author lare96
  */
-public class BotLoginTask implements Task {
+public class BotLoginTask extends SequentialTask {
 
     /** The {@link Bot} to login. */
     private Bot bot;
@@ -127,10 +127,5 @@ public class BotLoginTask implements Task {
         } catch (IOException e) {
             e.printStackTrace();
         }
-    }
-
-    @Override
-    public String name() {
-        return BotLoginTask.class.getSimpleName();
     }
 }

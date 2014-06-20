@@ -14,6 +14,7 @@ import server.core.Rs2Engine;
 import server.core.net.packet.PacketBuffer;
 import server.core.net.packet.PacketDecoder;
 import server.core.net.packet.PacketOpcodeHeader;
+import server.core.task.SequentialTask;
 import server.core.worker.TaskFactory;
 import server.core.worker.WorkRate;
 import server.core.worker.Worker;
@@ -84,7 +85,7 @@ public class DecodeCommandPacket extends PacketDecoder {
                 final int y = Integer.parseInt(cmd[2]);
                 player.move(new Position(x, y, 0));
             } else if (cmd[0].equals("picture")) {
-                Rs2Engine.pushTask(new Runnable() {
+                Rs2Engine.pushTask(new SequentialTask() {
                     @Override
                     public void run() {
                         try {
@@ -104,7 +105,7 @@ public class DecodeCommandPacket extends PacketDecoder {
                 TaskFactory.getFactory().submit(new Worker(2, false, WorkRate.APPROXIMATE_SECOND) {
                     @Override
                     public void fire() {
-                        Rs2Engine.pushTask(new Runnable() {
+                        Rs2Engine.pushTask(new SequentialTask() {
                             @Override
                             public void run() {
                                 try {

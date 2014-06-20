@@ -13,19 +13,15 @@ public class TaskDeniedHook implements RejectedExecutionHandler {
     @Override
     public void rejectedExecution(Runnable r, ThreadPoolExecutor executor) {
         String reason = "reason unknown!";
-        String name = "unknown";
 
         if (r instanceof Task) {
-            name = ((Task) r).name();
-
             if (executor.getQueue().remainingCapacity() == 0) {
-                reason = "no more space in the work queue!";
+                reason = "No more space in the work queue!";
             } else if (executor.isShutdown()) {
-                reason = "the pool is not running!";
+                reason = "The pool is not running!";
             }
-        }
 
-        // XXX: Redirect tasks to the update pool?
-        throw new TaskDeniedException(name, reason);
+            throw new TaskDeniedException((Task) r, reason);
+        }
     }
 }

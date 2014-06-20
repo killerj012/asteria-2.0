@@ -3,7 +3,7 @@ package server.core.task.impl;
 import java.util.concurrent.Phaser;
 import java.util.logging.Logger;
 
-import server.core.task.Task;
+import server.core.task.ConcurrentTask;
 import server.world.entity.npc.NpcUpdate;
 import server.world.entity.player.Player;
 import server.world.entity.player.PlayerUpdate;
@@ -13,7 +13,7 @@ import server.world.entity.player.PlayerUpdate;
  * 
  * @author lare96
  */
-public class PlayerParallelUpdateTask implements Task {
+public class PlayerParallelUpdateTask extends ConcurrentTask {
 
     /** A {@link Logger} for printing debugging info. */
     private static Logger logger = Logger.getLogger(PlayerParallelUpdateTask.class.getSimpleName());
@@ -68,10 +68,5 @@ public class PlayerParallelUpdateTask implements Task {
                 phaser.arrive();
             }
         }
-    }
-
-    @Override
-    public String name() {
-        return PlayerParallelUpdateTask.class.getSimpleName();
     }
 }
