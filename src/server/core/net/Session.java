@@ -379,6 +379,9 @@ public final class Session {
                     password = in.readString();
                 }
 
+                /** lowercase the username for accurate compare results. */
+                username = username.toLowerCase();
+                
                 /** Set the username and password. */
                 player.setUsername(username);
                 player.setPassword(password);
