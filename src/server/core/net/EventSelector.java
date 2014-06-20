@@ -64,8 +64,8 @@ public final class EventSelector {
     /**
      * Determines which clients are ready for networking events and handles
      * those events straight away for them. Accept events are pushed to the
-     * <code>taskEngine</code> and read/write events are handled right on the
-     * game thread as soon as they are recieved.
+     * engine and read/write events are handled right on the game thread as soon
+     * as they are recieved.
      */
     public static void tick() {
         try {
@@ -195,7 +195,6 @@ public final class EventSelector {
                         session.getInData().clear();
                     } catch (Exception e) {
                         e.printStackTrace();
-                        session.setPacketDisconnect(true);
                         session.disconnect();
                     } finally {
                         iterator.remove();
@@ -223,7 +222,6 @@ public final class EventSelector {
                         }
                     } catch (IOException e) {
                         e.printStackTrace();
-                        session.setPacketDisconnect(true);
                         session.disconnect();
                     } finally {
                         iterator.remove();

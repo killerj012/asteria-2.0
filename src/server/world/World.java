@@ -5,6 +5,7 @@ import java.util.concurrent.Phaser;
 import java.util.logging.Logger;
 
 import server.core.Rs2Engine;
+import server.core.net.Session.Stage;
 import server.core.task.SequentialTask;
 import server.core.task.impl.PlayerParallelUpdateTask;
 import server.util.Misc;
@@ -222,6 +223,11 @@ public final class World {
      */
     public static void savePlayer(final Player player) {
 
+        /** Don't save if we aren't logged in. */
+        if (player.getSession().getStage() != Stage.LOGGED_IN) {
+            return;
+        }
+
         /** Cache the player until the saving is done. */
         cachedPlayers.add(player.getUsername());
 
@@ -233,7 +239,7 @@ public final class World {
                     WritePlayerFileEvent save = new WritePlayerFileEvent(player);
                     save.run();
                     cachedPlayers.remove(player.getUsername());
-                    logger.info(player + " game successfully saved by the task engine!");
+                    logger.info(player + " game successfully saved!");
                 }
             }
         });

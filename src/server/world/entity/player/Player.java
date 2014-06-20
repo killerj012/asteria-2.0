@@ -10,7 +10,6 @@ import java.util.logging.Logger;
 
 import server.Main;
 import server.core.net.Session;
-import server.core.net.Session.Stage;
 import server.core.net.packet.PacketEncoder;
 import server.core.worker.TaskFactory;
 import server.core.worker.Worker;
@@ -557,20 +556,8 @@ public class Player extends Entity {
     /**
      * Logs the player out.
      */
-    public void logout() throws Exception {
-        if (World.getPlayers().contains(this)) {
-            World.getPlayers().remove(this);
-        }
-
-        if (!session.isPacketDisconnect()) {
-            getPacketBuilder().sendLogout();
-        }
-
-        if (username != null && session.getStage() == Stage.LOGGED_IN) {
-            World.savePlayer(this);
-        }
-
-        logger.info(this + " has logged out.");
+    public void logout() {
+        session.disconnect();
     }
 
     /**

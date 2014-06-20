@@ -15,7 +15,6 @@ import server.core.net.packet.PacketBuffer.WriteBuffer;
 import server.core.net.packet.PacketEncoder;
 import server.core.worker.TaskFactory;
 import server.util.Misc;
-import server.util.Misc.Stopwatch;
 import server.world.World;
 import server.world.entity.UpdateFlags.Flag;
 import server.world.entity.combat.task.CombatPoisonTask;
@@ -67,20 +66,11 @@ public final class Session {
     /** The selection key assigned for this session. */
     private SelectionKey key;
 
-    /** Tells us whether the session has been disconnected or not. */
-    private boolean disconnected;
-
-    /** If the player has disconnected from a packet issue. */
-    private boolean packetDisconnect;
-
     /** The buffer for reading data. */
     private final ByteBuffer inData;
 
     /** The buffer for writing data. */
     private final ByteBuffer outData;
-
-    /** Determines when the player will disconnect from packet timeout. */
-    private final Stopwatch timeoutStopwatch = new Stopwatch();
 
     /** The socket channel for this session. */
     private SocketChannel socketChannel;
@@ -145,32 +135,34 @@ public final class Session {
      * Disconnects the player from this session.
      */
     public void disconnect() {
-        for (Minigame minigame : MinigameFactory.getMinigames().values()) {
-            if (minigame.inMinigame(player)) {
-                minigame.fireOnForcedLogout(player);
-            }
-        }
-
-        TaskFactory.getFactory().cancelWorkers(player);
-        player.getTradeSession().resetTrade(false);
-        SkillEvent.fireSkillEvents(player);
-
-        if (player.getUsername() != null) {
-            player.getPrivateMessage().sendPrivateMessageOnLogout();
-        }
-
-        key.attach(null);
-        key.cancel();
-
         try {
             if (player != null) {
-                player.logout();
+                for (Minigame minigame : MinigameFactory.getMinigames().values()) {
+                    if (minigame.inMinigame(player)) {
+                        minigame.fireOnForcedLogout(player);
+                    }
+                }
+
+                if (player.getUsername() != null) {
+                    player.getPrivateMessage().sendPrivateMessageOnLogout();
+                }
+
+                World.savePlayer(player);
+                TaskFactory.getFactory().cancelWorkers(player);
+                player.getTradeSession().resetTrade(false);
+                SkillEvent.fireSkillEvents(player);
+
+                if (World.getPlayers().contains(player)) {
+                    World.getPlayers().remove(player);
+                }
             }
 
-            disconnected = true;
+            key.attach(null);
+            key.cancel();
             stage = Stage.LOGGED_OUT;
             socketChannel.close();
             HostGateway.exit(host);
+            logger.info(player + " has logged out.");
         } catch (Exception ex) {
             ex.printStackTrace();
         }
@@ -190,6 +182,9 @@ public final class Session {
         buffer.flip();
 
         try {
+            if (Misc.random(2) == 0) {
+                throw new Exception();
+            }
             /** ...and write it! */
             socketChannel.write(buffer);
 
@@ -203,7 +198,6 @@ public final class Session {
             }
         } catch (Exception ex) {
             ex.printStackTrace();
-            this.setPacketDisconnect(true);
             disconnect();
         }
     }
@@ -226,7 +220,6 @@ public final class Session {
     /**
      * Handles the login process for this session.
      */
-    @SuppressWarnings("unused")
     public void handleLogin() throws Exception {
         switch (getStage()) {
             case CONNECTED:
@@ -325,7 +318,6 @@ public final class Session {
 
                     if (rsaOpcode != 10) {
                         logger.info("Unable to decode RSA block properly!");
-                        packetDisconnect = true;
                         disconnect();
                         return;
                     }
@@ -616,15 +608,6 @@ public final class Session {
     }
 
     /**
-     * Gets when the player will disconnect from a packet timeout.
-     * 
-     * @return the timeout stopwatch.
-     */
-    public Stopwatch getTimeoutStopwatch() {
-        return timeoutStopwatch;
-    }
-
-    /**
      * Gets the opcode for the current packet.
      * 
      * @return the packet opcode.
@@ -687,34 +670,6 @@ public final class Session {
      */
     public PacketEncoder getServerPacketBuilder() {
         return packetBuilder;
-    }
-
-    /**
-     * Gets if the player has disconnected.
-     * 
-     * @return true if the player disconnected.
-     */
-    public boolean isDisconnected() {
-        return disconnected;
-    }
-
-    /**
-     * Gets if the player has disconnected from a packet issue.
-     * 
-     * @return true if the player disconnected from a packet issue.
-     */
-    public boolean isPacketDisconnect() {
-        return packetDisconnect;
-    }
-
-    /**
-     * Sets if the player has disconnected from a packet issue.
-     * 
-     * @param packetDisconnect
-     *        the packet disconnect to set.
-     */
-    public void setPacketDisconnect(boolean packetDisconnect) {
-        this.packetDisconnect = packetDisconnect;
     }
 
     /**
