@@ -173,7 +173,7 @@ public class Player extends Entity {
     /** A collection of anti-massing timers. */
     private final Stopwatch eatingTimer = new Stopwatch().reset();
     private final Stopwatch potionTimer = new Stopwatch().reset();
-    
+
     /** The amount of ticks this player is immune to dragon fire */
     private int dragonFireImmunity;
 
@@ -1083,7 +1083,7 @@ public class Player extends Entity {
     public Stopwatch getEatingTimer() {
         return eatingTimer;
     }
-    
+
     public Stopwatch getPotionTimer() {
         return potionTimer;
     }
@@ -1289,25 +1289,25 @@ public class Player extends Entity {
 
     // XXX: The implementation of an attribute system is looking vital!
     public boolean isImmuneToDragonFire() {
-	return dragonFireImmunity > 0;
+        return dragonFireImmunity > 0;
     }
-    
+
     public int getDragonFireImmunity() {
-	return dragonFireImmunity;
+        return dragonFireImmunity;
     }
-    
+
     public void setDragonFireImmunity(int drgonFireImmuity) {
-	this.dragonFireImmunity = dragonFireImmunity;
+        this.dragonFireImmunity = dragonFireImmunity;
     }
-    
+
     public void incrementDragonFireImmunity(int amount) {
-	dragonFireImmunity += amount;
+        dragonFireImmunity += amount;
     }
-    
+
     public void deincrementDragonFireImmunity() {
-	dragonFireImmunity--;
+        dragonFireImmunity--;
     }
-    
+
     /**
      * @return the isBanned
      */
@@ -1402,21 +1402,6 @@ public class Player extends Entity {
      */
     public void setPrayerDrain(CombatPrayerWorker prayerDrain) {
         this.prayerDrain = prayerDrain;
-    }
-
-    /**
-     * @return the needsRead
-     */
-    public boolean isNeedsRead() {
-        return needsRead;
-    }
-
-    /**
-     * @param needsRead
-     *        the needsRead to set
-     */
-    public void setNeedsRead(boolean needsRead) {
-        this.needsRead = needsRead;
     }
 
     /**

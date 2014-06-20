@@ -41,10 +41,8 @@ import server.world.entity.player.skill.SkillManager;
  * @author Ryley Kimmel <ryley.kimmel@live.com>
  */
 public final class Session {
-    
-    /**
-     * The regex pattern used to determine valid credentials.
-     */
+
+    /** The regex pattern used to determine valid credentials. */
     private static final Pattern PATTERN = Pattern.compile("\\w(\\w| (?! )){2,10}\\w");
 
     /**
@@ -381,7 +379,7 @@ public final class Session {
 
                 /** lowercase the username for accurate compare results. */
                 username = username.toLowerCase();
-                
+
                 /** Set the username and password. */
                 player.setUsername(username);
                 player.setPassword(password);
@@ -397,11 +395,7 @@ public final class Session {
                 /** Load saved data. */
                 if (response == 2) {
                     ReadPlayerFileEvent read = new ReadPlayerFileEvent(player);
-
-                    if (player.isNeedsRead()) {
-                        read.run();
-                    }
-
+                    read.run();
                     response = read.getReturnCode();
                 }
 
@@ -549,21 +543,25 @@ public final class Session {
 
     /**
      * Returns a flag to determine if a username and password are bad.
-     * @param username The username to check.
-     * @param password The password to check.
-     * @return {@code true} if and only if the credentials are bad, otherwise {@code falase}.
+     * 
+     * @param username
+     *        The username to check.
+     * @param password
+     *        The password to check.
+     * @return {@code true} if and only if the credentials are bad, otherwise
+     *         {@code falase}.
      */
     private boolean badCredentials(String username, String password) {
-	Matcher usernameMatcher = PATTERN.matcher(username);
-	Matcher passwordMatcher = PATTERN.matcher(password);
+        Matcher usernameMatcher = PATTERN.matcher(username);
+        Matcher passwordMatcher = PATTERN.matcher(password);
 
-	if (usernameMatcher.matches() && passwordMatcher.matches()) {
-	    return false;
-	}
-	
-	return true;
+        if (usernameMatcher.matches() && passwordMatcher.matches()) {
+            return false;
+        }
+
+        return true;
     }
-    
+
     /**
      * Gets the remote host of the client.
      * 

@@ -2,9 +2,8 @@ package server.core.task;
 
 import server.core.GenericTaskPool;
 
-
 /**
- * A generic task that can be carried out by a {@link GenericTaskPool}.
+ * A multi-purpose task that can be carried out by a {@link GenericTaskPool}.
  * 
  * @author lare96
  */

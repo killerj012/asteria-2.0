@@ -54,7 +54,7 @@ public class DefaultMagicCombatStrategy implements CombatStrategy {
     @Override
     public int attackTimer(Entity entity) {
 
-        /** The deafult attack time. */
+        /** The default attack time. */
         return 10;
     }
 

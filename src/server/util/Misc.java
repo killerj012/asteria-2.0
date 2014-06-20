@@ -949,16 +949,17 @@ public final class Misc {
          * 
          * @param type
          *        the type that will be used as the parameter.
-         * @return {@code true} if and only if the action executed successfully, otherwise {@code false}.
+         * @return {@code true} if and only if the action executed successfully,
+         *         otherwise {@code false}.
          */
-        public boolean fireAction(final T type);
+        public void fireAction(final T type);
     }
 
     /**
-     * Thread local random instance, used to generate pseudo-random primitive types.
-     * Thread local random is faster than your traditional random implementation
-     * as there is no unnecessary wait on the backing <code>AtomicLong</code>
-     * within {@link Random}.
+     * Thread local random instance, used to generate pseudo-random primitive
+     * types. Thread local random is faster than your traditional random
+     * implementation as there is no unnecessary wait on the backing
+     * <code>AtomicLong</code> within {@link Random}.
      */
     private static final Random RANDOM = ThreadLocalRandom.current();
 
@@ -970,37 +971,41 @@ public final class Misc {
      * <br>
      * This method is thread-safe. </br>
      * 
-     * @param range The exclusive range.
+     * @param range
+     *        The exclusive range.
      * @return The pseudo-random {@code int}.
-     * @throws IllegalArgumentException If the specified range is less <tt>0</tt>
+     * @throws IllegalArgumentException
+     *         If the specified range is less <tt>0</tt>
      * 
-     *             <p>
-     *             We use {@link ThreadLocalRandom#current()} to produce this
-     *             random {@code int}, it is faster than a standard
-     *             {@link Random} instance as we do not have to wait on
-     *             {@code AtomicLong}.
-     *             </p>
+     *         <p>
+     *         We use {@link ThreadLocalRandom#current()} to produce this random
+     *         {@code int}, it is faster than a standard {@link Random} instance
+     *         as we do not have to wait on {@code AtomicLong}.
+     *         </p>
      */
     public static int random(int range) {
-	if (range < 0) {
-	    throw new IllegalArgumentException("range < 0");
-	}
+        if (range < 0) {
+            throw new IllegalArgumentException("range < 0");
+        }
 
-	return RANDOM.nextInt(range);
+        return RANDOM.nextInt(range);
     }
 
     /**
      * Returns a pseudo-random {@code int} value between inclusive
      * <code>min</code> and inclusive <code>max</code>.
      * 
-     * @param min The minimum inclusive number.
-     * @param max The maximum inclusive number.
+     * @param min
+     *        The minimum inclusive number.
+     * @param max
+     *        The maximum inclusive number.
      * @return The pseudo-random {@code int}.
-     * @throws IllegalArgumentException If {@code max - min + 1} is less than <tt>0</tt>.
+     * @throws IllegalArgumentException
+     *         If {@code max - min + 1} is less than <tt>0</tt>.
      * @see {@link #random(int)}.
      */
     public static int inclusiveRandom(int min, int max) {
-	return random((max - min) + 1) + min;
+        return random((max - min) + 1) + min;
     }
 
     /**
@@ -1008,21 +1013,24 @@ public final class Misc {
      * <code>min</code> and inclusive <code>max</code> excluding the specified
      * numbers within the {@code excludes} array.
      * 
-     * @param min The minimum inclusive number.
-     * @param max The maximum inclusive number.
+     * @param min
+     *        The minimum inclusive number.
+     * @param max
+     *        The maximum inclusive number.
      * @return The pseudo-random {@code int}.
-     * @throws IllegalArgumentException If {@code max - min + 1} is less than <tt>0</tt>.
+     * @throws IllegalArgumentException
+     *         If {@code max - min + 1} is less than <tt>0</tt>.
      * @see {@link #inclusiveRandom(int, int)}.
      */
     public static int inclusiveRandomExcludes(int min, int max, int... exclude) {
-	Arrays.sort(exclude);
-	 
-	int result = inclusiveRandom(min, max);
-	while (Arrays.binarySearch(exclude, result) >= 0) {
-	    result = inclusiveRandom(min, max);
-	}
-	
-	return result;
+        Arrays.sort(exclude);
+
+        int result = inclusiveRandom(min, max);
+        while (Arrays.binarySearch(exclude, result) >= 0) {
+            result = inclusiveRandom(min, max);
+        }
+
+        return result;
     }
 
     /**
@@ -1033,23 +1041,24 @@ public final class Misc {
      * <br>
      * This method is thread-safe. </br>
      * 
-     * @param range The exclusive range.
+     * @param range
+     *        The exclusive range.
      * @return The pseudo-random {@code float}.
-     * @throws IllegalArgumentException If the specified range is less than <tt>0</tt>
+     * @throws IllegalArgumentException
+     *         If the specified range is less than <tt>0</tt>
      * 
-     *             <p>
-     *             We use {@link ThreadLocalRandom#current()} to produce this
-     *             random {@code float}, it is faster than a standard
-     *             {@link Random} instance as we do not have to wait on
-     *             {@code AtomicLong}.
-     *             </p>
+     *         <p>
+     *         We use {@link ThreadLocalRandom#current()} to produce this random
+     *         {@code float}, it is faster than a standard {@link Random}
+     *         instance as we do not have to wait on {@code AtomicLong}.
+     *         </p>
      */
     public static float random(float range) {
-	if (range < 0F) {
-	    throw new IllegalArgumentException("range <= 0");
-	}
+        if (range < 0F) {
+            throw new IllegalArgumentException("range <= 0");
+        }
 
-	return RANDOM.nextFloat() * range;
+        return RANDOM.nextFloat() * range;
     }
 
     /**
