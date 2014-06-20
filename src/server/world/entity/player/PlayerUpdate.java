@@ -64,7 +64,7 @@ public final class PlayerUpdate {
 
         /** Update the local player list. */
         for (int i = 0; i < World.getPlayers().getCapacity(); i++) {
-            if (added == 10 || player.getPlayers().size() >= 220) {
+            if (added == 10 || player.getPlayers().size() >= 255) {
 
                 /** Player limit has been reached. */
                 break;
@@ -370,7 +370,7 @@ public final class PlayerUpdate {
         /** Create the buffer we are going to cache. */
         WriteBuffer cachedBuffer = PacketBuffer.newWriteBuffer();
 
-        /** First we must prepare the mask. */
+        /** First we build the update mask. */
         int mask = 0x0;
 
         if (player.getFlags().get(Flag.GRAPHICS)) {
@@ -401,7 +401,7 @@ public final class PlayerUpdate {
             mask |= 0x200;
         }
 
-        /** Now, we write the actual mask. */
+        /** Then we write the built mask. */
         if (mask >= 0x100) {
             mask |= 0x40;
             cachedBuffer.writeShort(mask, PacketBuffer.ByteOrder.LITTLE);
@@ -409,7 +409,7 @@ public final class PlayerUpdate {
             cachedBuffer.writeByte(mask);
         }
 
-        /** Finally, we append the attributes blocks. */
+        /** Then we add the attribute data to the block. */
         // Graphics
         if (player.getFlags().get(Flag.GRAPHICS)) {
             appendGfx(player, cachedBuffer);
