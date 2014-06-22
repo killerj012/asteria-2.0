@@ -305,42 +305,66 @@ public final class Session {
                 String password = null;
 
                 /** Either decode RSA or ignore it depending on the settings. */
-                if (DECODE_RSA && !botLogin) {
-                    byte[] encryptionBytes = new byte[loginEncryptPacketSize];
-                    in.getBuffer().get(encryptionBytes);
+                if (DECODE_RSA) {
+                    if (!botLogin) {
+                        byte[] encryptionBytes = new byte[loginEncryptPacketSize];
+                        in.getBuffer().get(encryptionBytes);
 
-                    ByteBuffer rsaBuffer = ByteBuffer.wrap(new BigInteger(encryptionBytes).modPow(RSA_EXPONENT, RSA_MODULUS).toByteArray());
+                        ByteBuffer rsaBuffer = ByteBuffer.wrap(new BigInteger(encryptionBytes).modPow(RSA_EXPONENT, RSA_MODULUS).toByteArray());
 
-                    int rsaOpcode = rsaBuffer.get();
+                        int rsaOpcode = rsaBuffer.get();
 
-                    if (rsaOpcode != 10) {
-                        logger.info("Unable to decode RSA block properly!");
-                        disconnect();
-                        return;
+                        if (rsaOpcode != 10) {
+                            logger.info("Unable to decode RSA block properly!");
+                            disconnect();
+                            return;
+                        }
+
+                        /** Set up the ISAAC ciphers. */
+                        long clientHalf = rsaBuffer.getLong();
+                        long serverHalf = rsaBuffer.getLong();
+
+                        int[] isaacSeed = { (int) (clientHalf >> 32), (int) clientHalf, (int) (serverHalf >> 32), (int) serverHalf };
+
+                        decryptor = new ISAACCipher(isaacSeed);
+
+                        for (int i = 0; i < isaacSeed.length; i++) {
+                            isaacSeed[i] += 50;
+
+                        }
+
+                        encryptor = new ISAACCipher(isaacSeed);
+
+                        /** Read the user authentication. */
+                        // int uid = rsaBuffer.getInt();
+                        rsaBuffer.getInt();
+
+                        ReadBuffer readStr = PacketBuffer.newReadBuffer(rsaBuffer);
+                        username = readStr.readString();
+                        password = readStr.readString();
+                    } else {
+                        in.getBuffer().get();
+
+                        /** Set up the ISAAC ciphers. */
+                        long clientHalf = in.getBuffer().getLong();
+                        long serverHalf = in.getBuffer().getLong();
+
+                        int[] isaacSeed = { (int) (clientHalf >> 32), (int) clientHalf, (int) (serverHalf >> 32), (int) serverHalf };
+
+                        decryptor = new ISAACCipher(isaacSeed);
+
+                        for (int i = 0; i < isaacSeed.length; i++) {
+                            isaacSeed[i] += 50;
+
+                        }
+
+                        encryptor = new ISAACCipher(isaacSeed);
+
+                        /** Read the user authentication. */
+                        in.getBuffer().getInt(); // Skip the user ID.
+                        username = in.readString();
+                        password = in.readString();
                     }
-
-                    /** Set up the ISAAC ciphers. */
-                    long clientHalf = rsaBuffer.getLong();
-                    long serverHalf = rsaBuffer.getLong();
-
-                    int[] isaacSeed = { (int) (clientHalf >> 32), (int) clientHalf, (int) (serverHalf >> 32), (int) serverHalf };
-
-                    decryptor = new ISAACCipher(isaacSeed);
-
-                    for (int i = 0; i < isaacSeed.length; i++) {
-                        isaacSeed[i] += 50;
-
-                    }
-
-                    encryptor = new ISAACCipher(isaacSeed);
-
-                    /** Read the user authentication. */
-                    // int uid = rsaBuffer.getInt();
-                    rsaBuffer.getInt();
-
-                    ReadBuffer readStr = PacketBuffer.newReadBuffer(rsaBuffer);
-                    username = readStr.readString();
-                    password = readStr.readString();
                 } else {
                     in.getBuffer().get();
 

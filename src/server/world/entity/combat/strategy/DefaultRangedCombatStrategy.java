@@ -3,6 +3,7 @@ package server.world.entity.combat.strategy;
 import server.util.Misc;
 import server.world.entity.Animation;
 import server.world.entity.Entity;
+import server.world.entity.EntityType;
 import server.world.entity.Gfx;
 import server.world.entity.Hit;
 import server.world.entity.Projectile;
@@ -32,7 +33,7 @@ public class DefaultRangedCombatStrategy implements CombatStrategy {
     public boolean prepareAttack(Entity entity) {
 
         /** If the entity is a player we need to check for ammo. */
-        if (entity.isPlayer()) {
+        if (entity.type() == EntityType.PLAYER) {
             Player player = (Player) entity;
             Item arrowItem = player.getEquipment().getContainer().getItem(Misc.EQUIPMENT_SLOT_ARROWS);
 
@@ -104,7 +105,7 @@ public class DefaultRangedCombatStrategy implements CombatStrategy {
          * If the entity is a player we need to decrement and fire projectiles
          * and gfx's based on the current ammo they have equipped.
          */
-        if (entity.isPlayer()) {
+        if (entity.type() == EntityType.PLAYER) {
             Player player = (Player) entity;
             player.animation(new Animation(player.getFightType().getAnimation()));
             CombatRangedAmmo ammo = CombatRangedAmmo.getAmmo(player);
@@ -163,7 +164,7 @@ public class DefaultRangedCombatStrategy implements CombatStrategy {
          * If the entity is player then get the appropriate distance based on
          * the weapon being used.
          */
-        if (entity.isPlayer()) {
+        if (entity.type() == EntityType.PLAYER) {
             Player player = (Player) entity;
             int distance = 0;
 

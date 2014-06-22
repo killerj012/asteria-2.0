@@ -8,6 +8,7 @@ import java.util.Map.Entry;
 import server.core.worker.TaskFactory;
 import server.core.worker.listener.EventListener;
 import server.world.entity.Entity;
+import server.world.entity.EntityType;
 import server.world.entity.combat.task.CombatHookTask;
 import server.world.entity.npc.Npc;
 import server.world.entity.player.Player;
@@ -74,9 +75,9 @@ public class CombatBuilder {
         entity.getMovementQueue().follow(victim);
 
         /** Face the victim regardless. */
-        if (victim.isPlayer()) {
+        if (victim.type() == EntityType.PLAYER) {
             entity.faceEntity(victim.getSlot() + 32768);
-        } else if (victim.isNpc()) {
+        } else if (victim.type() == EntityType.NPC) {
             entity.faceEntity(victim.getSlot());
         }
 
@@ -99,7 +100,7 @@ public class CombatBuilder {
         final CombatBuilder builder = this;
 
         /** Determine the combat strategy for npcs. */
-        if (builder.getEntity().isNpc()) {
+        if (builder.getEntity().type() == EntityType.NPC) {
             Npc npc = (Npc) builder.getEntity();
             CombatFactory.determineNpcStrategy(npc);
         }
@@ -120,7 +121,7 @@ public class CombatBuilder {
                  * Redetermines the combat strategy while walking to the victim
                  * if you're a player.
                  */
-                if (builder.getEntity().isPlayer()) {
+                if (builder.getEntity().type() == EntityType.PLAYER) {
                     Player player = (Player) builder.getEntity();
                     CombatFactory.determinePlayerStrategy(player);
                 }
@@ -140,7 +141,7 @@ public class CombatBuilder {
                 }
 
                 /** Checks if the npc needs to retreat. */
-                if (builder.getEntity().isNpc()) {
+                if (builder.getEntity().type() == EntityType.NPC) {
                     Npc npc = (Npc) builder.getEntity();
 
                     if (!npc.getPosition().withinDistance(npc.getOriginalPosition(), 5)) {
@@ -302,11 +303,12 @@ public class CombatBuilder {
     }
 
     /**
-     * Gets the entity who killed this player.
+     * Gets the player who killed this entity. If no player is returned, then
+     * this entity was killed by an npc or another underlying force.
      * 
-     * @return the entity who killed this player.
+     * @return the player who killed this entity.
      */
-    public Entity getKiller() {
+    public Player getKiller() {
 
         /** We weren't killed by any entities. */
         if (damageMap.size() == 0) {
@@ -321,15 +323,19 @@ public class CombatBuilder {
         /** Search for the value and return the key for that value (the killer). */
         for (Entry<Entity, Integer> nextEntry : damageMap.entrySet()) {
             if (nextEntry.getValue().intValue() == searchValue) {
-                if (nextEntry.getKey().isHasDied() || nextEntry.getKey().isUnregistered()) {
+                Entity next = nextEntry.getKey();
+                if (next.isHasDied() || next.isUnregistered() || next.type() == EntityType.NPC) {
                     continue;
                 }
-                return nextEntry.getKey();
+                return (Player) next;
             }
         }
 
         /** If no killers have been found return the last attacker. */
-        return lastAttacker;
+        if (lastAttacker.type() == EntityType.PLAYER) {
+            return (Player) lastAttacker;
+        }
+        return null;
     }
 
     /**

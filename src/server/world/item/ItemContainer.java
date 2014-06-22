@@ -622,4 +622,22 @@ public class ItemContainer {
     public Item[] toArray() {
         return items;
     }
+
+    /**
+     * The backing array of items excluding nulls.
+     * 
+     * @return the array of items.
+     */
+    public Item[] toCleanArray() {
+        Item[] itemsCopy = new Item[size()];
+        int slot = 0;
+
+        for (Item item : itemsCopy) {
+            if (item == null) {
+                continue;
+            }
+            itemsCopy[slot++] = item;
+        }
+        return itemsCopy;
+    }
 }

@@ -4,13 +4,13 @@ import server.core.worker.Worker;
 import server.world.World;
 import server.world.entity.Animation;
 import server.world.entity.Entity;
+import server.world.entity.EntityType;
 import server.world.entity.UpdateFlags.Flag;
-import server.world.entity.npc.NpcDeathDrop.DeathDrop;
 import server.world.entity.player.Player;
 import server.world.entity.player.minigame.Minigame;
 import server.world.entity.player.minigame.MinigameFactory;
+import server.world.item.Item;
 import server.world.item.ground.GroundItem;
-import server.world.item.ground.StaticGroundItem;
 import server.world.map.Position;
 
 /**
@@ -71,8 +71,6 @@ public class Npc extends Entity {
         this.maxHealth = getDefinition().getHitpoints();
         this.setCurrentHealth(getDefinition().getHitpoints());
         this.setAutoRetaliate(true);
-        this.setNpc(true);
-        this.setPlayer(false);
         this.getFlags().flag(Flag.APPEARANCE);
     }
 
@@ -99,9 +97,11 @@ public class Npc extends Entity {
                     /** After 7 ticks remove the npc and begin respawning. */
                 } else if (getDeathTicks() == 6) {
 
-                    /** Drop the items on death and remove the npc from the area. */
+                    /**
+                     * Drop the items on death and remove the npc from the area.
+                     */
                     if (respawnTicks == 0) {
-                        Entity killer = getCombatBuilder().getKiller();
+                        Player killer = getCombatBuilder().getKiller();
                         dropDeathItems(killer);
                         move(new Position(1, 1));
 
@@ -147,57 +147,49 @@ public class Npc extends Entity {
 
     @Override
     public String toString() {
-        return "NPC(" + getSlot() + ":" + getDefinition().getName() + ")";
+        return "NPC[slot= " + getSlot() + ", name=" + getDefinition().getName() + "]";
+    }
+
+    @Override
+    public EntityType type() {
+        return EntityType.NPC;
     }
 
     /**
-     * Drops items for the entity that killed this npc.
+     * Drops items for the player that killed this npc.
      * 
      * @param killer
-     *        the killer for this entity.
+     *        the killer for this npc.
      */
-    public void dropDeathItems(Entity killer) {
+    public void dropDeathItems(Player killer) {
 
-        /** Get the drops for this npc. */
-        DeathDrop[] dropItems = NpcDeathDrop.calculateDeathDrop(this).clone();
-
-        /** Block if there are no drops. */
-        if (dropItems.length == 0) {
+        /** Validate the killer recieved. */
+        if (killer == null) {
             return;
         }
 
-        /**
-         * If the killer is an npc or an unknown entity register static ground
-         * items that will vanish within a minute.
-         */
-        if (killer == null || killer.isNpc()) {
-            for (DeathDrop drop : dropItems) {
-                if (drop == null) {
-                    continue;
-                }
+        /** Get the drop table for this npc. */
+        NpcDropTable table = NpcDropTable.getAllDrops().get(npcId);
 
-                World.getGroundItems().register(new StaticGroundItem(drop.getItem(), getPosition(), true, false));
+        /** Validate the drop table recieved. */
+        if (table == null) {
+            return;
+        }
+
+        /** Drop the items for the player. */
+        Item[] dropItems = table.calculateDrops(killer);
+
+        for (Item drop : dropItems) {
+            if (drop == null) {
+                continue;
             }
 
-            /**
-             * If the killer is a player register normal ground items just for
-             * the killer.
-             */
-        } else if (killer.isPlayer()) {
-            Player player = (Player) killer;
+            World.getGroundItems().register(new GroundItem(drop, new Position(getPosition().getX(), getPosition().getY(), getPosition().getZ()), killer));
+        }
 
-            for (DeathDrop drop : dropItems) {
-                if (drop == null) {
-                    continue;
-                }
-
-                World.getGroundItems().register(new GroundItem(drop.getItem(), new Position(getPosition().getX(), getPosition().getY(), getPosition().getZ()), player));
-            }
-
-            for (Minigame minigame : MinigameFactory.getMinigames().values()) {
-                if (minigame.inMinigame(player)) {
-                    minigame.fireOnKill(player, this);
-                }
+        for (Minigame minigame : MinigameFactory.getMinigames().values()) {
+            if (minigame.inMinigame(killer)) {
+                minigame.fireOnKill(killer, this);
             }
         }
     }

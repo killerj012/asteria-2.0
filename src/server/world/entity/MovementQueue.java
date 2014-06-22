@@ -300,9 +300,9 @@ public class MovementQueue {
                         return;
                     }
 
-                    if (leader.isPlayer()) {
+                    if (leader.type() == EntityType.PLAYER) {
                         entity.faceEntity(leader.getSlot() + 32768);
-                    } else if (leader.isNpc()) {
+                    } else if (leader.type() == EntityType.NPC) {
                         entity.faceEntity(leader.getSlot());
                     }
 
@@ -348,7 +348,7 @@ public class MovementQueue {
                         return;
                     }
 
-                    if (entity.isPlayer()) {
+                    if (entity.type() == EntityType.PLAYER) {
                         Player player = (Player) entity;
 
                         if (player.getCombatBuilder().isAttacking()) {
@@ -365,7 +365,7 @@ public class MovementQueue {
                         // x, y, true, 0, 0);
                         player.getMovementQueue().walk(new Position(x, y, player.getPosition().getZ()));
 
-                    } else if (entity.isNpc()) {
+                    } else if (entity.type() == EntityType.NPC) {
                         Npc npc = (Npc) entity;
 
                         if (npc.getCombatBuilder().isAttacking()) {

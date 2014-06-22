@@ -3,6 +3,7 @@ package server.world.entity.combat.strategy;
 import server.util.Misc;
 import server.world.entity.Animation;
 import server.world.entity.Entity;
+import server.world.entity.EntityType;
 import server.world.entity.Hit;
 import server.world.entity.combat.CombatFactory;
 import server.world.entity.combat.CombatHitContainer;
@@ -33,10 +34,10 @@ public class DefaultMeleeCombatStrategy implements CombatStrategy {
     public CombatHitContainer attack(Entity entity, Entity victim) {
 
         /** Determine the animation that will be used. */
-        if (entity.isNpc()) {
+        if (entity.type() == EntityType.NPC) {
             Npc npc = (Npc) entity;
             npc.animation(new Animation(npc.getDefinition().getAttackAnimation()));
-        } else if (entity.isPlayer()) {
+        } else if (entity.type() == EntityType.PLAYER) {
             Player player = (Player) entity;
 
             if (!player.isSpecialActivated()) {
@@ -84,7 +85,7 @@ public class DefaultMeleeCombatStrategy implements CombatStrategy {
     public int getDistance(Entity entity) {
 
         /** The default distance for all npcs is 1. */
-        if (entity.isNpc()) {
+        if (entity.type() == EntityType.NPC) {
             return 1;
         }
 

@@ -10,6 +10,9 @@ import java.util.Comparator;
  */
 public class Item implements Comparator<Item> {
 
+    /** The item instance used to set the comparator. */
+    public static final Item COMPARATOR = new Item(0, 0);
+
     /** The id of the item. */
     private int id;
 
@@ -50,6 +53,12 @@ public class Item implements Comparator<Item> {
             }
         }
         return false;
+    }
+
+    @Override
+    public String toString() {
+        String name = getDefinition() == null ? "null" : getDefinition().getItemName();
+        return "ITEM[item= " + id + ", amount= " + amount + ", name= " + name + "]";
     }
 
     /**
@@ -146,7 +155,7 @@ public class Item implements Comparator<Item> {
     @Override
     public int compare(Item o1, Item o2) {
         if (o1 == null || o2 == null) {
-            throw new IllegalArgumentException("Cannot compare {Item}s with null value.");
+            return -1;
         }
 
         if (o1.getDefinition().getGeneralStorePrice() > o2.getDefinition().getGeneralStorePrice()) {

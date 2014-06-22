@@ -27,7 +27,7 @@ public abstract class Spell {
      * @return true if the spell is successful.
      */
     public boolean prepareCast(Entity cast, Entity castOn) {
-        if (cast.isPlayer()) {
+        if (cast.type() == EntityType.PLAYER) {
             Player player = (Player) cast;
 
             /** Check the level required. */

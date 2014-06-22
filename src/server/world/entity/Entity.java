@@ -24,12 +24,6 @@ public abstract class Entity {
     /** The index of the entity. */
     private int slot = -1;
 
-    /** If this entity is a player. */
-    private boolean isPlayer;
-
-    /** If this entity is an npc. */
-    private boolean isNpc;
-
     /** The amount of poison hits left to take. */
     private int poisonHits;
 
@@ -159,6 +153,13 @@ public abstract class Entity {
     public abstract int getCurrentHealth();
 
     /**
+     * Get the type of the entity.
+     * 
+     * @return the type of the entity.
+     */
+    public abstract EntityType type();
+
+    /**
      * Resets this entity after updating.
      */
     public void reset() {
@@ -234,7 +235,7 @@ public abstract class Entity {
     public void dealDamage(Hit hit) {
         int writeDamage = hit.getDamage();
 
-        if (isPlayer()) {
+        if (this.type() == EntityType.PLAYER) {
             Player player = (Player) this;
 
             if (writeDamage > player.getSkills()[Misc.HITPOINTS].getLevel()) {
@@ -244,7 +245,7 @@ public abstract class Entity {
             player.getSkills()[Misc.HITPOINTS].decreaseLevel(writeDamage);
             SkillManager.refresh(player, SkillConstant.HITPOINTS);
             player.getPacketBuilder().closeWindows();
-        } else if (isNpc()) {
+        } else if (this.type() == EntityType.NPC) {
             Npc npc = (Npc) this;
 
             if (writeDamage > npc.getCurrentHP()) {
@@ -267,7 +268,7 @@ public abstract class Entity {
     private void dealSecondaryDamage(Hit secondaryHit) {
         int writeDamage = secondaryHit.getDamage();
 
-        if (isPlayer()) {
+        if (this.type() == EntityType.PLAYER) {
             Player player = (Player) this;
 
             if (writeDamage > player.getSkills()[Misc.HITPOINTS].getLevel()) {
@@ -277,7 +278,7 @@ public abstract class Entity {
             player.getSkills()[Misc.HITPOINTS].decreaseLevel(writeDamage);
             SkillManager.refresh(player, SkillConstant.HITPOINTS);
             player.getPacketBuilder().closeWindows();
-        } else if (isNpc()) {
+        } else if (this.type() == EntityType.NPC) {
             Npc npc = (Npc) this;
 
             if (writeDamage > npc.getCurrentHP()) {
@@ -681,36 +682,6 @@ public abstract class Entity {
      */
     public CombatBuilder getCombatBuilder() {
         return combatBuilder;
-    }
-
-    /**
-     * @return the isPlayer
-     */
-    public boolean isPlayer() {
-        return isPlayer;
-    }
-
-    /**
-     * @param isPlayer
-     *        the isPlayer to set
-     */
-    public void setPlayer(boolean isPlayer) {
-        this.isPlayer = isPlayer;
-    }
-
-    /**
-     * @return the isNpc
-     */
-    public boolean isNpc() {
-        return isNpc;
-    }
-
-    /**
-     * @param isNpc
-     *        the isNpc to set
-     */
-    public void setNpc(boolean isNpc) {
-        this.isNpc = isNpc;
     }
 
     /**

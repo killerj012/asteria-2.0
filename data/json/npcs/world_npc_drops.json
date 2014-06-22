@@ -1,28 +1,45 @@
 [
     {
         "id": 1,
-        "drops": [
+        "dynamic": [
         	{
-        	    "item": {
-        			"id": 526,
-        			"amount": 1
-        		},
-        		"chance": ALWAYS
+        		"id": 526,
+        		"amount": 1,
+        		"bet": 1.0
         	},
         	{
-        		"item": {
-        			"id": 995,
-        			"amount": 25
-        		},
-        		"chance": COMMON
+        	    "id": 995,
+        		"amount": 500,
+        		"bet": 0.75
         	},
         	{
-        		"item": {
-        		    "id": 1205,
-        			"amount": 1
-        		},
-        		"chance": COMMON
+        		"id": 1205,
+        		"amount": 1,
+        		"bet": 0.45
         	}
-        ]
+        ],
+        "rare": []
+    },
+    {
+        "id": 1615,
+        "dynamic": [
+        	{
+        		"id": 592,
+        		"amount": 1,
+        		"bet": 1.0
+        	},
+        	{
+        	    "id": 995,
+        		"amount": 10000,
+        		"bet": 0.15
+        	}
+        ],
+        "rare": [
+       		{
+        		"id": 4151,
+        		"amount": 1,
+        		"bet": 0.015
+        	}
+		]	
     }
 ]

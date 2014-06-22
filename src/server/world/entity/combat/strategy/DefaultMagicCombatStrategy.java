@@ -2,6 +2,7 @@ package server.world.entity.combat.strategy;
 
 import server.util.Misc;
 import server.world.entity.Entity;
+import server.world.entity.EntityType;
 import server.world.entity.Hit;
 import server.world.entity.combat.CombatHitContainer;
 import server.world.entity.combat.CombatStrategy;
@@ -19,7 +20,7 @@ public class DefaultMagicCombatStrategy implements CombatStrategy {
 
     @Override
     public boolean prepareAttack(Entity entity) {
-        if (entity.isPlayer()) {
+        if (entity.type() == EntityType.PLAYER) {
             Player player = (Player) entity;
 
             if (player.getCastSpell() == null) {
@@ -34,7 +35,7 @@ public class DefaultMagicCombatStrategy implements CombatStrategy {
 
     @Override
     public CombatHitContainer attack(Entity entity, Entity victim) {
-        if (entity.isPlayer()) {
+        if (entity.type() == EntityType.PLAYER) {
             Player player = (Player) entity;
 
             /** Cast the spell. */

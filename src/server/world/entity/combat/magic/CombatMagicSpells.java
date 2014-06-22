@@ -5,6 +5,7 @@ import server.core.worker.WorkRate;
 import server.util.Misc;
 import server.world.entity.Animation;
 import server.world.entity.Entity;
+import server.world.entity.EntityType;
 import server.world.entity.Gfx;
 import server.world.entity.Projectile;
 import server.world.entity.combat.CombatFactory;
@@ -87,11 +88,11 @@ public enum CombatMagicSpells {
 
         @Override
         public void spellEffect(Entity cast, Entity castOn) {
-            if (castOn.isPlayer()) {
+            if (castOn.type() == EntityType.PLAYER) {
                 Player player = (Player) castOn;
 
                 if (player.getSkills()[Misc.ATTACK].getLevel() < player.getSkills()[Misc.ATTACK].getLevelForExperience()) {
-                    if (cast.isPlayer()) {
+                    if (cast.type() == EntityType.PLAYER) {
                         ((Player) cast).getPacketBuilder().sendMessage("The spell has no effect because the player has already been weakened.");
                     }
                     return;
@@ -100,11 +101,11 @@ public enum CombatMagicSpells {
                 player.getSkills()[Misc.ATTACK].decreaseLevel((int) (0.05 * (player.getSkills()[Misc.ATTACK].getLevel())));
                 SkillManager.refresh(player, SkillConstant.ATTACK);
                 player.getPacketBuilder().sendMessage("You feel slightly weakened.");
-            } else if (castOn.isNpc()) {
+            } else if (castOn.type() == EntityType.NPC) {
                 Npc npc = (Npc) castOn;
 
                 if (npc.getStatsWeakened()[0] || npc.getStatsBadlyWeakened()[0]) {
-                    if (cast.isPlayer()) {
+                    if (cast.type() == EntityType.PLAYER) {
                         ((Player) cast).getPacketBuilder().sendMessage("The spell has no effect because the NPC has already been weakened.");
                     }
                     return;
@@ -259,11 +260,11 @@ public enum CombatMagicSpells {
 
         @Override
         public void spellEffect(Entity cast, Entity castOn) {
-            if (castOn.isPlayer()) {
+            if (castOn.type() == EntityType.PLAYER) {
                 Player player = (Player) castOn;
 
                 if (player.getSkills()[Misc.STRENGTH].getLevel() < player.getSkills()[Misc.STRENGTH].getLevelForExperience()) {
-                    if (cast.isPlayer()) {
+                    if (cast.type() == EntityType.PLAYER) {
                         ((Player) cast).getPacketBuilder().sendMessage("The spell has no effect because the player has already been weakened.");
                     }
                     return;
@@ -272,11 +273,11 @@ public enum CombatMagicSpells {
                 player.getSkills()[Misc.STRENGTH].decreaseLevel((int) (0.05 * (player.getSkills()[Misc.STRENGTH].getLevel())));
                 SkillManager.refresh(player, SkillConstant.STRENGTH);
                 player.getPacketBuilder().sendMessage("You feel slightly weakened.");
-            } else if (castOn.isNpc()) {
+            } else if (castOn.type() == EntityType.NPC) {
                 Npc npc = (Npc) castOn;
 
                 if (npc.getStatsWeakened()[1] || npc.getStatsBadlyWeakened()[1]) {
-                    if (cast.isPlayer()) {
+                    if (cast.type() == EntityType.PLAYER) {
                         ((Player) cast).getPacketBuilder().sendMessage("The spell has no effect because the NPC has already been weakened.");
                     }
                     return;
@@ -431,11 +432,11 @@ public enum CombatMagicSpells {
 
         @Override
         public void spellEffect(Entity cast, Entity castOn) {
-            if (castOn.isPlayer()) {
+            if (castOn.type() == EntityType.PLAYER) {
                 Player player = (Player) castOn;
 
                 if (player.getSkills()[Misc.DEFENCE].getLevel() < player.getSkills()[Misc.DEFENCE].getLevelForExperience()) {
-                    if (cast.isPlayer()) {
+                    if (cast.type() == EntityType.PLAYER) {
                         ((Player) cast).getPacketBuilder().sendMessage("The spell has no effect because the player has already been weakened.");
                     }
                     return;
@@ -444,11 +445,11 @@ public enum CombatMagicSpells {
                 player.getSkills()[Misc.DEFENCE].decreaseLevel((int) (0.05 * (player.getSkills()[Misc.DEFENCE].getLevel())));
                 SkillManager.refresh(player, SkillConstant.DEFENCE);
                 player.getPacketBuilder().sendMessage("You feel slightly weakened.");
-            } else if (castOn.isNpc()) {
+            } else if (castOn.type() == EntityType.NPC) {
                 Npc npc = (Npc) castOn;
 
                 if (npc.getStatsWeakened()[2] || npc.getStatsBadlyWeakened()[2]) {
-                    if (cast.isPlayer()) {
+                    if (cast.type() == EntityType.PLAYER) {
                         ((Player) cast).getPacketBuilder().sendMessage("The spell has no effect because the NPC has already been weakened.");
                     }
                     return;
@@ -502,7 +503,7 @@ public enum CombatMagicSpells {
         @Override
         public void spellEffect(Entity cast, Entity castOn) {
             if (castOn.getMovementQueue().isLockMovement()) {
-                if (cast.isPlayer()) {
+                if (cast.type() == EntityType.PLAYER) {
                     ((Player) cast).getPacketBuilder().sendMessage("The spell has no effect because they are already frozen.");
                 }
                 return;
@@ -510,7 +511,7 @@ public enum CombatMagicSpells {
 
             castOn.getMovementQueue().lockMovementFor(9, WorkRate.DEFAULT);
 
-            if (castOn.isPlayer()) {
+            if (castOn.type() == EntityType.PLAYER) {
                 ((Player) castOn).getPacketBuilder().sendMessage("You have been frozen by magic!");
             }
         }
@@ -916,7 +917,7 @@ public enum CombatMagicSpells {
         @Override
         public void spellEffect(Entity cast, Entity castOn) {
             if (castOn.getMovementQueue().isLockMovement()) {
-                if (cast.isPlayer()) {
+                if (cast.type() == EntityType.PLAYER) {
                     ((Player) cast).getPacketBuilder().sendMessage("The spell has no effect because they are already frozen.");
                 }
                 return;
@@ -924,7 +925,7 @@ public enum CombatMagicSpells {
 
             castOn.getMovementQueue().lockMovementFor(10, WorkRate.APPROXIMATE_SECOND);
 
-            if (castOn.isPlayer()) {
+            if (castOn.type() == EntityType.PLAYER) {
                 ((Player) castOn).getPacketBuilder().sendMessage("You have been frozen by magic!");
             }
         }
@@ -1380,11 +1381,11 @@ public enum CombatMagicSpells {
 
         @Override
         public void spellEffect(Entity cast, Entity castOn) {
-            if (castOn.isPlayer()) {
+            if (castOn.type() == EntityType.PLAYER) {
                 Player player = (Player) castOn;
 
                 if (player.getSkills()[Misc.DEFENCE].getLevel() < player.getSkills()[Misc.DEFENCE].getLevelForExperience()) {
-                    if (cast.isPlayer()) {
+                    if (cast.type() == EntityType.PLAYER) {
                         ((Player) cast).getPacketBuilder().sendMessage("The spell has no effect because the player is already weakened.");
                     }
                     return;
@@ -1393,11 +1394,11 @@ public enum CombatMagicSpells {
                 player.getSkills()[Misc.DEFENCE].decreaseLevel((int) (0.10 * (player.getSkills()[Misc.DEFENCE].getLevel())));
                 SkillManager.refresh(player, SkillConstant.DEFENCE);
                 player.getPacketBuilder().sendMessage("You feel slightly weakened.");
-            } else if (castOn.isNpc()) {
+            } else if (castOn.type() == EntityType.NPC) {
                 Npc npc = (Npc) castOn;
 
                 if (npc.getStatsWeakened()[2] || npc.getStatsBadlyWeakened()[2]) {
-                    if (cast.isPlayer()) {
+                    if (cast.type() == EntityType.PLAYER) {
                         ((Player) cast).getPacketBuilder().sendMessage("The spell has no effect because the NPC is already weakened.");
                     }
                     return;
@@ -1501,11 +1502,11 @@ public enum CombatMagicSpells {
 
         @Override
         public void spellEffect(Entity cast, Entity castOn) {
-            if (castOn.isPlayer()) {
+            if (castOn.type() == EntityType.PLAYER) {
                 Player player = (Player) castOn;
 
                 if (player.getSkills()[Misc.STRENGTH].getLevel() < player.getSkills()[Misc.STRENGTH].getLevelForExperience()) {
-                    if (cast.isPlayer()) {
+                    if (cast.type() == EntityType.PLAYER) {
                         ((Player) cast).getPacketBuilder().sendMessage("The spell has no effect because the player is already weakened.");
                     }
                     return;
@@ -1514,11 +1515,11 @@ public enum CombatMagicSpells {
                 player.getSkills()[Misc.STRENGTH].decreaseLevel((int) (0.10 * (player.getSkills()[Misc.STRENGTH].getLevel())));
                 SkillManager.refresh(player, SkillConstant.STRENGTH);
                 player.getPacketBuilder().sendMessage("You feel slightly weakened.");
-            } else if (castOn.isNpc()) {
+            } else if (castOn.type() == EntityType.NPC) {
                 Npc npc = (Npc) castOn;
 
                 if (npc.getStatsWeakened()[1] || npc.getStatsBadlyWeakened()[1]) {
-                    if (cast.isPlayer()) {
+                    if (cast.type() == EntityType.PLAYER) {
                         ((Player) cast).getPacketBuilder().sendMessage("The spell has no effect because the NPC is already weakened.");
                     }
                     return;
@@ -1623,7 +1624,7 @@ public enum CombatMagicSpells {
         @Override
         public void spellEffect(Entity cast, Entity castOn) {
             if (castOn.getMovementQueue().isLockMovement()) {
-                if (cast.isPlayer()) {
+                if (cast.type() == EntityType.PLAYER) {
                     ((Player) cast).getPacketBuilder().sendMessage("The spell has no effect because they are already frozen.");
                 }
                 return;
@@ -1631,7 +1632,7 @@ public enum CombatMagicSpells {
 
             castOn.getMovementQueue().lockMovementFor(15, WorkRate.APPROXIMATE_SECOND);
 
-            if (castOn.isPlayer()) {
+            if (castOn.type() == EntityType.PLAYER) {
                 ((Player) castOn).getPacketBuilder().sendMessage("You have been frozen by magic!");
             }
         }
@@ -1679,11 +1680,11 @@ public enum CombatMagicSpells {
 
         @Override
         public void spellEffect(Entity cast, Entity castOn) {
-            if (castOn.isPlayer()) {
+            if (castOn.type() == EntityType.PLAYER) {
                 Player player = (Player) castOn;
 
                 if (player.getSkills()[Misc.ATTACK].getLevel() < player.getSkills()[Misc.ATTACK].getLevelForExperience()) {
-                    if (cast.isPlayer()) {
+                    if (cast.type() == EntityType.PLAYER) {
                         ((Player) cast).getPacketBuilder().sendMessage("The spell has no effect because the player is already weakened.");
                     }
                     return;
@@ -1692,11 +1693,11 @@ public enum CombatMagicSpells {
                 player.getSkills()[Misc.ATTACK].decreaseLevel((int) (0.10 * (player.getSkills()[Misc.ATTACK].getLevel())));
                 SkillManager.refresh(player, SkillConstant.ATTACK);
                 player.getPacketBuilder().sendMessage("You feel slightly weakened.");
-            } else if (castOn.isNpc()) {
+            } else if (castOn.type() == EntityType.NPC) {
                 Npc npc = (Npc) castOn;
 
                 if (npc.getStatsWeakened()[0] || npc.getStatsBadlyWeakened()[0]) {
-                    if (cast.isPlayer()) {
+                    if (cast.type() == EntityType.PLAYER) {
                         ((Player) cast).getPacketBuilder().sendMessage("The spell has no effect because the NPC is already weakened.");
                     }
                     return;
@@ -1749,11 +1750,11 @@ public enum CombatMagicSpells {
 
         @Override
         public void spellEffect(Entity cast, Entity castOn) {
-            if (castOn.isPlayer()) {
+            if (castOn.type() == EntityType.PLAYER) {
                 Player player = (Player) castOn;
 
                 if (player.getTeleblockTimer() > 0) {
-                    if (cast.isPlayer()) {
+                    if (cast.type() == EntityType.PLAYER) {
                         ((Player) cast).getPacketBuilder().sendMessage("The spell has no effect because the player is already teleblocked.");
                     }
                     return;
@@ -1762,8 +1763,8 @@ public enum CombatMagicSpells {
                 player.setTeleblockTimer(3000);
                 TaskFactory.getFactory().submit(new CombatTeleblockTask(player));
                 player.getPacketBuilder().sendMessage("You have just been teleblocked!");
-            } else if (castOn.isNpc()) {
-                if (cast.isPlayer()) {
+            } else if (castOn.type() == EntityType.NPC) {
+                if (cast.type() == EntityType.PLAYER) {
                     ((Player) cast).getPacketBuilder().sendMessage("All NPCs are completely immune to this particular spell.");
                 }
             }
@@ -1860,7 +1861,7 @@ public enum CombatMagicSpells {
     SHADOW_RUSH(new CombatAncientSpell() {
         @Override
         public void spellEffect(Entity cast, Entity castOn, int damageInflicted) {
-            if (castOn.isPlayer()) {
+            if (castOn.type() == EntityType.PLAYER) {
                 Player player = (Player) castOn;
 
                 if (player.getSkills()[Misc.ATTACK].getLevel() < player.getSkills()[Misc.ATTACK].getLevelForExperience()) {
@@ -1929,7 +1930,7 @@ public enum CombatMagicSpells {
                 return;
             }
 
-            if (cast.isPlayer()) {
+            if (cast.type() == EntityType.PLAYER) {
                 Player player = (Player) cast;
                 player.getSkills()[Misc.HITPOINTS].increaseLevel((int) (damageInflicted * 0.25), player.getSkills()[Misc.HITPOINTS].getLevelForExperience());
                 SkillManager.refresh(player, SkillConstant.HITPOINTS);
@@ -2101,7 +2102,7 @@ public enum CombatMagicSpells {
     SHADOW_BURST(new CombatAncientSpell() {
         @Override
         public void spellEffect(Entity cast, Entity castOn, int damageInflicted) {
-            if (castOn.isPlayer()) {
+            if (castOn.type() == EntityType.PLAYER) {
                 Player player = (Player) castOn;
 
                 if (player.getSkills()[Misc.ATTACK].getLevel() < player.getSkills()[Misc.ATTACK].getLevelForExperience()) {
@@ -2170,7 +2171,7 @@ public enum CombatMagicSpells {
                 return;
             }
 
-            if (cast.isPlayer()) {
+            if (cast.type() == EntityType.PLAYER) {
                 Player player = (Player) cast;
                 player.getSkills()[Misc.HITPOINTS].increaseLevel((int) (damageInflicted * 0.25), player.getSkills()[Misc.HITPOINTS].getLevelForExperience());
                 SkillManager.refresh(player, SkillConstant.HITPOINTS);
@@ -2342,7 +2343,7 @@ public enum CombatMagicSpells {
     SHADOW_BLITZ(new CombatAncientSpell() {
         @Override
         public void spellEffect(Entity cast, Entity castOn, int damageInflicted) {
-            if (castOn.isPlayer()) {
+            if (castOn.type() == EntityType.PLAYER) {
                 Player player = (Player) castOn;
 
                 if (player.getSkills()[Misc.ATTACK].getLevel() < player.getSkills()[Misc.ATTACK].getLevelForExperience()) {
@@ -2411,7 +2412,7 @@ public enum CombatMagicSpells {
                 return;
             }
 
-            if (cast.isPlayer()) {
+            if (cast.type() == EntityType.PLAYER) {
                 Player player = (Player) cast;
                 player.getSkills()[Misc.HITPOINTS].increaseLevel((int) (damageInflicted * 0.25), player.getSkills()[Misc.HITPOINTS].getLevelForExperience());
                 SkillManager.refresh(player, SkillConstant.HITPOINTS);
@@ -2583,7 +2584,7 @@ public enum CombatMagicSpells {
     SHADOW_BARRAGE(new CombatAncientSpell() {
         @Override
         public void spellEffect(Entity cast, Entity castOn, int damageInflicted) {
-            if (castOn.isPlayer()) {
+            if (castOn.type() == EntityType.PLAYER) {
                 Player player = (Player) castOn;
 
                 if (player.getSkills()[Misc.ATTACK].getLevel() < player.getSkills()[Misc.ATTACK].getLevelForExperience()) {
@@ -2652,7 +2653,7 @@ public enum CombatMagicSpells {
                 return;
             }
 
-            if (cast.isPlayer()) {
+            if (cast.type() == EntityType.PLAYER) {
                 Player player = (Player) cast;
                 player.getSkills()[Misc.HITPOINTS].increaseLevel((int) (damageInflicted * 0.25), player.getSkills()[Misc.HITPOINTS].getLevelForExperience());
                 SkillManager.refresh(player, SkillConstant.HITPOINTS);

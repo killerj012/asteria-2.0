@@ -5,6 +5,7 @@ import server.util.Misc;
 import server.world.World;
 import server.world.entity.Animation;
 import server.world.entity.Entity;
+import server.world.entity.EntityType;
 import server.world.entity.Gfx;
 import server.world.entity.Hit;
 import server.world.entity.Projectile;
@@ -255,7 +256,7 @@ public enum CombatSpecial {
             CombatSpecial.drainAndDeplete(player, CombatSpecial.DRAGON_2H_SWORD.getSpecialAmount());
 
             if (Location.inMultiCombat(player)) {
-                if (target.isPlayer()) {
+                if (target.type() == EntityType.PLAYER) {
                     for (Player players : World.getPlayers()) {
                         if (players == null) {
                             continue;
@@ -267,7 +268,7 @@ public enum CombatSpecial {
                             players.getCombatBuilder().addDamage(player, damage);
                         }
                     }
-                } else if (target.isNpc()) {
+                } else if (target.type() == EntityType.NPC) {
                     for (Npc npc : World.getNpcs()) {
                         if (npc == null) {
                             continue;

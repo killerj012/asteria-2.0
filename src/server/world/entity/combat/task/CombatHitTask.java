@@ -5,6 +5,7 @@ import server.util.Misc;
 import server.world.World;
 import server.world.entity.Animation;
 import server.world.entity.Entity;
+import server.world.entity.EntityType;
 import server.world.entity.Gfx;
 import server.world.entity.Hit;
 import server.world.entity.combat.CombatFactory;
@@ -83,7 +84,7 @@ public class CombatHitTask extends Worker {
                 target.gfx(new Gfx(85));
                 attacker.getCurrentlyCasting().endCast(attacker, target, false, 0);
 
-                if (attacker.isPlayer()) {
+                if (attacker.type() == EntityType.PLAYER) {
                     Player player = (Player) attacker;
                     SkillManager.addExperience(player, attacker.getCurrentlyCasting().baseExperience(), SkillConstant.MAGIC);
 
@@ -119,7 +120,7 @@ public class CombatHitTask extends Worker {
                 }
 
                 /** Give range/melee/magic exp. */
-                if (attacker.isPlayer()) {
+                if (attacker.type() == EntityType.PLAYER) {
                     // XXX: These exp rates could use some work.
 
                     Player player = (Player) attacker;
@@ -162,7 +163,7 @@ public class CombatHitTask extends Worker {
                 /** Various armor and weapon effects. */
                 if (Misc.random(4) == 0) {
                     if (combatHit.getHitType() == CombatType.MELEE) {
-                        if (attacker.isPlayer() && target.isPlayer()) {
+                        if (attacker.type() == EntityType.PLAYER && target.type() == EntityType.PLAYER) {
                             Player player = (Player) attacker;
                             Player victim = (Player) target;
 
@@ -178,7 +179,7 @@ public class CombatHitTask extends Worker {
                                 player.getSkills()[Misc.HITPOINTS].increaseLevel(totalDamage, 99);
                                 SkillManager.refresh(player, SkillConstant.HITPOINTS);
                             }
-                        } else if (attacker.isPlayer()) {
+                        } else if (attacker.type() == EntityType.PLAYER) {
                             Player player = (Player) attacker;
 
                             if (CombatFactory.isWearingFullGuthans(player)) {
@@ -188,7 +189,7 @@ public class CombatHitTask extends Worker {
                             }
                         }
                     } else if (combatHit.getHitType() == CombatType.RANGE) {
-                        if (attacker.isPlayer() && target.isPlayer()) {
+                        if (attacker.type() == EntityType.PLAYER && target.type() == EntityType.PLAYER) {
                             Player player = (Player) attacker;
                             Player victim = (Player) target;
 
@@ -199,7 +200,7 @@ public class CombatHitTask extends Worker {
                             }
                         }
                     } else if (combatHit.getHitType() == CombatType.MAGIC) {
-                        if (attacker.isPlayer() && target.isPlayer()) {
+                        if (attacker.type() == EntityType.PLAYER && target.type() == EntityType.PLAYER) {
                             Player player = (Player) attacker;
                             Player victim = (Player) target;
 
@@ -213,13 +214,13 @@ public class CombatHitTask extends Worker {
                 }
 
                 /** Various entity effects take place here. */
-                if (attacker.isNpc()) {
+                if (attacker.type() == EntityType.NPC) {
                     Npc npc = (Npc) attacker;
 
                     if (npc.getDefinition().isPoisonous()) {
                         CombatFactory.poisonEntity(target, CombatPoison.STRONG);
                     }
-                } else if (attacker.isPlayer()) {
+                } else if (attacker.type() == EntityType.PLAYER) {
                     Player player = (Player) attacker;
 
                     if (combatHit.getHitType() == CombatType.MELEE || combatHit.getHitType() == CombatType.RANGE) {
@@ -255,7 +256,7 @@ public class CombatHitTask extends Worker {
                  * If both the attacker and target are players then check for
                  * retribution and do smite prayer effects.
                  */
-                if (attacker.isPlayer() && target.isPlayer()) {
+                if (attacker.type() == EntityType.PLAYER && target.type() == EntityType.PLAYER) {
                     Player player = (Player) attacker;
                     Player victim = (Player) target;
 
@@ -296,7 +297,7 @@ public class CombatHitTask extends Worker {
          * If the target is a player then check for the redemption prayer
          * effect.
          */
-        if (target.isPlayer() && combatHit.getHits() != null) {
+        if (target.type() == EntityType.PLAYER && combatHit.getHits() != null) {
             Player player = (Player) target;
 
             /** Redemption prayer check here. */
@@ -319,7 +320,7 @@ public class CombatHitTask extends Worker {
                 target.gfx(attacker.getCurrentlyCasting().endGfx());
                 attacker.getCurrentlyCasting().endCast(attacker, target, true, totalDamage);
 
-                if (attacker.isPlayer()) {
+                if (attacker.type() == EntityType.PLAYER) {
                     Player player = (Player) attacker;
 
                     if (combatHit.getHits() == null) {
@@ -333,17 +334,17 @@ public class CombatHitTask extends Worker {
                 attacker.setCurrentlyCasting(null);
             }
         } else if (combatHit.getHitType() == CombatType.MELEE) {
-            if (target.isPlayer()) {
+            if (target.type() == EntityType.PLAYER) {
                 Player player = (Player) target;
                 player.animation(new Animation(404));
             }
         } else if (combatHit.getHitType() == CombatType.RANGE) {
-            if (target.isPlayer()) {
+            if (target.type() == EntityType.PLAYER) {
                 Player player = (Player) target;
                 player.animation(new Animation(404));
             }
 
-            if (attacker.isPlayer()) {
+            if (attacker.type() == EntityType.PLAYER) {
                 if (Misc.random(3) != 0) {
 
                     Player player = (Player) attacker;

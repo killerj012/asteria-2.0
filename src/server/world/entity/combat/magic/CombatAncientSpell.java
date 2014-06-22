@@ -3,6 +3,7 @@ package server.world.entity.combat.magic;
 import server.util.Misc;
 import server.world.World;
 import server.world.entity.Entity;
+import server.world.entity.EntityType;
 import server.world.entity.Hit;
 import server.world.entity.npc.Npc;
 import server.world.entity.player.Player;
@@ -28,7 +29,7 @@ public abstract class CombatAncientSpell extends CombatSpell {
                 return;
             }
 
-            if (castOn.isNpc()) {
+            if (castOn.type() == EntityType.NPC) {
                 for (Npc npc : World.getNpcs()) {
                     if (npc == null) {
                         continue;
@@ -42,7 +43,7 @@ public abstract class CombatAncientSpell extends CombatSpell {
                         spellEffect(cast, npc, damage);
                     }
                 }
-            } else if (castOn.isPlayer()) {
+            } else if (castOn.type() == EntityType.PLAYER) {
                 for (Player player : World.getPlayers()) {
                     if (player == null) {
                         continue;

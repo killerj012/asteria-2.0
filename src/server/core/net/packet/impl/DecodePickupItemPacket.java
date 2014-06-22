@@ -1,9 +1,9 @@
 package server.core.net.packet.impl;
 
-import server.core.net.packet.PacketDecoder;
-import server.core.net.packet.PacketOpcodeHeader;
 import server.core.net.packet.PacketBuffer.ByteOrder;
 import server.core.net.packet.PacketBuffer.ReadBuffer;
+import server.core.net.packet.PacketDecoder;
+import server.core.net.packet.PacketOpcodeHeader;
 import server.world.World;
 import server.world.entity.player.Player;
 import server.world.entity.player.skill.SkillEvent;
@@ -16,7 +16,7 @@ import server.world.map.Position;
  * 
  * @author lare96
  */
-@PacketOpcodeHeader( { 236 })
+@PacketOpcodeHeader({ 236 })
 public class DecodePickupItemPacket extends PacketDecoder {
 
     @Override

@@ -17,10 +17,10 @@ import server.core.net.HostGateway;
 import server.core.net.packet.PacketDecoder;
 import server.world.World;
 import server.world.entity.npc.Npc;
-import server.world.entity.npc.NpcDeathDrop;
-import server.world.entity.npc.NpcDeathDrop.DeathDrop;
 import server.world.entity.npc.NpcDefinition;
 import server.world.entity.npc.NpcDialogue;
+import server.world.entity.npc.NpcDropTable;
+import server.world.entity.npc.NpcDropTable.NpcDrop;
 import server.world.entity.npc.NpcMovementCoordinator.Coordinator;
 import server.world.entity.player.minigame.Minigame;
 import server.world.entity.player.minigame.MinigameFactory;
@@ -511,8 +511,9 @@ public final class Misc {
             JsonObject reader = (JsonObject) array.get(i);
 
             final int id = reader.get("id").getAsInt();
-            final DeathDrop[] drops = builder.fromJson(reader.get("drops").getAsJsonArray(), DeathDrop[].class);
-            NpcDeathDrop.getDropDefinitions()[id] = new NpcDeathDrop(id, drops);
+            final NpcDrop[] dynamic = builder.fromJson(reader.get("dynamic"), NpcDrop[].class);
+            final NpcDrop[] rare = builder.fromJson(reader.get("rare"), NpcDrop[].class);
+            NpcDropTable.getAllDrops().put(id, new NpcDropTable(id, dynamic, rare));
         }
     }
 
@@ -965,6 +966,38 @@ public final class Misc {
 
     /**
      * Returns a pseudo-random {@code int} value between inclusive <tt>0</tt>
+     * and exclusive <code>range</code>.
+     * 
+     * <br>
+     * <br>
+     * This method is thread-safe. </br>
+     * 
+     * @param range
+     *        The exclusive range.
+     * @return The pseudo-random {@code int}.
+     * @throws IllegalArgumentException
+     *         If the specified range is less <tt>0</tt>
+     * 
+     *         <p>
+     *         We use {@link ThreadLocalRandom#current()} to produce this random
+     *         {@code int}, it is faster than a standard {@link Random} instance
+     *         as we do not have to wait on {@code AtomicLong}.
+     *         </p>
+     */
+    public static int randomNoZero(int range) {
+        if (range < 0) {
+            throw new IllegalArgumentException("range < 0");
+        }
+
+        int r = RANDOM.nextInt(range);
+
+        if (r == 0)
+            r++;
+        return r;
+    }
+
+    /**
+     * Returns a pseudo-random {@code int} value between inclusive <tt>1</tt>
      * and exclusive <code>range</code>.
      * 
      * <br>

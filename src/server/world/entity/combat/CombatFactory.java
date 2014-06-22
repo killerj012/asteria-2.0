@@ -3,6 +3,7 @@ package server.world.entity.combat;
 import server.core.worker.TaskFactory;
 import server.util.Misc;
 import server.world.entity.Entity;
+import server.world.entity.EntityType;
 import server.world.entity.Hit;
 import server.world.entity.UpdateFlags.Flag;
 import server.world.entity.combat.prayer.CombatPrayer;
@@ -11,8 +12,8 @@ import server.world.entity.combat.strategy.DefaultMagicCombatStrategy;
 import server.world.entity.combat.strategy.DefaultMeleeCombatStrategy;
 import server.world.entity.combat.strategy.DefaultRangedCombatStrategy;
 import server.world.entity.combat.task.CombatPoisonTask;
-import server.world.entity.combat.task.CombatSkullTask;
 import server.world.entity.combat.task.CombatPoisonTask.CombatPoison;
+import server.world.entity.combat.task.CombatSkullTask;
 import server.world.entity.npc.Npc;
 import server.world.entity.player.Player;
 import server.world.entity.player.content.AssignWeaponInterface.FightStyle;
@@ -69,7 +70,7 @@ public class CombatFactory {
             return;
         }
 
-        if (entity.isPlayer()) {
+        if (entity.type() == EntityType.PLAYER) {
             ((Player) entity).getPacketBuilder().sendMessage("You have been " + poisonType.name().toLowerCase() + "ly poisoned!");
         }
 
@@ -103,7 +104,7 @@ public class CombatFactory {
      * @return the max melee hit.
      */
     public static int calculateMaxMeleeHit(Entity entity) {
-        if (entity.isPlayer()) {
+        if (entity.type() == EntityType.PLAYER) {
             Player player = (Player) entity;
             double strengthLevel = player.getSkills()[Misc.STRENGTH].getLevel();
 
@@ -129,15 +130,23 @@ public class CombatFactory {
 
             int effectiveStrengthDamage = (int) (strengthLevel + styleBonus);
             double baseDamage = 5 + (effectiveStrengthDamage + 8) * (player.getPlayerBonus()[Misc.BONUS_STRENGTH] + 64) / 64;
+
             int maxHit = (int) Math.floor(baseDamage);
+
             maxHit = (int) Math.floor(maxHit / 10);
 
             if (CombatFactory.isWearingFullDharoks(player)) {
-                maxHit += (player.getSkills()[Misc.HITPOINTS].getLevelForExperience() - player.getSkills()[Misc.HITPOINTS].getLevel()) / 10;
+                int realLevel = player.getSkills()[Misc.HITPOINTS].getLevelForExperience();
+
+                if (realLevel <= player.getSkills()[Misc.HITPOINTS].getLevel()) {
+                    return maxHit;
+                }
+
+                maxHit += (realLevel - player.getSkills()[Misc.HITPOINTS].getLevel()) / 10;
             }
 
             return maxHit;
-        } else if (entity.isNpc()) {
+        } else if (entity.type() == EntityType.NPC) {
             Npc npc = (Npc) entity;
             int maxHit = npc.getDefinition().getMaxHit();
 
@@ -166,7 +175,7 @@ public class CombatFactory {
      * @return the max range hit.
      */
     public static int calculateMaxRangeHit(Entity entity, CombatRangedAmmo table) {
-        if (entity.isPlayer()) {
+        if (entity.type() == EntityType.PLAYER) {
             Player player = (Player) entity;
             int rangedLevel = player.getSkills()[Misc.RANGED].getLevel();
 
@@ -185,7 +194,7 @@ public class CombatFactory {
             int rangedStrength = table.getRangedStrength();
             double maxHit = (rangedLevel + rangedStrength / 8 + rangedLevel * rangedStrength * Math.pow(64, -1) + 14) / 10;
             return (int) Math.floor(maxHit);
-        } else if (entity.isNpc()) {
+        } else if (entity.type() == EntityType.NPC) {
             Npc npc = (Npc) entity;
             return npc.getDefinition().getMaxHit();
         }
@@ -200,12 +209,7 @@ public class CombatFactory {
      * @return the melee hit.
      */
     public static Hit getMeleeHit(Entity entity) {
-        int calculate = Misc.random(CombatFactory.calculateMaxMeleeHit(entity));
-
-        if (calculate < 1) {
-            calculate = 1;
-        }
-        return new Hit(calculate);
+        return new Hit(Misc.random(CombatFactory.calculateMaxMeleeHit(entity)));
     }
 
     /**
@@ -240,7 +244,7 @@ public class CombatFactory {
         double attackBonus = 0;
         double baseAttack = 0;
 
-        if (entity.isPlayer()) {
+        if (entity.type() == EntityType.PLAYER) {
             Player player = (Player) entity;
 
             if (type == CombatType.MELEE) {
@@ -265,7 +269,7 @@ public class CombatFactory {
             if (player.isSpecialActivated()) {
                 baseAttack *= player.getCombatSpecial().getAccuracyBonus();
             }
-        } else if (entity.isNpc()) {
+        } else if (entity.type() == EntityType.NPC) {
             Npc npc = (Npc) entity;
             baseAttack = npc.getDefinition().getAttackBonus();
 
@@ -295,7 +299,7 @@ public class CombatFactory {
     private static double getEffectiveDefence(Entity victim, CombatType type) {
         double baseDefence = 0;
 
-        if (victim.isPlayer()) {
+        if (victim.type() == EntityType.PLAYER) {
             Player player = (Player) victim;
 
             switch (type) {
@@ -315,7 +319,7 @@ public class CombatFactory {
                     baseDefence = player.getSkills()[Misc.DEFENCE].getLevel();
                     break;
             }
-        } else if (victim.isNpc()) {
+        } else if (victim.type() == EntityType.NPC) {
             Npc npc = (Npc) victim;
             switch (type) {
                 case RANGE:
@@ -358,7 +362,7 @@ public class CombatFactory {
 
         int styleBonusAttack = 0;
 
-        if (attacker.isPlayer()) {
+        if (attacker.type() == EntityType.PLAYER) {
             Player player = (Player) attacker;
 
             if (player.getFightType().getStyle() == FightStyle.ACCURATE) {
@@ -385,7 +389,7 @@ public class CombatFactory {
         double effectiveDefence = getEffectiveDefence(victim, type);
         int styleBonusDefence = 0;
 
-        if (victim.isPlayer()) {
+        if (victim.type() == EntityType.PLAYER) {
             Player player = (Player) victim;
 
             if (type == CombatType.MAGIC) {
@@ -409,13 +413,13 @@ public class CombatFactory {
         }
         effectiveDefence *= (1 + (styleBonusDefence) / 64);
 
-        if (victim.isPlayer()) {
+        if (victim.type() == EntityType.PLAYER) {
             Player player = (Player) victim;
 
             if (CombatFactory.isWearingFullVeracs(player)) {
                 effectiveDefence *= 0.75;
             }
-        } else if (victim.isNpc()) {
+        } else if (victim.type() == EntityType.NPC) {
             Npc npc = (Npc) victim;
 
             if (npc.getNpcId() == 2030) {

@@ -3,6 +3,7 @@ package server.world.entity.combat.task;
 import server.core.worker.TaskFactory;
 import server.core.worker.Worker;
 import server.util.Misc;
+import server.world.entity.EntityType;
 import server.world.entity.combat.CombatBuilder;
 import server.world.entity.combat.CombatFactory;
 import server.world.entity.combat.CombatHitContainer;
@@ -55,7 +56,7 @@ public class CombatHookTask extends Worker {
         }
 
         /** If the current target is a player... */
-        if (builder.getCurrentTarget().isPlayer()) {
+        if (builder.getCurrentTarget().type() == EntityType.PLAYER) {
             Player target = (Player) builder.getCurrentTarget();
 
             /**
@@ -72,28 +73,28 @@ public class CombatHookTask extends Worker {
                 return;
             }
 
-            if (builder.getEntity().isPlayer()) {
+            if (builder.getEntity().type() == EntityType.PLAYER) {
                 Player player = (Player) builder.getEntity();
 
-                /**
-                 * If the attacking entity is a player then check if the target
-                 * has ran out of the wilderness.
-                 */
-                if (!Location.inWilderness(target)) {
-                    player.getPacketBuilder().sendMessage("Your target is not in the wilderness!");
-                    builder.reset();
-                    builder.getEntity().faceEntity(65535);
-                    builder.getEntity().getFollowWorker().cancel();
-                    builder.getEntity().setFollowing(false);
-                    builder.getEntity().setFollowingEntity(null);
-                    this.cancel();
-                    return;
-                }
+                    /**
+                     * If the attacking entity is a player then check if the
+                     * target has ran out of the wilderness.
+                     */
+                    if (!Location.inWilderness(target)) {
+                        player.getPacketBuilder().sendMessage("Your target is not in the wilderness!");
+                        builder.reset();
+                        builder.getEntity().faceEntity(65535);
+                        builder.getEntity().getFollowWorker().cancel();
+                        builder.getEntity().setFollowing(false);
+                        builder.getEntity().setFollowingEntity(null);
+                        this.cancel();
+                        return;
+                    }
             }
         }
 
         /** If the attacker is a player.... */
-        if (builder.getEntity().isPlayer()) {
+        if (builder.getEntity().type() == EntityType.PLAYER) {
             Player player = (Player) builder.getEntity();
 
             /** Determine the combat strategy for this hook. */
@@ -135,7 +136,7 @@ public class CombatHookTask extends Worker {
          * its home position or if its trying to attack an entity already in
          * combat.
          */
-        if (builder.getEntity().isNpc()) {
+        if (builder.getEntity().type() == EntityType.NPC) {
             Npc npc = (Npc) builder.getEntity();
 
             if (npc.getCombatBuilder().getCurrentTarget().getCombatBuilder().isCooldownEffect() && !npc.getPosition().withinDistance(npc.getOriginalPosition(), 5) || !builder.getCurrentTarget().getCombatBuilder().isBeingAttacked() && !npc.getPosition().withinDistance(npc.getOriginalPosition(), 5)) {
@@ -245,7 +246,7 @@ public class CombatHookTask extends Worker {
                  * reduce the damage to 0 when the combat type corresponds to
                  * the correct protection prayer.
                  */
-                if (builder.getCurrentTarget().isPlayer() && builder.getEntity().isNpc()) {
+                if (builder.getCurrentTarget().type() == EntityType.PLAYER && builder.getEntity().type() == EntityType.NPC) {
                     Player player = (Player) builder.getCurrentTarget();
 
                     if (combatHit.getHitType() == CombatType.MELEE && CombatPrayer.isPrayerActivated(player, CombatPrayer.PROTECT_FROM_MELEE)) {
@@ -268,7 +269,7 @@ public class CombatHookTask extends Worker {
                      * the combat type corresponds to the correct protection
                      * prayer.
                      */
-                } else if (builder.getCurrentTarget().isPlayer() && builder.getEntity().isPlayer()) {
+                } else if (builder.getCurrentTarget().type() == EntityType.PLAYER && builder.getEntity().type() == EntityType.PLAYER) {
                     Player player = (Player) builder.getEntity();
                     Player target = (Player) builder.getCurrentTarget();
 
@@ -336,9 +337,9 @@ public class CombatHookTask extends Worker {
             builder.getEntity().getLastFight().reset();
             builder.getCurrentTarget().getCombatBuilder().resetCooldown();
 
-            if (builder.getCurrentTarget().isPlayer()) {
+            if (builder.getCurrentTarget().type() == EntityType.PLAYER) {
                 builder.getEntity().faceEntity(builder.getCurrentTarget().getSlot() + 32768);
-            } else if (builder.getCurrentTarget().isNpc()) {
+            } else if (builder.getCurrentTarget().type() == EntityType.NPC) {
                 builder.getEntity().faceEntity(builder.getCurrentTarget().getSlot());
             }
         }

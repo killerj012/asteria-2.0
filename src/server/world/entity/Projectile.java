@@ -93,7 +93,7 @@ public class Projectile {
      *        the curve angle of the projectile.
      */
     public Projectile(Entity source, Entity victim, int projectileId, int delay, int speed, int startHeight, int endHeight, int curve) {
-        this(source.getPosition(), victim.getPosition(), (victim.isPlayer() ? -victim.getSlot() - 1 : victim.getSlot() + 1), projectileId, delay, speed, startHeight, endHeight, curve);
+        this(source.getPosition(), victim.getPosition(), (victim.type() == EntityType.PLAYER ? -victim.getSlot() - 1 : victim.getSlot() + 1), projectileId, delay, speed, startHeight, endHeight, curve);
     }
 
     /**

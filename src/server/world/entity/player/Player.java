@@ -3,7 +3,10 @@ package server.world.entity.player;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.Iterator;
 import java.util.LinkedHashSet;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 import java.util.logging.Logger;
@@ -18,6 +21,7 @@ import server.util.Misc.Stopwatch;
 import server.world.World;
 import server.world.entity.Animation;
 import server.world.entity.Entity;
+import server.world.entity.EntityType;
 import server.world.entity.Gfx;
 import server.world.entity.UpdateFlags.Flag;
 import server.world.entity.combat.magic.CombatSpell;
@@ -281,10 +285,6 @@ public class Player extends Entity {
         getColors()[2] = 9;
         getColors()[3] = 5;
         getColors()[4] = 0;
-
-        /** Set various flags. */
-        setNpc(false);
-        setPlayer(true);
     }
 
     @Override
@@ -298,8 +298,10 @@ public class Player extends Entity {
     @Override
     public Worker death() throws Exception {
         return new Worker(1, true) {
+
             @Override
             public void fire() {
+
                 if (getDeathTicks() == 0) {
                     getMovementQueue().reset();
                     setPoisonHits(0);
@@ -309,7 +311,8 @@ public class Player extends Entity {
                     SkillEvent.fireSkillEvents(player);
                     player.getTradeSession().resetTrade(false);
                 } else if (getDeathTicks() == 5) {
-                    Entity killer = getCombatBuilder().getKiller();
+
+                    Player killer = getCombatBuilder().getKiller();
                     Minigame minigame = MinigameFactory.getMinigame(player);
 
                     if (minigame != null) {
@@ -317,16 +320,12 @@ public class Player extends Entity {
 
                         if (!minigame.canKeepItems()) {
                             if (player.getStaffRights() < 2) {
-                                if (killer == null || killer.isNpc()) {
-                                    dropDeathItems(null);
-                                } else if (killer.isPlayer()) {
-                                    dropDeathItems((Player) killer);
-                                }
+                                dropDeathItems(killer);
                             }
                         }
 
-                        if (killer != null && killer.isPlayer()) {
-                            minigame.fireOnKill((Player) killer, player);
+                        if (killer != null && killer.type() == EntityType.PLAYER) {
+                            minigame.fireOnKill(killer, player);
                         }
 
                         move(minigame.getDeathPosition(player));
@@ -335,9 +334,8 @@ public class Player extends Entity {
                             deathHook(killer);
                             move(new Position(3093, 3244));
                         } else {
-                            if (killer.isPlayer()) {
-                                Player player = (Player) killer;
-                                player.getPacketBuilder().sendMessage("Sorry, but you cannot kill administrators.");
+                            if (killer != null) {
+                                killer.getPacketBuilder().sendMessage("Sorry, but you cannot kill administrators.");
                             }
                         }
                     }
@@ -370,6 +368,11 @@ public class Player extends Entity {
                 incrementDeathTicks();
             }
         };
+    }
+
+    @Override
+    public EntityType type() {
+        return EntityType.PLAYER;
     }
 
     /**
@@ -565,17 +568,15 @@ public class Player extends Entity {
      * The hook fired when this player is killed.
      * 
      * @param killer
-     *        the entity who killed this player (if any).
+     *        the player who killed this player (if any).
      */
-    public void deathHook(Entity killer) {
-        if (killer == null || killer.isNpc()) {
+    public void deathHook(Player killer) {
+        if (killer == null) {
             dropDeathItems(null);
-        } else if (killer.isPlayer()) {
-            Player plr = (Player) killer;
-
-            plr.getPacketBuilder().sendMessage(Misc.randomElement(DEATH_MESSAGES).replaceAll("-player-", username));
-            dropDeathItems(plr);
+            return;
         }
+        killer.getPacketBuilder().sendMessage(Misc.randomElement(DEATH_MESSAGES).replaceAll("-player-", username));
+        dropDeathItems(killer);
     }
 
     /**
@@ -584,10 +585,11 @@ public class Player extends Entity {
     public void dropDeathItems(Player killer) {
 
         /** All of the player's inventory and equipment. */
-        ArrayList<Item> dropItems = new ArrayList<Item>();
-
-        dropItems.addAll(Arrays.asList(player.getEquipment().getContainer().toArray()));
-        dropItems.addAll(Arrays.asList(player.getInventory().getContainer().toArray()));
+        Item[] equipment = player.getEquipment().getContainer().toArray();
+        Item[] inventory = player.getInventory().getContainer().toArray();
+        LinkedList<Item> dropItems = new LinkedList<Item>();
+        dropItems.addAll(Arrays.asList(equipment));
+        dropItems.addAll(Arrays.asList(inventory));
 
         /** Remove all of the player's inventory and equipment. */
         player.getEquipment().getContainer().clear();
@@ -598,22 +600,12 @@ public class Player extends Entity {
 
         /** The player is skulled so drop everything. */
         if (player.getSkullTimer() > 0) {
-            if (killer == null) {
-                for (Item item : dropItems) {
-                    if (item == null) {
-                        continue;
-                    }
-
-                    World.getGroundItems().register(new StaticGroundItem(item, getPosition(), true, false));
+            for (Item item : dropItems) {
+                if (item == null) {
+                    continue;
                 }
-            } else {
-                for (Item item : dropItems) {
-                    if (item == null) {
-                        continue;
-                    }
 
-                    World.getGroundItems().register(new GroundItem(item, getPosition(), killer));
-                }
+                World.getGroundItems().register(killer == null ? new StaticGroundItem(item, getPosition(), true, false) : new GroundItem(item, getPosition(), killer));
             }
             return;
         }
@@ -627,60 +619,37 @@ public class Player extends Entity {
         }
 
         /** Fill the array with the most valuable items. */
-        for (int i = 0; i < keepItems.length; i++) {
-            keepItems[i] = getMaximumValue(dropItems);
-            dropItems.remove(keepItems[i]);
+        Collections.sort(dropItems, Item.COMPARATOR);
+        Collections.reverse(dropItems);
+        int slot = 0;
+
+        for (Iterator<Item> it = dropItems.iterator(); it.hasNext();) {
+            Item next = it.next();
+
+            if (next == null) {
+                continue;
+            } else if (slot == keepItems.length) {
+
+                /** We've filled the array, stop searching. */
+                break;
+            }
+
+            keepItems[slot++] = next;
+            it.remove();
+
         }
 
         /** Keep the saved items. */
         player.getInventory().addItemSet(keepItems);
 
         /** Drop the other items. */
-        if (killer == null) {
-            for (Item item : dropItems) {
-                if (item == null) {
-                    continue;
-                }
-
-                World.getGroundItems().register(new StaticGroundItem(item, getPosition(), true, false));
-            }
-        } else {
-            for (Item item : dropItems) {
-                if (item == null) {
-                    continue;
-                }
-
-                World.getGroundItems().register(new GroundItem(item, getPosition(), killer));
-            }
-        }
-    }
-
-    /**
-     * Gets the item with the highest general store price out of a list of
-     * items.
-     * 
-     * @param items
-     *        the items to choose from.
-     * @return the item with the highest value.
-     */
-    private Item getMaximumValue(ArrayList<Item> items) {
-        Item lastItem = null;
-
-        for (Item item : items) {
+        for (Item item : dropItems) {
             if (item == null) {
                 continue;
             }
 
-            if (lastItem == null) {
-                lastItem = item;
-                continue;
-            }
-
-            if (!(lastItem.getDefinition().getGeneralStorePrice() > item.getDefinition().getGeneralStorePrice())) {
-                lastItem = item;
-            }
+            World.getGroundItems().register(killer == null ? new StaticGroundItem(item, getPosition(), true, false) : new GroundItem(item, getPosition(), killer));
         }
-        return lastItem;
     }
 
     /**
