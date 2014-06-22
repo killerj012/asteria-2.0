@@ -753,6 +753,7 @@ public abstract class PacketBuffer {
          * @param from
          */
         public WriteBuffer writeBytes(byte[] from, int size) {
+            resizeBuffer(size);
             buffer.put(from, 0, size);
             return this;
         }
@@ -885,7 +886,6 @@ public abstract class PacketBuffer {
          *        the byte order
          */
         public WriteBuffer writeShort(int value, ValueType type, ByteOrder order) {
-            resizeBuffer(2);
             switch (order) {
                 case BIG:
                     writeByte(value >> 8);
@@ -951,7 +951,6 @@ public abstract class PacketBuffer {
          *        the byte order
          */
         public WriteBuffer writeInt(int value, ValueType type, ByteOrder order) {
-            resizeBuffer(4);
             switch (order) {
                 case BIG:
                     writeByte(value >> 24);
@@ -1029,7 +1028,6 @@ public abstract class PacketBuffer {
          *        the byte order
          */
         public WriteBuffer writeLong(long value, ValueType type, ByteOrder order) {
-            resizeBuffer(8);
             switch (order) {
                 case BIG:
                     writeByte((int) (value >> 56));
@@ -1103,7 +1101,6 @@ public abstract class PacketBuffer {
          *        the string
          */
         public WriteBuffer writeString(String string) {
-            resizeBuffer(string.getBytes().length + 1);
             for (byte value : string.getBytes()) {
                 writeByte(value);
             }

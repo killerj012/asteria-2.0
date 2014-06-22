@@ -54,6 +54,11 @@ public final class Rs2Engine implements Runnable {
      */
     public static void init() throws Exception {
 
+        /** Check if we have already started the engine. */
+        if (gameExecutor != null) {
+            throw new IllegalStateException("The engine has already been started!");
+        }
+
         /** Create the game executor. */
         gameExecutor = Executors.newSingleThreadScheduledExecutor(new ThreadProvider(Rs2Engine.class.getName(), Thread.MAX_PRIORITY, false, false));
 

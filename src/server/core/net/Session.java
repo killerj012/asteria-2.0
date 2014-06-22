@@ -48,7 +48,7 @@ public final class Session {
      * don't have RSA enabled in your client and you don't know how to get RSA
      * working).
      */
-    public static final boolean DECODE_RSA = false;
+    public static final boolean DECODE_RSA = true;
 
     /**
      * If this is set to true, any players that login but moderators or higher
@@ -162,7 +162,12 @@ public final class Session {
             stage = Stage.LOGGED_OUT;
             socketChannel.close();
             HostGateway.exit(host);
-            logger.info(player + " has logged out.");
+
+            if (player != null) {
+                logger.info(player + " has logged out.");
+            } else {
+                logger.info(this + " has logged out.");
+            }
         } catch (Exception ex) {
             ex.printStackTrace();
         }
@@ -561,7 +566,7 @@ public final class Session {
      * @param password
      *        The password to check.
      * @return {@code true} if and only if the credentials are bad, otherwise
-     *         {@code falase}.
+     *         {@code false}.
      */
     private boolean badCredentials(String username, String password) {
         Matcher usernameMatcher = PATTERN.matcher(username);
@@ -572,6 +577,11 @@ public final class Session {
         }
 
         return true;
+    }
+
+    @Override
+    public String toString() {
+        return "SESSION[host= " + host + ", stage= " + stage.name() + "]";
     }
 
     /**

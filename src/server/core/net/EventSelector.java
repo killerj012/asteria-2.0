@@ -18,7 +18,7 @@ import server.util.Misc;
 
 /**
  * A reactor that uses a selector to determine when connected client sessions
- * are ready to connect, send network data, and receive networking data.
+ * are ready to connect, as well as send and receive network data.
  * 
  * @author lare96
  * @author blakeman8192
@@ -46,6 +46,11 @@ public final class EventSelector {
      *         if any errors occur during the initialization.
      */
     public static void init() throws Exception {
+
+        /** Check if we have already started the selector. */
+        if (server != null && selector != null) {
+            throw new IllegalStateException("The event selctor has already been started!");
+        }
 
         /** Create the logger. */
         logger = Logger.getLogger(EventSelector.class.getSimpleName());
@@ -83,7 +88,9 @@ public final class EventSelector {
                 server.close();
                 selector = null;
                 server = null;
+                logger = null;
                 init();
+                selector.selectNow();
             } catch (Exception ex) {
 
                 /** Unable to restart! So throw an exception. */

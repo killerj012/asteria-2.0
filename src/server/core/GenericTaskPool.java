@@ -30,7 +30,12 @@ public final class GenericTaskPool implements Executor {
      * @param poolPriority
      *        the priority of the threads in this pool.
      */
+    @SuppressWarnings("unused")
     public GenericTaskPool(String poolName, int poolSize, int poolPriority) {
+        if (Rs2Engine.THREAD_IDLE_TIMEOUT < 1) {
+            throw new IllegalStateException("Idle thread timeout value must be greater than 0!");
+        }
+
         taskPool = (ThreadPoolExecutor) Executors.newFixedThreadPool(poolSize);
         taskPool.setThreadFactory(new ThreadProvider(poolName, poolPriority, true, false));
         taskPool.setRejectedExecutionHandler(new TaskDeniedHook());
