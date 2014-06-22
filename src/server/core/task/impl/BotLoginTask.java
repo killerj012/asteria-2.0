@@ -26,11 +26,11 @@ import server.world.entity.player.bot.BotLoginException;
  */
 public class BotLoginTask extends SequentialTask {
 
-    /** The {@link Bot} to login. */
+    /** The bot to login asynchronously. */
     private Bot bot;
 
     /**
-     * Create a new {@linkBotLoginTask}.
+     * Create a new {@link BotLoginTask}.
      * 
      * @param bot
      *        the bot to login.
@@ -125,6 +125,8 @@ public class BotLoginTask extends SequentialTask {
                 bot.assignTask(bot.getQueuedTask());
             }
         } catch (IOException e) {
+
+            /** Print the error and discard connection if it fails. */
             e.printStackTrace();
         }
     }

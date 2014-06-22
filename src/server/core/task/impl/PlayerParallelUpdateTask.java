@@ -1,7 +1,6 @@
 package server.core.task.impl;
 
 import java.util.concurrent.Phaser;
-import java.util.logging.Logger;
 
 import server.core.task.ConcurrentTask;
 import server.world.entity.npc.NpcUpdate;
@@ -14,9 +13,6 @@ import server.world.entity.player.PlayerUpdate;
  * @author lare96
  */
 public class PlayerParallelUpdateTask extends ConcurrentTask {
-
-    /** A {@link Logger} for printing debugging info. */
-    private static Logger logger = Logger.getLogger(PlayerParallelUpdateTask.class.getSimpleName());
 
     /** The {@link Player} to perform updating on. */
     private Player player;
@@ -58,7 +54,6 @@ public class PlayerParallelUpdateTask extends ConcurrentTask {
                 /** Handle any errors with the player. */
             } catch (Exception ex) {
                 ex.printStackTrace();
-                logger.warning(player + " error while updating concurrently!");
                 player.getSession().disconnect();
 
                 /**

@@ -2,6 +2,7 @@ package server.core.task;
 
 import server.core.GenericTaskPool;
 
+
 /**
  * An exception thrown when a {@link Task} is rejected by a
  * {@link GenericTaskPool}.
@@ -19,7 +20,7 @@ public class TaskDeniedException extends RuntimeException {
      *        the reason this service was rejected.
      */
     public TaskDeniedException(Task t, String reason) {
-        super("Task[" + t + "] rejected: " + reason);
+        super(t + " REJECTED: " + reason);
     }
 
     /** The generated serial version UID. */

@@ -52,6 +52,8 @@ public class BuildSessionTask extends SequentialTask {
                 eventCount.incrementAndGet();
             }
         } catch (IOException e) {
+
+            /** Print the error and ignore the connection for this session. */
             e.printStackTrace();
         }
     }

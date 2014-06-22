@@ -2,6 +2,7 @@ package server.core.task;
 
 import server.core.GenericTaskPool;
 
+
 /**
  * A {@link Task} implementation that will be executed sequentially along with
  * other tasks. Only one thread will be actively executing tasks at a time.
