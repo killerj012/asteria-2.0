@@ -149,7 +149,7 @@ public class DecodeCommandPacket extends PacketDecoder {
                         continue;
                     }
 
-                    if (i.getItemName().contains(item) || i.getItemName().equalsIgnoreCase(item) || i.getItemName().startsWith(item) || i.getItemName().endsWith(item)) {
+                    if (i.getItemName().toLowerCase().contains(item)) {
                         if (player.getInventory().getContainer().hasRoomFor(new Item(i.getItemId(), amount))) {
                             player.getInventory().addItem(new Item(i.getItemId(), amount));
                         } else {
