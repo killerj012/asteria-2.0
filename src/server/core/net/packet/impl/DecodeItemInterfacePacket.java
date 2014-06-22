@@ -15,7 +15,7 @@ import server.world.shop.Shop;
  * 
  * @author lare96
  */
-@PacketOpcodeHeader( { 145, 41, 117, 43, 129, 214 })
+@PacketOpcodeHeader({ 145, 41, 117, 43, 129, 214 })
 public class DecodeItemInterfacePacket extends PacketDecoder {
 
     @Override
@@ -35,11 +35,9 @@ public class DecodeItemInterfacePacket extends PacketDecoder {
                     case 1688:
                         player.getEquipment().removeItem(slot);
                         break;
-
                     case 5064:
                         player.getBank().addItem(slot, new Item(itemId, 1));
                         break;
-
                     case 5382:
                         player.getBank().deleteItem(slot, new Item(itemId, 1));
                         break;
@@ -68,7 +66,6 @@ public class DecodeItemInterfacePacket extends PacketDecoder {
                     case 5064:
                         player.getBank().addItem(slot, new Item(itemId, 5));
                         break;
-
                     case 5382:
                         player.getBank().deleteItem(slot, new Item(itemId, 5));
                         break;
@@ -173,12 +170,10 @@ public class DecodeItemInterfacePacket extends PacketDecoder {
                 int toSlot = in.readShort(PacketBuffer.ByteOrder.LITTLE);
 
                 switch (interfaceId) {
-
                     case 3214:
                         player.getInventory().exchangeItemSlot(fromSlot, toSlot);
                         player.getInventory().refresh();
                         break;
-
                     case 5382:
                         if (player.isInsertItem()) {
                             player.getBank().getContainer().swap(fromSlot, toSlot);
@@ -189,7 +184,6 @@ public class DecodeItemInterfacePacket extends PacketDecoder {
                         player.getPacketBuilder().sendUpdateItems(5382, bankItems);
                         break;
                 }
-
                 break;
         }
     }

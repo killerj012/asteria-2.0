@@ -1,9 +1,9 @@
 package server.core.net.packet.impl;
 
-import server.core.net.packet.PacketDecoder;
-import server.core.net.packet.PacketOpcodeHeader;
 import server.core.net.packet.PacketBuffer.ReadBuffer;
 import server.core.net.packet.PacketBuffer.ValueType;
+import server.core.net.packet.PacketDecoder;
+import server.core.net.packet.PacketOpcodeHeader;
 import server.world.World;
 import server.world.entity.player.Player;
 import server.world.entity.player.skill.SkillEvent;
@@ -17,7 +17,7 @@ import server.world.map.Position;
  * 
  * @author lare96
  */
-@PacketOpcodeHeader( { 87 })
+@PacketOpcodeHeader({ 87 })
 public class DecodeDropItemPacket extends PacketDecoder {
 
     @Override
@@ -29,9 +29,9 @@ public class DecodeDropItemPacket extends PacketDecoder {
 
         SkillEvent.fireSkillEvents(player);
 
-        int amount = ItemDefinition.getDefinitions()[item].isStackable() ? amount = player.getInventory().getContainer().getCount(item) : 1;
-
         if (player.getInventory().getContainer().contains(item)) {
+            int amount = ItemDefinition.getDefinitions()[item].isStackable() ? amount = player.getInventory().getContainer().getCount(item) : 1;
+
             player.getInventory().deleteItemSlot(new Item(item, amount), slot);
             final Position itemLocation = new Position(player.getPosition().getX(), player.getPosition().getY(), player.getPosition().getZ());
             World.getGroundItems().register(new GroundItem(new Item(item, amount), itemLocation, player));

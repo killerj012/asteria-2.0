@@ -1,17 +1,17 @@
 package server.core.net.packet.impl;
 
+import server.core.net.packet.PacketBuffer.ReadBuffer;
 import server.core.net.packet.PacketDecoder;
 import server.core.net.packet.PacketOpcodeHeader;
-import server.core.net.packet.PacketBuffer.ReadBuffer;
 import server.world.World;
 import server.world.entity.player.Player;
 
 /**
- * Sent when the player loads a new map region
+ * Sent when the player loads a new map region.
  * 
  * @author lare96
  */
-@PacketOpcodeHeader( { 121 })
+@PacketOpcodeHeader({ 121 })
 public class DecodeUpdateRegionPacket extends PacketDecoder {
 
     @Override

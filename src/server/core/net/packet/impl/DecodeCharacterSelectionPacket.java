@@ -1,8 +1,8 @@
 package server.core.net.packet.impl;
 
+import server.core.net.packet.PacketBuffer.ReadBuffer;
 import server.core.net.packet.PacketDecoder;
 import server.core.net.packet.PacketOpcodeHeader;
-import server.core.net.packet.PacketBuffer.ReadBuffer;
 import server.util.Misc;
 import server.world.entity.UpdateFlags.Flag;
 import server.world.entity.player.Player;
@@ -12,30 +12,34 @@ import server.world.entity.player.Player;
  * 
  * @author lare96
  */
-@PacketOpcodeHeader( { 101 })
+@PacketOpcodeHeader({ 101 })
 public class DecodeCharacterSelectionPacket extends PacketDecoder {
 
     @Override
     public void decode(Player player, ReadBuffer in) {
-        player.setGender(in.readByte());
-        player.getAppearance()[Misc.APPEARANCE_SLOT_HEAD] = in.readByte();
-        player.getAppearance()[Misc.APPEARANCE_SLOT_BEARD] = in.readByte();
-        player.getAppearance()[Misc.APPEARANCE_SLOT_CHEST] = in.readByte();
-        player.getAppearance()[Misc.APPEARANCE_SLOT_ARMS] = in.readByte();
-        player.getAppearance()[Misc.APPEARANCE_SLOT_HANDS] = in.readByte();
-        player.getAppearance()[Misc.APPEARANCE_SLOT_LEGS] = in.readByte();
-        player.getAppearance()[Misc.APPEARANCE_SLOT_FEET] = in.readByte();
-        player.getColors()[0] = in.readByte();
-        player.getColors()[1] = in.readByte();
-        player.getColors()[2] = in.readByte();
-        player.getColors()[3] = in.readByte();
+        int[] charMod = new int[13];
 
-        int color = in.readByte();
+        for (int i = 0; i < charMod.length; i++) {
+            charMod[i] = in.readByte();
 
-        if (color < 1) {
-            color = 0;
+            if (charMod[i] < 1) {
+                charMod[i] = 0;
+            }
         }
-        player.getColors()[4] = color;
+
+        player.setGender(charMod[0]);
+        player.getAppearance()[Misc.APPEARANCE_SLOT_HEAD] = charMod[1];
+        player.getAppearance()[Misc.APPEARANCE_SLOT_BEARD] = charMod[2];
+        player.getAppearance()[Misc.APPEARANCE_SLOT_CHEST] = charMod[3];
+        player.getAppearance()[Misc.APPEARANCE_SLOT_ARMS] = charMod[4];
+        player.getAppearance()[Misc.APPEARANCE_SLOT_HANDS] = charMod[5];
+        player.getAppearance()[Misc.APPEARANCE_SLOT_LEGS] = charMod[6];
+        player.getAppearance()[Misc.APPEARANCE_SLOT_FEET] = charMod[7];
+        player.getColors()[0] = charMod[8];
+        player.getColors()[1] = charMod[9];
+        player.getColors()[2] = charMod[10];
+        player.getColors()[3] = charMod[11];
+        player.getColors()[4] = charMod[12];
         player.getFlags().flag(Flag.APPEARANCE);
         player.getPacketBuilder().closeWindows();
     }

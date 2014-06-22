@@ -187,7 +187,7 @@ public final class World {
     }
 
     /**
-     * Sends a message to all online players.
+     * Sends a message to all online {@link Player}s.
      * 
      * @param message
      *        the message to send that will be sent to everyone online.

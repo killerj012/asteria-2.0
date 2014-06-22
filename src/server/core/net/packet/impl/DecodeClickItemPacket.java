@@ -10,6 +10,7 @@ import server.world.entity.player.content.FoodConsumable;
 import server.world.entity.player.content.PotionConsumable;
 import server.world.entity.player.skill.SkillEvent;
 import server.world.item.Item;
+import server.world.item.ItemDefinition;
 import server.world.item.container.InventoryContainer;
 
 /**
@@ -22,41 +23,32 @@ public class DecodeClickItemPacket extends PacketDecoder {
 
     @Override
     public void decode(Player player, ReadBuffer in) {
-	int interfaceId = in.readShort(true, ValueType.A, ByteOrder.LITTLE);
-	int slot = in.readShort(false, ValueType.A);
-	int id = in.readShort(false, ByteOrder.LITTLE);
+        int interfaceId = in.readShort(true, ValueType.A, ByteOrder.LITTLE);
+        int slot = in.readShort(false, ValueType.A);
+        int id = in.readShort(false, ByteOrder.LITTLE);
 
-	/*
-	 * TODO: Packet validation
-	 * - Be sure the interface id is valid
-	 * - Be sure the slot is valid (this should be done within the item container itself)
-	 * - Be sure the item id exists and is not < 0 || > definitions.size()
-	 * - Check the id in the specified slot to the item sent
-	 * - Check to be sure the slot is empty
-	 */
+        if (id < 1 || id > ItemDefinition.getDefinitions().length) {
+            return;
+        }
 
-	SkillEvent.fireSkillEvents(player);
-	player.getCombatBuilder().resetAttackTimer();
+        SkillEvent.fireSkillEvents(player);
+        player.getCombatBuilder().resetAttackTimer();
 
-	if (interfaceId == InventoryContainer.DEFAULT_INVENTORY_CONTAINER_ID) {
-	    if (player.getInventory().getContainer().isSlotFree(slot)) {
-		return;
-	    }
+        if (interfaceId == InventoryContainer.DEFAULT_INVENTORY_CONTAINER_ID) {
+            Item item = player.getInventory().getContainer().getItem(slot);
 
-	    Item item = player.getInventory().getContainer().getItem(slot);
+            if (item == null || item.getId() != id) {
+                return;
+            }
 
-	    if (item.getId() != id) {
-		return;
-	    }
+            if (FoodConsumable.consume(player, item, slot)) {
+                return;
+            }
 
-	    if (FoodConsumable.consume(player, item, slot)) {
-		return;
-	    }
-
-	    if (PotionConsumable.consume(player, item, slot)) {
-		return;
-	    }
-	}
+            if (PotionConsumable.consume(player, item, slot)) {
+                return;
+            }
+        }
     }
-    
+
 }

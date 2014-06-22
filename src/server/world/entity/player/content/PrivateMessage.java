@@ -43,13 +43,9 @@ public class PrivateMessage {
                 continue;
             }
 
+            /** Update with online/offline. */
             Player load = World.getPlayer(name);
-
-            if (load != null) {
-                player.getPacketBuilder().loadPrivateMessage(name, 1);
-            } else {
-                player.getPacketBuilder().loadPrivateMessage(name, 0);
-            }
+            player.getPacketBuilder().loadPrivateMessage(name, load == null ? 0 : 1);
         }
 
         for (Player players : World.getPlayers()) {
@@ -105,7 +101,6 @@ public class PrivateMessage {
 
         /** Update the friends list with online/offline. */
         Player load = World.getPlayer(name);
-
         player.getPacketBuilder().loadPrivateMessage(name, load == null ? 0 : 1);
     }
 
@@ -177,14 +172,10 @@ public class PrivateMessage {
      *        the total size of the message.
      */
     public void sendPrivateMessage(Player sendingFrom, long sendingTo, byte[] message, int messageSize) {
-        for (Player p : World.getPlayers()) {
-            if (p == null) {
-                continue;
-            }
+        Player send = World.getPlayer(sendingTo);
 
-            if (p.getUsernameHash() == sendingTo) {
-                p.getPacketBuilder().sendPrivateMessage(sendingFrom.getUsernameHash(), sendingFrom.getStaffRights(), message, messageSize);
-            }
+        if (send != null) {
+            send.getPacketBuilder().sendPrivateMessage(sendingFrom.getUsernameHash(), sendingFrom.getStaffRights(), message, messageSize);
         }
     }
 

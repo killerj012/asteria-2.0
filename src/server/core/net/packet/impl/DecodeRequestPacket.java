@@ -1,9 +1,9 @@
 package server.core.net.packet.impl;
 
-import server.core.net.packet.PacketDecoder;
-import server.core.net.packet.PacketOpcodeHeader;
 import server.core.net.packet.PacketBuffer.ByteOrder;
 import server.core.net.packet.PacketBuffer.ReadBuffer;
+import server.core.net.packet.PacketDecoder;
+import server.core.net.packet.PacketOpcodeHeader;
 import server.world.World;
 import server.world.entity.player.Player;
 import server.world.entity.player.minigame.Minigame;
@@ -16,7 +16,7 @@ import server.world.entity.player.skill.SkillEvent;
  * 
  * @author lare96
  */
-@PacketOpcodeHeader( { 139 })
+@PacketOpcodeHeader({ 139 })
 public class DecodeRequestPacket extends PacketDecoder {
 
     @Override
@@ -24,7 +24,8 @@ public class DecodeRequestPacket extends PacketDecoder {
         int requestId = in.readShort(true, ByteOrder.LITTLE);
         Player request = World.getPlayers().get(requestId);
 
-        if (request == null) {
+        /** Make sure the player to is real and close to us. */
+        if (request == null || !request.getPosition().isViewableFrom(player.getPosition())) {
             return;
         }
 

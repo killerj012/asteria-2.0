@@ -1,9 +1,9 @@
 package server.core.net.packet.impl;
 
-import server.core.net.packet.PacketDecoder;
-import server.core.net.packet.PacketOpcodeHeader;
 import server.core.net.packet.PacketBuffer.ByteOrder;
 import server.core.net.packet.PacketBuffer.ReadBuffer;
+import server.core.net.packet.PacketDecoder;
+import server.core.net.packet.PacketOpcodeHeader;
 import server.world.World;
 import server.world.entity.player.Player;
 import server.world.entity.player.skill.SkillEvent;
@@ -13,7 +13,7 @@ import server.world.entity.player.skill.SkillEvent;
  * 
  * @author lare96
  */
-@PacketOpcodeHeader( { 39 })
+@PacketOpcodeHeader({ 39 })
 public class DecodeFollowPlayerPacket extends PacketDecoder {
 
     @Override
@@ -21,7 +21,7 @@ public class DecodeFollowPlayerPacket extends PacketDecoder {
         int followId = in.readShort(false, ByteOrder.LITTLE);
         Player follow = World.getPlayers().get(followId);
 
-        if (follow == null) {
+        if (follow == null || !follow.getPosition().isViewableFrom(player.getPosition())) {
             return;
         }
 

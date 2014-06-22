@@ -1,10 +1,10 @@
 package server.core.net.packet.impl;
 
-import server.core.net.packet.PacketDecoder;
-import server.core.net.packet.PacketOpcodeHeader;
 import server.core.net.packet.PacketBuffer.ByteOrder;
 import server.core.net.packet.PacketBuffer.ReadBuffer;
 import server.core.net.packet.PacketBuffer.ValueType;
+import server.core.net.packet.PacketDecoder;
+import server.core.net.packet.PacketOpcodeHeader;
 import server.world.World;
 import server.world.entity.player.Player;
 
@@ -13,7 +13,7 @@ import server.world.entity.player.Player;
  * 
  * @author lare96
  */
-@PacketOpcodeHeader( { 14 })
+@PacketOpcodeHeader({ 14 })
 public class DecodeItemOnPlayerPacket extends PacketDecoder {
 
     @Override
@@ -25,7 +25,11 @@ public class DecodeItemOnPlayerPacket extends PacketDecoder {
         int something4 = in.readShort(false, ValueType.A, ByteOrder.LITTLE);
         final Player usedOn = World.getPlayers().get(playerId);
 
-        if (usedOn == null || !player.getInventory().getContainer().contains(itemUsed)) {
+        if (usedOn == null || !usedOn.getPosition().isViewableFrom(player.getPosition())) {
+            return;
+        }
+
+        if (!player.getInventory().getContainer().contains(itemUsed)) {
             return;
         }
 

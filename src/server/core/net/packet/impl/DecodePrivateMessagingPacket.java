@@ -1,8 +1,8 @@
 package server.core.net.packet.impl;
 
+import server.core.net.packet.PacketBuffer.ReadBuffer;
 import server.core.net.packet.PacketDecoder;
 import server.core.net.packet.PacketOpcodeHeader;
-import server.core.net.packet.PacketBuffer.ReadBuffer;
 import server.world.entity.player.Player;
 
 /**
@@ -11,7 +11,7 @@ import server.world.entity.player.Player;
  * 
  * @author lare96
  */
-@PacketOpcodeHeader( { 188, 215, 133, 74, 126 })
+@PacketOpcodeHeader({ 188, 215, 133, 74, 126 })
 public class DecodePrivateMessagingPacket extends PacketDecoder {
 
     @Override
@@ -37,6 +37,11 @@ public class DecodePrivateMessagingPacket extends PacketDecoder {
                 long to = in.readLong();
                 int size = player.getSession().getPacketLength() - 8;
                 byte[] message = in.readBytes(size);
+
+                if (!player.getFriends().contains(to)) {
+                    player.getPacketBuilder().sendMessage("You cannot send a message to a player not on your friends list!");
+                    return;
+                }
 
                 player.getPrivateMessage().sendPrivateMessage(player, to, message, size);
                 break;

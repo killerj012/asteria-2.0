@@ -276,7 +276,7 @@ public class ItemContainer {
      * @return the item on this index.
      */
     public Item getItem(int index) {
-        if (index == -1)
+        if (index == -1 || index >= items.length)
             return null;
         return items[index];
     }

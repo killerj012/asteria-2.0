@@ -1,10 +1,10 @@
 package server.core.net.packet.impl;
 
-import server.core.net.packet.PacketDecoder;
-import server.core.net.packet.PacketOpcodeHeader;
 import server.core.net.packet.PacketBuffer.ByteOrder;
 import server.core.net.packet.PacketBuffer.ReadBuffer;
 import server.core.net.packet.PacketBuffer.ValueType;
+import server.core.net.packet.PacketDecoder;
+import server.core.net.packet.PacketOpcodeHeader;
 import server.util.Misc;
 import server.world.entity.Animation;
 import server.world.entity.player.Player;
@@ -18,8 +18,11 @@ import server.world.map.Position;
  * 
  * @author lare96
  */
-@PacketOpcodeHeader( { 132, 252, 70 })
+@PacketOpcodeHeader({ 132, 252, 70 })
 public class DecodeObjectActionPacket extends PacketDecoder {
+
+    // TODO: When cache reading is done, check position of objects to
+    // see if you're actually near them or not.
 
     /** The various packet opcodes. */
     private static final int FIRST_CLICK = 132, SECOND_CLICK = 252,
