@@ -117,6 +117,10 @@ public class Bot {
      * @return true if this bot is online.
      */
     public boolean isOnline() {
+        if (player == null) {
+            return false;
+        }
+
         return World.getPlayers().contains(player);
     }
 
