@@ -1932,7 +1932,7 @@ public enum CombatMagicSpells {
 
             if (cast.type() == EntityType.PLAYER) {
                 Player player = (Player) cast;
-                player.getSkills()[Misc.HITPOINTS].increaseLevel((int) (damageInflicted * 0.25), player.getSkills()[Misc.HITPOINTS].getLevelForExperience());
+                player.heal((int) (damageInflicted * 0.25));
                 SkillManager.refresh(player, SkillConstant.HITPOINTS);
             }
         }
@@ -2173,7 +2173,7 @@ public enum CombatMagicSpells {
 
             if (cast.type() == EntityType.PLAYER) {
                 Player player = (Player) cast;
-                player.getSkills()[Misc.HITPOINTS].increaseLevel((int) (damageInflicted * 0.25), player.getSkills()[Misc.HITPOINTS].getLevelForExperience());
+                player.heal((int) (damageInflicted * 0.25));
                 SkillManager.refresh(player, SkillConstant.HITPOINTS);
             }
         }
@@ -2414,7 +2414,7 @@ public enum CombatMagicSpells {
 
             if (cast.type() == EntityType.PLAYER) {
                 Player player = (Player) cast;
-                player.getSkills()[Misc.HITPOINTS].increaseLevel((int) (damageInflicted * 0.25), player.getSkills()[Misc.HITPOINTS].getLevelForExperience());
+                player.heal((int) (damageInflicted * 0.25));
                 SkillManager.refresh(player, SkillConstant.HITPOINTS);
             }
         }
@@ -2655,7 +2655,7 @@ public enum CombatMagicSpells {
 
             if (cast.type() == EntityType.PLAYER) {
                 Player player = (Player) cast;
-                player.getSkills()[Misc.HITPOINTS].increaseLevel((int) (damageInflicted * 0.25), player.getSkills()[Misc.HITPOINTS].getLevelForExperience());
+                player.heal((int) (damageInflicted * 0.25));
                 SkillManager.refresh(player, SkillConstant.HITPOINTS);
             }
         }

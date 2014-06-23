@@ -302,8 +302,11 @@ public class CombatHitTask extends Worker {
 
             /** Redemption prayer check here. */
             if (CombatPrayer.isPrayerActivated(player, CombatPrayer.REDEMPTION)) {
-                if (player.getSkills()[Misc.HITPOINTS].getLevel() <= (player.getSkills()[Misc.HITPOINTS].getLevelForExperience() / 10)) {
-                    player.getSkills()[Misc.HITPOINTS].increaseLevel(Misc.random((player.getSkills()[Misc.HITPOINTS].getLevelForExperience() - player.getSkills()[Misc.HITPOINTS].getLevel())));
+
+                int level = player.getSkills()[Misc.HITPOINTS].getLevelForExperience();
+
+                if (player.getSkills()[Misc.HITPOINTS].getLevel() <= (level / 10)) {
+                    player.getSkills()[Misc.HITPOINTS].increaseLevel(Misc.randomNoZero(20));
                     player.gfx(new Gfx(436));
                     player.getSkills()[Misc.PRAYER].setLevel(0);
                     player.getPacketBuilder().sendMessage("You've run out of prayer points!");

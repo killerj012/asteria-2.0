@@ -50,9 +50,11 @@ public class DecodeObjectActionPacket extends PacketDecoder {
                                     player.getBank().open();
                                     break;
                                 case 409:
-                                    if (player.getSkills()[Misc.PRAYER].getLevel() < player.getSkills()[Misc.PRAYER].getLevelForExperience()) {
+                                    int level = player.getSkills()[Misc.PRAYER].getLevelForExperience();
+
+                                    if (player.getSkills()[Misc.PRAYER].getLevel() < level) {
                                         player.animation(new Animation(645));
-                                        player.getSkills()[Misc.PRAYER].setLevel(player.getSkills()[Misc.PRAYER].getLevelForExperience());
+                                        player.getSkills()[Misc.PRAYER].setLevel(level);
                                         player.getPacketBuilder().sendMessage("You recharge your prayer points.");
                                         SkillManager.refresh(player, SkillConstant.PRAYER);
                                     } else {

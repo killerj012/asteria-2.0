@@ -12,6 +12,8 @@ import server.world.entity.player.Player;
  */
 public class SkillManager {
 
+    // TODO: Make it so it only adds experience if you're at level 99!
+    // TODO: Use ID for refreshing/adding experience instead of skill constant!
     /**
      * How much the current exp rate will be multiplied by. The higher this
      * number, the more exp given.
@@ -227,9 +229,11 @@ public class SkillManager {
 
         player.getSkills()[skill.ordinal()].setExperience(experience + amount);
 
-        if (oldLevel < player.getSkills()[skill.ordinal()].getLevelForExperience()) {
+        int newLevel = player.getSkills()[skill.ordinal()].getLevelForExperience();
+
+        if (oldLevel < newLevel) {
             if (skill.ordinal() != 3) {
-                player.getSkills()[skill.ordinal()].setLevel(player.getSkills()[skill.ordinal()].getLevelForExperience());
+                player.getSkills()[skill.ordinal()].setLevel(newLevel);
             } else {
                 int old = player.getSkills()[skill.ordinal()].getLevel();
 
@@ -264,10 +268,11 @@ public class SkillManager {
         int experience = player.getSkills()[skill].getExperience();
 
         player.getSkills()[skill].setExperience(experience + amount);
+        int newLevel = player.getSkills()[skill].getLevelForExperience();
 
-        if (oldLevel < player.getSkills()[skill].getLevelForExperience()) {
+        if (oldLevel < newLevel) {
             if (skill != 3) {
-                player.getSkills()[skill].setLevel(player.getSkills()[skill].getLevelForExperience());
+                player.getSkills()[skill].setLevel(newLevel);
             } else {
                 int old = player.getSkills()[skill].getLevel();
 
@@ -324,13 +329,15 @@ public class SkillManager {
             }
         }
 
+        int l = player.getSkills()[skill.ordinal()].getLevelForExperience();
+
         player.getPacketBuilder().sendString("" + player.getSkills()[skill.ordinal()].getLevel() + "", skill.getRefreshOne());
-        player.getPacketBuilder().sendString("" + player.getSkills()[skill.ordinal()].getLevelForExperience() + "", skill.getRefreshTwo());
+        player.getPacketBuilder().sendString("" + l + "", skill.getRefreshTwo());
         player.getPacketBuilder().sendString("" + player.getSkills()[skill.ordinal()].getExperience() + "", skill.getRefreshThree());
         player.getPacketBuilder().sendString("" + player.getSkills()[skill.ordinal()].getExperienceForNextLevel() + "", skill.getRefreshFour());
 
         if (skill == SkillConstant.PRAYER) {
-            player.getPacketBuilder().sendString("Prayer: " + player.getSkills()[Misc.PRAYER].getLevel() + "/" + player.getSkills()[Misc.PRAYER].getLevelForExperience() + "", 687);
+            player.getPacketBuilder().sendString("Prayer: " + player.getSkills()[Misc.PRAYER].getLevel() + "/" + l + "", 687);
         }
     }
 

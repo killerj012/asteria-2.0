@@ -9,6 +9,10 @@ import server.world.entity.player.Player;
  */
 public class Skill {
 
+    // TODO: Find a way to cache the value for getting the level for the
+    // experience! I guarantee once that's done major performance benefits will
+    // be seen.
+
     /** The level of this skill. */
     private int level;
 

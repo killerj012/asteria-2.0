@@ -671,8 +671,10 @@ public class Player extends Entity {
      *        the amount of heal this player by.
      */
     public void heal(int amount) {
-        if (getSkills()[Misc.HITPOINTS].getLevel() + amount >= getSkills()[Misc.HITPOINTS].getLevelForExperience()) {
-            getSkills()[Misc.HITPOINTS].setLevel(getSkills()[Misc.HITPOINTS].getLevelForExperience());
+        int level = getSkills()[Misc.HITPOINTS].getLevelForExperience();
+
+        if ((getSkills()[Misc.HITPOINTS].getLevel() + amount) >= level) {
+            getSkills()[Misc.HITPOINTS].setLevel(level);
         } else {
             getSkills()[Misc.HITPOINTS].increaseLevel(amount);
         }
@@ -712,18 +714,25 @@ public class Player extends Entity {
      * @return the players combat level.
      */
     public int getCombatLevel() {
-        double mag = skills[SkillConstant.MAGIC.ordinal()].getLevelForExperience() * 1.5;
-        double ran = skills[SkillConstant.RANGED.ordinal()].getLevelForExperience() * 1.5;
-        double attstr = skills[SkillConstant.ATTACK.ordinal()].getLevelForExperience() + skills[SkillConstant.STRENGTH.ordinal()].getLevelForExperience();
+        int magLvl = skills[Misc.MAGIC].getLevelForExperience();
+        int ranLvl = skills[Misc.RANGED].getLevelForExperience();
+        int attLvl = skills[Misc.ATTACK].getLevelForExperience();
+        int strLvl = skills[Misc.STRENGTH].getLevelForExperience();
+        int defLvl = skills[Misc.DEFENCE].getLevelForExperience();
+        int hitLvl = skills[Misc.HITPOINTS].getLevelForExperience();
+        int prayLvl = skills[Misc.PRAYER].getLevelForExperience();
+        double mag = magLvl * 1.5;
+        double ran = ranLvl * 1.5;
+        double attstr = attLvl + strLvl;
 
         combatLevel = 0;
 
         if (ran > attstr) {
-            combatLevel = ((skills[SkillConstant.DEFENCE.ordinal()].getLevelForExperience()) * 0.25) + ((skills[SkillConstant.HITPOINTS.ordinal()].getLevelForExperience()) * 0.25) + ((skills[SkillConstant.PRAYER.ordinal()].getLevelForExperience()) * 0.125) + ((skills[SkillConstant.RANGED.ordinal()].getLevelForExperience()) * 0.4875);
+            combatLevel = ((defLvl) * 0.25) + ((hitLvl) * 0.25) + ((prayLvl) * 0.125) + ((ranLvl) * 0.4875);
         } else if (mag > attstr) {
-            combatLevel = (((skills[SkillConstant.DEFENCE.ordinal()].getLevelForExperience()) * 0.25) + ((skills[SkillConstant.HITPOINTS.ordinal()].getLevelForExperience()) * 0.25) + ((skills[SkillConstant.RANGED.ordinal()].getLevelForExperience()) * 0.125) + ((skills[SkillConstant.MAGIC.ordinal()].getLevelForExperience()) * 0.4875));
+            combatLevel = (((defLvl) * 0.25) + ((hitLvl) * 0.25) + ((ranLvl) * 0.125) + ((magLvl) * 0.4875));
         } else {
-            combatLevel = (((skills[SkillConstant.DEFENCE.ordinal()].getLevelForExperience()) * 0.25) + ((skills[SkillConstant.HITPOINTS.ordinal()].getLevelForExperience()) * 0.25) + ((skills[SkillConstant.PRAYER.ordinal()].getLevelForExperience()) * 0.125) + ((skills[SkillConstant.ATTACK.ordinal()].getLevelForExperience()) * 0.325) + ((skills[SkillConstant.STRENGTH.ordinal()].getLevelForExperience()) * 0.325));
+            combatLevel = (((defLvl) * 0.25) + ((hitLvl) * 0.25) + ((prayLvl) * 0.125) + ((attLvl) * 0.325) + ((strLvl) * 0.325));
         }
 
         return (int) combatLevel;
