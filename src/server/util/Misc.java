@@ -1120,5 +1120,4 @@ public final class Misc {
     public static boolean[] getIs2H() {
         return is2H;
     }
-
 }

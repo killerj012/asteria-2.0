@@ -36,10 +36,10 @@ public final class RSAKeyPair {
             PublicKey publicKey = keypair.getPublic();
 
             RSAPrivateKeySpec privSpec = factory.getKeySpec(privateKey, RSAPrivateKeySpec.class);
-            writeKey("./data/security/rsa/rsapriv.txt", privSpec.getModulus(), privSpec.getPrivateExponent());
+            writeKey("./data/rsapriv.txt", privSpec.getModulus(), privSpec.getPrivateExponent());
 
             RSAPublicKeySpec pubSpec = factory.getKeySpec(publicKey, RSAPublicKeySpec.class);
-            writeKey("./data/security/rsa/rsapub.txt", pubSpec.getModulus(), pubSpec.getPublicExponent());
+            writeKey("./data/rsapub.txt", pubSpec.getModulus(), pubSpec.getPublicExponent());
         } catch (Exception e) {
             e.printStackTrace();
         }

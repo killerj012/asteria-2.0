@@ -9,17 +9,17 @@ import server.core.worker.WorkRate;
 import server.core.worker.Worker;
 
 /**
- * A {@link ChainExecutor} holds a queue of {@link ChainWorker}s that can be
- * ran in first in first out order. When logic from a worker is executed the
- * next worker waits for its specified delay and then executes its logic, and so
- * on (like a chain) until the end is reached and the executor automatically
- * shuts down (and can be re-ran after). <br>
+ * A {@link ChainExecutor} holds a queue of {@link ChainWorker}s that can be ran
+ * in first in first out order. When logic from a worker is executed the next
+ * worker waits for its specified delay and then executes its logic, and so on
+ * (like a chain) until the end is reached and the executor automatically shuts
+ * down (and can be re-ran after). <br>
  * <br>
  * 
  * Factory executors can prove to be extremely useful when doing things that
  * require a lengthy amount of precisely executed workers in a specific order.
- * This is because it only uses <b>one</b> worker to run however many workers
- * it needs to run (rather than having the same amount of workers as there are
+ * This is because it only uses <b>one</b> worker to run however many workers it
+ * needs to run (rather than having the same amount of workers as there are
  * tasks, which can be a lot!). <br>
  * <br>
  * 
@@ -44,8 +44,7 @@ import server.core.worker.Worker;
  * });
  * </pre>
  * 
- * If you ran the executor using <code>executor.run()</code> it would result
- * in:
+ * If you ran the executor using <code>executor.run()</code> it would result in:
  * 
  * <pre>
  * ... delay for three seconds
@@ -166,7 +165,7 @@ public class ChainExecutor {
                 if (e != null) {
                     delayPassed++;
 
-                    if (delayPassed == e.delay() && isRunningExecutor()) {
+                    if (delayPassed == e.delay()) {
                         e.fire();
                         operationWorkers.remove();
                         delayPassed = 0;
