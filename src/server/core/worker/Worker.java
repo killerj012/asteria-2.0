@@ -1,8 +1,11 @@
 package server.core.worker;
 
+import java.util.Iterator;
+
 /**
  * A flexible dynamic worker created to carry out general game logic on the game
- * thread.
+ * thread. These workers can be paused, stopped, and have their delays
+ * dynamically changed during run-time.
  * 
  * @author lare96
  */
@@ -13,6 +16,9 @@ public abstract class Worker {
 
     /** The amount of ticks this worker has accumulated. */
     private int currentDelay;
+
+    /** The amount of ticks this worker is paused for. */
+    private int pauseDelay;
 
     /** If this worker should be ran initially before being scheduled. */
     private boolean initialRun;
@@ -71,6 +77,77 @@ public abstract class Worker {
     }
 
     /**
+     * Fired every single tick for all active workers, and is used to determine
+     * when workers should be fired. This method should never be called directly
+     * or workers will fire a lot faster than they are supposed to!
+     * 
+     * @param it
+     *        the iterator being used to process this worker.
+     */
+    protected void process(Iterator<Worker> it) {
+
+        /** First we check if the worker is paused. */
+        if (isPaused()) {
+
+            /** The worker is paused, decrement the delay and return. */
+            pauseDelay--;
+            return;
+        }
+
+        /** Increment the current delay holder. */
+        currentDelay++;
+
+        /** Check if this worker is ready to execute. */
+        if (currentDelay == delay) {
+
+            try {
+
+                /** Execute the logic within the worker. */
+                this.fire();
+            } catch (Exception e) {
+
+                /** Print any errors we may come across. */
+                e.printStackTrace();
+            }
+
+            /** Reset the delay for the worker. */
+            currentDelay = 0;
+
+            /** Remove the task if needed. */
+            if (!running) {
+                it.remove();
+            }
+        }
+    }
+
+    /**
+     * Determines if this worker is paused or not.
+     * 
+     * @return true if this worker is paused.
+     */
+    public boolean isPaused() {
+        return pauseDelay > 0;
+    }
+
+    /**
+     * Pauses this worker by preventing its <code>currentDelay</code> value from
+     * increasing. If a worker is paused while also being ready to fire, the
+     * worker will not fire until the pause delay is over. <br>
+     * <br>
+     * Please note that the <code>workRate</code> still applies!
+     * 
+     * @param pauseDelay
+     *        the delay to pause this worker for.
+     */
+    public void pause(int pauseDelay) {
+        if (pauseDelay > 0) {
+            throw new IllegalStateException("This worker has already been paused!");
+        }
+
+        this.pauseDelay = pauseDelay * workRate.getTickRate();
+    }
+
+    /**
      * Cancels this worker which will unregister it and stop its logic from
      * firing in the future.
      */
@@ -83,9 +160,8 @@ public abstract class Worker {
 
     /**
      * Attaches any key to this worker that can be retrieved with
-     * <code>getKey()</code>. Workers <b>do not</b> have to have a key but
-     * can be chained with this method for easily attaching keys on
-     * registration.
+     * <code>getKey()</code>. Workers <b>do not</b> have to have a key but can
+     * be chained with this method for easily attaching keys on registration.
      * 
      * @param key
      *        the key to attach.
@@ -97,27 +173,12 @@ public abstract class Worker {
     }
 
     /**
-     * Calculates the approximate time left until this worker executes (in
-     * ticks).
+     * Calculates the approximate time left until this worker executes in ticks.
      * 
-     * @return the approximate time left until this worker executes (in ticks).
+     * @return the approximate time left until this worker executes.
      */
-    public int calculateExecutionTime() {
+    public int delayTimeLeft() {
         return (delay - currentDelay);
-    }
-
-    /**
-     * Resets the current delay.
-     */
-    public void resetCurrentDelay() {
-        this.currentDelay = 0;
-    }
-
-    /**
-     * Increments the current delay.
-     */
-    public void incrementCurrentDelay() {
-        this.currentDelay++;
     }
 
     /**
@@ -132,16 +193,16 @@ public abstract class Worker {
     }
 
     /**
-     * Gets the fixed delay.
+     * Gets the fixed delay in ticks.
      * 
-     * @return the fixed delay (in ticks).
+     * @return the fixed delay.
      */
     public int getDelay() {
         return delay;
     }
 
     /**
-     * Sets a new delay for this worker. This can be used to make dynamic
+     * Sets a new fixed delay for this worker. This can be used to make dynamic
      * runtime changes to the delay. <br>
      * <br>
      * Please note that the <code>workRate</code> still applies!
@@ -182,9 +243,9 @@ public abstract class Worker {
     }
 
     /**
-     * Gets the current delay.
+     * Gets the current delay in ticks.
      * 
-     * @return the current delay (in ticks).
+     * @return the current delay.
      */
     public int getCurrentDelay() {
         return currentDelay;

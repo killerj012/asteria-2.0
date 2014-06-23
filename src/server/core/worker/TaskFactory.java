@@ -1,6 +1,6 @@
 package server.core.worker;
 
-import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -8,7 +8,7 @@ import java.util.List;
 import java.util.Queue;
 
 /**
- * Manages tasks that have been submitted to the <code>workQueue</code>.
+ * Contains utility methods to manage stored pending and active workers.
  * 
  * @author lare96
  */
@@ -17,86 +17,73 @@ public final class TaskFactory {
     /** The singleton instance. */
     private static TaskFactory singleton = new TaskFactory();
 
-    /** A queue of {@link Worker}s waiting to be registered. */
-    private static Queue<Worker> workQueue = new LinkedList<Worker>();
+    /** A queue of pending {@link Worker}s waiting to be registered. */
+    private static Queue<Worker> pendingWorkers = new LinkedList<Worker>();
+
+    /** A list of already registered {@link Worker}s being processed. */
+    // XXX: We use a linked list instead of an arraylist because we only need
+    // assertion and iterator removal which linkedlist has O(1) time
+    // complexities for, unlike arraylist which has to resize and has a time
+    // complexity of O(n) for iterator removal. Lengthy amounts of workers
+    // should process a lot faster as a result.
+    private static LinkedList<Worker> workers = new LinkedList<Worker>();
 
     /**
-     * A list of already registered {@link Worker}s waiting to have their logic
-     * fired.
-     */
-    private static List<Worker> registeredWorkers = new ArrayList<Worker>();
-
-    /**
-     * Adds new workers from the <code>workQueue</code>, fires workers
-     * awaiting execution, and removes workers that have been canceled. This
-     * also ticks workers that don't need to be fired or removed yet.
+     * Adds new pending workers, fires registered workers awaiting execution,
+     * and removes workers that have been canceled. This also ticks workers that
+     * don't need to be fired or removed yet.
      */
     public void tick() {
+
+        /** Add pending workers to the active list. */
         Worker worker;
 
-        /** Register the queued workers! */
-        while ((worker = workQueue.poll()) != null) {
-            registeredWorkers.add(worker);
+        while ((worker = pendingWorkers.poll()) != null) {
+
+            /** Add workers only if they are still running! */
+            if (worker.isRunning()) {
+                workers.add(worker);
+            }
         }
 
-        /** Fire any workers that need firing. */
-        for (Iterator<Worker> iterator = registeredWorkers.iterator(); iterator.hasNext();) {
+        /** Iterate and process all of the active services. */
+        for (Iterator<Worker> it = workers.iterator(); it.hasNext();) {
+            worker = it.next();
 
-            /** Retrieve the next worker. */
-            worker = iterator.next();
-
-            /** Block if this worker is malformed. */
             if (worker == null) {
                 continue;
             }
 
-            /** Unregister the worker if it is no longer running. */
             if (!worker.isRunning()) {
-                iterator.remove();
+                it.remove();
                 continue;
             }
 
-            /** Increment the delay for this worker. */
-            worker.incrementCurrentDelay();
-
-            /** Check if this worker is ready to fire! */
-            if (worker.getDelay() == worker.getCurrentDelay() && worker.isRunning()) {
-
-                /**
-                 * Fire the logic within the worker! ... and handle any errors
-                 * that might occur during execution.
-                 */
-                try {
-                    worker.fire();
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-
-                /** Reset the delay for the worker. */
-                worker.resetCurrentDelay();
-            }
+            /** Process each worker individually. */
+            worker.process(it);
         }
     }
 
     /**
-     * Submit a new {@link Worker} for registration.
+     * Submit a new {@link Worker} to be added to the
+     * <code>pendingWorkers</code> queue.
      * 
      * @param worker
-     *        the new worker to submit.
+     *        the new worker to submit to the queue.
      */
     public void submit(Worker worker) {
         if (worker.isInitialRun()) {
             worker.fire();
         }
 
-        workQueue.add(worker);
+        pendingWorkers.add(worker);
     }
 
     /**
      * Cancels all of the currently registered {@link Worker}s.
      */
     public void cancelAllWorkers() {
-        for (Worker c : registeredWorkers) {
+        for (Worker c : workers) {
             if (c == null) {
                 continue;
             }
@@ -112,12 +99,12 @@ public final class TaskFactory {
      *        the key to stop all workers with.
      */
     public void cancelWorkers(Object key) {
-        for (Worker c : registeredWorkers) {
+        for (Worker c : workers) {
             if (c == null || c.getKey() == null) {
                 continue;
             }
 
-            if (c.getKey() == key) {
+            if (c.getKey().equals(key)) {
                 c.cancel();
             }
         }
@@ -130,15 +117,15 @@ public final class TaskFactory {
      *        the workers with this key that will be added to the list.
      * @return a list of workers with this key attachment.
      */
-    public List<Worker> retrieveWorkers(Object key) {
-        List<Worker> tasks = new ArrayList<Worker>();
+    public LinkedList<Worker> retrieveWorkers(Object key) {
+        LinkedList<Worker> tasks = new LinkedList<Worker>();
 
-        for (Worker c : registeredWorkers) {
+        for (Worker c : workers) {
             if (c == null || c.getKey() == null) {
                 continue;
             }
 
-            if (c.getKey() == key) {
+            if (c.getKey().equals(key)) {
                 tasks.add(c);
             }
         }
@@ -152,7 +139,7 @@ public final class TaskFactory {
      * @return an unmodifiable list of all of the registered workers.
      */
     public List<Worker> retrieveRegisteredWorkers() {
-        return Collections.unmodifiableList(registeredWorkers);
+        return Collections.unmodifiableList(workers);
     }
 
     /**
@@ -162,8 +149,8 @@ public final class TaskFactory {
      * @return an unmodifiable queue of all of the workers awaiting
      *         registration.
      */
-    public Queue<Worker> retrieveAwaitingWorkers() {
-        return (Queue<Worker>) Collections.unmodifiableCollection(workQueue);
+    public Collection<Worker> retrievePendingWorkers() {
+        return Collections.unmodifiableCollection(pendingWorkers);
     }
 
     /**
