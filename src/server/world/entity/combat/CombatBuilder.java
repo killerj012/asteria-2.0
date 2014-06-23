@@ -178,6 +178,10 @@ public class CombatBuilder {
                 attackTimer = 0;
 
                 /** Start combat once we are in the correct distance. */
+                if (entity == null || currentStrategy == null) {
+                    return true;
+                }
+
                 return !entity.getPosition().withinDistance(victim.getPosition(), currentStrategy.getDistance(entity));
             }
 
@@ -185,6 +189,10 @@ public class CombatBuilder {
             public void run() {
 
                 /** Stop movement before attacking. */
+                if (entity == null || currentStrategy == null) {
+                    return;
+                }
+
                 entity.getMovementQueue().reset();
 
                 /** Change targets if needed. */
@@ -332,7 +340,7 @@ public class CombatBuilder {
         }
 
         /** If no killers have been found return the last attacker. */
-        if (lastAttacker.type() == EntityType.PLAYER) {
+        if (lastAttacker != null && lastAttacker.type() == EntityType.PLAYER) {
             return (Player) lastAttacker;
         }
         return null;

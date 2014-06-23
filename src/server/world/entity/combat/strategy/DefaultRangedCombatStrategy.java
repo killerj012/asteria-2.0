@@ -142,7 +142,11 @@ public class DefaultRangedCombatStrategy implements CombatStrategy {
             if (!player.isSpecialActivated()) {
                 player.gfx(new Gfx(ammo.getGraphicId(), 6553600));
                 new Projectile(player, victim, ammo.getProjectileId(), ammo.getDelay(), ammo.getSpeed(), ammo.getStartHeight(), ammo.getEndHeight(), 0).sendProjectile();
-                return new CombatHitContainer(new Hit[] { CombatFactory.getRangeHit(entity, ammo) }, CombatType.RANGE, true);
+                return new CombatHitContainer(new Hit[] { CombatFactory.getRangeHit(entity, ammo) }, CombatType.RANGE, true) {
+                    @Override
+                    public void onHit(Entity attacker, Entity victim, int damage, boolean accurate) {
+                    }
+                };
             }
             return player.getCombatSpecial().getSpecialStrategy().calculateHit(player, victim);
         }

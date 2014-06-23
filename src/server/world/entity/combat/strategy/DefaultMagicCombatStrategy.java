@@ -44,10 +44,18 @@ public class DefaultMagicCombatStrategy implements CombatStrategy {
 
             /** Disabling spells block here because there is no hit. */
             if (player.getCurrentlyCasting().maximumStrength() == -1) {
-                return new CombatHitContainer(null, CombatType.MAGIC, true);
+                return new CombatHitContainer(null, CombatType.MAGIC, true) {
+                    @Override
+                    public void onHit(Entity attacker, Entity victim, int damage, boolean accurate) {
+                    }
+                };
             }
 
-            return new CombatHitContainer(new Hit[] { new Hit(Misc.random(player.getCurrentlyCasting().maximumStrength())) }, CombatType.MAGIC, true);
+            return new CombatHitContainer(new Hit[] { new Hit(Misc.random(player.getCurrentlyCasting().maximumStrength())) }, CombatType.MAGIC, true) {
+                @Override
+                public void onHit(Entity attacker, Entity victim, int damage, boolean accurate) {
+                }
+            };
         }
         return null;
     }

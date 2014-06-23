@@ -1,8 +1,5 @@
 package server.world.entity;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import server.util.Misc;
 import server.world.entity.combat.magic.CombatMagicRuneCombination;
 import server.world.entity.combat.magic.CombatMagicStaff;
@@ -31,17 +28,18 @@ public abstract class Spell {
             Player player = (Player) cast;
 
             /** Check the level required. */
-            if (player.getSkills()[Misc.MAGIC].getLevel() < this.levelRequired()) {
-                player.getPacketBuilder().sendMessage("You need a Magic level of " + this.levelRequired() + " to cast this spell.");
+            if (player.getSkills()[Misc.MAGIC].getLevel() < levelRequired()) {
+                player.getPacketBuilder().sendMessage("You need a Magic level of " + levelRequired() + " to cast this spell.");
                 return false;
             }
 
             /** Check the items required. */
             if (this.itemsRequired(player) != null) {
-                Item[] compareItem = this.itemsRequired(player).clone();
-                CombatMagicStaff runeStaff = this.getStaff(player);
-                List<CombatMagicRuneCombination> combinationRune = this.getCombinationRunes(player);
-                List<Item> removeRune = new ArrayList<Item>();
+                Item[] compareItem = itemsRequired(player).clone();
+                CombatMagicStaff runeStaff = getStaff(player);
+                CombatMagicRuneCombination[] combinationRune = getCombinationRunes(player);
+                Item[] removeRune = new Item[compareItem.length + combinationRune.length];
+                int slot = 0;
 
                 if (runeStaff != null) {
                     for (int i = 0; i < compareItem.length; i++) {
@@ -62,40 +60,38 @@ public abstract class Spell {
                     }
                 }
 
-                if (combinationRune != null) {
-                    for (int i = 0; i < compareItem.length; i++) {
+                for (int i = 0; i < compareItem.length; i++) {
+                    if (compareItem[i] == null) {
+                        continue;
+                    }
+
+                    for (CombatMagicRuneCombination rune : combinationRune) {
                         if (compareItem[i] == null) {
                             continue;
                         }
 
-                        for (CombatMagicRuneCombination rune : combinationRune) {
-                            if (compareItem[i] == null) {
+                        int runesNeeded = compareItem[i].getAmount();
+
+                        if (compareItem[i].getId() == rune.getFirstRune()) {
+                            if (runesNeeded > player.getInventory().getContainer().getCount(rune.getCombinationRune())) {
                                 continue;
                             }
 
-                            int runesNeeded = compareItem[i].getAmount();
-
-                            if (compareItem[i].getId() == rune.getFirstRune()) {
-                                if (runesNeeded > player.getInventory().getContainer().getCount(rune.getCombinationRune())) {
-                                    continue;
-                                }
-
-                                compareItem[i].decrementAmountBy(runesNeeded);
-                                removeRune.add(new Item(rune.getCombinationRune(), runesNeeded));
-                                player.getInventory().getContainer().getById(rune.getCombinationRune()).decrementAmountBy(runesNeeded);
-                            } else if (compareItem[i].getId() == rune.getSecondRune()) {
-                                if (runesNeeded > player.getInventory().getContainer().getCount(rune.getCombinationRune())) {
-                                    continue;
-                                }
-
-                                compareItem[i].decrementAmountBy(runesNeeded);
-                                player.getInventory().getContainer().getById(rune.getCombinationRune()).decrementAmountBy(runesNeeded);
-                                removeRune.add(new Item(rune.getCombinationRune(), runesNeeded));
+                            compareItem[i].decrementAmountBy(runesNeeded);
+                            removeRune[slot++] = new Item(rune.getCombinationRune(), runesNeeded);
+                            player.getInventory().getContainer().getById(rune.getCombinationRune()).decrementAmountBy(runesNeeded);
+                        } else if (compareItem[i].getId() == rune.getSecondRune()) {
+                            if (runesNeeded > player.getInventory().getContainer().getCount(rune.getCombinationRune())) {
+                                continue;
                             }
 
-                            if (compareItem[i].getAmount() == 0) {
-                                compareItem[i] = null;
-                            }
+                            compareItem[i].decrementAmountBy(runesNeeded);
+                            player.getInventory().getContainer().getById(rune.getCombinationRune()).decrementAmountBy(runesNeeded);
+                            removeRune[slot++] = new Item(rune.getCombinationRune(), runesNeeded);
+                        }
+
+                        if (compareItem[i].getAmount() == 0) {
+                            compareItem[i] = null;
                         }
                     }
                 }
@@ -110,7 +106,7 @@ public abstract class Spell {
                         player.setCastSpell(null);
                     }
 
-                    player.getInventory().addItemCollection(removeRune);
+                    player.getInventory().addItemSet(removeRune);
                     return false;
                 }
 
@@ -137,7 +133,7 @@ public abstract class Spell {
     }
 
     /**
-     * Gets the staff that the player is currently wielding (if any).
+     * Gets the staff that the player is currently wielding if any.
      * 
      * @param player
      *        the player that will be checked for a staff.
@@ -155,25 +151,22 @@ public abstract class Spell {
     }
 
     /**
-     * Gets the combination runes in the players inventory (if any).
+     * Gets the combination runes in the players inventory if any.
      * 
      * @param player
-     *        the player that will be checked for a staff.
-     * @return the staff that the player is currently wielding.
+     *        the player that will be checked for rune.
+     * @return the runes in the players inventory.
      */
-    public List<CombatMagicRuneCombination> getCombinationRunes(Player player) {
-        List<CombatMagicRuneCombination> combinationRune = new ArrayList<CombatMagicRuneCombination>();
+    public CombatMagicRuneCombination[] getCombinationRunes(Player player) {
+        CombatMagicRuneCombination[] array = new CombatMagicRuneCombination[CombatMagicRuneCombination.values().length];
+        int slot = 0;
 
         for (CombatMagicRuneCombination rune : CombatMagicRuneCombination.values()) {
             if (player.getInventory().getContainer().contains(rune.getCombinationRune())) {
-                combinationRune.add(rune);
+                array[slot++] = rune;
             }
         }
-
-        if (combinationRune.isEmpty()) {
-            return null;
-        }
-        return combinationRune;
+        return array;
     }
 
     /**

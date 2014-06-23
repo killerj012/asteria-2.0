@@ -1,5 +1,6 @@
 package server.world.entity.combat;
 
+import server.world.entity.Entity;
 import server.world.entity.Hit;
 
 /**
@@ -7,7 +8,7 @@ import server.world.entity.Hit;
  * 
  * @author lare96
  */
-public class CombatHitContainer {
+public abstract class CombatHitContainer {
 
     /** The hits that will be dealt during this combat turn. */
     private CombatHit[] hits;
@@ -48,6 +49,21 @@ public class CombatHitContainer {
         this.hitType = hitType;
         this.checkAccuracy = checkAccuracy;
     }
+
+    /**
+     * Fired when the entity gets hit.
+     * 
+     * @param attacker
+     *        the person dealing the attack.
+     * @param victim
+     *        the person being dealt the attack.
+     * @param totalDamage
+     *        the damage inflicted with this attack, always 0 if the attack
+     *        isn't accurate.
+     * @param accurate
+     *        if the attack actually hit the player or not.
+     */
+    public abstract void onHit(Entity attacker, Entity victim, int totalDamage, boolean accurate);
 
     /**
      * Gets the hits that will be dealt during this combat turn.

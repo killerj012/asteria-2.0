@@ -94,6 +94,7 @@ public class CombatHitTask extends Worker {
                 }
                 attacker.setCurrentlyCasting(null);
             }
+            combatHit.onHit(attacker, target, 0, false);
         }
 
         /** Send the hitsplats if needed. */
@@ -153,6 +154,7 @@ public class CombatHitTask extends Worker {
                             break;
                     }
                 }
+
             }
 
             /** Add the total damage to the target's damage map. */
@@ -161,6 +163,8 @@ public class CombatHitTask extends Worker {
             if (oneHitAccurate) {
 
                 /** Various armor and weapon effects. */
+                combatHit.onHit(attacker, target, totalDamage, true);
+
                 if (Misc.random(4) == 0) {
                     if (combatHit.getHitType() == CombatType.MELEE) {
                         if (attacker.type() == EntityType.PLAYER && target.type() == EntityType.PLAYER) {

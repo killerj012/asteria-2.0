@@ -71,7 +71,11 @@ public class DefaultMeleeCombatStrategy implements CombatStrategy {
             }
         }
 
-        return new CombatHitContainer(new Hit[] { CombatFactory.getMeleeHit(entity) }, CombatType.MELEE, true);
+        return new CombatHitContainer(new Hit[] { CombatFactory.getMeleeHit(entity) }, CombatType.MELEE, true) {
+            @Override
+            public void onHit(Entity attacker, Entity victim, int damage, boolean accurate) {
+            }
+        };
     }
 
     @Override
