@@ -276,5 +276,4 @@ public enum PotionConsumable implements GenericAction<Player> {
 			return boostAmount;
 		}
 	}
-
 }
