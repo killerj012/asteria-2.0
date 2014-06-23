@@ -1,11 +1,14 @@
 package server.core;
 
 import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+import java.util.concurrent.FutureTask;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
 import server.core.net.EventSelector;
 import server.core.task.Task;
+import server.core.task.TaskFuture;
 import server.core.worker.TaskFactory;
 import server.world.World;
 
@@ -72,10 +75,23 @@ public final class Rs2Engine implements Runnable {
      * based on the {@link Task}s <code>context()</code> implementation.
      * 
      * @param t
-     *        the task to be pushed to the {@link#taskEngine}.
+     *        the task to be pushed to the engine.
      */
     public static void pushTask(Task t) {
         t.context();
+    }
+
+    /**
+     * Pushes a generic short-lived <b>blocking result</b> task to be carried
+     * out be the engine. The task may be executed sequentially, concurrently,
+     * or on the calling thread based on the {@link FutureTask}s
+     * <code>context()</code> implementation.
+     * 
+     * @param t
+     *        the task to be pushed to the engine.
+     */
+    public static <T> Future<T> pushTask(TaskFuture<T> t) {
+        return t.context();
     }
 
     @Override

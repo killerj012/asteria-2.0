@@ -1,21 +1,19 @@
 package server.core;
 
-import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
-import server.core.task.TaskDeniedHook;
+import server.core.task.TaskRejectedHook;
 
 /**
- * An {@link Executor} implementation that is used to carry out generic
- * asynchronous tasks throughout the server. When these pools are not in use for
- * a certain period of time they will automatically go 'idle' therefore
- * consuming less resources.
+ * A thread pool executor that is used to carry out generic asynchronous tasks
+ * throughout the server. When these pools are not in use for a certain period
+ * of time they will automatically go 'idle' therefore consuming less resources.
  * 
  * @author lare96
  */
-public final class GenericTaskPool implements Executor {
+public final class GenericTaskPool {
 
     /** The backing executor that will hold our pool of worker threads. */
     private ThreadPoolExecutor taskPool;
@@ -38,7 +36,7 @@ public final class GenericTaskPool implements Executor {
 
         taskPool = (ThreadPoolExecutor) Executors.newFixedThreadPool(poolSize);
         taskPool.setThreadFactory(new ThreadProvider(poolName, poolPriority, true, false));
-        taskPool.setRejectedExecutionHandler(new TaskDeniedHook());
+        taskPool.setRejectedExecutionHandler(new TaskRejectedHook());
         taskPool.setKeepAliveTime(Rs2Engine.THREAD_IDLE_TIMEOUT, TimeUnit.MINUTES);
         taskPool.allowCoreThreadTimeOut(true);
 
@@ -47,9 +45,13 @@ public final class GenericTaskPool implements Executor {
         }
     }
 
-    @Override
-    public void execute(Runnable command) {
-        taskPool.execute(command);
+    /**
+     * Gets the backing executor that holds our threads.
+     * 
+     * @return the backing executor that holds our threads.
+     */
+    public ThreadPoolExecutor getTaskPool() {
+        return taskPool;
     }
 
     /**

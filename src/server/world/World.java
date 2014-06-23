@@ -1,6 +1,5 @@
 package server.world;
 
-import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.Phaser;
 import java.util.logging.Logger;
 
@@ -22,7 +21,7 @@ import server.world.item.ground.RegisterableGroundItem;
 import server.world.object.RegisterableWorldObject;
 
 /**
- * Manages in-game entities in the game world.
+ * Manages entities in the game world.
  * 
  * @author lare96
  */
@@ -36,9 +35,6 @@ public final class World {
 
     /** All registered NPCs. */
     private static EntityContainer<Npc> npcs = new EntityContainer<Npc>(4000);
-
-    /** A list of players that are currently being saved. */
-    private static CopyOnWriteArrayList<String> cachedPlayers = new CopyOnWriteArrayList<String>();
 
     /** A stopwatch to track the total time this server has been online. */
     private static Stopwatch totalOnlineTime = new Stopwatch().reset();
@@ -228,17 +224,13 @@ public final class World {
             return;
         }
 
-        /** Cache the player until the saving is done. */
-        cachedPlayers.add(player.getUsername());
-
-        /** Save the actual file whenever the thread is available to. */
+        /** Add the pending logout until the saving is done. */
         Rs2Engine.pushTask(new SequentialTask() {
             @Override
             public void run() {
                 synchronized (player) {
                     WritePlayerFileEvent save = new WritePlayerFileEvent(player);
                     save.run();
-                    cachedPlayers.remove(player.getUsername());
                     logger.info(player + " game successfully saved!");
                 }
             }
@@ -270,15 +262,6 @@ public final class World {
      */
     public static EntityContainer<Npc> getNpcs() {
         return npcs;
-    }
-
-    /**
-     * Gets the map of cached players.
-     * 
-     * @return the cached players.
-     */
-    public static CopyOnWriteArrayList<String> getCachedPlayers() {
-        return cachedPlayers;
     }
 
     /**

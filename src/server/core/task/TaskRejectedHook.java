@@ -8,7 +8,7 @@ import java.util.concurrent.ThreadPoolExecutor;
  * 
  * @author lare96
  */
-public class TaskDeniedHook implements RejectedExecutionHandler {
+public class TaskRejectedHook implements RejectedExecutionHandler {
 
     @Override
     public void rejectedExecution(Runnable r, ThreadPoolExecutor executor) {
@@ -21,7 +21,7 @@ public class TaskDeniedHook implements RejectedExecutionHandler {
                 reason = "The pool is not running!";
             }
 
-            throw new TaskDeniedException((Task) r, reason);
+            throw new TaskRejectedException((Task) r, reason);
         }
     }
 }

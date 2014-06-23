@@ -1,8 +1,5 @@
 package server.core.task;
 
-import server.core.GenericTaskPool;
-
-
 /**
  * A {@link Task} implementation that will be executed concurrently along with
  * other tasks. The amount of threads that will be actively executing tasks is
@@ -10,16 +7,13 @@ import server.core.GenericTaskPool;
  * 
  * @author lare96
  */
-public abstract class ConcurrentTask implements Task {
-
-    /** An executor that handles short lived concurrent game related tasks. */
-    private static GenericTaskPool executor = new GenericTaskPool("ConcurrentThread", Runtime.getRuntime().availableProcessors(), Thread.MAX_PRIORITY);
+public abstract class ConcurrentTask extends Task {
 
     @Override
     public void context() {
 
         /** Execute the logic concurrently amongst multiple threads. */
-        executor.execute(this);
+        TaskExecutors.getConcurrentExecutor().getTaskPool().execute(this);
     }
 
     @Override

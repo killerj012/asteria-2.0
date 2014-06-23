@@ -9,17 +9,17 @@ import server.core.GenericTaskPool;
  * 
  * @author lare96
  */
-public class TaskDeniedException extends RuntimeException {
+public class TaskRejectedException extends RuntimeException {
 
     /**
-     * Create a new {@link TaskDeniedException}.
+     * Create a new {@link TaskRejectedException}.
      * 
      * @param t
      *        the task that was rejected.
      * @param reason
      *        the reason this service was rejected.
      */
-    public TaskDeniedException(Task t, String reason) {
+    public TaskRejectedException(Task t, String reason) {
         super(t + " REJECTED: " + reason);
     }
 

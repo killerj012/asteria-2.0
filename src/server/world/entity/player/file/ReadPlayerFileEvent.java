@@ -55,6 +55,7 @@ public class ReadPlayerFileEvent extends PlayerFileEvent {
             Path path = Paths.get(DIR, getPlayer().getUsername() + ".json");
             File file = path.toFile();
 
+            /** We are logging in for the first time. */
             if (!file.exists()) {
                 SkillManager.login(getPlayer());
                 logger.info(getPlayer() + " is logging in for the first time!");
@@ -136,7 +137,6 @@ public class ReadPlayerFileEvent extends PlayerFileEvent {
 
         } catch (Exception e) {
             e.printStackTrace();
-            logger.info("Error while reading data for " + getPlayer());
             returnCode = Misc.LOGIN_RESPONSE_COULD_NOT_COMPLETE_LOGIN;
         }
     }
