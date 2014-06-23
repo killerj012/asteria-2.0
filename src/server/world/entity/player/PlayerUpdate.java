@@ -29,7 +29,7 @@ public final class PlayerUpdate {
      * @param player
      *        the player to update.
      */
-    public static void update(Player player) {
+    public static void update(Player player) throws Exception {
         PacketBuffer.WriteBuffer out = PacketBuffer.newWriteBuffer(16384);
         PacketBuffer.WriteBuffer block = PacketBuffer.newWriteBuffer(8192);
 
@@ -175,7 +175,7 @@ public final class PlayerUpdate {
             /** Arms. */
             if (player.getEquipment().getContainer().getItemId(Misc.EQUIPMENT_SLOT_CHEST) > 1) {
 
-                if (!Misc.getIsPlatebody()[player.getEquipment().getContainer().getItemId(Misc.EQUIPMENT_SLOT_CHEST)]) {
+                if (!player.getEquipment().getContainer().getItem(Misc.EQUIPMENT_SLOT_CHEST).getDefinition().isPlatebody()) {
                     block.writeShort(0x100 + player.getAppearance()[Misc.APPEARANCE_SLOT_ARMS]);
                 } else {
                     block.writeByte(0);
@@ -192,7 +192,7 @@ public final class PlayerUpdate {
             }
 
             /** Head. */
-            if (player.getEquipment().getContainer().getItemId(Misc.EQUIPMENT_SLOT_HEAD) > 1 && Misc.getIsFullHelm()[player.getEquipment().getContainer().getItemId(Misc.EQUIPMENT_SLOT_HEAD)]) {
+            if (player.getEquipment().getContainer().getItemId(Misc.EQUIPMENT_SLOT_HEAD) > 1 && player.getEquipment().getContainer().getItem(Misc.EQUIPMENT_SLOT_HEAD).getDefinition().isFullHelm()) {
                 block.writeByte(0);
             } else {
                 block.writeShort(0x100 + player.getAppearance()[Misc.APPEARANCE_SLOT_HEAD]);
@@ -214,7 +214,7 @@ public final class PlayerUpdate {
 
             /** Beard. */
             if (player.getGender() == Misc.GENDER_MALE) {
-                if (player.getEquipment().getContainer().getItemId(Misc.EQUIPMENT_SLOT_HEAD) > 1 && !Misc.getIsFullHelm()[player.getEquipment().getContainer().getItemId(Misc.EQUIPMENT_SLOT_HEAD)] || player.getEquipment().getContainer().isSlotFree(Misc.EQUIPMENT_SLOT_HEAD)) {
+                if (player.getEquipment().getContainer().getItemId(Misc.EQUIPMENT_SLOT_HEAD) > 1 && !player.getEquipment().getContainer().getItem(Misc.EQUIPMENT_SLOT_HEAD).getDefinition().isFullHelm() || player.getEquipment().getContainer().isSlotFree(Misc.EQUIPMENT_SLOT_HEAD)) {
                     block.writeShort(0x100 + player.getAppearance()[Misc.APPEARANCE_SLOT_BEARD]);
                 } else {
                     block.writeByte(0);
@@ -354,7 +354,7 @@ public final class PlayerUpdate {
      * @param block
      *        the update block.
      */
-    public static void updateState(Player player, Player thisPlayer, PacketBuffer.WriteBuffer block, boolean forceAppearance, boolean noChat) {
+    public static void updateState(Player player, Player thisPlayer, PacketBuffer.WriteBuffer block, boolean forceAppearance, boolean noChat) throws Exception {
 
         /** Block if no update is required. */
         if (!player.getFlags().isUpdateRequired() && !forceAppearance) {
@@ -515,20 +515,15 @@ public final class PlayerUpdate {
      * @param out
      *        the packet to write to.
      */
-    private static void appendPrimaryHit(Player player, PacketBuffer.WriteBuffer out) {
+    private static void appendPrimaryHit(Player player, PacketBuffer.WriteBuffer out) throws Exception {
         out.writeByte(player.getPrimaryHit().getDamage());
         out.writeByte(player.getPrimaryHit().getType().getId(), ValueType.A);
 
         if (!player.isHasDied()) {
             if (player.getSkills()[Misc.HITPOINTS].getLevel() <= 0) {
                 player.getSkills()[Misc.HITPOINTS].setLevel(0);
-
-                try {
-                    player.setHasDied(true);
-                    TaskFactory.getFactory().submit(player.death());
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
+                player.setHasDied(true);
+                TaskFactory.getFactory().submit(player.death());
             }
         }
 
@@ -544,20 +539,15 @@ public final class PlayerUpdate {
      * @param out
      *        the packet to write to.
      */
-    private static void appendSecondaryHit(Player player, PacketBuffer.WriteBuffer out) {
+    private static void appendSecondaryHit(Player player, PacketBuffer.WriteBuffer out) throws Exception {
         out.writeByte(player.getSecondaryHit().getDamage());
         out.writeByte(player.getSecondaryHit().getType().getId(), ValueType.S);
 
         if (!player.isHasDied()) {
             if (player.getSkills()[Misc.HITPOINTS].getLevel() <= 0) {
                 player.getSkills()[Misc.HITPOINTS].setLevel(0);
-
-                try {
-                    player.setHasDied(true);
-                    TaskFactory.getFactory().submit(player.death());
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
+                player.setHasDied(true);
+                TaskFactory.getFactory().submit(player.death());
             }
         }
 

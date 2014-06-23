@@ -268,7 +268,7 @@ public class CombatHitTask extends Worker {
                                 victim.gfx(new Gfx(437));
 
                                 if (Location.inMultiCombat(target)) {
-                                    for (Player plr : World.getPlayers()) {
+                                    for (Player plr : victim.getPlayers()) {
                                         if (plr == null) {
                                             continue;
                                         }

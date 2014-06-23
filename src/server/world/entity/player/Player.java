@@ -1030,6 +1030,15 @@ public class Player extends Entity {
      * @param runEnergy
      *        the runEnergy to set
      */
+    public void incrementRunEnergy(int amount) {
+        this.runEnergy += amount;
+        getPacketBuilder().sendString(getRunEnergy() + "%", 149);
+    }
+
+    /**
+     * @param runEnergy
+     *        the runEnergy to set
+     */
     public void setRunEnergy(int runEnergy) {
         this.runEnergy = runEnergy;
     }

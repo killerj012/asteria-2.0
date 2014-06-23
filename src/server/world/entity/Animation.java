@@ -23,7 +23,7 @@ public class Animation {
      */
     public Animation(int id, int delay) {
         this.id = id;
-        this.setDelay(delay);
+        this.delay = delay;
     }
 
     /**
@@ -33,7 +33,7 @@ public class Animation {
      *        the id of the animation.
      */
     public Animation(int id) {
-        this.id = id;
+        this(id, 0);
     }
 
     /**
@@ -59,20 +59,6 @@ public class Animation {
      */
     public int getDelay() {
         return delay;
-    }
-
-    /**
-     * Sets the delay of this animation.
-     * 
-     * @param delay
-     *        the new delay to set.
-     */
-    private void setDelay(int delay) {
-        if (delay < 0) {
-            throw new IllegalArgumentException("Cannot have a delay below 0!");
-        }
-
-        this.delay = delay;
     }
 
     /**

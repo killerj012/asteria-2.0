@@ -23,7 +23,7 @@ public class Gfx {
      */
     public Gfx(int id, int delay) {
         this.id = id;
-        this.setDelay(delay);
+        this.delay = delay;
     }
 
     /**
@@ -33,8 +33,7 @@ public class Gfx {
      *        the id of the graphic.
      */
     public Gfx(int id) {
-        this.id = id;
-        this.setDelay(0);
+        this(id, 0);
     }
 
     /**
@@ -60,20 +59,6 @@ public class Gfx {
      */
     public int getDelay() {
         return delay;
-    }
-
-    /**
-     * Sets a delay for this graphic.
-     * 
-     * @param delay
-     *        the delay to set.
-     */
-    private void setDelay(int delay) {
-        if (delay < 0) {
-            throw new IllegalArgumentException("Cannot have a delay below 0!");
-        }
-
-        this.delay = delay;
     }
 
     /**

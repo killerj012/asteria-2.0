@@ -2,7 +2,6 @@ package server.world.entity.combat.special;
 
 import server.core.worker.WorkRate;
 import server.util.Misc;
-import server.world.World;
 import server.world.entity.Animation;
 import server.world.entity.Entity;
 import server.world.entity.EntityType;
@@ -257,7 +256,7 @@ public enum CombatSpecial {
 
             if (Location.inMultiCombat(player)) {
                 if (target.type() == EntityType.PLAYER) {
-                    for (Player players : World.getPlayers()) {
+                    for (Player players : player.getPlayers()) {
                         if (players == null) {
                             continue;
                         }
@@ -269,7 +268,7 @@ public enum CombatSpecial {
                         }
                     }
                 } else if (target.type() == EntityType.NPC) {
-                    for (Npc npc : World.getNpcs()) {
+                    for (Npc npc : player.getNpcs()) {
                         if (npc == null) {
                             continue;
                         }

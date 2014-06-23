@@ -8,9 +8,11 @@ import java.io.IOException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Random;
 import java.util.Scanner;
+import java.util.Set;
 import java.util.concurrent.ThreadLocalRandom;
 
 import server.core.net.HostGateway;
@@ -112,13 +114,13 @@ public final class Misc {
     public static final int[] NO_SHOP_ITEMS = { 995 };
 
     /** Items that are platebodies. */
-    private static boolean[] isPlatebody = new boolean[7956];
+    private static Set<Integer> isPlatebody = new HashSet<>();
 
     /** Items that are full helms. */
-    private static boolean[] isFullHelm = new boolean[7956];
+    private static Set<Integer> isFullHelm = new HashSet<>();
 
     /** Items that are two handed. */
-    private static boolean[] is2H = new boolean[7956];
+    private static Set<Integer> is2H = new HashSet<>();
 
     /** The bonus names. */
     public static final String[] BONUS_NAMES = { "Stab", "Slash", "Crush", "Magic", "Range", "Stab", "Slash", "Crush", "Magic", "Range", "Strength", "Prayer" };
@@ -542,10 +544,6 @@ public final class Misc {
      *         if any errors occur while scanningthis file.
      */
     public static void codeEquipment() throws Exception {
-        isPlatebody = new boolean[7956];
-        isFullHelm = new boolean[7956];
-        is2H = new boolean[7956];
-
         Scanner scanner = new Scanner(new File("./data/equipment_coder.txt"));
         int parsed = 0;
 
@@ -555,13 +553,13 @@ public final class Misc {
                 int value = scanner.nextInt();
 
                 if (keyword.equals("#2h")) {
-                    is2H[value] = true;
+                    is2H.add(value);
                     parsed++;
                 } else if (keyword.equals("#full_helm")) {
-                    isFullHelm[value] = true;
+                    isFullHelm.add(value);
                     parsed++;
                 } else if (keyword.equals("#platebody")) {
-                    isPlatebody[value] = true;
+                    isPlatebody.add(value);
                     parsed++;
                 }
             }
@@ -1099,7 +1097,7 @@ public final class Misc {
      * 
      * @return the array of platebodies.
      */
-    public static boolean[] getIsPlatebody() {
+    public static Set<Integer> getIsPlatebody() {
         return isPlatebody;
     }
 
@@ -1108,7 +1106,7 @@ public final class Misc {
      * 
      * @return the array of full helms.
      */
-    public static boolean[] getIsFullHelm() {
+    public static Set<Integer> getIsFullHelm() {
         return isFullHelm;
     }
 
@@ -1117,7 +1115,7 @@ public final class Misc {
      * 
      * @return the array of two handed swords.
      */
-    public static boolean[] getIs2H() {
+    public static Set<Integer> getIs2H() {
         return is2H;
     }
 }

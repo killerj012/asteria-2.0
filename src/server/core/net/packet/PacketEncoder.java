@@ -127,7 +127,7 @@ public final class PacketEncoder {
      * @return this packet encoder.
      */
     public PacketEncoder sendGlobalObjectAnimation(Position position, int animation, int type, int orientation) {
-        for (Player player : World.getPlayers()) {
+        for (Player player : this.player.getPlayers()) {
             if (player == null) {
                 continue;
             }
@@ -170,7 +170,7 @@ public final class PacketEncoder {
      * @return this packet encoder.
      */
     public PacketEncoder sendViewableGraphic(int id, Position position, int level) {
-        for (Player player : World.getPlayers()) {
+        for (Player player : this.player.getPlayers()) {
             if (player == null) {
                 continue;
             }

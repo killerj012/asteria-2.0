@@ -24,7 +24,7 @@ public class CombatPoisonTask extends Worker {
      *        the entity being inflicted with poison.
      */
     public CombatPoisonTask(Entity entity) {
-        super(10, false, WorkRate.APPROXIMATE_SECOND);
+        super(15, false, WorkRate.APPROXIMATE_SECOND);
         this.entity = entity;
     }
 

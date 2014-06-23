@@ -41,7 +41,7 @@ public class PlayerParallelUpdateTask extends ConcurrentTask {
     public void run() {
 
         /**
-         * Put a concurrent lock on the player we are currently updating - so
+         * Put a concurrent lock on the player we are currently updating, so
          * only one thread in the pool can access this player at a time.
          */
         synchronized (player) {
@@ -56,9 +56,7 @@ public class PlayerParallelUpdateTask extends ConcurrentTask {
                 ex.printStackTrace();
                 player.getSession().disconnect();
 
-                /**
-                 * Arrive at the phaser regardless if there was an error or not.
-                 */
+                /** Arrive at the phaser regardless if there was an error. */
             } finally {
                 phaser.arrive();
             }

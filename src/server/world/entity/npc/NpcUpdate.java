@@ -26,7 +26,7 @@ public class NpcUpdate {
      * @param player
      *        the argued player.
      */
-    public static void update(Player player) {
+    public static void update(Player player) throws Exception {
         // XXX: The buffer sizes may need to be tuned.
         PacketBuffer.WriteBuffer out = PacketBuffer.newWriteBuffer(2048);
         PacketBuffer.WriteBuffer block = PacketBuffer.newWriteBuffer(1024);
@@ -144,7 +144,7 @@ public class NpcUpdate {
      * @param npc
      *        The NPC to update.
      */
-    private static void updateState(PacketBuffer.WriteBuffer block, Npc npc) {
+    private static void updateState(PacketBuffer.WriteBuffer block, Npc npc) throws Exception {
         int mask = 0x0;
 
         /** NPC update masks. */
@@ -223,17 +223,12 @@ public class NpcUpdate {
      * @param npc
      *        the npc to append this update for.
      */
-    private static void appendSecondaryHit(PacketBuffer.WriteBuffer out, Npc npc) {
+    private static void appendSecondaryHit(PacketBuffer.WriteBuffer out, Npc npc) throws Exception {
         if (!npc.isHasDied()) {
             if (npc.getCurrentHP() <= 0) {
                 npc.setCurrentHealth(0);
-
-                try {
-                    npc.setHasDied(true);
-                    TaskFactory.getFactory().submit(npc.death());
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
+                npc.setHasDied(true);
+                TaskFactory.getFactory().submit(npc.death());
             }
         }
 
@@ -275,17 +270,12 @@ public class NpcUpdate {
      * @param npc
      *        the npc to append this update for.
      */
-    private static void appendPrimaryHit(PacketBuffer.WriteBuffer out, Npc npc) {
+    private static void appendPrimaryHit(PacketBuffer.WriteBuffer out, Npc npc) throws Exception {
         if (!npc.isHasDied()) {
             if (npc.getCurrentHP() <= 0) {
                 npc.setCurrentHealth(0);
-
-                try {
-                    npc.setHasDied(true);
-                    TaskFactory.getFactory().submit(npc.death());
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
+                npc.setHasDied(true);
+                TaskFactory.getFactory().submit(npc.death());
             }
         }
 

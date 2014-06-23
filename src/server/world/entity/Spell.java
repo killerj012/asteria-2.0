@@ -10,8 +10,8 @@ import server.world.entity.player.Player;
 import server.world.item.Item;
 
 /**
- * A dynamic class that is primarily used for the implemenation of more specific
- * spells although it can be used for any generic spell.
+ * A dynamic class that is primarily used for the implementation of more
+ * specific spells although it can be used for any generic spell.
  * 
  * @author lare96
  */

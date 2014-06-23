@@ -21,8 +21,6 @@ import server.world.entity.combat.task.CombatTeleblockTask;
 import server.world.entity.player.Player;
 import server.world.entity.player.content.AssignWeaponAnimation;
 import server.world.entity.player.content.AssignWeaponInterface;
-import server.world.entity.player.content.RestoreEnergyWorker;
-import server.world.entity.player.content.RestoreStatWorker;
 import server.world.entity.player.file.ReadPlayerFileEvent;
 import server.world.entity.player.minigame.Minigame;
 import server.world.entity.player.minigame.MinigameFactory;
@@ -42,7 +40,7 @@ public final class Session {
      * don't have RSA enabled in your client and you don't know how to get RSA
      * working).
      */
-    public static final boolean DECODE_RSA = false;
+    public static final boolean DECODE_RSA = true;
 
     /**
      * If this is set to true, any players that login but moderators or higher
@@ -511,9 +509,6 @@ public final class Session {
                 }
 
                 /** Schedule various workers. */
-                TaskFactory.getFactory().submit(new RestoreEnergyWorker(player));
-                TaskFactory.getFactory().submit(new RestoreStatWorker(player));
-
                 if (player.getPoisonHits() > 0) {
                     TaskFactory.getFactory().submit(new CombatPoisonTask(player));
                 }

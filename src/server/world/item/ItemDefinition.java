@@ -389,6 +389,24 @@ public class ItemDefinition {
      * @return true if this item is two handed.
      */
     public boolean isTwoHanded() {
-        return Misc.getIs2H()[itemId];
+        return Misc.getIs2H().contains(itemId);
+    }
+
+    /**
+     * Gets if this item is a full helm.
+     * 
+     * @return true if this item is a full helm.
+     */
+    public boolean isFullHelm() {
+        return Misc.getIsFullHelm().contains(itemId);
+    }
+
+    /**
+     * Gets if this item is a platebody.
+     * 
+     * @return true if this item is a platebody.
+     */
+    public boolean isPlatebody() {
+        return Misc.getIsPlatebody().contains(itemId);
     }
 }

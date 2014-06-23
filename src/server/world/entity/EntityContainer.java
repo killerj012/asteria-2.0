@@ -3,17 +3,21 @@ package server.world.entity;
 import java.util.Collection;
 import java.util.Iterator;
 
-import server.util.Misc.GenericAction;
 import server.world.WorldFullException;
 
 /**
- * A container for holding and managing entities.
+ * A container for holding and managing entities. This container uses a
+ * fail-safe iterator implementation which means you can add and remove npcs to
+ * this container during iteration.
  * 
  * @author lare96
  * @param <T>
  *        the type of entity to hold in this container.
  */
 public class EntityContainer<T extends Entity> implements Iterable<T> {
+
+    /** The size of this container. */
+    private int size;
 
     /** The backing array for this container. */
     private T[] backingArray;
@@ -27,6 +31,7 @@ public class EntityContainer<T extends Entity> implements Iterable<T> {
     @SuppressWarnings("unchecked")
     public EntityContainer(int capacity) {
         this.backingArray = (T[]) new Entity[capacity];
+        this.size = 0;
     }
 
     /**
@@ -95,6 +100,7 @@ public class EntityContainer<T extends Entity> implements Iterable<T> {
         /** Add the entity and set utility values. */
         backingArray[slot] = entity;
         backingArray[slot].setSlot(slot);
+        size++;
     }
 
     /**
@@ -137,22 +143,7 @@ public class EntityContainer<T extends Entity> implements Iterable<T> {
         /** Otherwise remove the entity from the slot and set utility values. */
         backingArray[slot].setUnregistered(true);
         backingArray[slot] = null;
-    }
-
-    /**
-     * Performs an action on every single valid entity in this container.
-     * 
-     * @param task
-     *        the action to perform.
-     */
-    public void loopTask(GenericAction<T> task) {
-        for (T entity : backingArray) {
-            if (entity == null) {
-                continue;
-            }
-
-            task.fireAction(entity);
-        }
+        size--;
     }
 
     /**
@@ -207,15 +198,6 @@ public class EntityContainer<T extends Entity> implements Iterable<T> {
      * @return the amount of non-malformed entities.
      */
     public int getSize() {
-        int size = 0;
-
-        for (T element : backingArray) {
-            if (element == null) {
-                continue;
-            }
-
-            size++;
-        }
         return size;
     }
 
@@ -239,7 +221,7 @@ public class EntityContainer<T extends Entity> implements Iterable<T> {
      * @return the amount of free slots left in this container.
      */
     public int getFreeSlotAmount() {
-        return backingArray.length - getSize();
+        return backingArray.length - size;
     }
 
     @Override
@@ -277,6 +259,7 @@ public class EntityContainer<T extends Entity> implements Iterable<T> {
                 removeSlot(lastElementIndex);
                 currentIndex = lastElementIndex;
                 lastElementIndex = -1;
+                size--;
             }
         };
     }

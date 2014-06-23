@@ -11,6 +11,8 @@ import server.core.task.Task;
 import server.core.task.TaskFuture;
 import server.core.worker.TaskFactory;
 import server.world.World;
+import server.world.entity.player.content.RestoreEnergyWorker;
+import server.world.entity.player.content.RestoreStatWorker;
 
 /**
  * The 'heart' of the the server that fires game logic at 600ms intervals and
@@ -67,6 +69,10 @@ public final class Rs2Engine implements Runnable {
 
         /** Start ticking the game executor */
         gameExecutor.scheduleAtFixedRate(new Rs2Engine(), 0, 600, TimeUnit.MILLISECONDS);
+
+        /** Start miscellaneous tasks. */
+        TaskFactory.getFactory().submit(new RestoreStatWorker());
+        TaskFactory.getFactory().submit(new RestoreEnergyWorker());
     }
 
     /**

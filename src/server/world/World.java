@@ -8,7 +8,6 @@ import server.core.net.Session.Stage;
 import server.core.task.SequentialTask;
 import server.core.task.impl.PlayerParallelUpdateTask;
 import server.util.Misc;
-import server.util.Misc.Stopwatch;
 import server.world.entity.EntityContainer;
 import server.world.entity.npc.Npc;
 import server.world.entity.player.Player;
@@ -31,13 +30,10 @@ public final class World {
     private static Logger logger = Logger.getLogger(World.class.getSimpleName());
 
     /** All registered players. */
-    private static EntityContainer<Player> players = new EntityContainer<Player>(2000);
+    private static final EntityContainer<Player> players = new EntityContainer<Player>(2147);
 
     /** All registered NPCs. */
-    private static EntityContainer<Npc> npcs = new EntityContainer<Npc>(4000);
-
-    /** A stopwatch to track the total time this server has been online. */
-    private static Stopwatch totalOnlineTime = new Stopwatch().reset();
+    private static final EntityContainer<Npc> npcs = new EntityContainer<Npc>(4000);
 
     /** The registerable container for ground item management. */
     private static RegisterableGroundItem registerableGroundItems;
@@ -89,7 +85,6 @@ public final class World {
                     player.pulse();
                 } catch (Exception ex) {
                     ex.printStackTrace();
-                    logger.warning(player + " error while firing game logic!");
                     player.getSession().disconnect();
                 }
             }
@@ -103,14 +98,12 @@ public final class World {
                     npc.pulse();
                 } catch (Exception ex) {
                     ex.printStackTrace();
-                    logger.warning(npc + " error while firing game logic!");
                     npcs.remove(npc);
                 }
             }
 
-            /** Perform updating for entities in parallel. */
+            /** Perform updating for players in parallel. */
             final Phaser phaser = new Phaser(1);
-
             phaser.bulkRegister(players.getSize());
 
             for (Player player : players) {
@@ -123,10 +116,7 @@ public final class World {
 
             phaser.arriveAndAwaitAdvance();
 
-            /**
-             * Reset all of the entities after updating and prepare for a new
-             * cycle.
-             */
+            /** Reset all entities and prepare for next cycle. */
             for (Player player : players) {
                 if (player == null) {
                     continue;
@@ -137,7 +127,6 @@ public final class World {
                     player.setCachedUpdateBlock(null);
                 } catch (Exception ex) {
                     ex.printStackTrace();
-                    logger.warning(player + " error while resetting for the next game tick!");
                     player.getSession().disconnect();
                 }
             }
@@ -151,8 +140,7 @@ public final class World {
                     npc.reset();
                 } catch (Exception ex) {
                     ex.printStackTrace();
-                    logger.warning(npc + " error while resetting for the next game tick!");
-                    World.getNpcs().remove(npc);
+                    npcs.remove(npc);
                 }
             }
         } catch (Exception ex) {
@@ -235,15 +223,6 @@ public final class World {
                 }
             }
         });
-    }
-
-    /**
-     * Gets the total time this server has been running.
-     * 
-     * @return the time that this server has online for.
-     */
-    public static long getTimeOnline() {
-        return totalOnlineTime.elapsed();
     }
 
     /**

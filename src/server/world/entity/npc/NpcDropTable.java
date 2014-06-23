@@ -18,7 +18,7 @@ public class NpcDropTable {
 
     /**
      * Will be used to hold all of the drops for each npc. We use a map for easy
-     * and fast retrieval of the npc's table (npc id -----> drop table).
+     * and fast retrieval of the npc's table.
      */
     private static Map<Integer, NpcDropTable> drops = new HashMap<Integer, NpcDropTable>();
 
@@ -55,7 +55,7 @@ public class NpcDropTable {
     }
 
     /**
-     * Calculates a set of drops will the intention that they will be dropped on
+     * Calculates a set of drops with the intention that they will be dropped on
      * death, although they can be used however one would like. Please note that
      * this is not a static implementation, meaning that calling this method
      * will return a different set of items each time.
