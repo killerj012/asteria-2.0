@@ -79,8 +79,11 @@ public class NpcDropTable {
                     continue;
                 }
 
+                /** Round to 3 decimal places for decreased accuracy. */
+                double rollRound = Math.round(roll.nextDouble() * 1000.0) / 1000.0;
+
                 /** Compare the roll against the bet. */
-                if (roll.nextDouble() <= drop.getBet()) {
+                if (rollRound <= drop.getBet()) {
 
                     /** Roll was successful! Add the item to the drops. */
                     item[slot++] = drop.toItem();
@@ -97,11 +100,14 @@ public class NpcDropTable {
             /** Select one random item from out of the rare table. */
             NpcDrop rareDrop = Misc.randomElement(rare);
 
+            /** Round to 3 decimal places for decreased accuracy. */
+            double rollRound = Math.round(roll.nextDouble() * 1000.0) / 1000.0;
+
             /**
              * Compare the roll against the bet, including the bet
              * modifications.
              */
-            if (roll.nextDouble() <= (rareDrop.getBet() + betMod.getMod())) {
+            if (rollRound <= (rareDrop.getBet() + betMod.getMod())) {
 
                 /** Roll was successful! Add the item to the drops. */
                 item[slot++] = rareDrop.toItem();
@@ -117,6 +123,41 @@ public class NpcDropTable {
         }
 
         return item;
+    }
+
+    /**
+     * Calculates a set of rare drops (without bet modifications) and prints out
+     * if any of them were successful out of 1 million kills. If they were
+     * successful it prints how many kills it took to make that drop successful.
+     * If none at all were successful out of a million kills it will print an
+     * indication of that. Please note that this method will exit the
+     * application once a rare drop is made or once the calculations have been
+     * completed with no successful drops. This method is for debugging only and
+     * <b>should not</b> be used during runtime.
+     */
+    public void calculateDropsDebug() {
+
+        /** Gamble one item in the rare table. */
+        if (rare != null && rare.length > 0) {
+
+            for (int i = 0; i < 1000000; i++) {
+
+                /** Select one random item from out of the rare table. */
+                NpcDrop rareDrop = Misc.randomElement(rare);
+
+                /** Round to 3 decimal places for decreased accuracy. */
+                double rollRound = Math.round(roll.nextDouble() * 1000.0) / 1000.0;
+
+                /** Compare the roll against the bet. */
+                if (rollRound <= rareDrop.getBet()) {
+                    System.out.println("RARE ITEM DROPPED[item = " + rareDrop.toItem().getDefinition().getItemName() + ", kills= " + (i + 1) + "]");
+                    System.exit(0);
+                }
+            }
+
+            System.out.println("NO RARE ITEMS DROPPED");
+            System.exit(0);
+        }
     }
 
     /**
