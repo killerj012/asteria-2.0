@@ -64,7 +64,7 @@ public final class PlayerUpdate {
 
         /** Update the local player list. */
         for (int i = 0; i < World.getPlayers().getCapacity(); i++) {
-            if (added == 10 || player.getPlayers().size() >= 255) {
+            if (added == 50 || player.getPlayers().size() >= 255) {
 
                 /** Player limit has been reached. */
                 break;

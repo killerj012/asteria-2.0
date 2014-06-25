@@ -10,6 +10,7 @@ import server.world.entity.combat.magic.CombatMagicSpells;
 import server.world.entity.combat.magic.CombatSpell;
 import server.world.entity.npc.Npc;
 import server.world.entity.npc.NpcDefinition;
+import server.world.entity.npc.dialogue.DialogueSender;
 import server.world.entity.player.Player;
 import server.world.entity.player.minigame.Minigame;
 import server.world.entity.player.minigame.MinigameFactory;
@@ -27,7 +28,9 @@ import server.world.shop.Shop;
 public class DecodeNpcActionPacket extends PacketDecoder {
 
     /** The various packet opcodes. */
-    public static final int ATTACK_NPC = 72, MAGE_NPC = 131, FIRST_CLICK = 155,
+    public static final int ATTACK_NPC = 72,
+            MAGE_NPC = 131,
+            FIRST_CLICK = 155,
             SECOND_CLICK = 17;
 
     @Override
@@ -56,7 +59,9 @@ public class DecodeNpcActionPacket extends PacketDecoder {
                 }
 
                 /** Multicombat location check. */
-                if (!Location.inMultiCombat(player) && player.getCombatBuilder().isBeingAttacked() && player.getCombatBuilder().getLastAttacker() != attackMelee) {
+                if (!Location.inMultiCombat(player)
+                        && player.getCombatBuilder().isBeingAttacked()
+                        && player.getCombatBuilder().getLastAttacker() != attackMelee) {
                     player.getPacketBuilder().sendMessage("You are already under attack!");
                     return;
                 }
@@ -87,7 +92,9 @@ public class DecodeNpcActionPacket extends PacketDecoder {
                 }
 
                 /** Multicombat location check. */
-                if (!Location.inMultiCombat(player) && player.getCombatBuilder().isBeingAttacked() && player.getCombatBuilder().getLastAttacker() != attackMagic) {
+                if (!Location.inMultiCombat(player)
+                        && player.getCombatBuilder().isBeingAttacked()
+                        && player.getCombatBuilder().getLastAttacker() != attackMagic) {
                     player.getPacketBuilder().sendMessage("You are already under attack!");
                     return;
                 }
@@ -115,7 +122,7 @@ public class DecodeNpcActionPacket extends PacketDecoder {
 
                             switch (firstClickMob.getNpcId()) {
                                 case 460:
-                                    player.dialogue(2);
+                                    DialogueSender.sendHomeWizardDialogue(player);
                                     break;
                                 case 520:
                                     Shop.getShop(0).openShop(player);

@@ -8,6 +8,7 @@ import server.core.net.Session.Stage;
 import server.core.task.SequentialTask;
 import server.core.task.impl.PlayerParallelUpdateTask;
 import server.util.Misc;
+import server.util.Misc.Stopwatch;
 import server.world.entity.EntityContainer;
 import server.world.entity.npc.Npc;
 import server.world.entity.player.Player;
@@ -49,11 +50,13 @@ public final class World {
      */
     public static void init() {
         try {
+            Misc.loadNpcDrops();
+            Misc.loadItemDefinitions();
+            // NpcDropTable.getAllDrops().get(1615).calculateDropsDebug();
             Misc.codeFiles();
             Misc.codeHosts();
             Misc.codeEquipment();
             Misc.loadWorldObjects();
-            Misc.loadItemDefinitions();
             Misc.loadNpcDefinitions();
             Misc.loadShops();
             Misc.loadWorldItems();
@@ -61,7 +64,6 @@ public final class World {
             AssignWeaponAnimation.class.newInstance();
             AssignWeaponInterface.class.newInstance();
             AssignSkillRequirement.class.newInstance();
-            Misc.loadNpcDrops();
             MinigameFactory.fireDynamicTasks();
         } catch (Exception e) {
             e.printStackTrace();
@@ -72,6 +74,8 @@ public final class World {
      * Ticks logic for the actual game - general logic sequentially and updating
      * logic in parallel.
      */
+    private static Stopwatch w = new Stopwatch();
+
     public static void tick() {
         try {
 
@@ -104,8 +108,10 @@ public final class World {
 
             /** Perform updating for players in parallel. */
             final Phaser phaser = new Phaser(1);
+
             phaser.bulkRegister(players.getSize());
 
+            // w.reset();
             for (Player player : players) {
                 if (player == null) {
                     continue;
@@ -115,6 +121,7 @@ public final class World {
             }
 
             phaser.arriveAndAwaitAdvance();
+            // System.out.println("updating: " + w.elapsed());
 
             /** Reset all entities and prepare for next cycle. */
             for (Player player : players) {

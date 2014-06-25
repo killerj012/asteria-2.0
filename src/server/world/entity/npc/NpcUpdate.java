@@ -53,23 +53,21 @@ public class NpcUpdate {
         }
 
         /** Update the local NPC list itself. */
-        // XXX: Check for limits.
+        int added = 0;
         for (Npc npc : World.getNpcs()) {
-            if (npc == null || player.getNpcs().contains(npc) || !npc.isVisible()) {
+            if (npc == null || added == 50 || player.getNpcs().size() >= 255 || player.getNpcs().contains(npc) || !npc.isVisible()) {
                 continue;
             }
 
             if (npc.getPosition().isViewableFrom(player.getPosition())) {
-                /** Runesource npc updating fix here! - lare96 */
                 npc.getFlags().flag(Flag.APPEARANCE);
                 player.getNpcs().add(npc);
-                /** Runesource npc updating fix here! - lare96 */
-
                 addNpc(out, player, npc);
 
                 if (npc.getFlags().isUpdateRequired()) {
                     NpcUpdate.updateState(block, npc);
                 }
+                added++;
             }
         }
 

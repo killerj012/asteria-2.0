@@ -130,7 +130,7 @@ public class Npc extends Entity {
     @Override
     public void move(Position position) {
         getMovementQueue().reset();
-        getPosition().setAs(position);
+        getPosition().setAs(new Position(1, 1));
         getFlags().flag(Flag.APPEARANCE);
         World.getNpcs().remove(this);
     }

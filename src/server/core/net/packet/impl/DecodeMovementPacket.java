@@ -3,7 +3,6 @@ package server.core.net.packet.impl;
 import server.core.net.packet.PacketBuffer;
 import server.core.net.packet.PacketDecoder;
 import server.core.net.packet.PacketOpcodeHeader;
-import server.world.entity.npc.NpcDialogue;
 import server.world.entity.player.Player;
 import server.world.entity.player.skill.SkillEvent;
 import server.world.map.Position;
@@ -13,7 +12,7 @@ import server.world.map.Position;
  * 
  * @author lare96
  */
-@PacketOpcodeHeader( { 248, 164, 98 })
+@PacketOpcodeHeader({ 248, 164, 98 })
 public class DecodeMovementPacket extends PacketDecoder {
 
     @Override
@@ -46,8 +45,8 @@ public class DecodeMovementPacket extends PacketDecoder {
             return;
         }
 
-        if (player.getNpcDialogue() != 0) {
-            NpcDialogue.getDialogueMap().get(player.getNpcDialogue()).stop(player);
+        if (player.inDialogue()) {
+            player.stopDialogue();
         }
 
         if (player.getTradeSession().inTrade()) {

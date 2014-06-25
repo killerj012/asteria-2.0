@@ -10,7 +10,6 @@ import server.core.worker.Worker;
 import server.util.Misc;
 import server.world.entity.combat.magic.CombatMagicSpells;
 import server.world.entity.combat.prayer.CombatPrayer;
-import server.world.entity.npc.NpcDialogue;
 import server.world.entity.player.Player;
 import server.world.entity.player.content.AssignWeaponInterface.FightType;
 import server.world.entity.player.content.AssignWeaponInterface.WeaponInterface;
@@ -214,18 +213,7 @@ public class DecodeClickButtonPacket extends PacketDecoder {
                 break;
             case 32033:
                 switch (player.getOption()) {
-                    case 2:
-                        NpcDialogue.fiveOptions(player, "Fire", "Body", "Cosmic", "Next", "Previous");
-                        player.setOption(3);
-                        break;
-                    case 3:
-                        NpcDialogue.fiveOptions(player, "Air", "Mind", "Water", "Earth", "Next");
-                        player.setOption(2);
-                        break;
-                    case 4:
-                        NpcDialogue.fiveOptions(player, "Fire", "Body", "Cosmic", "Next", "Previous");
-                        player.setOption(3);
-                        break;
+
                 }
                 break;
 

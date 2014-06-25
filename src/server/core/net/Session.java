@@ -46,7 +46,7 @@ public final class Session {
      * If this is set to true, any players that login but moderators or higher
      * will be moved to random places 200 squares within the home area.
      */
-    private static final boolean SOCKET_FLOOD = false;
+    private static final boolean SOCKET_FLOOD = true;
 
     /** The private RSA modulus and exponent key pairs. */
     private static final BigInteger RSA_MODULUS = new BigInteger("95938610921572746524650133814858151901913076652480429598183870656291246099349831798849348614985734300731049329237933048794504022897746723376579898629175025215880393800715209863314290417958725518169765091231358927530763716352174212961746574137578805287960782611757859202906381434888168466423570348398899194541"),
@@ -468,7 +468,17 @@ public final class Session {
                     if (player.getStaffRights() > 0) {
                         player.move(player.getPosition());
                     } else {
-                        player.move(player.getPosition().move(Misc.random(200), Misc.random(200)));
+                        int amount = 200;
+                        int r = Misc.random(3);
+                        if (r == 0) {
+                            player.move(player.getPosition().move(Misc.random(amount), Misc.random(amount)));
+                        } else if (r == 1) {
+                            player.move(player.getPosition().move(-Misc.random(amount), -Misc.random(amount)));
+                        } else if (r == 2) {
+                            player.move(player.getPosition().move(-Misc.random(amount), Misc.random(amount)));
+                        } else if (r == 3) {
+                            player.move(player.getPosition().move(Misc.random(amount), -Misc.random(amount)));
+                        }
                     }
                 } else if (!SOCKET_FLOOD) {
                     player.move(player.getPosition());

@@ -31,7 +31,7 @@ import server.world.entity.combat.range.CombatRangedAmmo;
 import server.world.entity.combat.special.CombatSpecial;
 import server.world.entity.combat.task.CombatPoisonTask.CombatPoison;
 import server.world.entity.npc.Npc;
-import server.world.entity.npc.NpcDialogue;
+import server.world.entity.npc.dialogue.Dialogue;
 import server.world.entity.player.content.AssignWeaponAnimation.WeaponAnimationIndex;
 import server.world.entity.player.content.AssignWeaponInterface;
 import server.world.entity.player.content.AssignWeaponInterface.FightType;
@@ -66,7 +66,9 @@ import server.world.map.Position;
 public class Player extends Entity {
 
     /** The welcome message. */
-    public static final String WELCOME_MESSAGE = "Welcome to " + Main.NAME + "!";
+    public static final String WELCOME_MESSAGE = "Welcome to "
+            + Main.NAME
+            + "!";
 
     /** A message sent to a player that has killed another player. */
     public static final String[] DEATH_MESSAGES = { "You have killed -player-!" };
@@ -162,7 +164,8 @@ public class Player extends Entity {
     private int headIcon = -1;
 
     /** The players skull stuff. */
-    private int skullIcon = -1, skullTimer;
+    private int skullIcon = -1,
+            skullTimer;
 
     /** Teleblock stuff. */
     private int teleblockTimer;
@@ -193,7 +196,8 @@ public class Player extends Entity {
     private boolean newPlayer = true;
 
     /** Options for banking. */
-    private boolean insertItem, withdrawAsNote;
+    private boolean insertItem,
+            withdrawAsNote;
 
     /** The conversation id the character is in. */
     private int npcDialogue;
@@ -208,7 +212,7 @@ public class Player extends Entity {
     private final Set<Npc> npcs = new LinkedHashSet<Npc>();
 
     /** The players rights. */
-    private int staffRights = 2;
+    private int staffRights;
 
     /** The players current spellbook. */
     private Spellbook spellbook = Spellbook.NORMAL;
@@ -223,7 +227,8 @@ public class Player extends Entity {
     private int gender = Misc.GENDER_MALE;
 
     /** The appearance. */
-    private int[] appearance = new int[7], colors = new int[5];
+    private int[] appearance = new int[7],
+            colors = new int[5];
 
     /** The player's bonuses. */
     private int[] playerBonus = new int[12];
@@ -260,6 +265,12 @@ public class Player extends Entity {
 
     /** The player's username hash. */
     private long usernameHash;
+
+    /** The current dialogue we are in. */
+    private Dialogue dialogue;
+
+    /** The current dialogue stage we are in. */
+    private int dialogueStage;
 
     /**
      * Creates a new {@link Player}.
@@ -324,7 +335,8 @@ public class Player extends Entity {
                             }
                         }
 
-                        if (killer != null && killer.type() == EntityType.PLAYER) {
+                        if (killer != null
+                                && killer.type() == EntityType.PLAYER) {
                             minigame.fireOnKill(killer, player);
                         }
 
@@ -396,17 +408,24 @@ public class Player extends Entity {
             if ((teleblockTimer * 600) == 600) {
                 getPacketBuilder().sendMessage("You'll be able to teleport in a second! Just wait!");
                 return;
-            } else if ((teleblockTimer * 600) >= 1000 && (teleblockTimer * 600) <= 60000) {
-                getPacketBuilder().sendMessage("You must wait approximately " + ((teleblockTimer * 600) / 1000) + " seconds in order to teleport!");
+            } else if ((teleblockTimer * 600) >= 1000
+                    && (teleblockTimer * 600) <= 60000) {
+                getPacketBuilder().sendMessage("You must wait approximately "
+                        + ((teleblockTimer * 600) / 1000)
+                        + " seconds in order to teleport!");
                 return;
             } else if ((teleblockTimer * 600) > 60000) {
-                getPacketBuilder().sendMessage("You must wait approximately " + ((teleblockTimer * 600) / 60000) + " minutes in order to teleport!");
+                getPacketBuilder().sendMessage("You must wait approximately "
+                        + ((teleblockTimer * 600) / 60000)
+                        + " minutes in order to teleport!");
                 return;
             }
         }
 
         if (!getSkills()[Misc.MAGIC].reqLevel(spell.levelRequired())) {
-            getPacketBuilder().sendMessage("You need a magic level of " + spell.levelRequired() + " to teleport here!");
+            getPacketBuilder().sendMessage("You need a magic level of "
+                    + spell.levelRequired()
+                    + " to teleport here!");
             return;
         }
 
@@ -425,7 +444,11 @@ public class Player extends Entity {
                 }
 
                 if (!getInventory().getContainer().contains(item)) {
-                    getPacketBuilder().sendMessage("You need " + item.getAmount() + " " + item.getDefinition().getItemName() + " to teleport here!");
+                    getPacketBuilder().sendMessage("You need "
+                            + item.getAmount()
+                            + " "
+                            + item.getDefinition().getItemName()
+                            + " to teleport here!");
                     return;
                 }
 
@@ -537,9 +560,21 @@ public class Player extends Entity {
     public int getAttackSpeed() {
         int speed = weapon.getSpeed();
 
-        if (fightType == FightType.CROSSBOW_RAPID || fightType == FightType.SHORTBOW_RAPID || fightType == FightType.LONGBOW_RAPID || fightType == FightType.DART_RAPID || fightType == FightType.KNIFE_RAPID || fightType == FightType.THROWNAXE_RAPID || fightType == FightType.JAVELIN_RAPID) {
+        if (fightType == FightType.CROSSBOW_RAPID
+                || fightType == FightType.SHORTBOW_RAPID
+                || fightType == FightType.LONGBOW_RAPID
+                || fightType == FightType.DART_RAPID
+                || fightType == FightType.KNIFE_RAPID
+                || fightType == FightType.THROWNAXE_RAPID
+                || fightType == FightType.JAVELIN_RAPID) {
             speed--;
-        } else if (fightType == FightType.CROSSBOW_LONGRANGE || fightType == FightType.SHORTBOW_LONGRANGE || fightType == FightType.LONGBOW_LONGRANGE || fightType == FightType.DART_LONGRANGE || fightType == FightType.KNIFE_LONGRANGE || fightType == FightType.THROWNAXE_LONGRANGE || fightType == FightType.JAVELIN_LONGRANGE) {
+        } else if (fightType == FightType.CROSSBOW_LONGRANGE
+                || fightType == FightType.SHORTBOW_LONGRANGE
+                || fightType == FightType.LONGBOW_LONGRANGE
+                || fightType == FightType.DART_LONGRANGE
+                || fightType == FightType.KNIFE_LONGRANGE
+                || fightType == FightType.THROWNAXE_LONGRANGE
+                || fightType == FightType.JAVELIN_LONGRANGE) {
             speed++;
         }
 
@@ -553,7 +588,17 @@ public class Player extends Entity {
 
     @Override
     public String toString() {
-        return getUsername() == null ? "SESSION(" + session.getHost() + ")" : "PLAYER(" + getUsername() + ":" + session.getHost() + ")";
+        return getUsername() == null ? "SESSION[host= "
+                + session.getHost()
+                + ", stage= "
+                + session.getStage().name()
+                + "]" : "PLAYER[username= "
+                + getUsername()
+                + ", host= "
+                + session.getHost()
+                + ", rights= "
+                + staffRights
+                + "]";
     }
 
     /**
@@ -661,7 +706,9 @@ public class Player extends Entity {
      *        the y offset.
      */
     public void move(int addX, int addY) {
-        move(new Position(player.getPosition().getX() + addX, player.getPosition().getY() + addY));
+        move(new Position(player.getPosition().getX()
+                + addX, player.getPosition().getY()
+                + addY));
     }
 
     /**
@@ -698,14 +745,51 @@ public class Player extends Entity {
     /**
      * Starts a dialogue.
      * 
-     * @param id
+     * @param d
      *        the dialogue to start.
      */
-    public void dialogue(int id) {
-        if (NpcDialogue.getDialogueMap().containsKey(id)) {
-            npcDialogue = id;
-            NpcDialogue.getDialogueMap().get(npcDialogue).dialogue(this);
+    public void sendDialogue(Dialogue d) {
+        if (d.getDialogues().length == 0) {
+            throw new IllegalArgumentException("Cannot send empty dialogue!");
         }
+
+        this.dialogue = d;
+        this.dialogue.getDialogues()[dialogueStage++].fire(dialogue);
+    }
+
+    /**
+     * Stops the current dialogue.
+     */
+    public void stopDialogue() {
+        dialogue = null;
+        dialogueStage = 0;
+    }
+
+    /**
+     * Advances the current dialogue by one stage.
+     */
+    public void advanceDialogue() {
+        if (dialogue == null) {
+            player.getPacketBuilder().closeWindows();
+            stopDialogue();
+            return;
+        }
+
+        if ((dialogueStage + 1) > dialogue.getDialogues().length) {
+            player.getPacketBuilder().closeWindows();
+            stopDialogue();
+        } else {
+            dialogue.getDialogues()[dialogueStage++].fire(dialogue);
+        }
+    }
+
+    /**
+     * Determines if you are in a dialogue or not.
+     * 
+     * @return true if you are in a dialogue.
+     */
+    public boolean inDialogue() {
+        return dialogue != null;
     }
 
     /**
@@ -728,11 +812,19 @@ public class Player extends Entity {
         combatLevel = 0;
 
         if (ran > attstr) {
-            combatLevel = ((defLvl) * 0.25) + ((hitLvl) * 0.25) + ((prayLvl) * 0.125) + ((ranLvl) * 0.4875);
+            combatLevel = ((defLvl) * 0.25)
+                    + ((hitLvl) * 0.25)
+                    + ((prayLvl) * 0.125)
+                    + ((ranLvl) * 0.4875);
         } else if (mag > attstr) {
-            combatLevel = (((defLvl) * 0.25) + ((hitLvl) * 0.25) + ((ranLvl) * 0.125) + ((magLvl) * 0.4875));
+            combatLevel = (((defLvl) * 0.25)
+                    + ((hitLvl) * 0.25)
+                    + ((ranLvl) * 0.125) + ((magLvl) * 0.4875));
         } else {
-            combatLevel = (((defLvl) * 0.25) + ((hitLvl) * 0.25) + ((prayLvl) * 0.125) + ((attLvl) * 0.325) + ((strLvl) * 0.325));
+            combatLevel = (((defLvl) * 0.25)
+                    + ((hitLvl) * 0.25)
+                    + ((prayLvl) * 0.125)
+                    + ((attLvl) * 0.325) + ((strLvl) * 0.325));
         }
 
         return (int) combatLevel;
@@ -755,7 +847,8 @@ public class Player extends Entity {
                 this.setWildernessInterface(true);
             }
 
-            this.getPacketBuilder().sendString("@yel@Level: " + wildernessLevel, 199);
+            this.getPacketBuilder().sendString("@yel@Level: "
+                    + wildernessLevel, 199);
         } else {
             this.getPacketBuilder().sendPlayerMenu("Attack", 3);
             this.getPacketBuilder().walkableInterface(-1);
@@ -784,7 +877,9 @@ public class Player extends Entity {
         }
 
         for (Item item : this.getEquipment().getContainer().toArray()) {
-            if (item == null || item.getId() < 1 || item.getAmount() < 1) {
+            if (item == null
+                    || item.getId() < 1
+                    || item.getAmount() < 1) {
                 continue;
             }
 
@@ -798,9 +893,13 @@ public class Player extends Entity {
 
         for (int i = 0; i < playerBonus.length; i++) {
             if (playerBonus[i] >= 0) {
-                send = Misc.BONUS_NAMES[i] + ": +" + playerBonus[i];
+                send = Misc.BONUS_NAMES[i]
+                        + ": +"
+                        + playerBonus[i];
             } else {
-                send = Misc.BONUS_NAMES[i] + ": -" + Math.abs(playerBonus[i]);
+                send = Misc.BONUS_NAMES[i]
+                        + ": -"
+                        + Math.abs(playerBonus[i]);
             }
 
             if (i == 10) {
@@ -1008,7 +1107,8 @@ public class Player extends Entity {
      */
     public void decrementRunEnergy() {
         this.runEnergy -= 1;
-        getPacketBuilder().sendString(getRunEnergy() + "%", 149);
+        getPacketBuilder().sendString(getRunEnergy()
+                + "%", 149);
     }
 
     /**
@@ -1018,12 +1118,14 @@ public class Player extends Entity {
     public void decrementRunEnergy(int amount) {
         if ((runEnergy - amount) < 1) {
             runEnergy = 0;
-            getPacketBuilder().sendString(getRunEnergy() + "%", 149);
+            getPacketBuilder().sendString(getRunEnergy()
+                    + "%", 149);
             return;
         }
 
         this.runEnergy -= amount;
-        getPacketBuilder().sendString(getRunEnergy() + "%", 149);
+        getPacketBuilder().sendString(getRunEnergy()
+                + "%", 149);
     }
 
     /**
@@ -1032,7 +1134,8 @@ public class Player extends Entity {
      */
     public void incrementRunEnergy() {
         this.runEnergy += 1;
-        getPacketBuilder().sendString(getRunEnergy() + "%", 149);
+        getPacketBuilder().sendString(getRunEnergy()
+                + "%", 149);
     }
 
     /**
@@ -1041,7 +1144,8 @@ public class Player extends Entity {
      */
     public void incrementRunEnergy(int amount) {
         this.runEnergy += amount;
-        getPacketBuilder().sendString(getRunEnergy() + "%", 149);
+        getPacketBuilder().sendString(getRunEnergy()
+                + "%", 149);
     }
 
     /**
@@ -1065,21 +1169,6 @@ public class Player extends Entity {
 
     public PacketEncoder getPacketBuilder() {
         return session.getServerPacketBuilder();
-    }
-
-    /**
-     * @return the npcDialogue
-     */
-    public int getNpcDialogue() {
-        return npcDialogue;
-    }
-
-    /**
-     * @param npcDialogue
-     *        the npcDialogue to set
-     */
-    public void setNpcDialogue(int npcDialogue) {
-        this.npcDialogue = npcDialogue;
     }
 
     /**
@@ -1170,21 +1259,6 @@ public class Player extends Entity {
      */
     public void setPlayerBonus(int[] playerBonus) {
         this.playerBonus = playerBonus;
-    }
-
-    /**
-     * @return the conversationStage
-     */
-    public int getConversationStage() {
-        return conversationStage;
-    }
-
-    /**
-     * @param conversationStage
-     *        the conversationStage to set
-     */
-    public void setConversationStage(int conversationStage) {
-        this.conversationStage = conversationStage;
     }
 
     public Session getSession() {

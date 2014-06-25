@@ -1,5 +1,3 @@
-#dialogue server.world.entity.npc.dialogue.NiceWizardDialogue
-
 #packet server.core.net.packet.impl.DecodeAttackPlayerPacket
 #packet server.core.net.packet.impl.DecodeChatOptionsPacket
 #packet server.core.net.packet.impl.DecodeChatPacket

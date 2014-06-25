@@ -20,7 +20,6 @@ import server.core.net.packet.PacketDecoder;
 import server.world.World;
 import server.world.entity.npc.Npc;
 import server.world.entity.npc.NpcDefinition;
-import server.world.entity.npc.NpcDialogue;
 import server.world.entity.npc.NpcDropTable;
 import server.world.entity.npc.NpcDropTable.NpcDrop;
 import server.world.entity.npc.NpcMovementCoordinator.Coordinator;
@@ -231,7 +230,6 @@ public final class Misc {
      *         if any errors occur during the coding of files.
      */
     public static void codeFiles() throws Exception {
-        NpcDialogue.getDialogueMap().clear();
         SkillEvent.getSkillEvents().clear();
         PacketDecoder.clear();
 
@@ -243,17 +241,7 @@ public final class Misc {
                 String keyword = scanner.next();
                 String path = scanner.next();
 
-                if (keyword.equals("#dialogue")) {
-                    Class<?> file = Class.forName(path);
-
-                    if (!(file.getSuperclass() == NpcDialogue.class)) {
-                        throw new IllegalStateException("Illegal dialogue! Not an instance of NpcDialogue: " + path);
-                    }
-
-                    NpcDialogue dialogue = (NpcDialogue) file.newInstance();
-                    NpcDialogue.getDialogueMap().put(dialogue.dialogueId(), dialogue);
-                    parsed++;
-                } else if (keyword.equals("#skill")) {
+                if (keyword.equals("#skill")) {
                     Class<?> file = Class.forName(path);
 
                     if (!(file.getSuperclass() == SkillEvent.class)) {
