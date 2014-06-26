@@ -42,7 +42,7 @@ public class NpcDropTable {
      * Create a new {@link NpcDropTable}.
      * 
      * @param npc
-     *        the npc who uses this drop table.
+     *        the npc(s) who use this drop table.
      * @param dynamic
      *        the dynamic drop table assigned to this npc.
      * @param rare
@@ -229,9 +229,9 @@ public class NpcDropTable {
     }
 
     /**
-     * Gets the npc who uses this drop table.
+     * Gets the npc(s) who use this drop table.
      * 
-     * @return the npc who uses this drop table.
+     * @return the npc(s) who use this drop table.
      */
     public int[] getNpcs() {
         return npcs;
@@ -317,8 +317,11 @@ public class NpcDropTable {
         /** The id of item that will be dropped. */
         private int id;
 
+        /** The minimum amount of item that will be dropped. */
+        private int minimum;
+
         /** The maximum amount of item that will be dropped. */
-        private int amount;
+        private int maximum;
 
         /**
          * The chance that this item will be dropped. The lowest chance being
@@ -331,14 +334,17 @@ public class NpcDropTable {
          * 
          * @param id
          *        the id of item that will be dropped.
-         * @param amount
+         * @param minimum
+         *        the minimum amount of item that will be dropped.
+         * @param maximum
          *        the maximum amount of item that will be dropped.
          * @param bet
          *        the chance that this item will be dropped.
          */
-        public NpcDrop(int id, int amount, double bet) {
+        public NpcDrop(int id, int minimum, int maximum, double bet) {
             this.id = id;
-            this.amount = amount;
+            this.minimum = minimum;
+            this.maximum = maximum;
             this.bet = bet;
         }
 
@@ -349,7 +355,7 @@ public class NpcDropTable {
          *         drop.
          */
         public Item toItem() {
-            return new Item(id, Misc.randomNoZero(amount));
+            return new Item(id, Misc.inclusiveRandom(minimum, maximum));
         }
 
         /**
