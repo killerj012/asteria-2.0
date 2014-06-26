@@ -19,7 +19,7 @@ public final class DialogueSender {
                 new PlayerDialogueAction("Cool, I'm loving it already!"),
                 new NpcDialogueAction(460, "Would you like some money?"),
                 new PlayerDialogueAction("I would love some money!"),
-                new GiveItemDialogueAction(new Item(995, 1000), "The wizard hands you 1000 coins"),
+                new GiveItemDialogueAction(new Item(995, 1000), "The wizard hands you 1000 coins."),
                 new PlayerDialogueAction("Thank you sir this truly means so", "much to me."),
                 new NpcDialogueAction(460, "Anytime, farewell young warrior!")));
     }
