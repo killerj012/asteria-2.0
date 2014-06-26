@@ -11,8 +11,6 @@ import server.core.worker.TaskFactory;
 import server.util.Misc;
 import server.world.World;
 import server.world.entity.UpdateFlags.Flag;
-import server.world.entity.player.skill.SkillManager;
-import server.world.entity.player.skill.SkillManager.SkillConstant;
 import server.world.map.Position;
 
 /**
@@ -48,7 +46,10 @@ public final class PlayerUpdate {
         out.writeBits(8, player.getPlayers().size());
         for (Iterator<Player> i = player.getPlayers().iterator(); i.hasNext();) {
             Player other = i.next();
-            if (other.getPosition().isViewableFrom(player.getPosition()) && other.getSession().getStage() == Session.Stage.LOGGED_IN && !other.isNeedsPlacement() && other.isVisible()) {
+            if (other.getPosition().isViewableFrom(player.getPosition())
+                    && other.getSession().getStage() == Session.Stage.LOGGED_IN
+                    && !other.isNeedsPlacement()
+                    && other.isVisible()) {
                 PlayerUpdate.updateOtherPlayerMovement(other, out);
                 if (other.getFlags().isUpdateRequired()) {
                     PlayerUpdate.updateState(other, player, block, false, false);
@@ -64,16 +65,21 @@ public final class PlayerUpdate {
 
         /** Update the local player list. */
         for (int i = 0; i < World.getPlayers().getCapacity(); i++) {
-            if (added == 50 || player.getPlayers().size() >= 255) {
+            if (added == 50
+                    || player.getPlayers().size() >= 255) {
 
                 /** Player limit has been reached. */
                 break;
             }
             Player other = World.getPlayers().get(i);
-            if (other == null || other == player || other.getSession().getStage() != Session.Stage.LOGGED_IN || !other.isVisible()) {
+            if (other == null
+                    || other == player
+                    || other.getSession().getStage() != Session.Stage.LOGGED_IN
+                    || !other.isVisible()) {
                 continue;
             }
-            if (!player.getPlayers().contains(other) && other.getPosition().isViewableFrom(player.getPosition())) {
+            if (!player.getPlayers().contains(other)
+                    && other.getPosition().isViewableFrom(player.getPosition())) {
                 added++;
                 player.getPlayers().add(other);
                 PlayerUpdate.addPlayer(out, player, other);
@@ -104,7 +110,8 @@ public final class PlayerUpdate {
      *        the buffer.
      */
     public static void appendChat(Player player, PacketBuffer.WriteBuffer out) {
-        out.writeShort(((player.getChatColor() & 0xff) << 8) + (player.getChatEffects() & 0xff), PacketBuffer.ByteOrder.LITTLE);
+        out.writeShort(((player.getChatColor() & 0xff) << 8)
+                + (player.getChatEffects() & 0xff), PacketBuffer.ByteOrder.LITTLE);
         out.writeByte(player.getStaffRights());
         out.writeByte(player.getChatText().length, PacketBuffer.ValueType.C);
         out.writeBytesReverse(player.getChatText());
@@ -192,7 +199,8 @@ public final class PlayerUpdate {
             }
 
             /** Head. */
-            if (player.getEquipment().getContainer().getItemId(Misc.EQUIPMENT_SLOT_HEAD) > 1 && player.getEquipment().getContainer().getItem(Misc.EQUIPMENT_SLOT_HEAD).getDefinition().isFullHelm()) {
+            if (player.getEquipment().getContainer().getItemId(Misc.EQUIPMENT_SLOT_HEAD) > 1
+                    && player.getEquipment().getContainer().getItem(Misc.EQUIPMENT_SLOT_HEAD).getDefinition().isFullHelm()) {
                 block.writeByte(0);
             } else {
                 block.writeShort(0x100 + player.getAppearance()[Misc.APPEARANCE_SLOT_HEAD]);
@@ -214,7 +222,9 @@ public final class PlayerUpdate {
 
             /** Beard. */
             if (player.getGender() == Misc.GENDER_MALE) {
-                if (player.getEquipment().getContainer().getItemId(Misc.EQUIPMENT_SLOT_HEAD) > 1 && !player.getEquipment().getContainer().getItem(Misc.EQUIPMENT_SLOT_HEAD).getDefinition().isFullHelm() || player.getEquipment().getContainer().isSlotFree(Misc.EQUIPMENT_SLOT_HEAD)) {
+                if (player.getEquipment().getContainer().getItemId(Misc.EQUIPMENT_SLOT_HEAD) > 1
+                        && !player.getEquipment().getContainer().getItem(Misc.EQUIPMENT_SLOT_HEAD).getDefinition().isFullHelm()
+                        || player.getEquipment().getContainer().isSlotFree(Misc.EQUIPMENT_SLOT_HEAD)) {
                     block.writeShort(0x100 + player.getAppearance()[Misc.APPEARANCE_SLOT_BEARD]);
                 } else {
                     block.writeByte(0);
@@ -357,12 +367,16 @@ public final class PlayerUpdate {
     public static void updateState(Player player, Player thisPlayer, PacketBuffer.WriteBuffer block, boolean forceAppearance, boolean noChat) throws Exception {
 
         /** Block if no update is required. */
-        if (!player.getFlags().isUpdateRequired() && !forceAppearance) {
+        if (!player.getFlags().isUpdateRequired()
+                && !forceAppearance) {
             return;
         }
 
         /** Send the cached update block if we are able to. */
-        if (player.getCachedUpdateBlock() != null && player != thisPlayer && !forceAppearance && !noChat) {
+        if (player.getCachedUpdateBlock() != null
+                && player != thisPlayer
+                && !forceAppearance
+                && !noChat) {
             block.getBuffer().put(player.getCachedUpdateBlock().array());
             return;
         }
@@ -382,10 +396,12 @@ public final class PlayerUpdate {
         if (player.getFlags().get(Flag.FORCED_CHAT)) {
             mask |= 4;
         }
-        if (player.getFlags().get(Flag.CHAT) && !noChat) {
+        if (player.getFlags().get(Flag.CHAT)
+                && !noChat) {
             mask |= 0x80;
         }
-        if (player.getFlags().get(Flag.APPEARANCE) || forceAppearance) {
+        if (player.getFlags().get(Flag.APPEARANCE)
+                || forceAppearance) {
             mask |= 0x10;
         }
         if (player.getFlags().get(Flag.FACE_ENTITY)) {
@@ -423,7 +439,8 @@ public final class PlayerUpdate {
             appendForcedChat(player, cachedBuffer);
         }
         // Regular chat
-        if (player.getFlags().get(Flag.CHAT) && !noChat) {
+        if (player.getFlags().get(Flag.CHAT)
+                && !noChat) {
             appendChat(player, cachedBuffer);
         }
         // Face entity
@@ -431,7 +448,8 @@ public final class PlayerUpdate {
             appendFaceEntity(player, cachedBuffer);
         }
         // Appearance
-        if (player.getFlags().get(Flag.APPEARANCE) || forceAppearance) {
+        if (player.getFlags().get(Flag.APPEARANCE)
+                || forceAppearance) {
             appendAppearance(player, cachedBuffer);
         }
         // Face coordinates
@@ -448,7 +466,9 @@ public final class PlayerUpdate {
         }
 
         /** Cache the block if possible. */
-        if (player != thisPlayer && !forceAppearance && !noChat) {
+        if (player != thisPlayer
+                && !forceAppearance
+                && !noChat) {
             player.setCachedUpdateBlock(cachedBuffer.getBuffer());
 
         }
@@ -553,7 +573,6 @@ public final class PlayerUpdate {
 
         out.writeByte(player.getSkills()[Misc.HITPOINTS].getLevel());
         out.writeByte(player.getSkills()[Misc.HITPOINTS].getLevelForExperience(), ValueType.C);
-        SkillManager.refresh(player, SkillConstant.HITPOINTS);
     }
 
     /**

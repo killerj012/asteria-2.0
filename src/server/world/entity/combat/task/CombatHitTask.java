@@ -17,7 +17,6 @@ import server.world.entity.npc.Npc;
 import server.world.entity.player.Player;
 import server.world.entity.player.minigame.MinigameFactory;
 import server.world.entity.player.skill.SkillManager;
-import server.world.entity.player.skill.SkillManager.SkillConstant;
 import server.world.item.Item;
 import server.world.item.ground.GroundItem;
 import server.world.map.Location;
@@ -73,7 +72,8 @@ public class CombatHitTask extends Worker {
     public void fire() {
 
         /** Stop the task if the target isn't registered or has died. */
-        if (target.isHasDied() || target.isUnregistered()) {
+        if (target.isHasDied()
+                || target.isUnregistered()) {
             this.cancel();
             return;
         }
@@ -86,7 +86,7 @@ public class CombatHitTask extends Worker {
 
                 if (attacker.type() == EntityType.PLAYER) {
                     Player player = (Player) attacker;
-                    SkillManager.addExperience(player, attacker.getCurrentlyCasting().baseExperience(), SkillConstant.MAGIC);
+                    SkillManager.addExperience(player, attacker.getCurrentlyCasting().baseExperience(), Misc.MAGIC);
 
                     if (!player.isAutocast()) {
                         player.setCastSpell(null);
@@ -99,7 +99,8 @@ public class CombatHitTask extends Worker {
 
         /** Send the hitsplats if needed. */
         if (combatHit.getHits() != null) {
-            if (combatHit.getHitType() != CombatType.MAGIC || oneHitAccurate) {
+            if (combatHit.getHitType() != CombatType.MAGIC
+                    || oneHitAccurate) {
                 if (combatHit.getHits().length == 1) {
                     target.dealDamage(combatHit.getHits()[0].getHit());
                     totalDamage += combatHit.getHits()[0].getHit().getDamage();
@@ -129,28 +130,28 @@ public class CombatHitTask extends Worker {
 
                     switch (player.getFightType().getTrainType()) {
                         case ATTACK:
-                            SkillManager.addExperience(player, defaultExp, SkillConstant.ATTACK);
+                            SkillManager.addExperience(player, defaultExp, Misc.ATTACK);
                             break;
                         case STRENGTH:
-                            SkillManager.addExperience(player, defaultExp, SkillConstant.STRENGTH);
+                            SkillManager.addExperience(player, defaultExp, Misc.STRENGTH);
                             break;
                         case DEFENCE:
-                            SkillManager.addExperience(player, defaultExp, SkillConstant.DEFENCE);
+                            SkillManager.addExperience(player, defaultExp, Misc.DEFENCE);
                             break;
                         case RANGED:
-                            SkillManager.addExperience(player, defaultExp, SkillConstant.RANGED);
+                            SkillManager.addExperience(player, defaultExp, Misc.RANGED);
                             break;
                         case MAGIC:
-                            SkillManager.addExperience(player, defaultExp, SkillConstant.MAGIC);
+                            SkillManager.addExperience(player, defaultExp, Misc.MAGIC);
                             break;
                         case ATTACK_STRENGTH_DEFENCE:
-                            SkillManager.addExperience(player, ((totalDamage * 10) / 5), SkillConstant.ATTACK);
-                            SkillManager.addExperience(player, ((totalDamage * 10) / 5), SkillConstant.STRENGTH);
-                            SkillManager.addExperience(player, ((totalDamage * 10) / 5), SkillConstant.DEFENCE);
+                            SkillManager.addExperience(player, ((totalDamage * 10) / 5), Misc.ATTACK);
+                            SkillManager.addExperience(player, ((totalDamage * 10) / 5), Misc.STRENGTH);
+                            SkillManager.addExperience(player, ((totalDamage * 10) / 5), Misc.DEFENCE);
                             break;
                         case RANGED_DEFENCE:
-                            SkillManager.addExperience(player, ((totalDamage * 10) / 4), SkillConstant.RANGED);
-                            SkillManager.addExperience(player, ((totalDamage * 10) / 5), SkillConstant.DEFENCE);
+                            SkillManager.addExperience(player, ((totalDamage * 10) / 4), Misc.RANGED);
+                            SkillManager.addExperience(player, ((totalDamage * 10) / 5), Misc.DEFENCE);
                             break;
                     }
                 }
@@ -167,7 +168,8 @@ public class CombatHitTask extends Worker {
 
                 if (Misc.random(4) == 0) {
                     if (combatHit.getHitType() == CombatType.MELEE) {
-                        if (attacker.type() == EntityType.PLAYER && target.type() == EntityType.PLAYER) {
+                        if (attacker.type() == EntityType.PLAYER
+                                && target.type() == EntityType.PLAYER) {
                             Player player = (Player) attacker;
                             Player victim = (Player) target;
 
@@ -176,12 +178,12 @@ public class CombatHitTask extends Worker {
                                 victim.gfx(new Gfx(399));
                             } else if (CombatFactory.isWearingFullAhrims(player)) {
                                 victim.getSkills()[Misc.STRENGTH].decreaseLevel(Misc.random(4) + 1);
-                                SkillManager.refresh(victim, SkillConstant.STRENGTH);
+                                SkillManager.refresh(victim, Misc.STRENGTH);
                                 victim.gfx(new Gfx(400));
                             } else if (CombatFactory.isWearingFullGuthans(player)) {
                                 target.gfx(new Gfx(398));
                                 player.getSkills()[Misc.HITPOINTS].increaseLevel(totalDamage, 99);
-                                SkillManager.refresh(player, SkillConstant.HITPOINTS);
+                                SkillManager.refresh(player, Misc.HITPOINTS);
                             }
                         } else if (attacker.type() == EntityType.PLAYER) {
                             Player player = (Player) attacker;
@@ -189,28 +191,30 @@ public class CombatHitTask extends Worker {
                             if (CombatFactory.isWearingFullGuthans(player)) {
                                 target.gfx(new Gfx(398));
                                 player.getSkills()[Misc.HITPOINTS].increaseLevel(totalDamage, 99);
-                                SkillManager.refresh(player, SkillConstant.HITPOINTS);
+                                SkillManager.refresh(player, Misc.HITPOINTS);
                             }
                         }
                     } else if (combatHit.getHitType() == CombatType.RANGE) {
-                        if (attacker.type() == EntityType.PLAYER && target.type() == EntityType.PLAYER) {
+                        if (attacker.type() == EntityType.PLAYER
+                                && target.type() == EntityType.PLAYER) {
                             Player player = (Player) attacker;
                             Player victim = (Player) target;
 
                             if (CombatFactory.isWearingFullKarils(player)) {
                                 victim.gfx(new Gfx(401));
                                 victim.getSkills()[Misc.AGILITY].decreaseLevel(Misc.random(4) + 1);
-                                SkillManager.refresh(victim, SkillConstant.AGILITY);
+                                SkillManager.refresh(victim, Misc.AGILITY);
                             }
                         }
                     } else if (combatHit.getHitType() == CombatType.MAGIC) {
-                        if (attacker.type() == EntityType.PLAYER && target.type() == EntityType.PLAYER) {
+                        if (attacker.type() == EntityType.PLAYER
+                                && target.type() == EntityType.PLAYER) {
                             Player player = (Player) attacker;
                             Player victim = (Player) target;
 
                             if (CombatFactory.isWearingFullAhrims(player)) {
                                 victim.getSkills()[Misc.STRENGTH].decreaseLevel(Misc.random(4) + 1);
-                                SkillManager.refresh(victim, SkillConstant.STRENGTH);
+                                SkillManager.refresh(victim, Misc.STRENGTH);
                                 victim.gfx(new Gfx(400));
                             }
                         }
@@ -227,7 +231,8 @@ public class CombatHitTask extends Worker {
                 } else if (attacker.type() == EntityType.PLAYER) {
                     Player player = (Player) attacker;
 
-                    if (combatHit.getHitType() == CombatType.MELEE || combatHit.getHitType() == CombatType.RANGE) {
+                    if (combatHit.getHitType() == CombatType.MELEE
+                            || combatHit.getHitType() == CombatType.RANGE) {
                         Item weapon = player.getEquipment().getContainer().getItem(Misc.EQUIPMENT_SLOT_WEAPON);
 
                         if (weapon != null) {
@@ -260,14 +265,16 @@ public class CombatHitTask extends Worker {
                  * If both the attacker and target are players then check for
                  * retribution and do smite prayer effects.
                  */
-                if (attacker.type() == EntityType.PLAYER && target.type() == EntityType.PLAYER) {
+                if (attacker.type() == EntityType.PLAYER
+                        && target.type() == EntityType.PLAYER) {
                     Player player = (Player) attacker;
                     Player victim = (Player) target;
 
                     /** Retribution prayer check and function here. */
                     if (CombatPrayer.isPrayerActivated(victim, CombatPrayer.RETRIBUTION)) {
                         if (victim.getSkills()[Misc.HITPOINTS].getLevel() < 1) {
-                            if (Location.inWilderness(player) || MinigameFactory.inMinigame(player)) {
+                            if (Location.inWilderness(player)
+                                    || MinigameFactory.inMinigame(player)) {
 
                                 victim.gfx(new Gfx(437));
 
@@ -277,7 +284,8 @@ public class CombatHitTask extends Worker {
                                             continue;
                                         }
 
-                                        if (!plr.getUsername().equals(victim.getUsername()) && plr.getPosition().withinDistance(target.getPosition().clone(), 5)) {
+                                        if (!plr.getUsername().equals(victim.getUsername())
+                                                && plr.getPosition().withinDistance(target.getPosition().clone(), 5)) {
                                             plr.dealDamage(new Hit(Misc.random(15)));
                                         }
                                     }
@@ -291,7 +299,7 @@ public class CombatHitTask extends Worker {
                     /** Smite prayer check and function here. */
                     if (CombatPrayer.isPrayerActivated(player, CombatPrayer.SMITE)) {
                         victim.getSkills()[Misc.PRAYER].decreaseLevel(totalDamage / 4);
-                        SkillManager.refresh(victim, SkillConstant.PRAYER);
+                        SkillManager.refresh(victim, Misc.PRAYER);
                     }
                 }
             }
@@ -301,7 +309,8 @@ public class CombatHitTask extends Worker {
          * If the target is a player then check for the redemption prayer
          * effect.
          */
-        if (target.type() == EntityType.PLAYER && combatHit.getHits() != null) {
+        if (target.type() == EntityType.PLAYER
+                && combatHit.getHits() != null) {
             Player player = (Player) target;
 
             /** Redemption prayer check here. */
@@ -315,8 +324,8 @@ public class CombatHitTask extends Worker {
                     player.getSkills()[Misc.PRAYER].setLevel(0);
                     player.getPacketBuilder().sendMessage("You've run out of prayer points!");
                     CombatPrayer.deactivateAllPrayer(player);
-                    SkillManager.refresh(player, SkillConstant.PRAYER);
-                    SkillManager.refresh(player, SkillConstant.HITPOINTS);
+                    SkillManager.refresh(player, Misc.PRAYER);
+                    SkillManager.refresh(player, Misc.HITPOINTS);
                 }
             }
         }
@@ -331,7 +340,7 @@ public class CombatHitTask extends Worker {
                     Player player = (Player) attacker;
 
                     if (combatHit.getHits() == null) {
-                        SkillManager.addExperience(player, attacker.getCurrentlyCasting().baseExperience(), SkillConstant.MAGIC);
+                        SkillManager.addExperience(player, attacker.getCurrentlyCasting().baseExperience(), Misc.MAGIC);
                     }
                     if (!player.isAutocast()) {
                         player.setCastSpell(null);
@@ -365,7 +374,8 @@ public class CombatHitTask extends Worker {
         }
 
         /** Auto-retaliate the attacker if needed. */
-        if (target.isAutoRetaliate() && !target.getCombatBuilder().isAttacking()) {
+        if (target.isAutoRetaliate()
+                && !target.getCombatBuilder().isAttacking()) {
             target.getCombatBuilder().attack(attacker);
         }
 

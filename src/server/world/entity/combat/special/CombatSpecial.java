@@ -14,7 +14,6 @@ import server.world.entity.combat.CombatType;
 import server.world.entity.npc.Npc;
 import server.world.entity.player.Player;
 import server.world.entity.player.skill.SkillManager;
-import server.world.entity.player.skill.SkillManager.SkillConstant;
 import server.world.map.Location;
 
 /**
@@ -40,7 +39,9 @@ public enum CombatSpecial {
             player.gfx(new Gfx(252, 6553600));
             CombatSpecial.drainAndDeplete(player, CombatSpecial.DRAGON_DAGGER.getSpecialAmount());
 
-            return new CombatHitContainer(new Hit[] { CombatFactory.getMeleeHit(player), CombatFactory.getMeleeHit(player) }, this.combatType(), true) {
+            return new CombatHitContainer(new Hit[] {
+                CombatFactory.getMeleeHit(player),
+                CombatFactory.getMeleeHit(player) }, this.combatType(), true) {
                 @Override
                 public void onHit(Entity attacker, Entity victim, int damage, boolean accurate) {
                 }
@@ -63,7 +64,9 @@ public enum CombatSpecial {
             player.gfx(new Gfx(337, 6553600));
             CombatSpecial.drainAndDeplete(player, CombatSpecial.GRANITE_MAUL.getSpecialAmount());
 
-            return new CombatHitContainer(new Hit[] { CombatFactory.getMeleeHit(player), CombatFactory.getMeleeHit(player) }, this.combatType(), true) {
+            return new CombatHitContainer(new Hit[] {
+                CombatFactory.getMeleeHit(player),
+                CombatFactory.getMeleeHit(player) }, this.combatType(), true) {
                 @Override
                 public void onHit(Entity attacker, Entity victim, int damage, boolean accurate) {
                 }
@@ -134,7 +137,9 @@ public enum CombatSpecial {
             CombatSpecial.drainAndDeplete(player, CombatSpecial.MAGIC_SHORTBOW.getSpecialAmount());
             new Projectile(player, target, 249, 44, 3, 43, 31, 0).sendProjectile();
 
-            return new CombatHitContainer(new Hit[] { CombatFactory.getRangeHit(player, player.getRangedAmmo()), CombatFactory.getRangeHit(player, player.getRangedAmmo()) }, this.combatType(), true) {
+            return new CombatHitContainer(new Hit[] {
+                CombatFactory.getRangeHit(player, player.getRangedAmmo()),
+                CombatFactory.getRangeHit(player, player.getRangedAmmo()) }, this.combatType(), true) {
                 @Override
                 public void onHit(Entity attacker, Entity victim, int damage, boolean accurate) {
                 }
@@ -182,11 +187,11 @@ public enum CombatSpecial {
             player.getSkills()[Misc.DEFENCE].decreaseLevel((int) (player.getSkills()[Misc.DEFENCE].getLevel() * 0.1));
             player.getSkills()[Misc.RANGED].decreaseLevel((int) (player.getSkills()[Misc.RANGED].getLevel() * 0.1));
             player.getSkills()[Misc.MAGIC].decreaseLevel((int) (player.getSkills()[Misc.MAGIC].getLevel() * 0.1));
-            SkillManager.refresh(player, SkillConstant.STRENGTH);
-            SkillManager.refresh(player, SkillConstant.ATTACK);
-            SkillManager.refresh(player, SkillConstant.DEFENCE);
-            SkillManager.refresh(player, SkillConstant.RANGED);
-            SkillManager.refresh(player, SkillConstant.MAGIC);
+            SkillManager.refresh(player, Misc.STRENGTH);
+            SkillManager.refresh(player, Misc.ATTACK);
+            SkillManager.refresh(player, Misc.DEFENCE);
+            SkillManager.refresh(player, Misc.RANGED);
+            SkillManager.refresh(player, Misc.MAGIC);
             CombatSpecial.drainAndDeplete(player, CombatSpecial.DRAGON_BATTLEAXE.getSpecialAmount());
         }
 
@@ -297,7 +302,9 @@ public enum CombatSpecial {
                             continue;
                         }
 
-                        if (players.getPosition().withinDistance(target.getPosition(), 1) && players.getSlot() != target.getSlot() && players.getSlot() != player.getSlot()) {
+                        if (players.getPosition().withinDistance(target.getPosition(), 1)
+                                && players.getSlot() != target.getSlot()
+                                && players.getSlot() != player.getSlot()) {
                             int damage = CombatFactory.getMeleeHit(player).getDamage();
                             players.dealDamage(new Hit(damage));
                             players.getCombatBuilder().addDamage(player, damage);
@@ -309,7 +316,9 @@ public enum CombatSpecial {
                             continue;
                         }
 
-                        if (npc.getPosition().withinDistance(target.getPosition(), 1) && npc.getSlot() != target.getSlot() && npc.getDefinition().isAttackable()) {
+                        if (npc.getPosition().withinDistance(target.getPosition(), 1)
+                                && npc.getSlot() != target.getSlot()
+                                && npc.getDefinition().isAttackable()) {
                             int damage = CombatFactory.getMeleeHit(player).getDamage();
                             npc.dealDamage(new Hit(damage));
                             npc.getCombatBuilder().addDamage(player, damage);
@@ -340,7 +349,9 @@ public enum CombatSpecial {
             player.animation(new Animation(1203));
             player.gfx(new Gfx(282));
             CombatSpecial.drainAndDeplete(player, CombatSpecial.DRAGON_HALBERD.getSpecialAmount());
-            return new CombatHitContainer(new Hit[] { CombatFactory.getMeleeHit(player), CombatFactory.getMeleeHit(player) }, this.combatType(), true) {
+            return new CombatHitContainer(new Hit[] {
+                CombatFactory.getMeleeHit(player),
+                CombatFactory.getMeleeHit(player) }, this.combatType(), true) {
                 @Override
                 public void onHit(Entity attacker, Entity victim, int damage, boolean accurate) {
                 }
@@ -413,7 +424,8 @@ public enum CombatSpecial {
      *        the player who's special bar will be updated.
      */
     public static void updateSpecialAmount(Player player) {
-        if (player.getWeapon().getSpecialBar() == -1 || player.getWeapon().getSpecialMeter() == -1) {
+        if (player.getWeapon().getSpecialBar() == -1
+                || player.getWeapon().getSpecialMeter() == -1) {
             return;
         }
 

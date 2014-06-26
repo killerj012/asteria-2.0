@@ -8,7 +8,6 @@ import server.world.entity.combat.prayer.CombatPrayer;
 import server.world.entity.combat.special.CombatSpecial;
 import server.world.entity.player.Player;
 import server.world.entity.player.skill.SkillManager;
-import server.world.entity.player.skill.SkillManager.SkillConstant;
 
 /**
  * A {@link Worker} implementation that restores boosted and weakened stats for
@@ -43,7 +42,8 @@ public class RestoreStatWorker extends Worker {
 
                 /** Check if the hp level needs regeneration. */
                 if (i == Misc.HITPOINTS) {
-                    if (player.getSkills()[i].getLevel() < realLevel && player.isAcceptAid()) {
+                    if (player.getSkills()[i].getLevel() < realLevel
+                            && player.isAcceptAid()) {
                         player.getSkills()[i].increaseLevel(1);
 
                         if (CombatPrayer.isPrayerActivated(player, CombatPrayer.RAPID_HEAL)) {
@@ -51,13 +51,14 @@ public class RestoreStatWorker extends Worker {
                                 player.getSkills()[i].increaseLevel(1);
                             }
                         }
-                        SkillManager.refresh(player, SkillConstant.HITPOINTS);
+                        SkillManager.refresh(player, Misc.HITPOINTS);
                     }
                     continue;
                 }
 
                 /** Check all other stats except prayer. */
-                if (player.getSkills()[i].getLevel() < realLevel && i != Misc.PRAYER) {
+                if (player.getSkills()[i].getLevel() < realLevel
+                        && i != Misc.PRAYER) {
                     player.getSkills()[i].increaseLevel(1);
 
                     if (CombatPrayer.isPrayerActivated(player, CombatPrayer.RAPID_RESTORE)) {
@@ -65,12 +66,13 @@ public class RestoreStatWorker extends Worker {
                             player.getSkills()[i].increaseLevel(1);
                         }
                     }
-                    SkillManager.refresh(player, SkillConstant.getSkill(i));
+                    SkillManager.refresh(player, i);
 
                     /** Check all boosted stats. */
-                } else if (player.getSkills()[i].getLevel() > realLevel && i != Misc.PRAYER) {
+                } else if (player.getSkills()[i].getLevel() > realLevel
+                        && i != Misc.PRAYER) {
                     player.getSkills()[i].decreaseLevel(1);
-                    SkillManager.refresh(player, SkillConstant.getSkill(i));
+                    SkillManager.refresh(player, i);
                 }
             }
 

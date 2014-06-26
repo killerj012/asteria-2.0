@@ -12,6 +12,8 @@ import server.world.entity.combat.CombatType;
 import server.world.entity.combat.prayer.CombatPrayer;
 import server.world.entity.npc.Npc;
 import server.world.entity.player.Player;
+import server.world.entity.player.minigame.Minigame;
+import server.world.entity.player.minigame.MinigameFactory;
 import server.world.map.Location;
 import server.world.map.Position;
 
@@ -75,6 +77,9 @@ public class CombatHookTask extends Worker {
 
             if (builder.getEntity().type() == EntityType.PLAYER) {
                 Player player = (Player) builder.getEntity();
+                Minigame minigame = MinigameFactory.getMinigame(player);
+
+                if (minigame == null) {
 
                     /**
                      * If the attacking entity is a player then check if the
@@ -90,6 +95,11 @@ public class CombatHookTask extends Worker {
                         this.cancel();
                         return;
                     }
+                } else {
+                    if (!minigame.canHit(player, builder.getCurrentTarget())) {
+                        return;
+                    }
+                }
             }
         }
 
@@ -104,7 +114,9 @@ public class CombatHookTask extends Worker {
              * Checks if you are trying to attack another entity while in
              * combat.
              */
-            if (!Location.inMultiCombat(player) && player.getCombatBuilder().isBeingAttacked() && player.getCombatBuilder().getCurrentTarget() != player.getCombatBuilder().getLastAttacker()) {
+            if (!Location.inMultiCombat(player)
+                    && player.getCombatBuilder().isBeingAttacked()
+                    && player.getCombatBuilder().getCurrentTarget() != player.getCombatBuilder().getLastAttacker()) {
                 player.getPacketBuilder().sendMessage("You are already under attack!");
                 builder.reset();
                 builder.getEntity().faceEntity(65535);
@@ -119,7 +131,9 @@ public class CombatHookTask extends Worker {
              * Checks if you are trying to attack another entity who is in
              * combat.
              */
-            if (!Location.inMultiCombat(builder.getCurrentTarget()) && builder.getCurrentTarget().getCombatBuilder().isBeingAttacked() && builder.getCurrentTarget().getCombatBuilder().getLastAttacker() != builder.getEntity()) {
+            if (!Location.inMultiCombat(builder.getCurrentTarget())
+                    && builder.getCurrentTarget().getCombatBuilder().isBeingAttacked()
+                    && builder.getCurrentTarget().getCombatBuilder().getLastAttacker() != builder.getEntity()) {
                 player.getPacketBuilder().sendMessage("They are already under attack!");
                 builder.reset();
                 builder.getEntity().faceEntity(65535);
@@ -139,7 +153,10 @@ public class CombatHookTask extends Worker {
         if (builder.getEntity().type() == EntityType.NPC) {
             Npc npc = (Npc) builder.getEntity();
 
-            if (npc.getCombatBuilder().getCurrentTarget().getCombatBuilder().isCooldownEffect() && !npc.getPosition().withinDistance(npc.getOriginalPosition(), 5) || !builder.getCurrentTarget().getCombatBuilder().isBeingAttacked() && !npc.getPosition().withinDistance(npc.getOriginalPosition(), 5)) {
+            if (npc.getCombatBuilder().getCurrentTarget().getCombatBuilder().isCooldownEffect()
+                    && !npc.getPosition().withinDistance(npc.getOriginalPosition(), 5)
+                    || !builder.getCurrentTarget().getCombatBuilder().isBeingAttacked()
+                    && !npc.getPosition().withinDistance(npc.getOriginalPosition(), 5)) {
                 npc.getCombatBuilder().reset();
                 npc.faceEntity(65535);
                 npc.getFollowWorker().cancel();
@@ -154,7 +171,9 @@ public class CombatHookTask extends Worker {
              * Checks if they are trying to attack another entity while in
              * combat.
              */
-            if (!Location.inMultiCombat(builder.getCurrentTarget()) && npc.getCombatBuilder().isBeingAttacked() && npc.getCombatBuilder().getCurrentTarget() != npc.getCombatBuilder().getLastAttacker()) {
+            if (!Location.inMultiCombat(builder.getCurrentTarget())
+                    && npc.getCombatBuilder().isBeingAttacked()
+                    && npc.getCombatBuilder().getCurrentTarget() != npc.getCombatBuilder().getLastAttacker()) {
                 builder.reset();
                 builder.getEntity().faceEntity(65535);
                 builder.getEntity().getFollowWorker().cancel();
@@ -168,7 +187,9 @@ public class CombatHookTask extends Worker {
              * Checks if they are trying to attack another entity who is in
              * combat.
              */
-            if (!Location.inMultiCombat(builder.getCurrentTarget()) && builder.getCurrentTarget().getCombatBuilder().isBeingAttacked() && builder.getCurrentTarget().getCombatBuilder().getLastAttacker() != builder.getEntity()) {
+            if (!Location.inMultiCombat(builder.getCurrentTarget())
+                    && builder.getCurrentTarget().getCombatBuilder().isBeingAttacked()
+                    && builder.getCurrentTarget().getCombatBuilder().getLastAttacker() != builder.getEntity()) {
                 builder.reset();
                 builder.getEntity().faceEntity(65535);
                 builder.getEntity().getFollowWorker().cancel();
@@ -180,7 +201,8 @@ public class CombatHookTask extends Worker {
         }
 
         /** If the attacker or target have unregistered then stop. */
-        if (builder.getCurrentTarget().isUnregistered() || builder.getEntity().isUnregistered()) {
+        if (builder.getCurrentTarget().isUnregistered()
+                || builder.getEntity().isUnregistered()) {
             builder.reset();
             this.cancel();
             return;
@@ -217,7 +239,10 @@ public class CombatHookTask extends Worker {
             Position victimPosition = builder.getCurrentTarget().getPosition().clone();
 
             if (!builder.getEntity().getMovementQueue().isLockMovement()) {
-                if (!builder.getEntity().getMovementQueue().isRunToggled() && !attackerPosition.withinDistance(victimPosition, builder.getCurrentStrategy().getDistance(builder.getEntity())) || builder.getEntity().getMovementQueue().isRunToggled() && !attackerPosition.withinDistance(victimPosition, (builder.getCurrentStrategy().getDistance(builder.getEntity()) + 3))) {
+                if (!builder.getEntity().getMovementQueue().isRunToggled()
+                        && !attackerPosition.withinDistance(victimPosition, builder.getCurrentStrategy().getDistance(builder.getEntity()))
+                        || builder.getEntity().getMovementQueue().isRunToggled()
+                        && !attackerPosition.withinDistance(victimPosition, (builder.getCurrentStrategy().getDistance(builder.getEntity()) + 3))) {
                     return;
                 }
             } else {
@@ -246,18 +271,22 @@ public class CombatHookTask extends Worker {
                  * reduce the damage to 0 when the combat type corresponds to
                  * the correct protection prayer.
                  */
-                if (builder.getCurrentTarget().type() == EntityType.PLAYER && builder.getEntity().type() == EntityType.NPC) {
+                if (builder.getCurrentTarget().type() == EntityType.PLAYER
+                        && builder.getEntity().type() == EntityType.NPC) {
                     Player player = (Player) builder.getCurrentTarget();
 
-                    if (combatHit.getHitType() == CombatType.MELEE && CombatPrayer.isPrayerActivated(player, CombatPrayer.PROTECT_FROM_MELEE)) {
+                    if (combatHit.getHitType() == CombatType.MELEE
+                            && CombatPrayer.isPrayerActivated(player, CombatPrayer.PROTECT_FROM_MELEE)) {
                         for (int i = 0; i < combatHit.getHits().length; i++) {
                             combatHit.getHits()[i].setSuccessful(false);
                         }
-                    } else if (combatHit.getHitType() == CombatType.MAGIC && CombatPrayer.isPrayerActivated(player, CombatPrayer.PROTECT_FROM_MAGIC)) {
+                    } else if (combatHit.getHitType() == CombatType.MAGIC
+                            && CombatPrayer.isPrayerActivated(player, CombatPrayer.PROTECT_FROM_MAGIC)) {
                         for (int i = 0; i < combatHit.getHits().length; i++) {
                             combatHit.getHits()[i].setSuccessful(false);
                         }
-                    } else if (combatHit.getHitType() == CombatType.RANGE && CombatPrayer.isPrayerActivated(player, CombatPrayer.PROTECT_FROM_MISSILES)) {
+                    } else if (combatHit.getHitType() == CombatType.RANGE
+                            && CombatPrayer.isPrayerActivated(player, CombatPrayer.PROTECT_FROM_MISSILES)) {
                         for (int i = 0; i < combatHit.getHits().length; i++) {
                             combatHit.getHits()[i].setSuccessful(false);
                         }
@@ -269,7 +298,8 @@ public class CombatHookTask extends Worker {
                      * the combat type corresponds to the correct protection
                      * prayer.
                      */
-                } else if (builder.getCurrentTarget().type() == EntityType.PLAYER && builder.getEntity().type() == EntityType.PLAYER) {
+                } else if (builder.getCurrentTarget().type() == EntityType.PLAYER
+                        && builder.getEntity().type() == EntityType.PLAYER) {
                     Player player = (Player) builder.getEntity();
                     Player target = (Player) builder.getCurrentTarget();
 
@@ -279,19 +309,22 @@ public class CombatHookTask extends Worker {
                      */
                     if (combatHit.isCheckAccuracy()) {
                         if (!CombatFactory.isWearingFullVeracs(player)) {
-                            if (combatHit.getHitType() == CombatType.MELEE && CombatPrayer.isPrayerActivated(target, CombatPrayer.PROTECT_FROM_MELEE)) {
+                            if (combatHit.getHitType() == CombatType.MELEE
+                                    && CombatPrayer.isPrayerActivated(target, CombatPrayer.PROTECT_FROM_MELEE)) {
                                 if (Misc.random(4) == 0) {
                                     for (int i = 0; i < combatHit.getHits().length; i++) {
                                         combatHit.getHits()[i].setSuccessful(false);
                                     }
                                 }
-                            } else if (combatHit.getHitType() == CombatType.MAGIC && CombatPrayer.isPrayerActivated(target, CombatPrayer.PROTECT_FROM_MAGIC)) {
+                            } else if (combatHit.getHitType() == CombatType.MAGIC
+                                    && CombatPrayer.isPrayerActivated(target, CombatPrayer.PROTECT_FROM_MAGIC)) {
                                 if (Misc.random(4) == 0) {
                                     for (int i = 0; i < combatHit.getHits().length; i++) {
                                         combatHit.getHits()[i].setSuccessful(false);
                                     }
                                 }
-                            } else if (combatHit.getHitType() == CombatType.RANGE && CombatPrayer.isPrayerActivated(target, CombatPrayer.PROTECT_FROM_MISSILES)) {
+                            } else if (combatHit.getHitType() == CombatType.RANGE
+                                    && CombatPrayer.isPrayerActivated(target, CombatPrayer.PROTECT_FROM_MISSILES)) {
                                 if (Misc.random(4) == 0) {
                                     for (int i = 0; i < combatHit.getHits().length; i++) {
                                         combatHit.getHits()[i].setSuccessful(false);
@@ -303,9 +336,11 @@ public class CombatHookTask extends Worker {
                 }
 
                 /** Calculate the accuracy for each hit. */
-                if (combatHit.isCheckAccuracy() && combatHit.getHits() != null) {
+                if (combatHit.isCheckAccuracy()
+                        && combatHit.getHits() != null) {
                     for (CombatHit hit : combatHit.getHits()) {
-                        if (hit == null || !hit.isSuccessful()) {
+                        if (hit == null
+                                || !hit.isSuccessful()) {
                             continue;
                         }
 
@@ -316,7 +351,8 @@ public class CombatHookTask extends Worker {
                             hit.setSuccessful(false);
                         }
                     }
-                } else if (!combatHit.isCheckAccuracy() && combatHit.getHits() != null) {
+                } else if (!combatHit.isCheckAccuracy()
+                        && combatHit.getHits() != null) {
                     oneHitAccurate = true;
                 }
             }

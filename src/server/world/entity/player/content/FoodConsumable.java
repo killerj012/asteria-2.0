@@ -144,7 +144,8 @@ public enum FoodConsumable implements GenericAction<Player> {
 
             if (Misc.random(100F) >= 61.24F) {
                 /* 10% of total hit points */
-                int healAmount = Math.round((10 * 100F) / realLevel);
+                int healAmount = Math.round((10 * 100F)
+                        / realLevel);
                 skill.increaseLevel(healAmount, realLevel);
                 player.getPacketBuilder().sendMessage("It restores some life points.");
                 return;
@@ -184,7 +185,9 @@ public enum FoodConsumable implements GenericAction<Player> {
                 Skill randomSkill = player.getSkills()[id];
 
                 randomSkill.decreaseLevel(Misc.random(3));
-                player.getPacketBuilder().sendMessage("Eating the kebab has damaged your " + SkillConstant.getSkill(id).name().toLowerCase().replaceAll("_", " ") + " stat.");
+                player.getPacketBuilder().sendMessage("Eating the kebab has damaged your "
+                        + SkillConstant.getSkill(id).name().toLowerCase().replaceAll("_", " ")
+                        + " stat.");
                 return;
             }
         }
@@ -281,7 +284,9 @@ public enum FoodConsumable implements GenericAction<Player> {
      * </p>
      */
     public String getMessage() {
-        return (ids.length > 1 ? "You eat a slice of the " : "You eat the ") + toString() + ".";
+        return (ids.length > 1 ? "You eat a slice of the " : "You eat the ")
+                + toString()
+                + ".";
     }
 
     /**
@@ -295,7 +300,8 @@ public enum FoodConsumable implements GenericAction<Player> {
         FoodConsumable food = forId(item.getId());
         int length = food.getIds().length;
         for (int index = 0; index < length; index++) {
-            if (food.getIds()[index] == item.getId() && index + 1 < length) {
+            if (food.getIds()[index] == item.getId()
+                    && index + 1 < length) {
                 return new Item(food.getIds()[index + 1]);
             }
         }
@@ -361,8 +367,7 @@ public enum FoodConsumable implements GenericAction<Player> {
 
         player.getPacketBuilder().sendMessage(food.getMessage());
         food.fireAction(player);
-        SkillManager.refresh(player, SkillConstant.HITPOINTS);
+        SkillManager.refresh(player, Misc.HITPOINTS);
         return true;
     }
-
 }

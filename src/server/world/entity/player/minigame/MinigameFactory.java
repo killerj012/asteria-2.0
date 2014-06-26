@@ -3,7 +3,6 @@ package server.world.entity.player.minigame;
 import java.util.HashMap;
 import java.util.Map;
 
-import server.core.worker.TaskFactory;
 import server.world.entity.player.Player;
 
 /**
@@ -15,17 +14,6 @@ public class MinigameFactory {
 
     /** A map containing all of the minigames. */
     private static Map<String, Minigame> minigames = new HashMap<String, Minigame>();
-
-    /**
-     * Fires the task for all of the dynamic minigames.
-     */
-    public static void fireDynamicTasks() {
-        for (Minigame minigame : minigames.values()) {
-            if (minigame instanceof CycledMinigame) {
-                TaskFactory.getFactory().submit(((CycledMinigame) minigame).cycleWorker());
-            }
-        }
-    }
 
     /**
      * Gets the instance of the minigame the player is currently in.

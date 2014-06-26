@@ -11,7 +11,6 @@ import server.world.entity.combat.task.CombatPoisonTask.CombatPoison;
 import server.world.entity.npc.Npc;
 import server.world.entity.player.Player;
 import server.world.entity.player.skill.SkillManager;
-import server.world.entity.player.skill.SkillManager.SkillConstant;
 import server.world.map.Position;
 
 /**
@@ -243,7 +242,7 @@ public abstract class Entity {
             }
 
             player.getSkills()[Misc.HITPOINTS].decreaseLevel(writeDamage);
-            SkillManager.refresh(player, SkillConstant.HITPOINTS);
+            SkillManager.refresh(player, Misc.HITPOINTS);
             player.getPacketBuilder().closeWindows();
         } else if (this.type() == EntityType.NPC) {
             Npc npc = (Npc) this;
@@ -276,7 +275,7 @@ public abstract class Entity {
             }
 
             player.getSkills()[Misc.HITPOINTS].decreaseLevel(writeDamage);
-            SkillManager.refresh(player, SkillConstant.HITPOINTS);
+            SkillManager.refresh(player, Misc.HITPOINTS);
             player.getPacketBuilder().closeWindows();
         } else if (this.type() == EntityType.NPC) {
             Npc npc = (Npc) this;

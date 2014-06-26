@@ -48,12 +48,17 @@ public final class Main {
 
             Rs2Engine.init();
             logger.info("The engine is now running...");
-            logger.info(NAME + " is now ".concat(Rs2Engine.INITIALLY_IDLE ? "IDLE " : "ACTIVE ").concat("[took " + timer.elapsed() + " ms]"));
+            logger.info(NAME
+                    + " is now ".concat(Rs2Engine.INITIALLY_IDLE ? "IDLE " : "ACTIVE ").concat("[took "
+                            + timer.elapsed()
+                            + " ms]"));
         } catch (Exception e) {
 
             /** An error occurred, print it and abort startup. */
             e.printStackTrace();
-            throw new IllegalStateException("An error occured while starting " + Main.NAME + "!");
+            throw new IllegalStateException("An error occured while starting "
+                    + Main.NAME
+                    + "!");
         }
     }
 }

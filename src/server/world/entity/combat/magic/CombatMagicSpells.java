@@ -14,7 +14,6 @@ import server.world.entity.combat.task.CombatTeleblockTask;
 import server.world.entity.npc.Npc;
 import server.world.entity.player.Player;
 import server.world.entity.player.skill.SkillManager;
-import server.world.entity.player.skill.SkillManager.SkillConstant;
 import server.world.item.Item;
 
 /**
@@ -63,7 +62,9 @@ public enum CombatMagicSpells {
 
         @Override
         public Item[] itemsRequired(Player player) {
-            return new Item[] { new Item(556), new Item(558) };
+            return new Item[] {
+                new Item(556),
+                new Item(558) };
         }
 
         @Override
@@ -75,7 +76,8 @@ public enum CombatMagicSpells {
         public int spellId() {
             return 1152;
         }
-    }), CONFUSE(new CombatEffectSpell() {
+    }),
+    CONFUSE(new CombatEffectSpell() {
         @Override
         public Animation castAnimation() {
             return new Animation(716);
@@ -99,12 +101,13 @@ public enum CombatMagicSpells {
                 }
 
                 player.getSkills()[Misc.ATTACK].decreaseLevel((int) (0.05 * (player.getSkills()[Misc.ATTACK].getLevel())));
-                SkillManager.refresh(player, SkillConstant.ATTACK);
+                SkillManager.refresh(player, Misc.ATTACK);
                 player.getPacketBuilder().sendMessage("You feel slightly weakened.");
             } else if (castOn.type() == EntityType.NPC) {
                 Npc npc = (Npc) castOn;
 
-                if (npc.getStatsWeakened()[0] || npc.getStatsBadlyWeakened()[0]) {
+                if (npc.getStatsWeakened()[0]
+                        || npc.getStatsBadlyWeakened()[0]) {
                     if (cast.type() == EntityType.PLAYER) {
                         ((Player) cast).getPacketBuilder().sendMessage("The spell has no effect because the NPC has already been weakened.");
                     }
@@ -132,7 +135,10 @@ public enum CombatMagicSpells {
 
         @Override
         public Item[] itemsRequired(Player player) {
-            return new Item[] { new Item(555, 3), new Item(557, 2), new Item(559) };
+            return new Item[] {
+                new Item(555, 3),
+                new Item(557, 2),
+                new Item(559) };
         }
 
         @Override
@@ -183,7 +189,10 @@ public enum CombatMagicSpells {
 
         @Override
         public Item[] itemsRequired(Player player) {
-            return new Item[] { new Item(555), new Item(556), new Item(558) };
+            return new Item[] {
+                new Item(555),
+                new Item(556),
+                new Item(558) };
         }
 
         @Override
@@ -234,7 +243,10 @@ public enum CombatMagicSpells {
 
         @Override
         public Item[] itemsRequired(Player player) {
-            return new Item[] { new Item(556, 1), new Item(558, 1), new Item(557, 2) };
+            return new Item[] {
+                new Item(556, 1),
+                new Item(558, 1),
+                new Item(557, 2) };
         }
 
         @Override
@@ -271,12 +283,13 @@ public enum CombatMagicSpells {
                 }
 
                 player.getSkills()[Misc.STRENGTH].decreaseLevel((int) (0.05 * (player.getSkills()[Misc.STRENGTH].getLevel())));
-                SkillManager.refresh(player, SkillConstant.STRENGTH);
+                SkillManager.refresh(player, Misc.STRENGTH);
                 player.getPacketBuilder().sendMessage("You feel slightly weakened.");
             } else if (castOn.type() == EntityType.NPC) {
                 Npc npc = (Npc) castOn;
 
-                if (npc.getStatsWeakened()[1] || npc.getStatsBadlyWeakened()[1]) {
+                if (npc.getStatsWeakened()[1]
+                        || npc.getStatsBadlyWeakened()[1]) {
                     if (cast.type() == EntityType.PLAYER) {
                         ((Player) cast).getPacketBuilder().sendMessage("The spell has no effect because the NPC has already been weakened.");
                     }
@@ -304,7 +317,10 @@ public enum CombatMagicSpells {
 
         @Override
         public Item[] itemsRequired(Player player) {
-            return new Item[] { new Item(555, 3), new Item(557, 2), new Item(559, 1) };
+            return new Item[] {
+                new Item(555, 3),
+                new Item(557, 2),
+                new Item(559, 1) };
         }
 
         @Override
@@ -355,7 +371,10 @@ public enum CombatMagicSpells {
 
         @Override
         public Item[] itemsRequired(Player player) {
-            return new Item[] { new Item(556, 1), new Item(558, 1), new Item(554, 3) };
+            return new Item[] {
+                new Item(556, 1),
+                new Item(558, 1),
+                new Item(554, 3) };
         }
 
         @Override
@@ -406,7 +425,9 @@ public enum CombatMagicSpells {
 
         @Override
         public Item[] itemsRequired(Player player) {
-            return new Item[] { new Item(556, 2), new Item(562, 1) };
+            return new Item[] {
+                new Item(556, 2),
+                new Item(562, 1) };
         }
 
         @Override
@@ -443,12 +464,13 @@ public enum CombatMagicSpells {
                 }
 
                 player.getSkills()[Misc.DEFENCE].decreaseLevel((int) (0.05 * (player.getSkills()[Misc.DEFENCE].getLevel())));
-                SkillManager.refresh(player, SkillConstant.DEFENCE);
+                SkillManager.refresh(player, Misc.DEFENCE);
                 player.getPacketBuilder().sendMessage("You feel slightly weakened.");
             } else if (castOn.type() == EntityType.NPC) {
                 Npc npc = (Npc) castOn;
 
-                if (npc.getStatsWeakened()[2] || npc.getStatsBadlyWeakened()[2]) {
+                if (npc.getStatsWeakened()[2]
+                        || npc.getStatsBadlyWeakened()[2]) {
                     if (cast.type() == EntityType.PLAYER) {
                         ((Player) cast).getPacketBuilder().sendMessage("The spell has no effect because the NPC has already been weakened.");
                     }
@@ -476,7 +498,10 @@ public enum CombatMagicSpells {
 
         @Override
         public Item[] itemsRequired(Player player) {
-            return new Item[] { new Item(555, 2), new Item(557, 3), new Item(559, 1) };
+            return new Item[] {
+                new Item(555, 2),
+                new Item(557, 3),
+                new Item(559, 1) };
         }
 
         @Override
@@ -533,7 +558,10 @@ public enum CombatMagicSpells {
 
         @Override
         public Item[] itemsRequired(Player player) {
-            return new Item[] { new Item(555, 3), new Item(557, 3), new Item(561, 2) };
+            return new Item[] {
+                new Item(555, 3),
+                new Item(557, 3),
+                new Item(561, 2) };
         }
 
         @Override
@@ -584,7 +612,10 @@ public enum CombatMagicSpells {
 
         @Override
         public Item[] itemsRequired(Player player) {
-            return new Item[] { new Item(556, 2), new Item(562, 1), new Item(555, 2) };
+            return new Item[] {
+                new Item(556, 2),
+                new Item(562, 1),
+                new Item(555, 2) };
         }
 
         @Override
@@ -635,7 +666,10 @@ public enum CombatMagicSpells {
 
         @Override
         public Item[] itemsRequired(Player player) {
-            return new Item[] { new Item(556, 2), new Item(562, 1), new Item(557, 3) };
+            return new Item[] {
+                new Item(556, 2),
+                new Item(562, 1),
+                new Item(557, 3) };
         }
 
         @Override
@@ -686,7 +720,10 @@ public enum CombatMagicSpells {
 
         @Override
         public Item[] itemsRequired(Player player) {
-            return new Item[] { new Item(556, 3), new Item(562, 1), new Item(554, 4) };
+            return new Item[] {
+                new Item(556, 3),
+                new Item(562, 1),
+                new Item(554, 4) };
         }
 
         @Override
@@ -737,7 +774,10 @@ public enum CombatMagicSpells {
 
         @Override
         public Item[] itemsRequired(Player player) {
-            return new Item[] { new Item(556, 2), new Item(562, 1), new Item(557, 2) };
+            return new Item[] {
+                new Item(556, 2),
+                new Item(562, 1),
+                new Item(557, 2) };
         }
 
         @Override
@@ -788,7 +828,9 @@ public enum CombatMagicSpells {
 
         @Override
         public Item[] itemsRequired(Player player) {
-            return new Item[] { new Item(556, 3), new Item(560, 1) };
+            return new Item[] {
+                new Item(556, 3),
+                new Item(560, 1) };
         }
 
         @Override
@@ -839,7 +881,10 @@ public enum CombatMagicSpells {
 
         @Override
         public Item[] itemsRequired(Player player) {
-            return new Item[] { new Item(555, 3), new Item(556, 3), new Item(560, 1) };
+            return new Item[] {
+                new Item(555, 3),
+                new Item(556, 3),
+                new Item(560, 1) };
         }
 
         @Override
@@ -890,7 +935,9 @@ public enum CombatMagicSpells {
 
         @Override
         public Item[] itemsRequired(Player player) {
-            return new Item[] { new Item(560, 1), new Item(554, 5) };
+            return new Item[] {
+                new Item(560, 1),
+                new Item(554, 5) };
         }
 
         @Override
@@ -947,7 +994,10 @@ public enum CombatMagicSpells {
 
         @Override
         public Item[] itemsRequired(Player player) {
-            return new Item[] { new Item(555, 3), new Item(557, 4), new Item(561, 3) };
+            return new Item[] {
+                new Item(555, 3),
+                new Item(557, 4),
+                new Item(561, 3) };
         }
 
         @Override
@@ -998,7 +1048,9 @@ public enum CombatMagicSpells {
 
         @Override
         public Item[] itemsRequired(Player player) {
-            return new Item[] { new Item(558, 4), new Item(560, 1) };
+            return new Item[] {
+                new Item(558, 4),
+                new Item(560, 1) };
         }
 
         @Override
@@ -1049,7 +1101,10 @@ public enum CombatMagicSpells {
 
         @Override
         public Item[] itemsRequired(Player player) {
-            return new Item[] { new Item(556, 3), new Item(560, 1), new Item(557, 4) };
+            return new Item[] {
+                new Item(556, 3),
+                new Item(560, 1),
+                new Item(557, 4) };
         }
 
         @Override
@@ -1100,7 +1155,10 @@ public enum CombatMagicSpells {
 
         @Override
         public Item[] itemsRequired(Player player) {
-            return new Item[] { new Item(556, 4), new Item(560, 1), new Item(554, 5) };
+            return new Item[] {
+                new Item(556, 4),
+                new Item(560, 1),
+                new Item(554, 5) };
         }
 
         @Override
@@ -1151,7 +1209,10 @@ public enum CombatMagicSpells {
 
         @Override
         public Item[] itemsRequired(Player player) {
-            return new Item[] { new Item(556, 4), new Item(565, 2), new Item(554, 2) };
+            return new Item[] {
+                new Item(556, 4),
+                new Item(565, 2),
+                new Item(554, 2) };
         }
 
         @Override
@@ -1202,7 +1263,10 @@ public enum CombatMagicSpells {
 
         @Override
         public Item[] itemsRequired(Player player) {
-            return new Item[] { new Item(556, 4), new Item(565, 2), new Item(554, 2) };
+            return new Item[] {
+                new Item(556, 4),
+                new Item(565, 2),
+                new Item(554, 2) };
         }
 
         @Override
@@ -1253,7 +1317,10 @@ public enum CombatMagicSpells {
 
         @Override
         public Item[] itemsRequired(Player player) {
-            return new Item[] { new Item(556, 4), new Item(565, 2), new Item(554, 2) };
+            return new Item[] {
+                new Item(556, 4),
+                new Item(565, 2),
+                new Item(554, 2) };
         }
 
         @Override
@@ -1304,7 +1371,9 @@ public enum CombatMagicSpells {
 
         @Override
         public Item[] itemsRequired(Player player) {
-            return new Item[] { new Item(556, 5), new Item(565, 1) };
+            return new Item[] {
+                new Item(556, 5),
+                new Item(565, 1) };
         }
 
         @Override
@@ -1355,7 +1424,10 @@ public enum CombatMagicSpells {
 
         @Override
         public Item[] itemsRequired(Player player) {
-            return new Item[] { new Item(556, 5), new Item(565, 1), new Item(555, 7) };
+            return new Item[] {
+                new Item(556, 5),
+                new Item(565, 1),
+                new Item(555, 7) };
         }
 
         @Override
@@ -1392,12 +1464,13 @@ public enum CombatMagicSpells {
                 }
 
                 player.getSkills()[Misc.DEFENCE].decreaseLevel((int) (0.10 * (player.getSkills()[Misc.DEFENCE].getLevel())));
-                SkillManager.refresh(player, SkillConstant.DEFENCE);
+                SkillManager.refresh(player, Misc.DEFENCE);
                 player.getPacketBuilder().sendMessage("You feel slightly weakened.");
             } else if (castOn.type() == EntityType.NPC) {
                 Npc npc = (Npc) castOn;
 
-                if (npc.getStatsWeakened()[2] || npc.getStatsBadlyWeakened()[2]) {
+                if (npc.getStatsWeakened()[2]
+                        || npc.getStatsBadlyWeakened()[2]) {
                     if (cast.type() == EntityType.PLAYER) {
                         ((Player) cast).getPacketBuilder().sendMessage("The spell has no effect because the NPC is already weakened.");
                     }
@@ -1425,7 +1498,10 @@ public enum CombatMagicSpells {
 
         @Override
         public Item[] itemsRequired(Player player) {
-            return new Item[] { new Item(557, 5), new Item(555, 5), new Item(566, 1) };
+            return new Item[] {
+                new Item(557, 5),
+                new Item(555, 5),
+                new Item(566, 1) };
         }
 
         @Override
@@ -1476,7 +1552,10 @@ public enum CombatMagicSpells {
 
         @Override
         public Item[] itemsRequired(Player player) {
-            return new Item[] { new Item(556, 5), new Item(565, 1), new Item(557, 7) };
+            return new Item[] {
+                new Item(556, 5),
+                new Item(565, 1),
+                new Item(557, 7) };
         }
 
         @Override
@@ -1513,12 +1592,13 @@ public enum CombatMagicSpells {
                 }
 
                 player.getSkills()[Misc.STRENGTH].decreaseLevel((int) (0.10 * (player.getSkills()[Misc.STRENGTH].getLevel())));
-                SkillManager.refresh(player, SkillConstant.STRENGTH);
+                SkillManager.refresh(player, Misc.STRENGTH);
                 player.getPacketBuilder().sendMessage("You feel slightly weakened.");
             } else if (castOn.type() == EntityType.NPC) {
                 Npc npc = (Npc) castOn;
 
-                if (npc.getStatsWeakened()[1] || npc.getStatsBadlyWeakened()[1]) {
+                if (npc.getStatsWeakened()[1]
+                        || npc.getStatsBadlyWeakened()[1]) {
                     if (cast.type() == EntityType.PLAYER) {
                         ((Player) cast).getPacketBuilder().sendMessage("The spell has no effect because the NPC is already weakened.");
                     }
@@ -1546,7 +1626,10 @@ public enum CombatMagicSpells {
 
         @Override
         public Item[] itemsRequired(Player player) {
-            return new Item[] { new Item(557, 8), new Item(555, 8), new Item(566, 1) };
+            return new Item[] {
+                new Item(557, 8),
+                new Item(555, 8),
+                new Item(566, 1) };
         }
 
         @Override
@@ -1597,7 +1680,10 @@ public enum CombatMagicSpells {
 
         @Override
         public Item[] itemsRequired(Player player) {
-            return new Item[] { new Item(556, 5), new Item(565, 1), new Item(554, 7) };
+            return new Item[] {
+                new Item(556, 5),
+                new Item(565, 1),
+                new Item(554, 7) };
         }
 
         @Override
@@ -1654,7 +1740,10 @@ public enum CombatMagicSpells {
 
         @Override
         public Item[] itemsRequired(Player player) {
-            return new Item[] { new Item(555, 5), new Item(557, 5), new Item(561, 4) };
+            return new Item[] {
+                new Item(555, 5),
+                new Item(557, 5),
+                new Item(561, 4) };
         }
 
         @Override
@@ -1691,12 +1780,13 @@ public enum CombatMagicSpells {
                 }
 
                 player.getSkills()[Misc.ATTACK].decreaseLevel((int) (0.10 * (player.getSkills()[Misc.ATTACK].getLevel())));
-                SkillManager.refresh(player, SkillConstant.ATTACK);
+                SkillManager.refresh(player, Misc.ATTACK);
                 player.getPacketBuilder().sendMessage("You feel slightly weakened.");
             } else if (castOn.type() == EntityType.NPC) {
                 Npc npc = (Npc) castOn;
 
-                if (npc.getStatsWeakened()[0] || npc.getStatsBadlyWeakened()[0]) {
+                if (npc.getStatsWeakened()[0]
+                        || npc.getStatsBadlyWeakened()[0]) {
                     if (cast.type() == EntityType.PLAYER) {
                         ((Player) cast).getPacketBuilder().sendMessage("The spell has no effect because the NPC is already weakened.");
                     }
@@ -1724,7 +1814,10 @@ public enum CombatMagicSpells {
 
         @Override
         public Item[] itemsRequired(Player player) {
-            return new Item[] { new Item(557, 12), new Item(555, 12), new Item(556, 1) };
+            return new Item[] {
+                new Item(557, 12),
+                new Item(555, 12),
+                new Item(556, 1) };
         }
 
         @Override
@@ -1787,7 +1880,10 @@ public enum CombatMagicSpells {
 
         @Override
         public Item[] itemsRequired(Player player) {
-            return new Item[] { new Item(563, 1), new Item(562, 1), new Item(560, 1) };
+            return new Item[] {
+                new Item(563, 1),
+                new Item(562, 1),
+                new Item(560, 1) };
         }
 
         @Override
@@ -1845,7 +1941,11 @@ public enum CombatMagicSpells {
 
         @Override
         public Item[] itemsRequired(Player player) {
-            return new Item[] { new Item(556, 1), new Item(554, 1), new Item(562, 2), new Item(560, 2) };
+            return new Item[] {
+                new Item(556, 1),
+                new Item(554, 1),
+                new Item(562, 2),
+                new Item(560, 2) };
         }
 
         @Override
@@ -1869,7 +1969,7 @@ public enum CombatMagicSpells {
                 }
 
                 player.getSkills()[Misc.ATTACK].decreaseLevel((int) (0.1 * (player.getSkills()[Misc.ATTACK].getLevel())));
-                SkillManager.refresh(player, SkillConstant.ATTACK);
+                SkillManager.refresh(player, Misc.ATTACK);
             }
         }
 
@@ -1910,7 +2010,11 @@ public enum CombatMagicSpells {
 
         @Override
         public Item[] itemsRequired(Player player) {
-            return new Item[] { new Item(556, 1), new Item(566, 1), new Item(562, 2), new Item(560, 2) };
+            return new Item[] {
+                new Item(556, 1),
+                new Item(566, 1),
+                new Item(562, 2),
+                new Item(560, 2) };
         }
 
         @Override
@@ -1933,7 +2037,6 @@ public enum CombatMagicSpells {
             if (cast.type() == EntityType.PLAYER) {
                 Player player = (Player) cast;
                 player.heal((int) (damageInflicted * 0.25));
-                SkillManager.refresh(player, SkillConstant.HITPOINTS);
             }
         }
 
@@ -1974,7 +2077,10 @@ public enum CombatMagicSpells {
 
         @Override
         public Item[] itemsRequired(Player player) {
-            return new Item[] { new Item(565, 1), new Item(562, 2), new Item(560, 2) };
+            return new Item[] {
+                new Item(565, 1),
+                new Item(562, 2),
+                new Item(560, 2) };
         }
 
         @Override
@@ -2030,7 +2136,10 @@ public enum CombatMagicSpells {
 
         @Override
         public Item[] itemsRequired(Player player) {
-            return new Item[] { new Item(555, 2), new Item(562, 2), new Item(560, 2) };
+            return new Item[] {
+                new Item(555, 2),
+                new Item(562, 2),
+                new Item(560, 2) };
         }
 
         @Override
@@ -2086,7 +2195,11 @@ public enum CombatMagicSpells {
 
         @Override
         public Item[] itemsRequired(Player player) {
-            return new Item[] { new Item(556, 2), new Item(554, 2), new Item(562, 4), new Item(560, 2) };
+            return new Item[] {
+                new Item(556, 2),
+                new Item(554, 2),
+                new Item(562, 4),
+                new Item(560, 2) };
         }
 
         @Override
@@ -2110,7 +2223,7 @@ public enum CombatMagicSpells {
                 }
 
                 player.getSkills()[Misc.ATTACK].decreaseLevel((int) (0.1 * (player.getSkills()[Misc.ATTACK].getLevel())));
-                SkillManager.refresh(player, SkillConstant.ATTACK);
+                SkillManager.refresh(player, Misc.ATTACK);
             }
         }
 
@@ -2151,7 +2264,11 @@ public enum CombatMagicSpells {
 
         @Override
         public Item[] itemsRequired(Player player) {
-            return new Item[] { new Item(556, 1), new Item(566, 2), new Item(562, 4), new Item(560, 2) };
+            return new Item[] {
+                new Item(556, 1),
+                new Item(566, 2),
+                new Item(562, 4),
+                new Item(560, 2) };
         }
 
         @Override
@@ -2174,7 +2291,6 @@ public enum CombatMagicSpells {
             if (cast.type() == EntityType.PLAYER) {
                 Player player = (Player) cast;
                 player.heal((int) (damageInflicted * 0.25));
-                SkillManager.refresh(player, SkillConstant.HITPOINTS);
             }
         }
 
@@ -2215,7 +2331,10 @@ public enum CombatMagicSpells {
 
         @Override
         public Item[] itemsRequired(Player player) {
-            return new Item[] { new Item(565, 2), new Item(562, 4), new Item(560, 2) };
+            return new Item[] {
+                new Item(565, 2),
+                new Item(562, 4),
+                new Item(560, 2) };
         }
 
         @Override
@@ -2271,7 +2390,10 @@ public enum CombatMagicSpells {
 
         @Override
         public Item[] itemsRequired(Player player) {
-            return new Item[] { new Item(555, 4), new Item(562, 4), new Item(560, 2) };
+            return new Item[] {
+                new Item(555, 4),
+                new Item(562, 4),
+                new Item(560, 2) };
         }
 
         @Override
@@ -2327,7 +2449,11 @@ public enum CombatMagicSpells {
 
         @Override
         public Item[] itemsRequired(Player player) {
-            return new Item[] { new Item(556, 2), new Item(554, 2), new Item(565, 2), new Item(560, 2) };
+            return new Item[] {
+                new Item(556, 2),
+                new Item(554, 2),
+                new Item(565, 2),
+                new Item(560, 2) };
         }
 
         @Override
@@ -2351,7 +2477,7 @@ public enum CombatMagicSpells {
                 }
 
                 player.getSkills()[Misc.ATTACK].decreaseLevel((int) (0.15 * (player.getSkills()[Misc.ATTACK].getLevel())));
-                SkillManager.refresh(player, SkillConstant.ATTACK);
+                SkillManager.refresh(player, Misc.ATTACK);
             }
         }
 
@@ -2392,7 +2518,11 @@ public enum CombatMagicSpells {
 
         @Override
         public Item[] itemsRequired(Player player) {
-            return new Item[] { new Item(556, 2), new Item(566, 2), new Item(565, 2), new Item(560, 2) };
+            return new Item[] {
+                new Item(556, 2),
+                new Item(566, 2),
+                new Item(565, 2),
+                new Item(560, 2) };
         }
 
         @Override
@@ -2415,7 +2545,6 @@ public enum CombatMagicSpells {
             if (cast.type() == EntityType.PLAYER) {
                 Player player = (Player) cast;
                 player.heal((int) (damageInflicted * 0.25));
-                SkillManager.refresh(player, SkillConstant.HITPOINTS);
             }
         }
 
@@ -2456,7 +2585,9 @@ public enum CombatMagicSpells {
 
         @Override
         public Item[] itemsRequired(Player player) {
-            return new Item[] { new Item(565, 4), new Item(560, 2) };
+            return new Item[] {
+                new Item(565, 4),
+                new Item(560, 2) };
         }
 
         @Override
@@ -2512,7 +2643,10 @@ public enum CombatMagicSpells {
 
         @Override
         public Item[] itemsRequired(Player player) {
-            return new Item[] { new Item(555, 3), new Item(565, 2), new Item(560, 2) };
+            return new Item[] {
+                new Item(555, 3),
+                new Item(565, 2),
+                new Item(560, 2) };
         }
 
         @Override
@@ -2568,7 +2702,11 @@ public enum CombatMagicSpells {
 
         @Override
         public Item[] itemsRequired(Player player) {
-            return new Item[] { new Item(556, 4), new Item(554, 4), new Item(565, 2), new Item(560, 4) };
+            return new Item[] {
+                new Item(556, 4),
+                new Item(554, 4),
+                new Item(565, 2),
+                new Item(560, 4) };
         }
 
         @Override
@@ -2592,7 +2730,7 @@ public enum CombatMagicSpells {
                 }
 
                 player.getSkills()[Misc.ATTACK].decreaseLevel((int) (0.15 * (player.getSkills()[Misc.ATTACK].getLevel())));
-                SkillManager.refresh(player, SkillConstant.ATTACK);
+                SkillManager.refresh(player, Misc.ATTACK);
             }
         }
 
@@ -2633,7 +2771,11 @@ public enum CombatMagicSpells {
 
         @Override
         public Item[] itemsRequired(Player player) {
-            return new Item[] { new Item(556, 4), new Item(566, 3), new Item(565, 2), new Item(560, 4) };
+            return new Item[] {
+                new Item(556, 4),
+                new Item(566, 3),
+                new Item(565, 2),
+                new Item(560, 4) };
         }
 
         @Override
@@ -2656,7 +2798,6 @@ public enum CombatMagicSpells {
             if (cast.type() == EntityType.PLAYER) {
                 Player player = (Player) cast;
                 player.heal((int) (damageInflicted * 0.25));
-                SkillManager.refresh(player, SkillConstant.HITPOINTS);
             }
         }
 
@@ -2697,7 +2838,10 @@ public enum CombatMagicSpells {
 
         @Override
         public Item[] itemsRequired(Player player) {
-            return new Item[] { new Item(560, 4), new Item(566, 1), new Item(565, 4) };
+            return new Item[] {
+                new Item(560, 4),
+                new Item(566, 1),
+                new Item(565, 4) };
         }
 
         @Override
@@ -2753,7 +2897,10 @@ public enum CombatMagicSpells {
 
         @Override
         public Item[] itemsRequired(Player player) {
-            return new Item[] { new Item(555, 6), new Item(565, 2), new Item(560, 4) };
+            return new Item[] {
+                new Item(555, 6),
+                new Item(565, 2),
+                new Item(560, 4) };
         }
 
         @Override

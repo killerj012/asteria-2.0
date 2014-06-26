@@ -10,7 +10,6 @@ import server.world.entity.Animation;
 import server.world.entity.player.Player;
 import server.world.entity.player.content.Spellbook;
 import server.world.entity.player.skill.SkillManager;
-import server.world.entity.player.skill.SkillManager.SkillConstant;
 import server.world.map.Position;
 
 /**
@@ -25,7 +24,8 @@ public class DecodeObjectActionPacket extends PacketDecoder {
     // see if you're actually near them or not.
 
     /** The various packet opcodes. */
-    private static final int FIRST_CLICK = 132, SECOND_CLICK = 252,
+    private static final int FIRST_CLICK = 132,
+            SECOND_CLICK = 252,
             THIRD_CLICK = 70;
 
     @Override
@@ -56,7 +56,7 @@ public class DecodeObjectActionPacket extends PacketDecoder {
                                         player.animation(new Animation(645));
                                         player.getSkills()[Misc.PRAYER].setLevel(level);
                                         player.getPacketBuilder().sendMessage("You recharge your prayer points.");
-                                        SkillManager.refresh(player, SkillConstant.PRAYER);
+                                        SkillManager.refresh(player, Misc.PRAYER);
                                     } else {
                                         player.getPacketBuilder().sendMessage("You already have full prayer points.");
                                     }

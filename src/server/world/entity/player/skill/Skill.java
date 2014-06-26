@@ -9,15 +9,14 @@ import server.world.entity.player.Player;
  */
 public class Skill {
 
-    // TODO: Find a way to cache the value for getting the level for the
-    // experience! I guarantee once that's done major performance benefits will
-    // be seen.
-
     /** The level of this skill. */
     private int level;
 
     /** The experience for this skill. */
     private int experience;
+
+    /** The real level for this skill. */
+    private int realLevel;
 
     /**
      * Create a new {@link Skill}.
@@ -33,16 +32,33 @@ public class Skill {
      * @return the level based on how much experience you have.
      */
     public int getLevelForExperience() {
+        return realLevel;
+    }
+
+    /**
+     * Calculates the level based on how much experience you have.
+     * 
+     * @return the level based on how much experience you have.
+     */
+    public int calculateLevelForExperience() {
         int points = 0;
         int output = 0;
 
+        if (realLevel >= 99) {
+            return 99;
+        }
+
         for (int lvl = 1; lvl <= 99; lvl++) {
-            points += Math.floor(lvl + 300.0 * Math.pow(2.0, lvl / 7.0));
+            points += Math.floor(lvl
+                    + 300.0
+                    * Math.pow(2.0, lvl / 7.0));
             output = (int) Math.floor(points / 4);
             if (output >= this.getExperience()) {
+                realLevel = lvl;
                 return lvl;
             }
         }
+        realLevel = 99;
         return 99;
     }
 
@@ -56,7 +72,9 @@ public class Skill {
         int output = 0;
 
         for (int lvl = 1; lvl <= (this.getLevel() + 1); lvl++) {
-            points += Math.floor(lvl + 300.0 * Math.pow(2.0, lvl / 7.0));
+            points += Math.floor(lvl
+                    + 300.0
+                    * Math.pow(2.0, lvl / 7.0));
             if (lvl >= (this.getLevelForExperience() + 1))
                 return output;
             output = (int) Math.floor(points / 4);

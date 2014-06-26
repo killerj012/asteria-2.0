@@ -45,7 +45,6 @@ import server.world.entity.player.minigame.MinigameFactory;
 import server.world.entity.player.skill.Skill;
 import server.world.entity.player.skill.SkillEvent;
 import server.world.entity.player.skill.SkillManager;
-import server.world.entity.player.skill.SkillManager.SkillConstant;
 import server.world.item.Item;
 import server.world.item.container.BankContainer;
 import server.world.item.container.EquipmentContainer;
@@ -368,7 +367,7 @@ public class Player extends Entity {
                     getPacketBuilder().walkableInterface(65535);
                     player.getSkills()[Misc.PRAYER].setLevel(player.getSkills()[Misc.PRAYER].getLevelForExperience());
                     CombatPrayer.deactivateAllPrayer(player);
-                    SkillManager.refresh(player, SkillConstant.PRAYER);
+                    SkillManager.refresh(player, Misc.PRAYER);
                     heal(player.getSkills()[Misc.HITPOINTS].getLevelForExperience());
                     setHasDied(false);
                     setDeathTicks(0);
@@ -463,7 +462,7 @@ public class Player extends Entity {
         setFollowing(false);
         setFollowingEntity(null);
         getPacketBuilder().closeWindows();
-        SkillManager.addExperience(this, spell.baseExperience(), SkillConstant.MAGIC);
+        SkillManager.addExperience(this, spell.baseExperience(), Misc.MAGIC);
 
         switch (spell.type()) {
             case NORMAL_SPELLBOOK_TELEPORT:
@@ -726,7 +725,7 @@ public class Player extends Entity {
             getSkills()[Misc.HITPOINTS].increaseLevel(amount);
         }
 
-        SkillManager.refresh(this, SkillConstant.HITPOINTS);
+        SkillManager.refresh(this, Misc.HITPOINTS);
     }
 
     /**
@@ -1353,8 +1352,8 @@ public class Player extends Entity {
         dragonFireImmunity += amount;
     }
 
-    public void deincrementDragonFireImmunity() {
-        dragonFireImmunity--;
+    public void decrementDragonFireImmunity(int amount) {
+        dragonFireImmunity -= amount;
     }
 
     /**

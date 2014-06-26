@@ -17,10 +17,21 @@ public abstract class SkillEvent {
      * The indexes for all of the various non-combat skills in the event reset
      * array.
      */
-    protected static final int PRAYER = 0, COOKING = 1, WOODCUTTING = 2,
-            FLETCHING = 3, FISHING = 4, FIREMAKING = 5, CRAFTING = 6,
-            SMITHING = 7, MINING = 8, HERBLORE = 9, AGILITY = 10,
-            THIEVING = 11, SLAYER = 12, FARMING = 13, RUNECRAFTING = 14;
+    protected static final int PRAYER = 0,
+            COOKING = 1,
+            WOODCUTTING = 2,
+            FLETCHING = 3,
+            FISHING = 4,
+            FIREMAKING = 5,
+            CRAFTING = 6,
+            SMITHING = 7,
+            MINING = 8,
+            HERBLORE = 9,
+            AGILITY = 10,
+            THIEVING = 11,
+            SLAYER = 12,
+            FARMING = 13,
+            RUNECRAFTING = 14;
 
     /** A set of every unique {@link SkillEvent} that has fireable events. */
     private static Set<SkillEvent> skillEvents = new HashSet<SkillEvent>();
@@ -56,12 +67,12 @@ public abstract class SkillEvent {
      *        the amount to add.
      */
     public void exp(Player player, int amount) {
-        SkillManager.addExperience(player, amount, skillConstant());
+        SkillManager.addExperience(player, amount, skillConstant().ordinal());
     }
 
     /**
-     * Fires the <code>fireResetEvent(Player)</code> method for all of the
-     * coded {@link SkillEvent}s.
+     * Fires the <code>fireResetEvent(Player)</code> method for all of the coded
+     * {@link SkillEvent}s.
      * 
      * @param player
      *        the player to fire the policy for.

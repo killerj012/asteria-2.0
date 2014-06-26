@@ -1,10 +1,10 @@
 package server.core.net.packet.impl;
 
-import server.core.net.packet.PacketDecoder;
-import server.core.net.packet.PacketOpcodeHeader;
 import server.core.net.packet.PacketBuffer.ByteOrder;
 import server.core.net.packet.PacketBuffer.ReadBuffer;
 import server.core.net.packet.PacketBuffer.ValueType;
+import server.core.net.packet.PacketDecoder;
+import server.core.net.packet.PacketOpcodeHeader;
 import server.world.World;
 import server.world.entity.combat.CombatFactory;
 import server.world.entity.combat.magic.CombatMagicSpells;
@@ -19,7 +19,7 @@ import server.world.map.Location;
  * 
  * @author lare96
  */
-@PacketOpcodeHeader( { 249 })
+@PacketOpcodeHeader({ 249 })
 public class DecodeAttackPlayerMagicPacket extends PacketDecoder {
 
     @Override
@@ -38,13 +38,18 @@ public class DecodeAttackPlayerMagicPacket extends PacketDecoder {
         if (minigame == null) {
 
             /** Wilderness location check. */
-            if (!Location.inWilderness(player) || !Location.inWilderness(attacked)) {
-                player.getPacketBuilder().sendMessage("Both you and " + attacked.getUsername() + " need to be in the wilderness to fight!");
+            if (!Location.inWilderness(player)
+                    || !Location.inWilderness(attacked)) {
+                player.getPacketBuilder().sendMessage("Both you and "
+                        + attacked.getUsername()
+                        + " need to be in the wilderness to fight!");
                 return;
             }
 
             /** Multicombat location check. */
-            if (!Location.inMultiCombat(player) && player.getCombatBuilder().isBeingAttacked() && player.getCombatBuilder().getLastAttacker() != attacked) {
+            if (!Location.inMultiCombat(player)
+                    && player.getCombatBuilder().isBeingAttacked()
+                    && player.getCombatBuilder().getLastAttacker() != attacked) {
                 player.getPacketBuilder().sendMessage("You are already under attack!");
                 return;
             }
@@ -52,14 +57,18 @@ public class DecodeAttackPlayerMagicPacket extends PacketDecoder {
             /** The combat level difference check. */
             int combatDifference = CombatFactory.calculateCombatDifference(player.getCombatLevel(), attacked.getCombatLevel());
 
-            if (combatDifference > player.getWildernessLevel() || combatDifference > attacked.getWildernessLevel()) {
+            if (combatDifference > player.getWildernessLevel()
+                    || combatDifference > attacked.getWildernessLevel()) {
                 player.getPacketBuilder().sendMessage("Your combat level difference is too great to attack that player here.");
                 player.getMovementQueue().reset();
                 return;
             }
 
             /** Skull the player if needed. */
-            if (!player.getCombatBuilder().isBeingAttacked() || player.getCombatBuilder().isBeingAttacked() && player.getCombatBuilder().getLastAttacker() != attacked && Location.inMultiCombat(player)) {
+            if (!player.getCombatBuilder().isBeingAttacked()
+                    || player.getCombatBuilder().isBeingAttacked()
+                    && player.getCombatBuilder().getLastAttacker() != attacked
+                    && Location.inMultiCombat(player)) {
                 CombatFactory.skullPlayer(player);
             }
         } else {
@@ -67,7 +76,6 @@ public class DecodeAttackPlayerMagicPacket extends PacketDecoder {
                 return;
             }
         }
-
         /** Start combat! */
         player.setAutocastSpell(null);
         player.setAutocast(false);

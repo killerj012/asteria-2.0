@@ -29,8 +29,8 @@ public class NpcDropTable {
      */
     private static Random roll = new Random();
 
-    /** The npc who uses this drop table. */
-    private int npc;
+    /** The npc(s) who uses this drop table. */
+    private int[] npcs;
 
     /** The dynamic drop table assigned to this npc. */
     private NpcDrop[] dynamic;
@@ -48,8 +48,8 @@ public class NpcDropTable {
      * @param rare
      *        the rare table assigned to this npc.
      */
-    public NpcDropTable(int npc, NpcDrop[] dynamic, NpcDrop[] rare) {
-        this.npc = npc;
+    public NpcDropTable(int[] npcs, NpcDrop[] dynamic, NpcDrop[] rare) {
+        this.npcs = npcs;
         this.dynamic = dynamic;
         this.rare = rare;
     }
@@ -73,7 +73,8 @@ public class NpcDropTable {
         Item[] item = new Item[getDropLength()];
 
         /** Gamble all items in the dynamic table. */
-        if (dynamic != null && dynamic.length > 0) {
+        if (dynamic != null
+                && dynamic.length > 0) {
             for (NpcDrop drop : dynamic) {
                 if (drop == null) {
                     continue;
@@ -92,7 +93,8 @@ public class NpcDropTable {
         }
 
         /** Gamble one item in the rare table. */
-        if (rare != null && rare.length > 0) {
+        if (rare != null
+                && rare.length > 0) {
 
             /** The bet modification value. */
             BetModification betMod = getBetModification(player);
@@ -138,7 +140,8 @@ public class NpcDropTable {
     public void calculateDropsDebug() {
 
         /** Gamble one item in the rare table. */
-        if (rare != null && rare.length > 0) {
+        if (rare != null
+                && rare.length > 0) {
 
             for (int i = 0; i < 1000000; i++) {
 
@@ -150,7 +153,11 @@ public class NpcDropTable {
 
                 /** Compare the roll against the bet. */
                 if (rollRound <= rareDrop.getBet()) {
-                    System.out.println("RARE ITEM DROPPED[item = " + rareDrop.toItem().getDefinition().getItemName() + ", kills= " + (i + 1) + "]");
+                    System.out.println("RARE ITEM DROPPED[item = "
+                            + rareDrop.toItem().getDefinition().getItemName()
+                            + ", kills= "
+                            + (i + 1)
+                            + "]");
                     System.exit(0);
                 }
             }
@@ -226,8 +233,8 @@ public class NpcDropTable {
      * 
      * @return the npc who uses this drop table.
      */
-    public int getNpc() {
-        return npc;
+    public int[] getNpcs() {
+        return npcs;
     }
 
     /**

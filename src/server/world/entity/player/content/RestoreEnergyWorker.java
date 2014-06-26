@@ -38,7 +38,8 @@ public class RestoreEnergyWorker extends Worker {
             }
 
             /** Restore energy whenever the player isn't running. */
-            if (player.getMovementQueue().isMovementDone() || !player.getMovementQueue().isRunPath()) {
+            if (player.getMovementQueue().isMovementDone()
+                    || !player.getMovementQueue().isRunPath()) {
                 player.incrementRunEnergy();
             }
         }

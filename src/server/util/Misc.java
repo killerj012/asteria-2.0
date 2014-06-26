@@ -53,16 +53,19 @@ import com.google.gson.JsonSyntaxException;
 public final class Misc {
 
     /** Difference in X coordinates for directions array. */
-    public static final byte[] DIRECTION_DELTA_X = new byte[] { -1, 0, 1, -1, 1, -1, 0, 1 };
+    public static final byte[] DIRECTION_DELTA_X = new byte[] {
+        -1, 0, 1, -1, 1, -1, 0, 1 };
 
     /** Difference in Y coordinates for directions array. */
-    public static final byte[] DIRECTION_DELTA_Y = new byte[] { 1, 1, 1, 0, 0, -1, -1, -1 };
+    public static final byte[] DIRECTION_DELTA_Y = new byte[] {
+        1, 1, 1, 0, 0, -1, -1, -1 };
 
     /** The login response codes. */
     public static final int LOGIN_RESPONSE_OK = 2,
             LOGIN_RESPONSE_INVALID_CREDENTIALS = 3,
             LOGIN_RESPONSE_ACCOUNT_DISABLED = 4,
-            LOGIN_RESPONSE_ACCOUNT_ONLINE = 5, LOGIN_RESPONSE_UPDATED = 6,
+            LOGIN_RESPONSE_ACCOUNT_ONLINE = 5,
+            LOGIN_RESPONSE_UPDATED = 6,
             LOGIN_RESPONSE_WORLD_FULL = 7,
             LOGIN_RESPONSE_LOGIN_SERVER_OFFLINE = 8,
             LOGIN_RESPONSE_LOGIN_LIMIT_EXCEEDED = 9,
@@ -75,36 +78,62 @@ public final class Misc {
             LOGIN_RESPONSE_MEMBERS_ONLY_AREA = 17;
 
     /** The equipment slots. */
-    public static final int EQUIPMENT_SLOT_HEAD = 0, EQUIPMENT_SLOT_CAPE = 1,
-            EQUIPMENT_SLOT_AMULET = 2, EQUIPMENT_SLOT_WEAPON = 3,
-            EQUIPMENT_SLOT_CHEST = 4, EQUIPMENT_SLOT_SHIELD = 5,
-            EQUIPMENT_SLOT_LEGS = 7, EQUIPMENT_SLOT_HANDS = 9,
-            EQUIPMENT_SLOT_FEET = 10, EQUIPMENT_SLOT_RING = 12,
+    public static final int EQUIPMENT_SLOT_HEAD = 0,
+            EQUIPMENT_SLOT_CAPE = 1,
+            EQUIPMENT_SLOT_AMULET = 2,
+            EQUIPMENT_SLOT_WEAPON = 3,
+            EQUIPMENT_SLOT_CHEST = 4,
+            EQUIPMENT_SLOT_SHIELD = 5,
+            EQUIPMENT_SLOT_LEGS = 7,
+            EQUIPMENT_SLOT_HANDS = 9,
+            EQUIPMENT_SLOT_FEET = 10,
+            EQUIPMENT_SLOT_RING = 12,
             EQUIPMENT_SLOT_ARROWS = 13;
 
     /** The appearance slots. */
     public static final int APPEARANCE_SLOT_CHEST = 0,
-            APPEARANCE_SLOT_ARMS = 1, APPEARANCE_SLOT_LEGS = 2,
-            APPEARANCE_SLOT_HEAD = 3, APPEARANCE_SLOT_HANDS = 4,
-            APPEARANCE_SLOT_FEET = 5, APPEARANCE_SLOT_BEARD = 6;
+            APPEARANCE_SLOT_ARMS = 1,
+            APPEARANCE_SLOT_LEGS = 2,
+            APPEARANCE_SLOT_HEAD = 3,
+            APPEARANCE_SLOT_HANDS = 4,
+            APPEARANCE_SLOT_FEET = 5,
+            APPEARANCE_SLOT_BEARD = 6;
 
     /** The skill id's. */
-    public static final int ATTACK = 0, DEFENCE = 1, STRENGTH = 2,
-            HITPOINTS = 3, RANGED = 4, PRAYER = 5, MAGIC = 6, COOKING = 7,
-            WOODCUTTING = 8, FLETCHING = 9, FISHING = 10, FIREMAKING = 11,
-            CRAFTING = 12, SMITHING = 13, MINING = 14, HERBLORE = 15,
-            AGILITY = 16, THIEVING = 17, SLAYER = 18, FARMING = 19,
+    public static final int ATTACK = 0,
+            DEFENCE = 1, STRENGTH = 2,
+            HITPOINTS = 3, RANGED = 4,
+            PRAYER = 5, MAGIC = 6,
+            COOKING = 7,
+            WOODCUTTING = 8,
+            FLETCHING = 9,
+            FISHING = 10,
+            FIREMAKING = 11,
+            CRAFTING = 12,
+            SMITHING = 13, MINING = 14,
+            HERBLORE = 15,
+            AGILITY = 16,
+            THIEVING = 17, SLAYER = 18,
+            FARMING = 19,
             RUNECRAFTING = 20;
 
     /** The bonus id's. */
-    public static final int ATTACK_STAB = 0, ATTACK_SLASH = 1,
-            ATTACK_CRUSH = 2, ATTACK_MAGIC = 3, ATTACK_RANGE = 4,
-            DEFENCE_STAB = 5, DEFENCE_SLASH = 6, DEFENCE_CRUSH = 7,
-            DEFENCE_MAGIC = 8, DEFENCE_RANGE = 9, BONUS_STRENGTH = 10,
+    public static final int ATTACK_STAB = 0,
+            ATTACK_SLASH = 1,
+            ATTACK_CRUSH = 2,
+            ATTACK_MAGIC = 3,
+            ATTACK_RANGE = 4,
+            DEFENCE_STAB = 5,
+            DEFENCE_SLASH = 6,
+            DEFENCE_CRUSH = 7,
+            DEFENCE_MAGIC = 8,
+            DEFENCE_RANGE = 9,
+            BONUS_STRENGTH = 10,
             BONUS_PRAYER = 11;
 
     /** The gender id's. */
-    public static final int GENDER_MALE = 0, GENDER_FEMALE = 1;
+    public static final int GENDER_MALE = 0,
+            GENDER_FEMALE = 1;
 
     /** Items that are not allowed to be traded. */
     public static final int[] ITEM_UNTRADEABLE = {};
@@ -122,19 +151,64 @@ public final class Misc {
     private static Set<Integer> is2H = new HashSet<>();
 
     /** The bonus names. */
-    public static final String[] BONUS_NAMES = { "Stab", "Slash", "Crush", "Magic", "Range", "Stab", "Slash", "Crush", "Magic", "Range", "Strength", "Prayer" };
+    public static final String[] BONUS_NAMES = {
+        "Stab", "Slash", "Crush",
+        "Magic", "Range", "Stab",
+        "Slash", "Crush", "Magic",
+        "Range", "Strength", "Prayer" };
 
     /** The character table. */
-    private static char xlateTable[] = { ' ', 'e', 't', 'a', 'o', 'i', 'h', 'n', 's', 'r', 'd', 'l', 'u', 'm', 'w', 'c', 'y', 'f', 'g', 'p', 'b', 'v', 'k', 'x', 'j', 'q', 'z', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', ' ', '!', '?', '.', ',', ':', ';', '(', ')', '-', '&', '*', '\\', '\'', '@', '#', '+', '=', '\243', '$', '%', '"', '[', ']' };
+    private static char xlateTable[] = {
+        ' ', 'e', 't', 'a', 'o', 'i',
+        'h', 'n', 's', 'r', 'd', 'l',
+        'u', 'm', 'w', 'c', 'y', 'f',
+        'g', 'p', 'b', 'v', 'k', 'x',
+        'j', 'q', 'z', '0', '1', '2',
+        '3', '4', '5', '6', '7', '8',
+        '9', ' ', '!', '?', '.', ',',
+        ':', ';', '(', ')', '-', '&',
+        '*', '\\', '\'', '@', '#', '+',
+        '=', '\243', '$', '%', '"',
+        '[', ']' };
 
     /** The decode buffer. */
     private static char decodeBuf[] = new char[4096];
 
     /** A table of valid characters. */
-    public static final char VALID_CHARS[] = { '_', 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '!', '@', '#', '$', '%', '^', '&', '*', '(', ')', '-', '+', '=', ':', ';', '.', '>', '<', ',', '"', '[', ']', '|', '?', '/', '`' };
+    public static final char VALID_CHARS[] = {
+        '_', 'a', 'b', 'c', 'd', 'e',
+        'f', 'g', 'h', 'i', 'j', 'k',
+        'l', 'm', 'n', 'o', 'p', 'q',
+        'r', 's', 't', 'u', 'v', 'w',
+        'x', 'y', 'z', '0', '1', '2',
+        '3', '4', '5', '6', '7', '8',
+        '9', '!', '@', '#', '$', '%',
+        '^', '&', '*', '(', ')', '-',
+        '+', '=', ':', ';', '.', '>',
+        '<', ',', '"', '[', ']', '|',
+        '?', '/', '`' };
 
     /** To prevent instantiation. */
     private Misc() {
+    }
+
+    /**
+     * Appends the indefinite article of a 'thing'.
+     * 
+     * @param thing
+     *        the thing.
+     * @return the indefinite article.
+     */
+    public static String appendIndefiniteArticle(String thing) {
+        char first = thing.toLowerCase().charAt(0);
+        boolean vowel = first == 'a'
+                || first == 'e'
+                || first == 'i'
+                || first == 'o'
+                || first == 'u';
+        return vowel ? "an".concat(" "
+                + thing) : "a".concat(" "
+                + thing);
     }
 
     /**
@@ -186,7 +260,8 @@ public final class Misc {
      */
     public void classMethod(String methodName, Class<?> classWithMethod) {
         for (Method m : classWithMethod.getMethods()) {
-            if (m == null || !Modifier.isStatic(m.getModifiers())) {
+            if (m == null
+                    || !Modifier.isStatic(m.getModifiers())) {
                 continue;
             }
 
@@ -245,7 +320,8 @@ public final class Misc {
                     Class<?> file = Class.forName(path);
 
                     if (!(file.getSuperclass() == SkillEvent.class)) {
-                        throw new IllegalStateException("Illegal skill! Not an instance of SkillEvent: " + path);
+                        throw new IllegalStateException("Illegal skill! Not an instance of SkillEvent: "
+                                + path);
                     }
 
                     SkillEvent.getSkillEvents().add((SkillEvent) file.newInstance());
@@ -254,7 +330,8 @@ public final class Misc {
                     Class<?> file = Class.forName(path);
 
                     if (!(file.getSuperclass() == PacketDecoder.class)) {
-                        throw new IllegalStateException("Illegal packet decoder! Not an instance of PacketDecoder: " + path);
+                        throw new IllegalStateException("Illegal packet decoder! Not an instance of PacketDecoder: "
+                                + path);
                     }
 
                     PacketDecoder.addDecoder((PacketDecoder) file.newInstance());
@@ -263,7 +340,8 @@ public final class Misc {
                     Object file = Class.forName(path);
 
                     if (!(file instanceof Minigame)) {
-                        throw new IllegalStateException("Illegal minigame! Not an instance of Minigame: " + path);
+                        throw new IllegalStateException("Illegal minigame! Not an instance of Minigame: "
+                                + path);
                     }
 
                     Minigame minigame = (Minigame) file;
@@ -296,9 +374,11 @@ public final class Misc {
             Position position = builder.fromJson(reader.get("position").getAsJsonObject(), Position.class);
             Coordinator coordinator = builder.fromJson(reader.get("walking-policy").getAsJsonObject(), Coordinator.class);
 
-            if (coordinator.isCoordinate() && coordinator.getRadius() == 0) {
+            if (coordinator.isCoordinate()
+                    && coordinator.getRadius() == 0) {
                 throw new IllegalStateException("Radius must be higher than 0 when coordinator is active!");
-            } else if (!coordinator.isCoordinate() && coordinator.getRadius() > 0) {
+            } else if (!coordinator.isCoordinate()
+                    && coordinator.getRadius() > 0) {
                 throw new IllegalStateException("Radius must be 0 when coordinator is inactive!");
             }
 
@@ -328,7 +408,8 @@ public final class Misc {
 
             for (int e : NO_SHOP_ITEMS) {
                 if (shop.getShopContainer().contains(e)) {
-                    throw new IllegalStateException("Invalid shop item: " + ItemDefinition.getDefinitions()[e].getItemName());
+                    throw new IllegalStateException("Invalid shop item: "
+                            + ItemDefinition.getDefinitions()[e].getItemName());
                 }
             }
 
@@ -428,10 +509,15 @@ public final class Misc {
      * @return the newly formatted price.
      */
     public static String formatPrice(int price) {
-        if (price >= 1000 && price < 1000000) {
-            return " (" + (price / 1000) + "K)";
+        if (price >= 1000
+                && price < 1000000) {
+            return " ("
+                    + (price / 1000)
+                    + "K)";
         } else if (price >= 1000000) {
-            return " (" + (price / 1000000) + " million)";
+            return " ("
+                    + (price / 1000000)
+                    + " million)";
         }
 
         return "";
@@ -458,7 +544,15 @@ public final class Misc {
             Rotation face = Rotation.valueOf(reader.get("rotation").getAsString());
 
             if (face == null) {
-                throw new IllegalStateException("Invalid object rotation! for [" + id + ":" + x + ":" + y + ":" + z + "]");
+                throw new IllegalStateException("Invalid object rotation! for ["
+                        + id
+                        + ":"
+                        + x
+                        + ":"
+                        + y
+                        + ":"
+                        + z
+                        + "]");
             }
 
             int type = reader.get("type").getAsInt();
@@ -500,10 +594,13 @@ public final class Misc {
         for (int i = 0; i < array.size(); i++) {
             JsonObject reader = (JsonObject) array.get(i);
 
-            final int id = reader.get("id").getAsInt();
+            final int id[] = builder.fromJson(reader.get("id"), int[].class);
             final NpcDrop[] dynamic = builder.fromJson(reader.get("dynamic"), NpcDrop[].class);
             final NpcDrop[] rare = builder.fromJson(reader.get("rare"), NpcDrop[].class);
-            NpcDropTable.getAllDrops().put(id, new NpcDropTable(id, dynamic, rare));
+
+            for (int e : id) {
+                NpcDropTable.getAllDrops().put(e, new NpcDropTable(id, dynamic, rare));
+            }
         }
     }
 
@@ -623,7 +720,8 @@ public final class Misc {
         int value = 0;
         int n = 1000;
         for (int i = 0; i < data.length; i++) {
-            int num = (data[i] & 0xFF) * n;
+            int num = (data[i] & 0xFF)
+                    * n;
             value += num;
             if (n > 1) {
                 n = n / 1000;
@@ -689,7 +787,9 @@ public final class Misc {
     public static String formatInputString(String string) {
         String result = "";
         for (String part : string.toLowerCase().split(" ")) {
-            result += part.substring(0, 1).toUpperCase() + part.substring(1) + " ";
+            result += part.substring(0, 1).toUpperCase()
+                    + part.substring(1)
+                    + " ";
         }
         return result.trim();
     }
@@ -703,14 +803,17 @@ public final class Misc {
      */
     public static long nameToLong(String s) {
         long l = 0L;
-        for (int i = 0; i < s.length() && i < 12; i++) {
+        for (int i = 0; i < s.length()
+                && i < 12; i++) {
             char c = s.charAt(i);
             l *= 37L;
             if (c >= 'A' && c <= 'Z')
                 l += (1 + c) - 65;
-            else if (c >= 'a' && c <= 'z')
+            else if (c >= 'a'
+                    && c <= 'z')
                 l += (1 + c) - 97;
-            else if (c >= '0' && c <= '9')
+            else if (c >= '0'
+                    && c <= '9')
                 l += (27 + c) - 48;
         }
         while (l % 37L == 0L && l != 0L)
@@ -730,7 +833,9 @@ public final class Misc {
      * @return the delta coordinates contained within a position.
      */
     public static Position delta(Position a, Position b) {
-        return new Position(b.getX() - a.getX(), b.getY() - a.getY());
+        return new Position(b.getX()
+                - a.getX(), b.getY()
+                - a.getY());
     }
 
     /**
@@ -773,31 +878,31 @@ public final class Misc {
     /** Lengths for the various packets. */
     public static final int packetLengths[] = { //
     0, 0, 0, 1, -1, 0, 0, 0, 0, 0, // 0
-    0, 0, 0, 0, 8, 0, 6, 2, 2, 0, // 10
-    0, 2, 0, 6, 0, 12, 0, 0, 0, 0, // 20
-    0, 0, 0, 0, 0, 8, 4, 0, 0, 2, // 30
-    2, 6, 0, 6, 0, -1, 0, 0, 0, 0, // 40
-    0, 0, 0, 12, 0, 0, 0, 0, 8, 0, // 50
-    0, 8, 0, 0, 0, 0, 0, 0, 0, 0, // 60
-    6, 0, 2, 2, 8, 6, 0, -1, 0, 6, // 70
-    0, 0, 0, 0, 0, 1, 4, 6, 0, 0, // 80
-    0, 0, 0, 0, 0, 3, 0, 0, -1, 0, // 90
-    0, 13, 0, -1, 0, 0, 0, 0, 0, 0,// 100
-    0, 0, 0, 0, 0, 0, 0, 6, 0, 0, // 110
-    1, 0, 6, 0, 0, 0, -1, 0, 2, 6, // 120
-    0, 4, 6, 8, 0, 6, 0, 0, 0, 2, // 130
-    0, 0, 0, 0, 0, 6, 0, 0, 0, 0, // 140
-    0, 0, 1, 2, 0, 2, 6, 0, 0, 0, // 150
-    0, 0, 0, 0, -1, -1, 0, 0, 0, 0,// 160
-    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, // 170
-    0, 8, 0, 3, 0, 2, 0, 0, 8, 1, // 180
-    0, 0, 12, 0, 0, 0, 0, 0, 0, 0, // 190
-    2, 0, 0, 0, 0, 0, 0, 0, 4, 0, // 200
-    4, 0, 0, 0, 7, 8, 0, 0, 10, 0, // 210
-    0, 0, 0, 0, 0, 0, -1, 0, 6, 0, // 220
-    1, 0, 0, 0, 6, 0, 6, 8, 1, 0, // 230
-    0, 4, 0, 0, 0, 0, -1, 0, -1, 4,// 240
-    0, 0, 6, 6, 0, 0, 0 // 250
+        0, 0, 0, 0, 8, 0, 6, 2, 2, 0, // 10
+        0, 2, 0, 6, 0, 12, 0, 0, 0, 0, // 20
+        0, 0, 0, 0, 0, 8, 4, 0, 0, 2, // 30
+        2, 6, 0, 6, 0, -1, 0, 0, 0, 0, // 40
+        0, 0, 0, 12, 0, 0, 0, 0, 8, 0, // 50
+        0, 8, 0, 0, 0, 0, 0, 0, 0, 0, // 60
+        6, 0, 2, 2, 8, 6, 0, -1, 0, 6, // 70
+        0, 0, 0, 0, 0, 1, 4, 6, 0, 0, // 80
+        0, 0, 0, 0, 0, 3, 0, 0, -1, 0, // 90
+        0, 13, 0, -1, 0, 0, 0, 0, 0, 0,// 100
+        0, 0, 0, 0, 0, 0, 0, 6, 0, 0, // 110
+        1, 0, 6, 0, 0, 0, -1, 0, 2, 6, // 120
+        0, 4, 6, 8, 0, 6, 0, 0, 0, 2, // 130
+        0, 0, 0, 0, 0, 6, 0, 0, 0, 0, // 140
+        0, 0, 1, 2, 0, 2, 6, 0, 0, 0, // 150
+        0, 0, 0, 0, -1, -1, 0, 0, 0, 0,// 160
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, // 170
+        0, 8, 0, 3, 0, 2, 0, 0, 8, 1, // 180
+        0, 0, 12, 0, 0, 0, 0, 0, 0, 0, // 190
+        2, 0, 0, 0, 0, 0, 0, 0, 4, 0, // 200
+        4, 0, 0, 0, 7, 8, 0, 0, 10, 0, // 210
+        0, 0, 0, 0, 0, 0, -1, 0, 6, 0, // 220
+        1, 0, 0, 0, 6, 0, 6, 8, 1, 0, // 230
+        0, 4, 0, 0, 0, 0, -1, 0, -1, 4,// 240
+        0, 0, 6, 6, 0, 0, 0 // 250
     };
 
     /**
@@ -818,7 +923,8 @@ public final class Misc {
          *        the head start value.
          */
         public Stopwatch headStart(long startAt) {
-            time = System.currentTimeMillis() - startAt;
+            time = System.currentTimeMillis()
+                    - startAt;
             return this;
         }
 
@@ -840,7 +946,8 @@ public final class Misc {
          * @return the elapsed time (in milliseconds).
          */
         public long elapsed() {
-            return System.currentTimeMillis() - time;
+            return System.currentTimeMillis()
+                    - time;
         }
     }
 
@@ -897,7 +1004,8 @@ public final class Misc {
          * @return the random value.
          */
         public int calculate() {
-            int difference = end - start;
+            int difference = end
+                    - start;
 
             return (start + random(difference));
         }
@@ -1024,7 +1132,8 @@ public final class Misc {
      * @see {@link #random(int)}.
      */
     public static int inclusiveRandom(int min, int max) {
-        return random((max - min) + 1) + min;
+        return random((max - min) + 1)
+                + min;
     }
 
     /**
@@ -1077,7 +1186,8 @@ public final class Misc {
             throw new IllegalArgumentException("range <= 0");
         }
 
-        return RANDOM.nextFloat() * range;
+        return RANDOM.nextFloat()
+                * range;
     }
 
     /**

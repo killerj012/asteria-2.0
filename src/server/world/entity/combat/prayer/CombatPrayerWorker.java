@@ -4,7 +4,6 @@ import server.core.worker.Worker;
 import server.util.Misc;
 import server.world.entity.player.Player;
 import server.world.entity.player.skill.SkillManager;
-import server.world.entity.player.skill.SkillManager.SkillConstant;
 
 /**
  * A {@link Worker} implementation that handles prayer draining.
@@ -45,7 +44,7 @@ public class CombatPrayerWorker extends Worker {
 
                 if (prayerTicks[i] >= calculateDrainRate(CombatPrayer.getPrayer(i))) {
                     player.getSkills()[Misc.PRAYER].decreaseLevel(1);
-                    SkillManager.refresh(player, SkillConstant.PRAYER);
+                    SkillManager.refresh(player, Misc.PRAYER);
                     prayerTicks[i] = 0;
                 }
             }
@@ -77,6 +76,7 @@ public class CombatPrayerWorker extends Worker {
      * @return the amount of ticks needed to drain 1 level of prayer.
      */
     private int calculateDrainRate(CombatPrayer prayer) {
-        return (player.getPlayerBonus()[Misc.BONUS_PRAYER] / 3) + prayer.getDrainRate();
+        return (player.getPlayerBonus()[Misc.BONUS_PRAYER] / 3)
+                + prayer.getDrainRate();
     }
 }

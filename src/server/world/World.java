@@ -8,15 +8,14 @@ import server.core.net.Session.Stage;
 import server.core.task.SequentialTask;
 import server.core.task.impl.PlayerParallelUpdateTask;
 import server.util.Misc;
-import server.util.Misc.Stopwatch;
 import server.world.entity.EntityContainer;
 import server.world.entity.npc.Npc;
+import server.world.entity.npc.NpcDropTable;
 import server.world.entity.player.Player;
 import server.world.entity.player.content.AssignSkillRequirement;
 import server.world.entity.player.content.AssignWeaponAnimation;
 import server.world.entity.player.content.AssignWeaponInterface;
 import server.world.entity.player.file.WritePlayerFileEvent;
-import server.world.entity.player.minigame.MinigameFactory;
 import server.world.item.ground.RegisterableGroundItem;
 import server.world.object.RegisterableWorldObject;
 
@@ -52,7 +51,7 @@ public final class World {
         try {
             Misc.loadNpcDrops();
             Misc.loadItemDefinitions();
-            // NpcDropTable.getAllDrops().get(1615).calculateDropsDebug();
+            NpcDropTable.getAllDrops().get(1615).calculateDropsDebug();
             Misc.codeFiles();
             Misc.codeHosts();
             Misc.codeEquipment();
@@ -64,7 +63,6 @@ public final class World {
             AssignWeaponAnimation.class.newInstance();
             AssignWeaponInterface.class.newInstance();
             AssignSkillRequirement.class.newInstance();
-            MinigameFactory.fireDynamicTasks();
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -74,8 +72,6 @@ public final class World {
      * Ticks logic for the actual game - general logic sequentially and updating
      * logic in parallel.
      */
-    private static Stopwatch w = new Stopwatch();
-
     public static void tick() {
         try {
 
@@ -111,7 +107,6 @@ public final class World {
 
             phaser.bulkRegister(players.getSize());
 
-            // w.reset();
             for (Player player : players) {
                 if (player == null) {
                     continue;
@@ -121,7 +116,6 @@ public final class World {
             }
 
             phaser.arriveAndAwaitAdvance();
-            // System.out.println("updating: " + w.elapsed());
 
             /** Reset all entities and prepare for next cycle. */
             for (Player player : players) {
@@ -226,7 +220,8 @@ public final class World {
                 synchronized (player) {
                     WritePlayerFileEvent save = new WritePlayerFileEvent(player);
                     save.run();
-                    logger.info(player + " game successfully saved!");
+                    logger.info(player
+                            + " game successfully saved!");
                 }
             }
         });
