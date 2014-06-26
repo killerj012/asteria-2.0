@@ -92,7 +92,9 @@ public class PrivateMessage {
          * list.
          */
         if (player.getFriends().contains(name)) {
-            player.getPacketBuilder().sendMessage("" + Misc.longToName(name) + " is already on your friends list.");
+            player.getPacketBuilder().sendMessage(""
+                    + Misc.longToName(name)
+                    + " is already on your friends list.");
             return;
         }
 
@@ -123,7 +125,9 @@ public class PrivateMessage {
          * list.
          */
         if (player.getIgnores().contains(name)) {
-            player.getPacketBuilder().sendMessage("" + Misc.longToName(name) + " is already on your ignores list.");
+            player.getPacketBuilder().sendMessage(""
+                    + Misc.longToName(name)
+                    + " is already on your ignores list.");
             return;
         }
 
@@ -141,7 +145,9 @@ public class PrivateMessage {
         if (player.getFriends().contains(name)) {
             player.getFriends().remove(name);
         } else {
-            player.getPacketBuilder().sendMessage("" + Misc.longToName(name) + " is not even on your friends list...");
+            player.getPacketBuilder().sendMessage(""
+                    + Misc.longToName(name)
+                    + " is not even on your friends list...");
         }
     }
 
@@ -155,7 +161,9 @@ public class PrivateMessage {
         if (player.getIgnores().contains(name)) {
             player.getIgnores().remove(name);
         } else {
-            player.getPacketBuilder().sendMessage("" + Misc.longToName(name) + " is not even on your ignores list...");
+            player.getPacketBuilder().sendMessage(""
+                    + Misc.longToName(name)
+                    + " is not even on your ignores list...");
         }
     }
 
@@ -175,7 +183,7 @@ public class PrivateMessage {
         Player send = World.getPlayer(sendingTo);
 
         if (send != null) {
-            send.getPacketBuilder().sendPrivateMessage(sendingFrom.getUsernameHash(), sendingFrom.getStaffRights(), message, messageSize);
+            send.getPacketBuilder().sendPrivateMessage(sendingFrom.getUsernameHash(), sendingFrom.getRights().getProtocolValue(), message, messageSize);
         }
     }
 

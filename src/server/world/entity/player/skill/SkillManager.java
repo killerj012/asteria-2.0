@@ -343,6 +343,7 @@ public final class SkillManager {
 
             if (i == 3) {
                 player.getSkills()[i].setLevel(10);
+                player.getSkills()[i].setRealLevel(10);
                 player.getSkills()[i].setExperience(1300);
             }
         }

@@ -42,17 +42,20 @@ public class WritePlayerFileEvent extends PlayerFileEvent {
     @Override
     public void run() {
         try {
-            Path path = Paths.get(DIR, getPlayer().getUsername() + ".json");
+            Path path = Paths.get(DIR, getPlayer().getUsername()
+                    + ".json");
             File file = path.toFile();
 
             if (!file.exists()) {
                 if (!file.createNewFile()) {
-                    logger.severe("Unable to create save file for player: " + getPlayer());
+                    logger.severe("Unable to create save file for player: "
+                            + getPlayer());
                     return;
                 }
             }
 
-            if (file.exists() && !getPlayer().isIncorrectPassword()) {
+            if (file.exists()
+                    && !getPlayer().isIncorrectPassword()) {
                 final Gson builder = new GsonBuilder().setPrettyPrinting().create();
                 final JsonObject object = new JsonObject();
 
@@ -61,7 +64,7 @@ public class WritePlayerFileEvent extends PlayerFileEvent {
                 object.addProperty("x", new Integer(getPlayer().getPosition().getX()));
                 object.addProperty("y", new Integer(getPlayer().getPosition().getY()));
                 object.addProperty("z", new Integer(getPlayer().getPosition().getZ()));
-                object.addProperty("staff-rights", new Integer(getPlayer().getStaffRights()));
+                object.addProperty("staff-rights", getPlayer().getRights().name());
                 object.addProperty("gender", new Integer(getPlayer().getGender()));
                 object.add("appearance", builder.toJsonTree(getPlayer().getAppearance()));
                 object.add("colors", builder.toJsonTree(getPlayer().getColors()));
@@ -91,7 +94,8 @@ public class WritePlayerFileEvent extends PlayerFileEvent {
             }
         } catch (Exception e) {
             e.printStackTrace();
-            logger.info("Error while writing data for " + getPlayer());
+            logger.info("Error while writing data for "
+                    + getPlayer());
         }
     }
 

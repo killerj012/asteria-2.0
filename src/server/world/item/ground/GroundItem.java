@@ -15,11 +15,6 @@ import server.world.map.Position;
  */
 public class GroundItem {
 
-    // XXX: afaik I've fixed all of the issues with this, its still a work in
-    // progress though so I'm wondering if there were any bugs I missed. Design
-    // is a ton better than it was in my previous release, and written in less
-    // code as well :)
-
     /** The actual {@link Item} on the ground. */
     private Item item;
 
@@ -132,7 +127,8 @@ public class GroundItem {
                 }
 
                 for (Player p : World.getPlayers()) {
-                    if (p == null || p.getUsername().equals(player.getUsername())) {
+                    if (p == null
+                            || p.getUsername().equals(player.getUsername())) {
                         continue;
                     }
 
@@ -175,7 +171,8 @@ public class GroundItem {
     public boolean equals(Object obj) {
         if (obj instanceof GroundItem) {
             GroundItem w = (GroundItem) obj;
-            if (w.getItem().equals(item) && w.getPosition().equals(position)) {
+            if (w.getItem().equals(item)
+                    && w.getPosition().equals(position)) {
                 return true;
             }
         }

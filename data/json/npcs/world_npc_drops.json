@@ -8,19 +8,19 @@
         "dynamic": [
         	{
         		"id": 526,
-        		"minimum: 1,
+        		"minimum": 1,
         		"maximum": 1,
         		"bet": 1.0
         	},
         	{
         	    "id": 995,
-        		"minimum: 50,
+        		"minimum": 50,
         		"maximum": 500,
         		"bet": 0.75
         	},
         	{
         		"id": 1205,
-        		"minimum: 1,
+        		"minimum": 1,
         		"maximum": 1,
         		"bet": 0.45
         	}
@@ -34,13 +34,13 @@
         "dynamic": [
         	{
         		"id": 592,
-        		"minimum: 1,
+        		"minimum": 1,
         		"maximum": 1,
         		"bet": 1.0
         	},
         	{
         	    "id": 995,
-        		"minimum: 1000,
+        		"minimum": 1000,
         		"maximum": 100000,
         		"bet": 0.15
         	}
@@ -48,7 +48,7 @@
         "rare": [
        		{
         		"id": 4151,
-        		"minimum: 1,
+        		"minimum": 1,
         		"maximum": 1,
         		"bet": 0.001
         	}

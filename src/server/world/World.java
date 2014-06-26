@@ -10,7 +10,6 @@ import server.core.task.impl.PlayerParallelUpdateTask;
 import server.util.Misc;
 import server.world.entity.EntityContainer;
 import server.world.entity.npc.Npc;
-import server.world.entity.npc.NpcDropTable;
 import server.world.entity.player.Player;
 import server.world.entity.player.content.AssignSkillRequirement;
 import server.world.entity.player.content.AssignWeaponAnimation;
@@ -51,7 +50,7 @@ public final class World {
         try {
             Misc.loadNpcDrops();
             Misc.loadItemDefinitions();
-            NpcDropTable.getAllDrops().get(1615).calculateDropsDebug();
+            // NpcDropTable.getAllDrops().get(1615).calculateDropsDebug();
             Misc.codeFiles();
             Misc.codeHosts();
             Misc.codeEquipment();

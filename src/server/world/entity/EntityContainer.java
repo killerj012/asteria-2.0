@@ -1,6 +1,5 @@
 package server.world.entity;
 
-import java.util.Collection;
 import java.util.Iterator;
 
 import server.world.WorldFullException;
@@ -32,26 +31,6 @@ public class EntityContainer<T extends Entity> implements Iterable<T> {
     public EntityContainer(int capacity) {
         this.backingArray = (T[]) new Entity[capacity];
         this.size = 0;
-    }
-
-    /**
-     * Create a new {@link EntityContainer} with a collection of entities
-     * already added. The capacity of the container depends on the size of the
-     * given collection.
-     * 
-     * @param collection
-     *        the collection with the entities to add to this container.
-     */
-    public EntityContainer(Collection<T> collection) {
-        this(collection.size());
-
-        /** So we don't waste time looping to find a slot. */
-        int addSlot = 0;
-
-        for (T element : collection) {
-            this.addSlot(addSlot, element);
-            addSlot++;
-        }
     }
 
     /**
@@ -93,7 +72,8 @@ public class EntityContainer<T extends Entity> implements Iterable<T> {
         }
 
         /** Throw an exception if the slot is out of the range. */
-        if (slot > backingArray.length || slot < 1) {
+        if (slot > backingArray.length
+                || slot < 1) {
             throw new IllegalArgumentException("Invalid entry slot requested!");
         }
 
@@ -131,7 +111,8 @@ public class EntityContainer<T extends Entity> implements Iterable<T> {
     public void removeSlot(int slot) {
 
         /** Throw an exception if the slot is out of the range. */
-        if (slot > backingArray.length || slot < 1) {
+        if (slot > backingArray.length
+                || slot < 1) {
             throw new IllegalArgumentException("Invalid remove slot requested!");
         }
 
@@ -154,7 +135,8 @@ public class EntityContainer<T extends Entity> implements Iterable<T> {
      * @return true if this container has the entity.
      */
     public boolean contains(T entity) {
-        if (entity.getSlot() > backingArray.length || entity.getSlot() < 1) {
+        if (entity.getSlot() > backingArray.length
+                || entity.getSlot() < 1) {
             return false;
         }
 
@@ -221,7 +203,8 @@ public class EntityContainer<T extends Entity> implements Iterable<T> {
      * @return the amount of free slots left in this container.
      */
     public int getFreeSlotAmount() {
-        return backingArray.length - size;
+        return backingArray.length
+                - size;
     }
 
     @Override

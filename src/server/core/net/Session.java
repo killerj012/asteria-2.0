@@ -19,6 +19,7 @@ import server.world.entity.combat.task.CombatPoisonTask;
 import server.world.entity.combat.task.CombatSkullTask;
 import server.world.entity.combat.task.CombatTeleblockTask;
 import server.world.entity.player.Player;
+import server.world.entity.player.PlayerRights;
 import server.world.entity.player.content.AssignWeaponAnimation;
 import server.world.entity.player.content.AssignWeaponInterface;
 import server.world.entity.player.file.ReadPlayerFileEvent;
@@ -100,7 +101,10 @@ public final class Session {
      * @author blakeman8192
      */
     public enum Stage {
-        CONNECTED, LOGGING_IN, LOGGED_IN, LOGGED_OUT
+        CONNECTED,
+        LOGGING_IN,
+        LOGGED_IN,
+        LOGGED_OUT
     }
 
     /**
@@ -156,9 +160,11 @@ public final class Session {
             HostGateway.exit(host);
 
             if (player != null) {
-                logger.info(player + " has logged out.");
+                logger.info(player
+                        + " has logged out.");
             } else {
-                logger.info(this + " has logged out.");
+                logger.info(this
+                        + " has logged out.");
             }
         } catch (Exception ex) {
             ex.printStackTrace();
@@ -227,7 +233,8 @@ public final class Session {
                 inData.get();
 
                 if (request != 14) {
-                    logger.info("Invalid login request: " + request);
+                    logger.info("Invalid login request: "
+                            + request);
                     disconnect();
                     return;
                 }
@@ -250,15 +257,18 @@ public final class Session {
                 /** Validate the login type. */
                 int loginType = inData.get();
 
-                if (loginType != 16 && loginType != 18) {
-                    logger.info("Invalid login type: " + loginType);
+                if (loginType != 16
+                        && loginType != 18) {
+                    logger.info("Invalid login type: "
+                            + loginType);
                     disconnect();
                     return;
                 }
 
                 /** Ensure that we can read all of the login block. */
                 int blockLength = inData.get() & 0xff;
-                int loginEncryptPacketSize = blockLength - (36 + 1 + 1 + 2);
+                int loginEncryptPacketSize = blockLength
+                        - (36 + 1 + 1 + 2);
 
                 if (loginEncryptPacketSize <= 0) {
                     logger.info("Zero RSA packet size");
@@ -285,7 +295,8 @@ public final class Session {
                 int clientVersion = in.readShort();
 
                 if (clientVersion != 317) {
-                    logger.info("Invalid client version: " + clientVersion);
+                    logger.info("Invalid client version: "
+                            + clientVersion);
                     disconnect();
                     return;
                 }
@@ -321,7 +332,11 @@ public final class Session {
                         long clientHalf = rsaBuffer.getLong();
                         long serverHalf = rsaBuffer.getLong();
 
-                        int[] isaacSeed = { (int) (clientHalf >> 32), (int) clientHalf, (int) (serverHalf >> 32), (int) serverHalf };
+                        int[] isaacSeed = {
+                            (int) (clientHalf >> 32),
+                            (int) clientHalf,
+                            (int) (serverHalf >> 32),
+                            (int) serverHalf };
 
                         decryptor = new ISAACCipher(isaacSeed);
 
@@ -346,7 +361,11 @@ public final class Session {
                         long clientHalf = in.getBuffer().getLong();
                         long serverHalf = in.getBuffer().getLong();
 
-                        int[] isaacSeed = { (int) (clientHalf >> 32), (int) clientHalf, (int) (serverHalf >> 32), (int) serverHalf };
+                        int[] isaacSeed = {
+                            (int) (clientHalf >> 32),
+                            (int) clientHalf,
+                            (int) (serverHalf >> 32),
+                            (int) serverHalf };
 
                         decryptor = new ISAACCipher(isaacSeed);
 
@@ -369,7 +388,11 @@ public final class Session {
                     long clientHalf = in.getBuffer().getLong();
                     long serverHalf = in.getBuffer().getLong();
 
-                    int[] isaacSeed = { (int) (clientHalf >> 32), (int) clientHalf, (int) (serverHalf >> 32), (int) serverHalf };
+                    int[] isaacSeed = {
+                        (int) (clientHalf >> 32),
+                        (int) clientHalf,
+                        (int) (serverHalf >> 32),
+                        (int) serverHalf };
 
                     decryptor = new ISAACCipher(isaacSeed);
 
@@ -389,7 +412,8 @@ public final class Session {
                 /** Make sure the account credentials are valid. */
                 boolean invalidCredentials = false;
 
-                if (username.isEmpty() || password.isEmpty()) {
+                if (username.isEmpty()
+                        || password.isEmpty()) {
                     username = "invalid";
                     password = "invalid";
                     invalidCredentials = true;
@@ -425,13 +449,7 @@ public final class Session {
                 /** Load player rights and the client response code. */
                 PacketBuffer.WriteBuffer resp = PacketBuffer.newWriteBuffer(3);
                 resp.writeByte(invalidCredentials ? Misc.LOGIN_RESPONSE_INVALID_CREDENTIALS : response);
-
-                if (player.getStaffRights() == 3) {
-                    resp.writeByte(2);
-                } else {
-                    resp.writeByte(player.getStaffRights());
-                }
-
+                resp.writeByte(player.getRights().getProtocolValue());
                 resp.writeByte(0);
                 send(resp.getBuffer());
 
@@ -465,7 +483,7 @@ public final class Session {
 
                 /** Teleport the player to the saved position. */
                 if (SOCKET_FLOOD) {
-                    if (player.getStaffRights() > 0) {
+                    if (player.getRights().greaterThan(PlayerRights.PLAYER)) {
                         player.move(player.getPosition());
                     } else {
                         int amount = 200;
@@ -555,7 +573,8 @@ public final class Session {
                 /** Load the configs. */
                 player.loadConfigs();
 
-                logger.info(player + " has logged in.");
+                logger.info(player
+                        + " has logged in.");
                 stage = Stage.LOGGED_IN;
                 break;
             case LOGGED_OUT:
@@ -569,7 +588,11 @@ public final class Session {
 
     @Override
     public String toString() {
-        return "SESSION[host= " + host + ", stage= " + stage.name() + "]";
+        return "SESSION[host= "
+                + host
+                + ", stage= "
+                + stage.name()
+                + "]";
     }
 
     /**

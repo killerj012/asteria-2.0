@@ -49,7 +49,7 @@ public class WorldObject {
          * @param faceId
          *        the id of the direction.
          */
-        Rotation(int faceId) {
+        private Rotation(int faceId) {
             this.faceId = faceId;
         }
 
@@ -90,7 +90,10 @@ public class WorldObject {
 
         WorldObject object = (WorldObject) obj;
 
-        return object.id == id && object.position.equals(position) && object.rotation == rotation && object.type == type;
+        return object.id == id
+                && object.position.equals(position)
+                && object.rotation == rotation
+                && object.type == type;
     }
 
     /**

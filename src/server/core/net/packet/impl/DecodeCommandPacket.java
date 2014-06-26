@@ -24,6 +24,7 @@ import server.world.entity.Animation;
 import server.world.entity.Gfx;
 import server.world.entity.npc.Npc;
 import server.world.entity.player.Player;
+import server.world.entity.player.PlayerRights;
 import server.world.entity.player.bot.Bot;
 import server.world.entity.player.bot.BotTask;
 import server.world.entity.player.skill.SkillManager;
@@ -47,7 +48,7 @@ public class DecodeCommandPacket extends PacketDecoder {
         String command = in.readString();
         final String[] cmd = command.toLowerCase().split(" ");
 
-        if (player.getStaffRights() > 1) {
+        if (player.getRights().greaterThan(PlayerRights.ADMINISTRATOR)) {
             if (cmd[0].equals("config")) {
                 int parent = Integer.parseInt(cmd[1]);
                 int child = Integer.parseInt(cmd[2]);
@@ -59,7 +60,8 @@ public class DecodeCommandPacket extends PacketDecoder {
                 for (int i = 0; i < amount; i++) {
 
                     // logs bot in
-                    final Bot bot = new Bot("bot" + i, "pass", player.getPosition().clone()).loginBot();
+                    final Bot bot = new Bot("bot"
+                            + i, "pass", player.getPosition().clone()).loginBot();
 
                     // assigns the bot the walking around task
                     bot.assignTask(BotTask.WALK_AROUND);
@@ -101,7 +103,9 @@ public class DecodeCommandPacket extends PacketDecoder {
                     }
                 });
 
-                final File file = new File("./data/coordinates/" + player.getPosition() + ".png");
+                final File file = new File("./data/coordinates/"
+                        + player.getPosition()
+                        + ".png");
                 TaskFactory.getFactory().submit(new Worker(2, false, WorkRate.APPROXIMATE_SECOND) {
                     @Override
                     public void fire() {
@@ -122,7 +126,9 @@ public class DecodeCommandPacket extends PacketDecoder {
                     }
                 }.attach(player));
 
-                player.getPacketBuilder().sendMessage("Created picture [" + file.getPath() + "]");
+                player.getPacketBuilder().sendMessage("Created picture ["
+                        + file.getPath()
+                        + "]");
             } else if (cmd[0].equals("npc")) {
                 int npc = Integer.parseInt(cmd[1]);
 
@@ -145,7 +151,8 @@ public class DecodeCommandPacket extends PacketDecoder {
                 int bankCount = 0;
                 boolean addedToBank = false;
                 for (ItemDefinition i : ItemDefinition.getDefinitions()) {
-                    if (i == null || i.isNoted()) {
+                    if (i == null
+                            || i.isNoted()) {
                         continue;
                     }
 
@@ -162,13 +169,20 @@ public class DecodeCommandPacket extends PacketDecoder {
                 }
 
                 if (count == 0) {
-                    player.getPacketBuilder().sendMessage("Item [" + item + "] not found!");
+                    player.getPacketBuilder().sendMessage("Item ["
+                            + item
+                            + "] not found!");
                 } else {
-                    player.getPacketBuilder().sendMessage("Item [" + item + "] found on " + count + " occurances.");
+                    player.getPacketBuilder().sendMessage("Item ["
+                            + item
+                            + "] found on "
+                            + count
+                            + " occurances.");
                 }
 
                 if (addedToBank) {
-                    player.getPacketBuilder().sendMessage(bankCount + " items were banked due to lack of inventory space!");
+                    player.getPacketBuilder().sendMessage(bankCount
+                            + " items were banked due to lack of inventory space!");
                 }
             } else if (cmd[0].equals("i")) {
                 int x = Integer.parseInt(cmd[1]);
@@ -179,7 +193,8 @@ public class DecodeCommandPacket extends PacketDecoder {
                 int delay = Integer.parseInt(cmd[2]);
                 player.getPacketBuilder().sendSound(x, 0, delay);
             } else if (cmd[0].equals("mypos")) {
-                player.getPacketBuilder().sendMessage("You are at: " + player.getPosition());
+                player.getPacketBuilder().sendMessage("You are at: "
+                        + player.getPosition());
             } else if (cmd[0].equals("pickup")) {
                 player.getInventory().addItem(new Item(Integer.parseInt(cmd[1]), Integer.parseInt(cmd[2])));
             } else if (cmd[0].equals("empty")) {
@@ -194,7 +209,9 @@ public class DecodeCommandPacket extends PacketDecoder {
                 player.animation(new Animation(emote));
             } else if (cmd[0].equals("players")) {
                 int size = World.getPlayers().getSize();
-                player.getPacketBuilder().sendMessage(size == 1 ? "There is currently 1 player online!" : "There are currently " + size + " players online!");
+                player.getPacketBuilder().sendMessage(size == 1 ? "There is currently 1 player online!" : "There are currently "
+                        + size
+                        + " players online!");
             } else if (cmd[0].equals("gfx")) {
                 int gfx = Integer.parseInt(cmd[1]);
                 player.gfx(new Gfx(gfx));

@@ -8,10 +8,7 @@ import java.util.Comparator;
  * 
  * @author lare96
  */
-public class Item implements Comparator<Item> {
-
-    /** The item instance used to set the comparator. */
-    public static final Item COMPARATOR = new Item(0, 0);
+public class Item {
 
     /** The id of the item. */
     private int id;
@@ -48,7 +45,8 @@ public class Item implements Comparator<Item> {
         if (obj instanceof Item) {
             Item item = (Item) obj;
 
-            if (id == item.id && amount == item.amount) {
+            if (id == item.id
+                    && amount == item.amount) {
                 return true;
             }
         }
@@ -58,7 +56,13 @@ public class Item implements Comparator<Item> {
     @Override
     public String toString() {
         String name = getDefinition() == null ? "null" : getDefinition().getItemName();
-        return "ITEM[item= " + id + ", amount= " + amount + ", name= " + name + "]";
+        return "ITEM[item= "
+                + id
+                + ", amount= "
+                + amount
+                + ", name= "
+                + name
+                + "]";
     }
 
     /**
@@ -152,17 +156,49 @@ public class Item implements Comparator<Item> {
         return ItemDefinition.getDefinitions()[id];
     }
 
-    @Override
-    public int compare(Item o1, Item o2) {
-        if (o1 == null || o2 == null) {
-            return -1;
-        }
+    /**
+     * A comparator that will compare a set of items by general store price.
+     * 
+     * @author lare96
+     */
+    public static class NormalPriceItemComparator implements Comparator<Item> {
 
-        if (o1.getDefinition().getGeneralStorePrice() > o2.getDefinition().getGeneralStorePrice()) {
-            return 1;
-        } else if (o1.getDefinition().getGeneralStorePrice() < o2.getDefinition().getGeneralStorePrice()) {
-            return -1;
+        @Override
+        public int compare(Item o1, Item o2) {
+            if (o1 == null
+                    || o2 == null) {
+                return -1;
+            }
+
+            if (o1.getDefinition().getGeneralStorePrice() > o2.getDefinition().getGeneralStorePrice()) {
+                return 1;
+            } else if (o1.getDefinition().getGeneralStorePrice() < o2.getDefinition().getGeneralStorePrice()) {
+                return -1;
+            }
+            return 0;
         }
-        return 0;
+    }
+
+    /**
+     * A comparator that will compare a set of items by special store price.
+     * 
+     * @author lare96
+     */
+    public static class SpecialPriceItemComparator implements Comparator<Item> {
+
+        @Override
+        public int compare(Item o1, Item o2) {
+            if (o1 == null
+                    || o2 == null) {
+                return -1;
+            }
+
+            if (o1.getDefinition().getSpecialStorePrice() > o2.getDefinition().getSpecialStorePrice()) {
+                return 1;
+            } else if (o1.getDefinition().getSpecialStorePrice() < o2.getDefinition().getSpecialStorePrice()) {
+                return -1;
+            }
+            return 0;
+        }
     }
 }

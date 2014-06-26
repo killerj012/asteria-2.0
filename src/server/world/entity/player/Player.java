@@ -46,6 +46,7 @@ import server.world.entity.player.skill.Skill;
 import server.world.entity.player.skill.SkillEvent;
 import server.world.entity.player.skill.SkillManager;
 import server.world.item.Item;
+import server.world.item.Item.NormalPriceItemComparator;
 import server.world.item.container.BankContainer;
 import server.world.item.container.EquipmentContainer;
 import server.world.item.container.InventoryContainer;
@@ -211,7 +212,7 @@ public class Player extends Entity {
     private final Set<Npc> npcs = new LinkedHashSet<Npc>();
 
     /** The players rights. */
-    private int staffRights;
+    private PlayerRights rights = PlayerRights.PLAYER;
 
     /** The players current spellbook. */
     private Spellbook spellbook = Spellbook.NORMAL;
@@ -329,7 +330,7 @@ public class Player extends Entity {
                         minigame.fireOnDeath(player);
 
                         if (!minigame.canKeepItems()) {
-                            if (player.getStaffRights() < 2) {
+                            if (player.getRights().lessThan(PlayerRights.ADMINISTRATOR)) {
                                 dropDeathItems(killer);
                             }
                         }
@@ -341,7 +342,7 @@ public class Player extends Entity {
 
                         move(minigame.getDeathPosition(player));
                     } else {
-                        if (player.getStaffRights() < 2) {
+                        if (player.getRights().lessThan(PlayerRights.ADMINISTRATOR)) {
                             deathHook(killer);
                             move(new Position(3093, 3244));
                         } else {
@@ -357,7 +358,7 @@ public class Player extends Entity {
                     teleblockTimer = 0;
                     animation(new Animation(65535));
 
-                    if (staffRights < 2) {
+                    if (rights.lessThan(PlayerRights.ADMINISTRATOR)) {
                         AssignWeaponInterface.reset(player);
                         AssignWeaponInterface.changeFightType(player);
                     }
@@ -596,7 +597,7 @@ public class Player extends Entity {
                 + ", host= "
                 + session.getHost()
                 + ", rights= "
-                + staffRights
+                + rights
                 + "]";
     }
 
@@ -663,7 +664,7 @@ public class Player extends Entity {
         }
 
         /** Fill the array with the most valuable items. */
-        Collections.sort(dropItems, Item.COMPARATOR);
+        Collections.sort(dropItems, new NormalPriceItemComparator());
         Collections.reverse(dropItems);
         int slot = 0;
 
@@ -1264,12 +1265,12 @@ public class Player extends Entity {
         return session;
     }
 
-    public void setStaffRights(int staffRights) {
-        this.staffRights = staffRights;
+    public void setRights(PlayerRights rights) {
+        this.rights = rights;
     }
 
-    public int getStaffRights() {
-        return staffRights;
+    public PlayerRights getRights() {
+        return rights;
     }
 
     public void setChatColor(int chatColor) {

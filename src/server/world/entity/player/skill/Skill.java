@@ -22,6 +22,7 @@ public class Skill {
      * Create a new {@link Skill}.
      */
     public Skill() {
+        this.realLevel = 1;
         this.level = 1;
         this.experience = 0;
     }
@@ -173,6 +174,16 @@ public class Skill {
         } else if (this.level > 120) {
             this.level = 120;
         }
+    }
+
+    /**
+     * Set a new real level for this skill.
+     * 
+     * @param realLevel
+     *        the new level to set.
+     */
+    protected void setRealLevel(int realLevel) {
+        this.realLevel = realLevel;
     }
 
     /**

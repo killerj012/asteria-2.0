@@ -10,6 +10,7 @@ import server.util.Misc;
 import server.world.entity.combat.task.CombatPoisonTask.CombatPoison;
 import server.world.entity.player.Player;
 import server.world.entity.player.PlayerFileEvent;
+import server.world.entity.player.PlayerRights;
 import server.world.entity.player.content.AssignWeaponInterface.FightType;
 import server.world.entity.player.content.Spellbook;
 import server.world.entity.player.skill.Skill;
@@ -52,13 +53,15 @@ public class ReadPlayerFileEvent extends PlayerFileEvent {
     @Override
     public void run() {
         try {
-            Path path = Paths.get(DIR, getPlayer().getUsername() + ".json");
+            Path path = Paths.get(DIR, getPlayer().getUsername()
+                    + ".json");
             File file = path.toFile();
 
             /** We are logging in for the first time. */
             if (!file.exists()) {
                 SkillManager.login(getPlayer());
-                logger.info(getPlayer() + " is logging in for the first time!");
+                logger.info(getPlayer()
+                        + " is logging in for the first time!");
                 returnCode = Misc.LOGIN_RESPONSE_OK;
                 return;
             }
@@ -71,7 +74,7 @@ public class ReadPlayerFileEvent extends PlayerFileEvent {
             final String username = reader.get("username").getAsString();
             final String password = reader.get("password").getAsString();
             final Position position = new Position(reader.get("x").getAsInt(), reader.get("y").getAsInt(), reader.get("z").getAsInt());
-            final int staffRights = reader.get("staff-rights").getAsInt();
+            final PlayerRights rights = PlayerRights.valueOf(reader.get("staff-rights").getAsString());
             final int gender = reader.get("gender").getAsInt();
             final int[] appearance = builder.fromJson(reader.get("appearance").getAsJsonArray(), int[].class);
             final int[] colors = builder.fromJson(reader.get("colors").getAsJsonArray(), int[].class);
@@ -105,7 +108,7 @@ public class ReadPlayerFileEvent extends PlayerFileEvent {
 
             getPlayer().setPassword(password);
             getPlayer().getPosition().setAs(position);
-            getPlayer().setStaffRights(staffRights);
+            getPlayer().setRights(rights);
             getPlayer().setGender(gender);
             getPlayer().setAppearance(appearance);
             getPlayer().setColors(colors);

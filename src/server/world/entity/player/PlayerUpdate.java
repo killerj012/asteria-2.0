@@ -65,7 +65,7 @@ public final class PlayerUpdate {
 
         /** Update the local player list. */
         for (int i = 0; i < World.getPlayers().getCapacity(); i++) {
-            if (added == 50
+            if (added == 15
                     || player.getPlayers().size() >= 255) {
 
                 /** Player limit has been reached. */
@@ -112,7 +112,7 @@ public final class PlayerUpdate {
     public static void appendChat(Player player, PacketBuffer.WriteBuffer out) {
         out.writeShort(((player.getChatColor() & 0xff) << 8)
                 + (player.getChatEffects() & 0xff), PacketBuffer.ByteOrder.LITTLE);
-        out.writeByte(player.getStaffRights());
+        out.writeByte(player.getRights().getProtocolValue());
         out.writeByte(player.getChatText().length, PacketBuffer.ValueType.C);
         out.writeBytesReverse(player.getChatText());
     }

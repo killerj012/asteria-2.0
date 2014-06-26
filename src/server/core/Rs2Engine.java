@@ -10,6 +10,7 @@ import server.core.net.EventSelector;
 import server.core.task.Task;
 import server.core.task.TaskFuture;
 import server.core.worker.TaskFactory;
+import server.util.Misc.Stopwatch;
 import server.world.World;
 import server.world.entity.player.content.RestoreEnergyWorker;
 import server.world.entity.player.content.RestoreStatWorker;
@@ -100,15 +101,20 @@ public final class Rs2Engine implements Runnable {
         return t.context();
     }
 
+    Stopwatch w = new Stopwatch();
+
     @Override
     public void run() {
         try {
+            w.reset();
             // XXX: Please do not add multiple task systems... Asteria already
             // comes with one! trying to keep as little overhead as possible.
 
             TaskFactory.getFactory().tick();
             EventSelector.tick();
             World.tick();
+            System.out.println("cycle time: "
+                    + w.elapsed());
         } catch (Exception e) {
 
             /** Nothing we can do, print error and continue processing. */

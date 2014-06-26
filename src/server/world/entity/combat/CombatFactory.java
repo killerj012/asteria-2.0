@@ -71,7 +71,9 @@ public class CombatFactory {
         }
 
         if (entity.type() == EntityType.PLAYER) {
-            ((Player) entity).getPacketBuilder().sendMessage("You have been " + poisonType.name().toLowerCase() + "ly poisoned!");
+            ((Player) entity).getPacketBuilder().sendMessage("You have been "
+                    + poisonType.name().toLowerCase()
+                    + "ly poisoned!");
         }
 
         entity.setPoisonHits(poisonType.getHitAmount());
@@ -116,7 +118,8 @@ public class CombatFactory {
                 strengthLevel *= 1.15;
             }
 
-            if (player.isSpecialActivated() && player.getCombatSpecial().getSpecialStrategy().combatType() == CombatType.MELEE) {
+            if (player.isSpecialActivated()
+                    && player.getCombatSpecial().getSpecialStrategy().combatType() == CombatType.MELEE) {
                 strengthLevel *= player.getCombatSpecial().getStrengthBonus();
             }
 
@@ -129,7 +132,10 @@ public class CombatFactory {
             }
 
             int effectiveStrengthDamage = (int) (strengthLevel + styleBonus);
-            double baseDamage = 5 + (effectiveStrengthDamage + 8) * (player.getPlayerBonus()[Misc.BONUS_STRENGTH] + 64) / 64;
+            double baseDamage = 5
+                    + (effectiveStrengthDamage + 8)
+                    * (player.getPlayerBonus()[Misc.BONUS_STRENGTH] + 64)
+                    / 64;
 
             int maxHit = (int) Math.floor(baseDamage);
 
@@ -145,7 +151,11 @@ public class CombatFactory {
                 maxHit += (realLevel - player.getSkills()[Misc.HITPOINTS].getLevel()) / 10;
             }
 
-            return maxHit;
+            if (maxHit < 0) {
+                maxHit = 0;
+            }
+
+            return maxHit + 1;
         } else if (entity.type() == EntityType.NPC) {
             Npc npc = (Npc) entity;
             int maxHit = npc.getDefinition().getMaxHit();
@@ -179,7 +189,8 @@ public class CombatFactory {
             Player player = (Player) entity;
             int rangedLevel = player.getSkills()[Misc.RANGED].getLevel();
 
-            if (player.isSpecialActivated() && player.getCombatSpecial().getSpecialStrategy().combatType() == CombatType.RANGE) {
+            if (player.isSpecialActivated()
+                    && player.getCombatSpecial().getSpecialStrategy().combatType() == CombatType.RANGE) {
                 rangedLevel *= player.getCombatSpecial().getStrengthBonus();
             }
 
@@ -192,7 +203,12 @@ public class CombatFactory {
             rangedLevel += styleBonus;
 
             int rangedStrength = table.getRangedStrength();
-            double maxHit = (rangedLevel + rangedStrength / 8 + rangedLevel * rangedStrength * Math.pow(64, -1) + 14) / 10;
+            double maxHit = (rangedLevel
+                    + rangedStrength
+                    / 8
+                    + rangedLevel
+                    * rangedStrength
+                    * Math.pow(64, -1) + 14) / 10;
             return (int) Math.floor(maxHit);
         } else if (entity.type() == EntityType.NPC) {
             Npc npc = (Npc) entity;
@@ -248,7 +264,7 @@ public class CombatFactory {
             Player player = (Player) entity;
 
             if (type == CombatType.MELEE) {
-                baseAttack = player.getSkills()[Misc.ATTACK].getLevel();
+                baseAttack = player.getSkills()[Misc.ATTACK].getLevel() + 10.0;
                 attackBonus = player.getPlayerBonus()[player.getFightType().getBonusType()];
 
                 if (CombatPrayer.isPrayerActivated(player, CombatPrayer.CLARITY_OF_THOUGHT)) {
@@ -269,14 +285,15 @@ public class CombatFactory {
             if (player.isSpecialActivated()) {
                 baseAttack *= player.getCombatSpecial().getAccuracyBonus();
             }
+
         } else if (entity.type() == EntityType.NPC) {
             Npc npc = (Npc) entity;
             baseAttack = npc.getDefinition().getAttackBonus();
 
             if (npc.getStatsWeakened()[0]) {
-                baseAttack -= (int) ((0.10) * (baseAttack));
+                baseAttack -= (int) ((0.1) * (baseAttack));
             } else if (npc.getStatsBadlyWeakened()[0]) {
-                baseAttack -= (int) ((0.20) * (baseAttack));
+                baseAttack -= (int) ((0.2) * (baseAttack));
             }
 
             if (baseAttack < 1) {
@@ -284,7 +301,8 @@ public class CombatFactory {
             }
         }
 
-        return Math.floor(baseAttack + attackBonus) + 8;
+        return Math.floor(baseAttack
+                + attackBonus) + 8;
     }
 
     /**
@@ -397,7 +415,8 @@ public class CombatFactory {
             } else if (type == CombatType.RANGE) {
                 effectiveDefence += player.getPlayerBonus()[Misc.DEFENCE_RANGE];
             } else {
-                effectiveDefence += ((player.getPlayerBonus()[Misc.DEFENCE_CRUSH] + player.getPlayerBonus()[Misc.DEFENCE_SLASH] + player.getPlayerBonus()[Misc.DEFENCE_STAB]) / 3);
+                effectiveDefence += ((player.getPlayerBonus()[Misc.DEFENCE_CRUSH]
+                        + player.getPlayerBonus()[Misc.DEFENCE_SLASH] + player.getPlayerBonus()[Misc.DEFENCE_STAB]) / 3);
             }
 
             if (type == CombatType.MAGIC) {
@@ -441,7 +460,10 @@ public class CombatFactory {
     private static double getChance(double attack, double defence) {
         double A = Math.floor(attack);
         double D = Math.floor(defence);
-        double chance = A < D ? (A - 1.0) / (2.0 * D) : 1.0 - (D + 1.0) / (2.0 * A);
+        double chance = A < D ? (A - 1.0)
+                / (2.0 * D) : 1.0
+                - (D + 1.0)
+                / (2.0 * A);
         chance = chance > 0.9999 ? 0.9999 : chance < 0.0001 ? 0.0001 : chance;
         return chance;
     }
@@ -477,13 +499,20 @@ public class CombatFactory {
             return;
         }
 
-        if (player.getCastSpell() != null || player.getAutocastSpell() != null) {
+        if (player.getCastSpell() != null
+                || player.getAutocastSpell() != null) {
             if (player.isAutocast()) {
                 player.setCastSpell(player.getAutocastSpell());
             }
 
             player.getCombatBuilder().setCurrentStrategy(CombatFactory.newDefaultMagicStrategy());
-        } else if (player.getWeapon() == WeaponInterface.SHORTBOW || player.getWeapon() == WeaponInterface.LONGBOW || player.getWeapon() == WeaponInterface.CROSSBOW || player.getWeapon() == WeaponInterface.DART || player.getWeapon() == WeaponInterface.JAVELIN || player.getWeapon() == WeaponInterface.THROWNAXE || player.getWeapon() == WeaponInterface.KNIFE) {
+        } else if (player.getWeapon() == WeaponInterface.SHORTBOW
+                || player.getWeapon() == WeaponInterface.LONGBOW
+                || player.getWeapon() == WeaponInterface.CROSSBOW
+                || player.getWeapon() == WeaponInterface.DART
+                || player.getWeapon() == WeaponInterface.JAVELIN
+                || player.getWeapon() == WeaponInterface.THROWNAXE
+                || player.getWeapon() == WeaponInterface.KNIFE) {
             player.getCombatBuilder().setCurrentStrategy(CombatFactory.newDefaultRangedStrategy());
         } else {
             player.getCombatBuilder().setCurrentStrategy(CombatFactory.newDefaultMeleeStrategy());
@@ -508,11 +537,17 @@ public class CombatFactory {
      * @return true if the player is wearing full veracs.
      */
     public static boolean isWearingFullVeracs(Player player) {
-        if (player.getEquipment().getContainer().getItem(Misc.EQUIPMENT_SLOT_HEAD) == null || player.getEquipment().getContainer().getItem(Misc.EQUIPMENT_SLOT_CHEST) == null || player.getEquipment().getContainer().getItem(Misc.EQUIPMENT_SLOT_LEGS) == null || player.getEquipment().getContainer().getItem(Misc.EQUIPMENT_SLOT_WEAPON) == null) {
+        if (player.getEquipment().getContainer().getItem(Misc.EQUIPMENT_SLOT_HEAD) == null
+                || player.getEquipment().getContainer().getItem(Misc.EQUIPMENT_SLOT_CHEST) == null
+                || player.getEquipment().getContainer().getItem(Misc.EQUIPMENT_SLOT_LEGS) == null
+                || player.getEquipment().getContainer().getItem(Misc.EQUIPMENT_SLOT_WEAPON) == null) {
             return false;
         }
 
-        return player.getEquipment().getContainer().getItem(Misc.EQUIPMENT_SLOT_HEAD).getId() == 4753 && player.getEquipment().getContainer().getItem(Misc.EQUIPMENT_SLOT_CHEST).getId() == 4757 && player.getEquipment().getContainer().getItem(Misc.EQUIPMENT_SLOT_LEGS).getId() == 4759 && player.getEquipment().getContainer().getItem(Misc.EQUIPMENT_SLOT_WEAPON).getId() == 4755;
+        return player.getEquipment().getContainer().getItem(Misc.EQUIPMENT_SLOT_HEAD).getId() == 4753
+                && player.getEquipment().getContainer().getItem(Misc.EQUIPMENT_SLOT_CHEST).getId() == 4757
+                && player.getEquipment().getContainer().getItem(Misc.EQUIPMENT_SLOT_LEGS).getId() == 4759
+                && player.getEquipment().getContainer().getItem(Misc.EQUIPMENT_SLOT_WEAPON).getId() == 4755;
     }
 
     /**
@@ -523,11 +558,17 @@ public class CombatFactory {
      * @return true if the player is wearing full dharoks.
      */
     private static boolean isWearingFullDharoks(Player player) {
-        if (player.getEquipment().getContainer().getItem(Misc.EQUIPMENT_SLOT_HEAD) == null || player.getEquipment().getContainer().getItem(Misc.EQUIPMENT_SLOT_CHEST) == null || player.getEquipment().getContainer().getItem(Misc.EQUIPMENT_SLOT_LEGS) == null || player.getEquipment().getContainer().getItem(Misc.EQUIPMENT_SLOT_WEAPON) == null) {
+        if (player.getEquipment().getContainer().getItem(Misc.EQUIPMENT_SLOT_HEAD) == null
+                || player.getEquipment().getContainer().getItem(Misc.EQUIPMENT_SLOT_CHEST) == null
+                || player.getEquipment().getContainer().getItem(Misc.EQUIPMENT_SLOT_LEGS) == null
+                || player.getEquipment().getContainer().getItem(Misc.EQUIPMENT_SLOT_WEAPON) == null) {
             return false;
         }
 
-        return player.getEquipment().getContainer().getItem(Misc.EQUIPMENT_SLOT_HEAD).getId() == 4716 && player.getEquipment().getContainer().getItem(Misc.EQUIPMENT_SLOT_CHEST).getId() == 4720 && player.getEquipment().getContainer().getItem(Misc.EQUIPMENT_SLOT_LEGS).getId() == 4722 && player.getEquipment().getContainer().getItem(Misc.EQUIPMENT_SLOT_WEAPON).getId() == 4718;
+        return player.getEquipment().getContainer().getItem(Misc.EQUIPMENT_SLOT_HEAD).getId() == 4716
+                && player.getEquipment().getContainer().getItem(Misc.EQUIPMENT_SLOT_CHEST).getId() == 4720
+                && player.getEquipment().getContainer().getItem(Misc.EQUIPMENT_SLOT_LEGS).getId() == 4722
+                && player.getEquipment().getContainer().getItem(Misc.EQUIPMENT_SLOT_WEAPON).getId() == 4718;
     }
 
     /**
@@ -538,11 +579,17 @@ public class CombatFactory {
      * @return true if the player is wearing full karils.
      */
     public static boolean isWearingFullKarils(Player player) {
-        if (player.getEquipment().getContainer().getItem(Misc.EQUIPMENT_SLOT_HEAD) == null || player.getEquipment().getContainer().getItem(Misc.EQUIPMENT_SLOT_CHEST) == null || player.getEquipment().getContainer().getItem(Misc.EQUIPMENT_SLOT_LEGS) == null || player.getEquipment().getContainer().getItem(Misc.EQUIPMENT_SLOT_WEAPON) == null) {
+        if (player.getEquipment().getContainer().getItem(Misc.EQUIPMENT_SLOT_HEAD) == null
+                || player.getEquipment().getContainer().getItem(Misc.EQUIPMENT_SLOT_CHEST) == null
+                || player.getEquipment().getContainer().getItem(Misc.EQUIPMENT_SLOT_LEGS) == null
+                || player.getEquipment().getContainer().getItem(Misc.EQUIPMENT_SLOT_WEAPON) == null) {
             return false;
         }
 
-        return player.getEquipment().getContainer().getItem(Misc.EQUIPMENT_SLOT_HEAD).getId() == 4732 && player.getEquipment().getContainer().getItem(Misc.EQUIPMENT_SLOT_CHEST).getId() == 4736 && player.getEquipment().getContainer().getItem(Misc.EQUIPMENT_SLOT_LEGS).getId() == 4738 && player.getEquipment().getContainer().getItem(Misc.EQUIPMENT_SLOT_WEAPON).getId() == 4734;
+        return player.getEquipment().getContainer().getItem(Misc.EQUIPMENT_SLOT_HEAD).getId() == 4732
+                && player.getEquipment().getContainer().getItem(Misc.EQUIPMENT_SLOT_CHEST).getId() == 4736
+                && player.getEquipment().getContainer().getItem(Misc.EQUIPMENT_SLOT_LEGS).getId() == 4738
+                && player.getEquipment().getContainer().getItem(Misc.EQUIPMENT_SLOT_WEAPON).getId() == 4734;
     }
 
     /**
@@ -553,11 +600,17 @@ public class CombatFactory {
      * @return true if the player is wearing full ahrims.
      */
     public static boolean isWearingFullAhrims(Player player) {
-        if (player.getEquipment().getContainer().getItem(Misc.EQUIPMENT_SLOT_HEAD) == null || player.getEquipment().getContainer().getItem(Misc.EQUIPMENT_SLOT_CHEST) == null || player.getEquipment().getContainer().getItem(Misc.EQUIPMENT_SLOT_LEGS) == null || player.getEquipment().getContainer().getItem(Misc.EQUIPMENT_SLOT_WEAPON) == null) {
+        if (player.getEquipment().getContainer().getItem(Misc.EQUIPMENT_SLOT_HEAD) == null
+                || player.getEquipment().getContainer().getItem(Misc.EQUIPMENT_SLOT_CHEST) == null
+                || player.getEquipment().getContainer().getItem(Misc.EQUIPMENT_SLOT_LEGS) == null
+                || player.getEquipment().getContainer().getItem(Misc.EQUIPMENT_SLOT_WEAPON) == null) {
             return false;
         }
 
-        return player.getEquipment().getContainer().getItem(Misc.EQUIPMENT_SLOT_HEAD).getId() == 4708 && player.getEquipment().getContainer().getItem(Misc.EQUIPMENT_SLOT_CHEST).getId() == 4712 && player.getEquipment().getContainer().getItem(Misc.EQUIPMENT_SLOT_LEGS).getId() == 4714 && player.getEquipment().getContainer().getItem(Misc.EQUIPMENT_SLOT_WEAPON).getId() == 4710;
+        return player.getEquipment().getContainer().getItem(Misc.EQUIPMENT_SLOT_HEAD).getId() == 4708
+                && player.getEquipment().getContainer().getItem(Misc.EQUIPMENT_SLOT_CHEST).getId() == 4712
+                && player.getEquipment().getContainer().getItem(Misc.EQUIPMENT_SLOT_LEGS).getId() == 4714
+                && player.getEquipment().getContainer().getItem(Misc.EQUIPMENT_SLOT_WEAPON).getId() == 4710;
     }
 
     /**
@@ -568,11 +621,17 @@ public class CombatFactory {
      * @return true if the player is wearing full torags.
      */
     public static boolean isWearingFullTorags(Player player) {
-        if (player.getEquipment().getContainer().getItem(Misc.EQUIPMENT_SLOT_HEAD) == null || player.getEquipment().getContainer().getItem(Misc.EQUIPMENT_SLOT_CHEST) == null || player.getEquipment().getContainer().getItem(Misc.EQUIPMENT_SLOT_LEGS) == null || player.getEquipment().getContainer().getItem(Misc.EQUIPMENT_SLOT_WEAPON) == null) {
+        if (player.getEquipment().getContainer().getItem(Misc.EQUIPMENT_SLOT_HEAD) == null
+                || player.getEquipment().getContainer().getItem(Misc.EQUIPMENT_SLOT_CHEST) == null
+                || player.getEquipment().getContainer().getItem(Misc.EQUIPMENT_SLOT_LEGS) == null
+                || player.getEquipment().getContainer().getItem(Misc.EQUIPMENT_SLOT_WEAPON) == null) {
             return false;
         }
 
-        return player.getEquipment().getContainer().getItem(Misc.EQUIPMENT_SLOT_HEAD).getId() == 4745 && player.getEquipment().getContainer().getItem(Misc.EQUIPMENT_SLOT_CHEST).getId() == 4749 && player.getEquipment().getContainer().getItem(Misc.EQUIPMENT_SLOT_LEGS).getId() == 4751 && player.getEquipment().getContainer().getItem(Misc.EQUIPMENT_SLOT_WEAPON).getId() == 4747;
+        return player.getEquipment().getContainer().getItem(Misc.EQUIPMENT_SLOT_HEAD).getId() == 4745
+                && player.getEquipment().getContainer().getItem(Misc.EQUIPMENT_SLOT_CHEST).getId() == 4749
+                && player.getEquipment().getContainer().getItem(Misc.EQUIPMENT_SLOT_LEGS).getId() == 4751
+                && player.getEquipment().getContainer().getItem(Misc.EQUIPMENT_SLOT_WEAPON).getId() == 4747;
     }
 
     /**
@@ -583,11 +642,17 @@ public class CombatFactory {
      * @return true if the player is wearing full guthans.
      */
     public static boolean isWearingFullGuthans(Player player) {
-        if (player.getEquipment().getContainer().getItem(Misc.EQUIPMENT_SLOT_HEAD) == null || player.getEquipment().getContainer().getItem(Misc.EQUIPMENT_SLOT_CHEST) == null || player.getEquipment().getContainer().getItem(Misc.EQUIPMENT_SLOT_LEGS) == null || player.getEquipment().getContainer().getItem(Misc.EQUIPMENT_SLOT_WEAPON) == null) {
+        if (player.getEquipment().getContainer().getItem(Misc.EQUIPMENT_SLOT_HEAD) == null
+                || player.getEquipment().getContainer().getItem(Misc.EQUIPMENT_SLOT_CHEST) == null
+                || player.getEquipment().getContainer().getItem(Misc.EQUIPMENT_SLOT_LEGS) == null
+                || player.getEquipment().getContainer().getItem(Misc.EQUIPMENT_SLOT_WEAPON) == null) {
             return false;
         }
 
-        return player.getEquipment().getContainer().getItem(Misc.EQUIPMENT_SLOT_HEAD).getId() == 4724 && player.getEquipment().getContainer().getItem(Misc.EQUIPMENT_SLOT_CHEST).getId() == 4728 && player.getEquipment().getContainer().getItem(Misc.EQUIPMENT_SLOT_LEGS).getId() == 4730 && player.getEquipment().getContainer().getItem(Misc.EQUIPMENT_SLOT_WEAPON).getId() == 4726;
+        return player.getEquipment().getContainer().getItem(Misc.EQUIPMENT_SLOT_HEAD).getId() == 4724
+                && player.getEquipment().getContainer().getItem(Misc.EQUIPMENT_SLOT_CHEST).getId() == 4728
+                && player.getEquipment().getContainer().getItem(Misc.EQUIPMENT_SLOT_LEGS).getId() == 4730
+                && player.getEquipment().getContainer().getItem(Misc.EQUIPMENT_SLOT_WEAPON).getId() == 4726;
     }
 
     /**

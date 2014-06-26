@@ -7,6 +7,7 @@ import server.world.World;
 import server.world.entity.combat.prayer.CombatPrayer;
 import server.world.entity.combat.special.CombatSpecial;
 import server.world.entity.player.Player;
+import server.world.entity.player.PlayerRights;
 import server.world.entity.player.skill.SkillManager;
 
 /**
@@ -78,7 +79,7 @@ public class RestoreStatWorker extends Worker {
 
             /** Check the special meter and increase it if needed. */
             if (player.getSpecialPercentage() < 100) {
-                if (player.getStaffRights() > 1) {
+                if (player.getRights().greaterThan(PlayerRights.MODERATOR)) {
                     CombatSpecial.boostAndRestore(player, 100);
                     return;
                 }
