@@ -41,13 +41,13 @@ public final class Session {
      * don't have RSA enabled in your client and you don't know how to get RSA
      * working).
      */
-    public static final boolean DECODE_RSA = true;
+    public static final boolean DECODE_RSA = false;
 
     /**
      * If this is set to true, any players that login but moderators or higher
      * will be moved to random places 200 squares within the home area.
      */
-    private static final boolean SOCKET_FLOOD = true;
+    private static final boolean SOCKET_FLOOD = false;
 
     /** The private RSA modulus and exponent key pairs. */
     private static final BigInteger RSA_MODULUS = new BigInteger("95938610921572746524650133814858151901913076652480429598183870656291246099349831798849348614985734300731049329237933048794504022897746723376579898629175025215880393800715209863314290417958725518169765091231358927530763716352174212961746574137578805287960782611757859202906381434888168466423570348398899194541"),
