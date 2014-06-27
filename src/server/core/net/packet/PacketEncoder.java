@@ -44,7 +44,7 @@ public final class PacketEncoder {
      * @param interfaceIndex
      *        the layer to show or hide.
      * @param hidden
-     *        true if the layor should be hidden.
+     *        true if the layer should be hidden.
      * @return this packet encoder.
      */
     public PacketEncoder sendHideInterfaceLayer(int interfaceIndex, boolean hidden) {
@@ -106,8 +106,10 @@ public final class PacketEncoder {
         sendCoordinates(position);
         WriteBuffer out = PacketBuffer.newWriteBuffer(5);
         out.writeHeader(160);
-        out.writeByte(((0 & 7) << 4) + (0 & 7), ValueType.S);
-        out.writeByte((type << 2) + (orientation & 3), ValueType.S);
+        out.writeByte(((0 & 7) << 4)
+                + (0 & 7), ValueType.S);
+        out.writeByte((type << 2)
+                + (orientation & 3), ValueType.S);
         out.writeShort(animation, ValueType.A);
         player.getSession().encode(out);
         return this;
@@ -303,7 +305,7 @@ public final class PacketEncoder {
      * @return this packet builder.
      */
     public PacketEncoder sendCustomMapRegion(Palette palette) {
-        this.sendMapRegion();
+        sendMapRegion();
         PacketBuffer.WriteBuffer out = PacketBuffer.newWriteBuffer(100);
         out.writeVariableShortPacketHeader(241);
         out.writeShort(player.getPosition().getRegionY() + 6, ValueType.A);
@@ -315,7 +317,10 @@ public final class PacketEncoder {
                     PaletteTile tile = palette.getTile(x, y, z);
                     out.writeBits(1, tile != null ? 1 : 0);
                     if (tile != null) {
-                        out.writeBits(26, tile.getX() << 14 | tile.getY() << 3 | tile.getZ() << 24 | tile.getRotation() << 1);
+                        out.writeBits(26, tile.getX() << 14
+                                | tile.getY() << 3
+                                | tile.getZ() << 24
+                                | tile.getRotation() << 1);
                     }
                 }
             }
@@ -622,7 +627,8 @@ public final class PacketEncoder {
     public PacketEncoder sendObject(WorldObject object) {
         sendCoordinates(object.getPosition());
         PacketBuffer.WriteBuffer out = PacketBuffer.newWriteBuffer(5);
-        out.writeHeader(151).writeByte(0, ValueType.S).writeShort(object.getId(), ByteOrder.LITTLE).writeByte((object.getType() << 2) + (object.getRotation().getFaceId() & 3), ValueType.S);
+        out.writeHeader(151).writeByte(0, ValueType.S).writeShort(object.getId(), ByteOrder.LITTLE).writeByte((object.getType() << 2)
+                + (object.getRotation().getFaceId() & 3), ValueType.S);
         player.getSession().encode(out);
         return this;
     }
@@ -637,7 +643,8 @@ public final class PacketEncoder {
     public PacketEncoder removeObject(WorldObject object) {
         sendCoordinates(object.getPosition());
         PacketBuffer.WriteBuffer out = PacketBuffer.newWriteBuffer(3);
-        out.writeHeader(101).writeByte((object.getType() << 2) + (object.getRotation().getFaceId() & 3), ValueType.C).writeByte(0);
+        out.writeHeader(101).writeByte((object.getType() << 2)
+                + (object.getRotation().getFaceId() & 3), ValueType.C).writeByte(0);
         player.getSession().encode(out);
         return this;
     }
@@ -800,7 +807,9 @@ public final class PacketEncoder {
      */
     public PacketEncoder sendCoordinates(Position position) {
         PacketBuffer.WriteBuffer out = PacketBuffer.newWriteBuffer(3);
-        out.writeHeader(85).writeByte(position.getY() - (player.getCurrentRegion().getRegionY() * 8), ValueType.C).writeByte(position.getX() - (player.getCurrentRegion().getRegionX() * 8), ValueType.C);
+        out.writeHeader(85).writeByte(position.getY()
+                - (player.getCurrentRegion().getRegionY() * 8), ValueType.C).writeByte(position.getX()
+                - (player.getCurrentRegion().getRegionX() * 8), ValueType.C);
         player.getSession().encode(out);
         return this;
     }

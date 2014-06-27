@@ -28,6 +28,7 @@ public final class PlayerUpdate {
      *        the player to update.
      */
     public static void update(Player player) throws Exception {
+
         PacketBuffer.WriteBuffer out = PacketBuffer.newWriteBuffer(16384);
         PacketBuffer.WriteBuffer block = PacketBuffer.newWriteBuffer(8192);
 
@@ -298,10 +299,14 @@ public final class PlayerUpdate {
     public static void updateLocalPlayerMovement(Player player, PacketBuffer.WriteBuffer out) {
         boolean updateRequired = player.getFlags().isUpdateRequired();
         if (player.isNeedsPlacement()) { // Do they need placement?
+
+
             out.writeBit(true); // Yes, there is an update.
             int posX = player.getPosition().getLocalX(player.getCurrentRegion());
             int posY = player.getPosition().getLocalY(player.getCurrentRegion());
+
             appendPlacement(out, posX, posY, player.getPosition().getZ(), player.isResetMovementQueue(), updateRequired);
+
             // player.setNeedsPlacement(false);
         } else { // No placement update, check for movement.
             int pDir = player.getPrimaryDirection();

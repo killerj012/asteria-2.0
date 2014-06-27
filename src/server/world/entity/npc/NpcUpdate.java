@@ -39,7 +39,8 @@ public class NpcUpdate {
         out.writeBits(8, player.getNpcs().size());
         for (Iterator<Npc> i = player.getNpcs().iterator(); i.hasNext();) {
             Npc npc = i.next();
-            if (npc.getPosition().isViewableFrom(player.getPosition()) && npc.isVisible()) {
+            if (npc.getPosition().isViewableFrom(player.getPosition())
+                    && npc.isVisible()) {
                 NpcUpdate.updateNpcMovement(out, npc);
                 if (npc.getFlags().isUpdateRequired()) {
                     NpcUpdate.updateState(block, npc);
@@ -55,7 +56,11 @@ public class NpcUpdate {
         /** Update the local NPC list itself. */
         int added = 0;
         for (Npc npc : World.getNpcs()) {
-            if (npc == null || added == 50 || player.getNpcs().size() >= 255 || player.getNpcs().contains(npc) || !npc.isVisible()) {
+            if (npc == null
+                    || added == 15
+                    || player.getNpcs().size() >= 255
+                    || player.getNpcs().contains(npc)
+                    || !npc.isVisible()) {
                 continue;
             }
 

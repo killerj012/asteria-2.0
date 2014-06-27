@@ -548,6 +548,7 @@ public class Player extends Entity {
 
     @Override
     public void move(Position position) {
+        dialogueStage = 0;
         getMovementQueue().reset();
         getPacketBuilder().closeWindows();
         getPosition().setAs(position);

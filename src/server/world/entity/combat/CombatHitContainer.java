@@ -10,6 +10,13 @@ import server.world.entity.Hit;
  */
 public abstract class CombatHitContainer {
 
+    /** A static {@link CombatHitContianer} implementation that deals no damage. */
+    public static final CombatHitContainer NO_DAMAGE = new CombatHitContainer(null, null, true) {
+        @Override
+        public void onHit(Entity attacker, Entity victim, int totalDamage, boolean accurate) {
+        }
+    };
+
     /** The hits that will be dealt during this combat turn. */
     private CombatHit[] hits;
 
@@ -33,7 +40,8 @@ public abstract class CombatHitContainer {
         if (hitSet != null) {
             if (hitSet.length > 4) {
                 throw new IllegalArgumentException("Illegal number of hits! The maximum number of hits per turn is 4.");
-            } else if (hitSet.length > 1 && hitType == CombatType.MAGIC) {
+            } else if (hitSet.length > 1
+                    && hitType == CombatType.MAGIC) {
                 throw new IllegalArgumentException("Illegal number of hits! The maximum number of hits per turn with magic is 1.");
             } else if (hitSet.length < 1) {
                 throw new IllegalArgumentException("Illegal number of hits! The minimum number of hits per turn is 1.");

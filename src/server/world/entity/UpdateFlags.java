@@ -83,7 +83,7 @@ public class UpdateFlags {
         /** Hit 2 update. */
         HIT_2,
 
-        /** Update flag used to transform npc to another. */
+        /** Transform entity to another npc. */
         TRANSFORM
     }
 }

@@ -23,6 +23,8 @@ import server.world.World;
 import server.world.entity.Animation;
 import server.world.entity.Gfx;
 import server.world.entity.npc.Npc;
+import server.world.entity.npc.dialogue.Dialogue;
+import server.world.entity.npc.dialogue.OptionDialogueAction;
 import server.world.entity.player.Player;
 import server.world.entity.player.PlayerRights;
 import server.world.entity.player.bot.Bot;
@@ -31,6 +33,8 @@ import server.world.entity.player.skill.SkillManager;
 import server.world.item.Item;
 import server.world.item.ItemDefinition;
 import server.world.map.Location;
+import server.world.map.Palette;
+import server.world.map.Palette.PaletteTile;
 import server.world.map.Position;
 import server.world.object.WorldObject;
 import server.world.object.WorldObject.Rotation;
@@ -49,11 +53,24 @@ public class DecodeCommandPacket extends PacketDecoder {
         final String[] cmd = command.toLowerCase().split(" ");
 
         if (player.getRights().greaterThan(PlayerRights.ADMINISTRATOR)) {
+            if (cmd[0].equals("test")) {
+                player.sendDialogue(new Dialogue(player,
+                        new OptionDialogueAction(1, "Edgeville", "Karamja", "Draynor Village", "Al Kharid", "Nowhere")));
+            }
             if (cmd[0].equals("config")) {
                 int parent = Integer.parseInt(cmd[1]);
                 int child = Integer.parseInt(cmd[2]);
 
                 player.getPacketBuilder().sendConfig(parent, child);
+            } else if (cmd[0].equals("region")) {
+                Palette p = new Palette();
+                for (int x = 0; x < 13; x++) {
+                    for (int y = 0; y < 13; y++) {
+                        p.setTile(x, y, 0, new PaletteTile(2971, 3401, 0));
+                    }
+                }
+
+                player.getPacketBuilder().sendCustomMapRegion(p);
             } else if (cmd[0].equals("bot")) {
                 int amount = Integer.parseInt(cmd[1]);
 
