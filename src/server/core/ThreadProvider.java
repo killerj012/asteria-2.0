@@ -15,19 +15,19 @@ public class ThreadProvider implements ThreadFactory {
      * A thread safe integer that will be used to track the amount of threads
      * created by this provider.
      */
-    private volatile AtomicInteger threadCount;
+    private final AtomicInteger threadCount;
 
     /** The name of the prepared thread. */
-    private volatile String threadName;
+    private final String threadName;
 
     /** The priority of the prepared thread. */
-    private volatile int threadPriority;
+    private final int threadPriority;
 
     /** If this thread is a daemon thread. */
-    private volatile boolean daemonThread;
+    private final boolean daemonThread;
 
     /** If this provider should keep track of the amount of threads it created. */
-    private volatile boolean keepThreadCount;
+    private final boolean keepThreadCount;
 
     /**
      * Create a new {@link ThreadProvider}.
@@ -53,7 +53,9 @@ public class ThreadProvider implements ThreadFactory {
     @Override
     public Thread newThread(Runnable r) {
         Thread thread = new Thread(r);
-        thread.setName(keepThreadCount ? threadName + "-" + threadCount.incrementAndGet() : threadName);
+        thread.setName(keepThreadCount ? threadName
+                + "-"
+                + threadCount.incrementAndGet() : threadName);
         thread.setPriority(threadPriority);
         thread.setDaemon(daemonThread);
         return thread;
