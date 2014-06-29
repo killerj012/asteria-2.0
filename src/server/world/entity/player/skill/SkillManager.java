@@ -68,7 +68,7 @@ public final class SkillManager {
          * @param refresh
          *        the lines that will be used to refresh the skill.
          */
-        SkillConstant(int firstLine, int secondLine, int chatbox, int... refresh) {
+        private SkillConstant(int firstLine, int secondLine, int chatbox, int... refresh) {
             this.firstLine = firstLine;
             this.secondLine = secondLine;
             this.chatbox = chatbox;

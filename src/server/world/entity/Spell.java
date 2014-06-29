@@ -66,7 +66,7 @@ public abstract class Spell {
                     }
 
                     for (CombatMagicRuneCombination rune : combinationRune) {
-                        if (compareItem[i] == null) {
+                        if (compareItem[i] == null || rune == null) {
                             continue;
                         }
 
