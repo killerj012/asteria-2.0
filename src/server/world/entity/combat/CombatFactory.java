@@ -12,7 +12,7 @@ import server.world.entity.combat.strategy.DefaultMagicCombatStrategy;
 import server.world.entity.combat.strategy.DefaultMeleeCombatStrategy;
 import server.world.entity.combat.strategy.DefaultRangedCombatStrategy;
 import server.world.entity.combat.task.CombatPoisonTask;
-import server.world.entity.combat.task.CombatPoisonTask.CombatPoison;
+import server.world.entity.combat.task.CombatPoisonTask.PoisonType;
 import server.world.entity.combat.task.CombatSkullTask;
 import server.world.entity.npc.Npc;
 import server.world.entity.player.Player;
@@ -60,23 +60,24 @@ public class CombatFactory {
     }
 
     /**
-     * Poisons the designated entity.
-     * 
-     * @param entity
-     *        the entity being poisoned.
-     */
-    public static void poisonEntity(Entity entity, CombatPoison poisonType) {
-        if (entity.getPoisonHits() > 0) {
+	 * Poisons the designated entity.
+	 * 
+	 * @param entity
+	 *            the entity being poisoned.
+	 * @param poisonType
+	 *            the poison that this entity is being inflicted with.
+	 */
+	public static void poisonEntity(Entity entity, PoisonType poisonType) {
+		if (poisonType == null || entity.getPoisonHits() > 0) {
             return;
         }
 
         if (entity.type() == EntityType.PLAYER) {
-            ((Player) entity).getPacketBuilder().sendMessage("You have been "
-                    + poisonType.name().toLowerCase()
-                    + "ly poisoned!");
+			((Player) entity).getPacketBuilder().sendMessage(
+					"You have been poisoned!");
         }
 
-        entity.setPoisonHits(poisonType.getHitAmount());
+		entity.setPoisonHits(50);
         entity.setPoisonStrength(poisonType);
         TaskFactory.getFactory().submit(new CombatPoisonTask(entity));
     }

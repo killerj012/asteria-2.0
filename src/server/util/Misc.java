@@ -1056,7 +1056,7 @@ public final class Misc {
      * implementation as there is no unnecessary wait on the backing
      * <code>AtomicLong</code> within {@link Random}.
      */
-    private static final Random RANDOM = ThreadLocalRandom.current();
+	public static final Random RANDOM = ThreadLocalRandom.current();
 
     /**
      * Returns a pseudo-random {@code int} value between inclusive <tt>0</tt>

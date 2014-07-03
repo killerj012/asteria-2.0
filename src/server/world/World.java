@@ -9,6 +9,7 @@ import server.core.task.SequentialTask;
 import server.core.task.impl.PlayerParallelUpdateTask;
 import server.util.Misc;
 import server.world.entity.EntityContainer;
+import server.world.entity.combat.task.CombatPoisonTask.CombatPoisonData;
 import server.world.entity.npc.Npc;
 import server.world.entity.player.Player;
 import server.world.entity.player.content.AssignSkillRequirement;
@@ -29,10 +30,12 @@ public final class World {
     private static Logger logger = Logger.getLogger(World.class.getSimpleName());
 
     /** All registered players. */
-    private static final EntityContainer<Player> players = new EntityContainer<Player>(2147);
+	private static final EntityContainer<Player> players = new EntityContainer<Player>(
+			1000);
 
     /** All registered NPCs. */
-    private static final EntityContainer<Npc> npcs = new EntityContainer<Npc>(4000);
+	private static final EntityContainer<Npc> npcs = new EntityContainer<Npc>(
+			1500);
 
     /** The registerable container for ground item management. */
     private static RegisterableGroundItem registerableGroundItems;
@@ -62,6 +65,7 @@ public final class World {
             AssignWeaponAnimation.class.newInstance();
             AssignWeaponInterface.class.newInstance();
             AssignSkillRequirement.class.newInstance();
+			CombatPoisonData.class.newInstance();
         } catch (Exception e) {
             e.printStackTrace();
         }

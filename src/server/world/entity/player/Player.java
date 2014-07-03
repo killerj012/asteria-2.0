@@ -29,7 +29,7 @@ import server.world.entity.combat.prayer.CombatPrayer;
 import server.world.entity.combat.prayer.CombatPrayerWorker;
 import server.world.entity.combat.range.CombatRangedAmmo;
 import server.world.entity.combat.special.CombatSpecial;
-import server.world.entity.combat.task.CombatPoisonTask.CombatPoison;
+import server.world.entity.combat.task.CombatPoisonTask.PoisonType;
 import server.world.entity.npc.Npc;
 import server.world.entity.npc.dialogue.Dialogue;
 import server.world.entity.player.content.AssignWeaponAnimation.WeaponAnimationIndex;
@@ -316,7 +316,7 @@ public class Player extends Entity {
                 if (getDeathTicks() == 0) {
                     getMovementQueue().reset();
                     setPoisonHits(0);
-                    setPoisonStrength(CombatPoison.MILD);
+					setPoisonStrength(PoisonType.MILD);
                 } else if (getDeathTicks() == 1) {
                     animation(DEATH);
                     SkillEvent.fireSkillEvents(player);

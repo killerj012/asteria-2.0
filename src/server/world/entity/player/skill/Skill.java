@@ -16,6 +16,8 @@ public class Skill {
     private int experience;
 
     /** The real level for this skill. */
+	// XXX: The real level is now cached so we only have to do calculations when
+	// absolutely needed!
     private int realLevel;
 
     /**

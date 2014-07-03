@@ -7,7 +7,7 @@ import server.util.Misc.Stopwatch;
 import server.world.entity.UpdateFlags.Flag;
 import server.world.entity.combat.CombatBuilder;
 import server.world.entity.combat.magic.CombatSpell;
-import server.world.entity.combat.task.CombatPoisonTask.CombatPoison;
+import server.world.entity.combat.task.CombatPoisonTask.PoisonType;
 import server.world.entity.npc.Npc;
 import server.world.entity.player.Player;
 import server.world.entity.player.skill.SkillManager;
@@ -27,7 +27,7 @@ public abstract class Entity {
     private int poisonHits;
 
     /** The strength of the poison. */
-    private CombatPoison poisonStrength = CombatPoison.MILD;
+	private PoisonType poisonStrength = PoisonType.MILD;
 
     /** If this entity retaliates automatically. */
     private boolean isAutoRetaliate;
@@ -753,7 +753,7 @@ public abstract class Entity {
     /**
      * @return the poisonStrength
      */
-    public CombatPoison getPoisonStrength() {
+	public PoisonType getPoisonStrength() {
         return poisonStrength;
     }
 
@@ -761,7 +761,7 @@ public abstract class Entity {
      * @param poisonStrength
      *        the poisonStrength to set
      */
-    public void setPoisonStrength(CombatPoison poisonStrength) {
+	public void setPoisonStrength(PoisonType poisonStrength) {
         this.poisonStrength = poisonStrength;
     }
 

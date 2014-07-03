@@ -9,7 +9,7 @@ import server.world.entity.EntityType;
 import server.world.entity.Gfx;
 import server.world.entity.Projectile;
 import server.world.entity.combat.CombatFactory;
-import server.world.entity.combat.task.CombatPoisonTask.CombatPoison;
+import server.world.entity.combat.task.CombatPoisonTask.PoisonType;
 import server.world.entity.combat.task.CombatTeleblockTask;
 import server.world.entity.npc.Npc;
 import server.world.entity.player.Player;
@@ -1901,7 +1901,7 @@ public enum CombatMagicSpells {
     SMOKE_RUSH(new CombatAncientSpell() {
         @Override
         public void spellEffect(Entity cast, Entity castOn, int damageInflicted) {
-            CombatFactory.poisonEntity(castOn, CombatPoison.MILD);
+			CombatFactory.poisonEntity(castOn, PoisonType.MILD);
         }
 
         @Override
@@ -2155,7 +2155,7 @@ public enum CombatMagicSpells {
     SMOKE_BURST(new CombatAncientSpell() {
         @Override
         public void spellEffect(Entity cast, Entity castOn, int damageInflicted) {
-            CombatFactory.poisonEntity(castOn, CombatPoison.MILD);
+			CombatFactory.poisonEntity(castOn, PoisonType.MILD);
         }
 
         @Override
@@ -2409,7 +2409,7 @@ public enum CombatMagicSpells {
     SMOKE_BLITZ(new CombatAncientSpell() {
         @Override
         public void spellEffect(Entity cast, Entity castOn, int damageInflicted) {
-            CombatFactory.poisonEntity(castOn, CombatPoison.STRONG);
+			CombatFactory.poisonEntity(castOn, PoisonType.EXTRA);
         }
 
         @Override
@@ -2662,7 +2662,7 @@ public enum CombatMagicSpells {
     SMOKE_BARRAGE(new CombatAncientSpell() {
         @Override
         public void spellEffect(Entity cast, Entity castOn, int damageInflicted) {
-            CombatFactory.poisonEntity(castOn, CombatPoison.SEVERE);
+			CombatFactory.poisonEntity(castOn, PoisonType.SUPER);
         }
 
         @Override

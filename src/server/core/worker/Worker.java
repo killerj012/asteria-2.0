@@ -59,7 +59,7 @@ public abstract class Worker {
      *        the rate this worker is firing logic at.
      */
     public Worker(int delay, boolean initialRun, WorkRate workRate) {
-        this.delay = delay * workRate.getTickRate();
+		this.delay = delay <= 0 ? 1 : (delay * workRate.getTickRate());
         this.initialRun = initialRun;
         this.workRate = workRate;
         this.running = true;

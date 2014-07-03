@@ -41,7 +41,7 @@ public final class Session {
      * don't have RSA enabled in your client and you don't know how to get RSA
      * working).
      */
-    public static final boolean DECODE_RSA = false;
+	public static final boolean DECODE_RSA = true;
 
     /**
      * If this is set to true, any players that login but moderators or higher

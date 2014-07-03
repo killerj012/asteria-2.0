@@ -7,7 +7,7 @@ import java.nio.file.Paths;
 import java.util.logging.Logger;
 
 import server.util.Misc;
-import server.world.entity.combat.task.CombatPoisonTask.CombatPoison;
+import server.world.entity.combat.task.CombatPoisonTask.PoisonType;
 import server.world.entity.player.Player;
 import server.world.entity.player.PlayerFileEvent;
 import server.world.entity.player.PlayerRights;
@@ -94,7 +94,8 @@ public class ReadPlayerFileEvent extends PlayerFileEvent {
             final int skullTimer = reader.get("skull-timer").getAsInt();
             final boolean acceptAid = reader.get("accept-aid").getAsBoolean();
             final int poisonHits = reader.get("poison-hits").getAsInt();
-            final CombatPoison poisonStrength = CombatPoison.valueOf(reader.get("poison-strength").getAsString());
+			final PoisonType poisonStrength = PoisonType.valueOf(reader.get(
+					"poison-strength").getAsString());
             final int teleblockTimer = reader.get("teleblock-timer").getAsInt();
             final int specialAmount = reader.get("special-amount").getAsInt();
 
