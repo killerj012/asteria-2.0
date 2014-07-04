@@ -11,7 +11,7 @@ import server.world.WorldFullException;
  * 
  * @author lare96
  * @param <T>
- *        the type of entity to hold in this container.
+ *            the type of entity to hold in this container.
  */
 public class EntityContainer<T extends Entity> implements Iterable<T> {
 
@@ -25,7 +25,8 @@ public class EntityContainer<T extends Entity> implements Iterable<T> {
      * Create a new {@link EntityContainer} with the specified capacity.
      * 
      * @param capacity
-     *        the maximum amount of entities this container is allowed to hold.
+     *            the maximum amount of entities this container is allowed to
+     *            hold.
      */
     @SuppressWarnings("unchecked")
     public EntityContainer(int capacity) {
@@ -38,7 +39,7 @@ public class EntityContainer<T extends Entity> implements Iterable<T> {
      * found then a {@link WorldFullException} is thrown.
      * 
      * @param entity
-     *        the entity to add to the found slot.
+     *            the entity to add to the found slot.
      * @return this container for chaining.
      */
     public void add(T entity) {
@@ -59,21 +60,21 @@ public class EntityContainer<T extends Entity> implements Iterable<T> {
      * Adds an entity to the specified slot.
      * 
      * @param slot
-     *        the slot to add this entity to.
+     *            the slot to add this entity to.
      * @param entity
-     *        the entity to add to the slot.
+     *            the entity to add to the slot.
      * @return this container for chaining.
      */
     public void addSlot(int slot, T entity) {
 
         /** Throw an exception if this is a malformed entity. */
         if (entity == null) {
-            throw new IllegalArgumentException("Cannot add a malformed entity to this container!");
+            throw new IllegalArgumentException(
+                    "Cannot add a malformed entity to this container!");
         }
 
         /** Throw an exception if the slot is out of the range. */
-        if (slot > backingArray.length
-                || slot < 1) {
+        if (slot > backingArray.length || slot < 1) {
             throw new IllegalArgumentException("Invalid entry slot requested!");
         }
 
@@ -87,14 +88,15 @@ public class EntityContainer<T extends Entity> implements Iterable<T> {
      * Remove this entity from the slot its currently in.
      * 
      * @param entity
-     *        the entity to remove from its slot.
+     *            the entity to remove from its slot.
      * @return this container for chaining.
      */
     public void remove(T entity) {
 
         /** Throw an exception if this is a malformed entity. */
         if (entity == null) {
-            throw new IllegalArgumentException("Cannot add a malformed entity to this container!");
+            throw new IllegalArgumentException(
+                    "Cannot add a malformed entity to this container!");
         }
 
         /** Otherwise remove the entity. */
@@ -105,14 +107,13 @@ public class EntityContainer<T extends Entity> implements Iterable<T> {
      * Remove the entity on the specified slot.
      * 
      * @param slot
-     *        the slot to remove the entity on.
+     *            the slot to remove the entity on.
      * @return this container for chaining.
      */
     public void removeSlot(int slot) {
 
         /** Throw an exception if the slot is out of the range. */
-        if (slot > backingArray.length
-                || slot < 1) {
+        if (slot > backingArray.length || slot < 1) {
             throw new IllegalArgumentException("Invalid remove slot requested!");
         }
 
@@ -131,12 +132,11 @@ public class EntityContainer<T extends Entity> implements Iterable<T> {
      * Determines if this container has the specified entity.
      * 
      * @param entity
-     *        the entity to check this container for.
+     *            the entity to check this container for.
      * @return true if this container has the entity.
      */
     public boolean contains(T entity) {
-        if (entity.getSlot() > backingArray.length
-                || entity.getSlot() < 1) {
+        if (entity.getSlot() > backingArray.length || entity.getSlot() < 1) {
             return false;
         }
 
@@ -147,7 +147,7 @@ public class EntityContainer<T extends Entity> implements Iterable<T> {
      * Determines if the given slot is free.
      * 
      * @param slot
-     *        the slot to determine if free.
+     *            the slot to determine if free.
      * @return true if the slot is free.
      */
     public boolean isSlotFree(int slot) {
@@ -158,7 +158,7 @@ public class EntityContainer<T extends Entity> implements Iterable<T> {
      * Gets the entity on the specified slot.
      * 
      * @param slot
-     *        the slot to retrieve the entity on.
+     *            the slot to retrieve the entity on.
      * @return the entity on the specified slot.
      */
     public T get(int slot) {
@@ -203,8 +203,7 @@ public class EntityContainer<T extends Entity> implements Iterable<T> {
      * @return the amount of free slots left in this container.
      */
     public int getFreeSlotAmount() {
-        return backingArray.length
-                - size;
+        return backingArray.length - size;
     }
 
     @Override
@@ -225,7 +224,8 @@ public class EntityContainer<T extends Entity> implements Iterable<T> {
             @Override
             public T next() {
                 if (currentIndex >= backingArray.length) {
-                    throw new ArrayIndexOutOfBoundsException("Can only call 'next()' in amount to 'backingArray.length'.");
+                    throw new ArrayIndexOutOfBoundsException(
+                            "Can only call 'next()' in amount to 'backingArray.length'.");
                 }
 
                 int i = currentIndex;
@@ -236,7 +236,8 @@ public class EntityContainer<T extends Entity> implements Iterable<T> {
             @Override
             public void remove() {
                 if (lastElementIndex < 0) {
-                    throw new IllegalStateException("Can only call 'remove()' once in call to 'next()'.");
+                    throw new IllegalStateException(
+                            "Can only call 'remove()' once in call to 'next()'.");
                 }
 
                 removeSlot(lastElementIndex);

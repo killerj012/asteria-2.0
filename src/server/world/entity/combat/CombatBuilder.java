@@ -52,7 +52,7 @@ public class CombatBuilder {
      * Create a new {@link CombatBuilder}.
      * 
      * @param entity
-     *        the entity controlling this builder.
+     *            the entity controlling this builder.
      */
     public CombatBuilder(Entity entity) {
         this.entity = entity;
@@ -62,7 +62,7 @@ public class CombatBuilder {
      * Prompts the controller to begin attacking another entity.
      * 
      * @param victim
-     *        the entity that will be attacked.
+     *            the entity that will be attacked.
      */
     public void attack(final Entity victim) {
 
@@ -130,7 +130,9 @@ public class CombatBuilder {
                  * Stop listening if we take too long or the victim becomes way
                  * out of range.
                  */
-                if (loopCount > 15 || !entity.getPosition().isViewableFrom(victim.getPosition())) {
+                if (loopCount > 15
+                        || !entity.getPosition().isViewableFrom(
+                                victim.getPosition())) {
                     builder.reset();
                     this.cancel();
                     entity.faceEntity(65535);
@@ -144,7 +146,8 @@ public class CombatBuilder {
                 if (builder.getEntity().type() == EntityType.NPC) {
                     Npc npc = (Npc) builder.getEntity();
 
-                    if (!npc.getPosition().withinDistance(npc.getOriginalPosition(), 5)) {
+                    if (!npc.getPosition().withinDistance(
+                            npc.getOriginalPosition(), 5)) {
                         npc.getCombatBuilder().reset();
                         npc.faceEntity(65535);
                         npc.getFollowWorker().cancel();
@@ -182,7 +185,9 @@ public class CombatBuilder {
                     return true;
                 }
 
-                return !entity.getPosition().withinDistance(victim.getPosition(), currentStrategy.getDistance(entity));
+                return !entity.getPosition().withinDistance(
+                        victim.getPosition(),
+                        currentStrategy.getDistance(entity));
             }
 
             @Override
@@ -256,7 +261,7 @@ public class CombatBuilder {
      * Sets the attack timer to any positive value including 0.
      * 
      * @param value
-     *        the value to set the attack timer to.
+     *            the value to set the attack timer to.
      */
     public void setAttackTimer(int value) {
         if (value < 0) {
@@ -332,7 +337,8 @@ public class CombatBuilder {
         for (Entry<Entity, Integer> nextEntry : damageMap.entrySet()) {
             if (nextEntry.getValue().intValue() == searchValue) {
                 Entity next = nextEntry.getKey();
-                if (next.isHasDied() || next.isUnregistered() || next.type() == EntityType.NPC) {
+                if (next.isHasDied() || next.isUnregistered()
+                        || next.type() == EntityType.NPC) {
                     continue;
                 }
                 return (Player) next;
@@ -350,9 +356,9 @@ public class CombatBuilder {
      * Adds damage to the damage map.
      * 
      * @param entity
-     *        the entity to add damage for.
+     *            the entity to add damage for.
      * @param amountDealt
-     *        the amount of damage dealt.
+     *            the amount of damage dealt.
      */
     public void addDamage(Entity entity, int amountDealt) {
 
@@ -404,7 +410,7 @@ public class CombatBuilder {
      * Sets the entity controlling this builder.
      * 
      * @param entity
-     *        the entity controlling this builder.
+     *            the entity controlling this builder.
      */
     public void setEntity(Entity entity) {
         this.entity = entity;
@@ -423,7 +429,7 @@ public class CombatBuilder {
      * Sets the entity this controller is currently attacking.
      * 
      * @param currentTarget
-     *        the entity this controller is currently attacking.
+     *            the entity this controller is currently attacking.
      */
     public void setCurrentTarget(Entity currentTarget) {
         this.currentTarget = currentTarget;
@@ -442,7 +448,7 @@ public class CombatBuilder {
      * Sets the entity that last attacked you.
      * 
      * @param lastAttacker
-     *        the entity that last attacked you.
+     *            the entity that last attacked you.
      */
     public void setLastAttacker(Entity lastAttacker) {
         this.lastAttacker = lastAttacker;
@@ -461,7 +467,7 @@ public class CombatBuilder {
      * Sets the current combat strategy this npc is using.
      * 
      * @param currentStrategy
-     *        the current combat strategy this npc is using.
+     *            the current combat strategy this npc is using.
      */
     public void setCurrentStrategy(CombatStrategy currentStrategy) {
         this.currentStrategy = currentStrategy;

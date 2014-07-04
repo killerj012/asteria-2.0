@@ -10,7 +10,7 @@ import server.world.entity.player.Player;
  * 
  * @author lare96
  */
-@PacketOpcodeHeader( { 241 })
+@PacketOpcodeHeader({ 241 })
 public class DecodeClickScreenPacket extends PacketDecoder {
 
     @Override

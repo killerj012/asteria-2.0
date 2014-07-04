@@ -22,7 +22,7 @@ public class PrivateMessage {
      * Create a new {@link PrivateMessage}.
      * 
      * @param player
-     *        the player in control of the private message.
+     *            the player in control of the private message.
      */
     public PrivateMessage(Player player) {
         this.player = player;
@@ -45,7 +45,8 @@ public class PrivateMessage {
 
             /** Update with online/offline. */
             Player load = World.getPlayer(name);
-            player.getPacketBuilder().loadPrivateMessage(name, load == null ? 0 : 1);
+            player.getPacketBuilder().loadPrivateMessage(name,
+                    load == null ? 0 : 1);
         }
 
         for (Player players : World.getPlayers()) {
@@ -53,7 +54,8 @@ public class PrivateMessage {
                 continue;
 
             if (players.getFriends().contains(player.getUsernameHash())) {
-                players.getPacketBuilder().loadPrivateMessage(player.getUsernameHash(), 1);
+                players.getPacketBuilder().loadPrivateMessage(
+                        player.getUsernameHash(), 1);
             }
         }
     }
@@ -68,7 +70,8 @@ public class PrivateMessage {
                 continue;
 
             if (players.getFriends().contains(player.getUsernameHash())) {
-                players.getPacketBuilder().loadPrivateMessage(player.getUsernameHash(), 0);
+                players.getPacketBuilder().loadPrivateMessage(
+                        player.getUsernameHash(), 0);
             }
         }
     }
@@ -77,7 +80,7 @@ public class PrivateMessage {
      * Adds someone to your friends list.
      * 
      * @param name
-     *        the name of the person to add in a {@link Long} format.
+     *            the name of the person to add in a {@link Long} format.
      */
     public void addFriend(long name) {
 
@@ -92,9 +95,9 @@ public class PrivateMessage {
          * list.
          */
         if (player.getFriends().contains(name)) {
-            player.getPacketBuilder().sendMessage(""
-                    + Misc.longToName(name)
-                    + " is already on your friends list.");
+            player.getPacketBuilder().sendMessage(
+                    "" + Misc.longToName(name)
+                            + " is already on your friends list.");
             return;
         }
 
@@ -103,14 +106,15 @@ public class PrivateMessage {
 
         /** Update the friends list with online/offline. */
         Player load = World.getPlayer(name);
-        player.getPacketBuilder().loadPrivateMessage(name, load == null ? 0 : 1);
+        player.getPacketBuilder()
+                .loadPrivateMessage(name, load == null ? 0 : 1);
     }
 
     /**
      * Adds someone to your ignores list.
      * 
      * @param name
-     *        the name of the person to add in a {@link Long} format.
+     *            the name of the person to add in a {@link Long} format.
      */
     public void addIgnore(long name) {
 
@@ -125,9 +129,9 @@ public class PrivateMessage {
          * list.
          */
         if (player.getIgnores().contains(name)) {
-            player.getPacketBuilder().sendMessage(""
-                    + Misc.longToName(name)
-                    + " is already on your ignores list.");
+            player.getPacketBuilder().sendMessage(
+                    "" + Misc.longToName(name)
+                            + " is already on your ignores list.");
             return;
         }
 
@@ -139,15 +143,15 @@ public class PrivateMessage {
      * Remove a friend from your friends list.
      * 
      * @param name
-     *        the name of the person to remove in a {@link Long} format.
+     *            the name of the person to remove in a {@link Long} format.
      */
     public void removeFriend(long name) {
         if (player.getFriends().contains(name)) {
             player.getFriends().remove(name);
         } else {
-            player.getPacketBuilder().sendMessage(""
-                    + Misc.longToName(name)
-                    + " is not even on your friends list...");
+            player.getPacketBuilder().sendMessage(
+                    "" + Misc.longToName(name)
+                            + " is not even on your friends list...");
         }
     }
 
@@ -155,15 +159,15 @@ public class PrivateMessage {
      * Remove an ignore from your ignores list.
      * 
      * @param name
-     *        the name of the person to remove in a {@link Long} format.
+     *            the name of the person to remove in a {@link Long} format.
      */
     public void removeIgnore(long name) {
         if (player.getIgnores().contains(name)) {
             player.getIgnores().remove(name);
         } else {
-            player.getPacketBuilder().sendMessage(""
-                    + Misc.longToName(name)
-                    + " is not even on your ignores list...");
+            player.getPacketBuilder().sendMessage(
+                    "" + Misc.longToName(name)
+                            + " is not even on your ignores list...");
         }
     }
 
@@ -171,19 +175,23 @@ public class PrivateMessage {
      * Sends a private message to another player.
      * 
      * @param sendingFrom
-     *        the player sending the message.
+     *            the player sending the message.
      * @param sendingTo
-     *        the player being sent the message.
+     *            the player being sent the message.
      * @param message
-     *        the message in a {@link Byte} array format.
+     *            the message in a {@link Byte} array format.
      * @param messageSize
-     *        the total size of the message.
+     *            the total size of the message.
      */
-    public void sendPrivateMessage(Player sendingFrom, long sendingTo, byte[] message, int messageSize) {
+    public void sendPrivateMessage(Player sendingFrom, long sendingTo,
+            byte[] message, int messageSize) {
         Player send = World.getPlayer(sendingTo);
 
         if (send != null) {
-            send.getPacketBuilder().sendPrivateMessage(sendingFrom.getUsernameHash(), sendingFrom.getRights().getProtocolValue(), message, messageSize);
+            send.getPacketBuilder().sendPrivateMessage(
+                    sendingFrom.getUsernameHash(),
+                    sendingFrom.getRights().getProtocolValue(), message,
+                    messageSize);
         }
     }
 

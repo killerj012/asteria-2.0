@@ -58,7 +58,8 @@ public class DecodeMovementPacket extends PacketDecoder {
 
         int steps = (length - 5) / 2;
         int[][] path = new int[steps][2];
-        int firstStepX = in.readShort(PacketBuffer.ValueType.A, PacketBuffer.ByteOrder.LITTLE);
+        int firstStepX = in.readShort(PacketBuffer.ValueType.A,
+                PacketBuffer.ByteOrder.LITTLE);
         for (int i = 0; i < steps; i++) {
             path[i][0] = in.readByte();
             path[i][1] = in.readByte();
@@ -66,15 +67,19 @@ public class DecodeMovementPacket extends PacketDecoder {
         int firstStepY = in.readShort(PacketBuffer.ByteOrder.LITTLE);
 
         player.getMovementQueue().reset();
-        player.getMovementQueue().setRunPath(in.readByte(PacketBuffer.ValueType.C) == 1);
-        player.getMovementQueue().addToPath(new Position(firstStepX, firstStepY));
+        player.getMovementQueue().setRunPath(
+                in.readByte(PacketBuffer.ValueType.C) == 1);
+        player.getMovementQueue().addToPath(
+                new Position(firstStepX, firstStepY));
 
         for (int i = 0; i < steps; i++) {
             path[i][0] += firstStepX;
             path[i][1] += firstStepY;
-            player.getMovementQueue().addToPath(new Position(path[i][0], path[i][1]));
+            player.getMovementQueue().addToPath(
+                    new Position(path[i][0], path[i][1]));
         }
         player.getMovementQueue().finish();
-        player.getPacketBuilder().sendMessage(player.getPosition().getRegionId() + " - walking");
+        player.getPacketBuilder().sendMessage(
+                player.getPosition().getRegionId() + " - walking");
     }
 }

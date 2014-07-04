@@ -9,7 +9,7 @@ import java.util.concurrent.FutureTask;
  * 
  * @author lare96
  * @param <T>
- *        the type of result returned by this task.
+ *            the type of result returned by this task.
  */
 public abstract class SequentialFutureTask<T> implements TaskFuture<T> {
 

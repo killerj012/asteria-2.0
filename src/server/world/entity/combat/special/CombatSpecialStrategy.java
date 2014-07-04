@@ -17,9 +17,9 @@ public interface CombatSpecialStrategy {
      * Fired when the player activates the special attack bar.
      * 
      * @param player
-     *        the player activating the special attack bar.
+     *            the player activating the special attack bar.
      * @param target
-     *        the player's current target.
+     *            the player's current target.
      */
     public void onActivation(Player player, Entity target);
 
@@ -27,9 +27,9 @@ public interface CombatSpecialStrategy {
      * Fired on the player's combat hook.
      * 
      * @param player
-     *        the player currently fighting.
+     *            the player currently fighting.
      * @param target
-     *        the player's current target.
+     *            the player's current target.
      * @return the combat hit for this combat hook.
      */
     public CombatHitContainer calculateHit(Player player, Entity target);

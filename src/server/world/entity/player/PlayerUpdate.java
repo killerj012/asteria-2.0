@@ -25,7 +25,7 @@ public final class PlayerUpdate {
      * Updates the player.
      * 
      * @param player
-     *        the player to update.
+     *            the player to update.
      */
     public static void update(Player player) throws Exception {
 
@@ -49,11 +49,11 @@ public final class PlayerUpdate {
             Player other = i.next();
             if (other.getPosition().isViewableFrom(player.getPosition())
                     && other.getSession().getStage() == Session.Stage.LOGGED_IN
-                    && !other.isNeedsPlacement()
-                    && other.isVisible()) {
+                    && !other.isNeedsPlacement() && other.isVisible()) {
                 PlayerUpdate.updateOtherPlayerMovement(other, out);
                 if (other.getFlags().isUpdateRequired()) {
-                    PlayerUpdate.updateState(other, player, block, false, false);
+                    PlayerUpdate
+                            .updateState(other, player, block, false, false);
                 }
             } else {
                 out.writeBit(true);
@@ -66,15 +66,13 @@ public final class PlayerUpdate {
 
         /** Update the local player list. */
         for (int i = 0; i < World.getPlayers().getCapacity(); i++) {
-            if (added == 15
-                    || player.getPlayers().size() >= 255) {
+            if (added == 15 || player.getPlayers().size() >= 255) {
 
                 /** Player limit has been reached. */
                 break;
             }
             Player other = World.getPlayers().get(i);
-            if (other == null
-                    || other == player
+            if (other == null || other == player
                     || other.getSession().getStage() != Session.Stage.LOGGED_IN
                     || !other.isVisible()) {
                 continue;
@@ -106,13 +104,15 @@ public final class PlayerUpdate {
      * Appends the state of a player's chat to a buffer.
      * 
      * @param player
-     *        the player.
+     *            the player.
      * @param out
-     *        the buffer.
+     *            the buffer.
      */
     public static void appendChat(Player player, PacketBuffer.WriteBuffer out) {
-        out.writeShort(((player.getChatColor() & 0xff) << 8)
-                + (player.getChatEffects() & 0xff), PacketBuffer.ByteOrder.LITTLE);
+        out.writeShort(
+                ((player.getChatColor() & 0xff) << 8)
+                        + (player.getChatEffects() & 0xff),
+                PacketBuffer.ByteOrder.LITTLE);
         out.writeByte(player.getRights().getProtocolValue());
         out.writeByte(player.getChatText().length, PacketBuffer.ValueType.C);
         out.writeBytesReverse(player.getChatText());
@@ -122,11 +122,12 @@ public final class PlayerUpdate {
      * Appends the state of a player's appearance to a buffer.
      * 
      * @param player
-     *        the player.
+     *            the player.
      * @param out
-     *        the buffer.
+     *            the buffer.
      */
-    public static void appendAppearance(Player player, PacketBuffer.WriteBuffer out) {
+    public static void appendAppearance(Player player,
+            PacketBuffer.WriteBuffer out) {
         PacketBuffer.WriteBuffer block = PacketBuffer.newWriteBuffer(128);
 
         /** Gender. */
@@ -139,51 +140,66 @@ public final class PlayerUpdate {
         block.writeByte(player.getSkullIcon());
         if (player.getNpcAppearanceId() == -1) {
 
-            if (player.getEquipment().getContainer().getItemId(Misc.EQUIPMENT_SLOT_HEAD) > 1) {
-                block.writeShort(0x200 + player.getEquipment().getContainer().getItemId(Misc.EQUIPMENT_SLOT_HEAD));
+            if (player.getEquipment().getContainer()
+                    .getItemId(Misc.EQUIPMENT_SLOT_HEAD) > 1) {
+                block.writeShort(0x200 + player.getEquipment().getContainer()
+                        .getItemId(Misc.EQUIPMENT_SLOT_HEAD));
             } else {
                 block.writeByte(0);
             }
 
             /** Cape. */
-            if (player.getEquipment().getContainer().getItemId(Misc.EQUIPMENT_SLOT_CAPE) > 1) {
-                block.writeShort(0x200 + player.getEquipment().getContainer().getItemId(Misc.EQUIPMENT_SLOT_CAPE));
+            if (player.getEquipment().getContainer()
+                    .getItemId(Misc.EQUIPMENT_SLOT_CAPE) > 1) {
+                block.writeShort(0x200 + player.getEquipment().getContainer()
+                        .getItemId(Misc.EQUIPMENT_SLOT_CAPE));
             } else {
                 block.writeByte(0);
             }
 
             /** Amulet. */
-            if (player.getEquipment().getContainer().getItemId(Misc.EQUIPMENT_SLOT_AMULET) > 1) {
-                block.writeShort(0x200 + player.getEquipment().getContainer().getItemId(Misc.EQUIPMENT_SLOT_AMULET));
+            if (player.getEquipment().getContainer()
+                    .getItemId(Misc.EQUIPMENT_SLOT_AMULET) > 1) {
+                block.writeShort(0x200 + player.getEquipment().getContainer()
+                        .getItemId(Misc.EQUIPMENT_SLOT_AMULET));
             } else {
                 block.writeByte(0);
             }
 
             /** Weapon. */
-            if (player.getEquipment().getContainer().getItemId(Misc.EQUIPMENT_SLOT_WEAPON) > 1) {
-                block.writeShort(0x200 + player.getEquipment().getContainer().getItemId(Misc.EQUIPMENT_SLOT_WEAPON));
+            if (player.getEquipment().getContainer()
+                    .getItemId(Misc.EQUIPMENT_SLOT_WEAPON) > 1) {
+                block.writeShort(0x200 + player.getEquipment().getContainer()
+                        .getItemId(Misc.EQUIPMENT_SLOT_WEAPON));
             } else {
                 block.writeByte(0);
             }
 
             /** Chest. */
-            if (player.getEquipment().getContainer().getItemId(Misc.EQUIPMENT_SLOT_CHEST) > 1) {
-                block.writeShort(0x200 + player.getEquipment().getContainer().getItemId(Misc.EQUIPMENT_SLOT_CHEST));
+            if (player.getEquipment().getContainer()
+                    .getItemId(Misc.EQUIPMENT_SLOT_CHEST) > 1) {
+                block.writeShort(0x200 + player.getEquipment().getContainer()
+                        .getItemId(Misc.EQUIPMENT_SLOT_CHEST));
             } else {
                 block.writeShort(0x100 + player.getAppearance()[Misc.APPEARANCE_SLOT_CHEST]);
             }
 
             /** Shield. */
-            if (player.getEquipment().getContainer().getItemId(Misc.EQUIPMENT_SLOT_SHIELD) > 1) {
-                block.writeShort(0x200 + player.getEquipment().getContainer().getItemId(Misc.EQUIPMENT_SLOT_SHIELD));
+            if (player.getEquipment().getContainer()
+                    .getItemId(Misc.EQUIPMENT_SLOT_SHIELD) > 1) {
+                block.writeShort(0x200 + player.getEquipment().getContainer()
+                        .getItemId(Misc.EQUIPMENT_SLOT_SHIELD));
             } else {
                 block.writeByte(0);
             }
 
             /** Arms. */
-            if (player.getEquipment().getContainer().getItemId(Misc.EQUIPMENT_SLOT_CHEST) > 1) {
+            if (player.getEquipment().getContainer()
+                    .getItemId(Misc.EQUIPMENT_SLOT_CHEST) > 1) {
 
-                if (!player.getEquipment().getContainer().getItem(Misc.EQUIPMENT_SLOT_CHEST).getDefinition().isPlatebody()) {
+                if (!player.getEquipment().getContainer()
+                        .getItem(Misc.EQUIPMENT_SLOT_CHEST).getDefinition()
+                        .isPlatebody()) {
                     block.writeShort(0x100 + player.getAppearance()[Misc.APPEARANCE_SLOT_ARMS]);
                 } else {
                     block.writeByte(0);
@@ -193,39 +209,52 @@ public final class PlayerUpdate {
             }
 
             /** Legs. */
-            if (player.getEquipment().getContainer().getItemId(Misc.EQUIPMENT_SLOT_LEGS) > 1) {
-                block.writeShort(0x200 + player.getEquipment().getContainer().getItemId(Misc.EQUIPMENT_SLOT_LEGS));
+            if (player.getEquipment().getContainer()
+                    .getItemId(Misc.EQUIPMENT_SLOT_LEGS) > 1) {
+                block.writeShort(0x200 + player.getEquipment().getContainer()
+                        .getItemId(Misc.EQUIPMENT_SLOT_LEGS));
             } else {
                 block.writeShort(0x100 + player.getAppearance()[Misc.APPEARANCE_SLOT_LEGS]);
             }
 
             /** Head. */
-            if (player.getEquipment().getContainer().getItemId(Misc.EQUIPMENT_SLOT_HEAD) > 1
-                    && player.getEquipment().getContainer().getItem(Misc.EQUIPMENT_SLOT_HEAD).getDefinition().isFullHelm()) {
+            if (player.getEquipment().getContainer()
+                    .getItemId(Misc.EQUIPMENT_SLOT_HEAD) > 1
+                    && player.getEquipment().getContainer()
+                            .getItem(Misc.EQUIPMENT_SLOT_HEAD).getDefinition()
+                            .isFullHelm()) {
                 block.writeByte(0);
             } else {
                 block.writeShort(0x100 + player.getAppearance()[Misc.APPEARANCE_SLOT_HEAD]);
             }
 
             /** Hands. */
-            if (player.getEquipment().getContainer().getItemId(Misc.EQUIPMENT_SLOT_HANDS) > 1) {
-                block.writeShort(0x200 + player.getEquipment().getContainer().getItemId(Misc.EQUIPMENT_SLOT_HANDS));
+            if (player.getEquipment().getContainer()
+                    .getItemId(Misc.EQUIPMENT_SLOT_HANDS) > 1) {
+                block.writeShort(0x200 + player.getEquipment().getContainer()
+                        .getItemId(Misc.EQUIPMENT_SLOT_HANDS));
             } else {
                 block.writeShort(0x100 + player.getAppearance()[Misc.APPEARANCE_SLOT_HANDS]);
             }
 
             /** Feet. */
-            if (player.getEquipment().getContainer().getItemId(Misc.EQUIPMENT_SLOT_FEET) > 1) {
-                block.writeShort(0x200 + player.getEquipment().getContainer().getItemId(Misc.EQUIPMENT_SLOT_FEET));
+            if (player.getEquipment().getContainer()
+                    .getItemId(Misc.EQUIPMENT_SLOT_FEET) > 1) {
+                block.writeShort(0x200 + player.getEquipment().getContainer()
+                        .getItemId(Misc.EQUIPMENT_SLOT_FEET));
             } else {
                 block.writeShort(0x100 + player.getAppearance()[Misc.APPEARANCE_SLOT_FEET]);
             }
 
             /** Beard. */
             if (player.getGender() == Misc.GENDER_MALE) {
-                if (player.getEquipment().getContainer().getItemId(Misc.EQUIPMENT_SLOT_HEAD) > 1
-                        && !player.getEquipment().getContainer().getItem(Misc.EQUIPMENT_SLOT_HEAD).getDefinition().isFullHelm()
-                        || player.getEquipment().getContainer().isSlotFree(Misc.EQUIPMENT_SLOT_HEAD)) {
+                if (player.getEquipment().getContainer()
+                        .getItemId(Misc.EQUIPMENT_SLOT_HEAD) > 1
+                        && !player.getEquipment().getContainer()
+                                .getItem(Misc.EQUIPMENT_SLOT_HEAD)
+                                .getDefinition().isFullHelm()
+                        || player.getEquipment().getContainer()
+                                .isSlotFree(Misc.EQUIPMENT_SLOT_HEAD)) {
                     block.writeShort(0x100 + player.getAppearance()[Misc.APPEARANCE_SLOT_BEARD]);
                 } else {
                     block.writeByte(0);
@@ -245,13 +274,19 @@ public final class PlayerUpdate {
         block.writeByte(player.getColors()[4]);
 
         /** Movement animations */
-        block.writeShort(player.getUpdateAnimation().getStandingAnimation() == -1 ? PlayerAnimation.getStandEmote() : player.getUpdateAnimation().getStandingAnimation()); // stand
+        block.writeShort(player.getUpdateAnimation().getStandingAnimation() == -1 ? PlayerAnimation
+                .getStandEmote() : player.getUpdateAnimation()
+                .getStandingAnimation()); // stand
         block.writeShort(PlayerAnimation.getStandTurnEmote()); // stand turn
-        block.writeShort(player.getUpdateAnimation().getWalkingAnimation() == -1 ? PlayerAnimation.getWalkEmote() : player.getUpdateAnimation().getWalkingAnimation()); // walk
+        block.writeShort(player.getUpdateAnimation().getWalkingAnimation() == -1 ? PlayerAnimation
+                .getWalkEmote() : player.getUpdateAnimation()
+                .getWalkingAnimation()); // walk
         block.writeShort(PlayerAnimation.getTurn180Emote()); // turn 180
         block.writeShort(PlayerAnimation.getTurn90CWEmote()); // turn 90 cw
         block.writeShort(PlayerAnimation.getTurn90CCWEmote()); // turn 90 ccw
-        block.writeShort(player.getUpdateAnimation().getRunningAnimation() == -1 ? PlayerAnimation.getRunEmote() : player.getUpdateAnimation().getRunningAnimation()); // run
+        block.writeShort(player.getUpdateAnimation().getRunningAnimation() == -1 ? PlayerAnimation
+                .getRunEmote() : player.getUpdateAnimation()
+                .getRunningAnimation()); // run
 
         /** Player context menus */
         block.writeLong(player.getUsernameHash());
@@ -267,13 +302,14 @@ public final class PlayerUpdate {
      * Adds a player to the local player list of another player.
      * 
      * @param out
-     *        the packet to write to.
+     *            the packet to write to.
      * @param player
-     *        the host player.
+     *            the host player.
      * @param other
-     *        the player being added.
+     *            the player being added.
      */
-    public static void addPlayer(PacketBuffer.WriteBuffer out, Player player, Player other) {
+    public static void addPlayer(PacketBuffer.WriteBuffer out, Player player,
+            Player other) {
         out.writeBits(11, other.getSlot()); // Server slot.
         out.writeBit(true); // Yes, an update is required.
         out.writeBit(true); // Discard walking queue(?)
@@ -292,20 +328,23 @@ public final class PlayerUpdate {
      * instead).
      * 
      * @param player
-     *        the player to update movement for.
+     *            the player to update movement for.
      * @param out
-     *        the packet to write to.
+     *            the packet to write to.
      */
-    public static void updateLocalPlayerMovement(Player player, PacketBuffer.WriteBuffer out) {
+    public static void updateLocalPlayerMovement(Player player,
+            PacketBuffer.WriteBuffer out) {
         boolean updateRequired = player.getFlags().isUpdateRequired();
         if (player.isNeedsPlacement()) { // Do they need placement?
 
-
             out.writeBit(true); // Yes, there is an update.
-            int posX = player.getPosition().getLocalX(player.getCurrentRegion());
-            int posY = player.getPosition().getLocalY(player.getCurrentRegion());
+            int posX = player.getPosition()
+                    .getLocalX(player.getCurrentRegion());
+            int posY = player.getPosition()
+                    .getLocalY(player.getCurrentRegion());
 
-            appendPlacement(out, posX, posY, player.getPosition().getZ(), player.isResetMovementQueue(), updateRequired);
+            appendPlacement(out, posX, posY, player.getPosition().getZ(),
+                    player.isResetMovementQueue(), updateRequired);
 
             // player.setNeedsPlacement(false);
         } else { // No placement update, check for movement.
@@ -334,11 +373,12 @@ public final class PlayerUpdate {
      * sector 2,3).
      * 
      * @param player
-     *        the player to update movement for.
+     *            the player to update movement for.
      * @param out
-     *        the packet to write to.
+     *            the packet to write to.
      */
-    public static void updateOtherPlayerMovement(Player player, PacketBuffer.WriteBuffer out) {
+    public static void updateOtherPlayerMovement(Player player,
+            PacketBuffer.WriteBuffer out) {
         boolean updateRequired = player.getFlags().isUpdateRequired();
         int pDir = player.getPrimaryDirection();
         int sDir = player.getSecondaryDirection();
@@ -363,25 +403,24 @@ public final class PlayerUpdate {
      * Updates the state of a player.
      * 
      * @param player
-     *        the player being constructed.
+     *            the player being constructed.
      * @param thisPlayer
-     *        the player being constructed for.
+     *            the player being constructed for.
      * @param block
-     *        the update block.
+     *            the update block.
      */
-    public static void updateState(Player player, Player thisPlayer, PacketBuffer.WriteBuffer block, boolean forceAppearance, boolean noChat) throws Exception {
+    public static void updateState(Player player, Player thisPlayer,
+            PacketBuffer.WriteBuffer block, boolean forceAppearance,
+            boolean noChat) throws Exception {
 
         /** Block if no update is required. */
-        if (!player.getFlags().isUpdateRequired()
-                && !forceAppearance) {
+        if (!player.getFlags().isUpdateRequired() && !forceAppearance) {
             return;
         }
 
         /** Send the cached update block if we are able to. */
-        if (player.getCachedUpdateBlock() != null
-                && player != thisPlayer
-                && !forceAppearance
-                && !noChat) {
+        if (player.getCachedUpdateBlock() != null && player != thisPlayer
+                && !forceAppearance && !noChat) {
             block.getBuffer().put(player.getCachedUpdateBlock().array());
             return;
         }
@@ -401,12 +440,10 @@ public final class PlayerUpdate {
         if (player.getFlags().get(Flag.FORCED_CHAT)) {
             mask |= 4;
         }
-        if (player.getFlags().get(Flag.CHAT)
-                && !noChat) {
+        if (player.getFlags().get(Flag.CHAT) && !noChat) {
             mask |= 0x80;
         }
-        if (player.getFlags().get(Flag.APPEARANCE)
-                || forceAppearance) {
+        if (player.getFlags().get(Flag.APPEARANCE) || forceAppearance) {
             mask |= 0x10;
         }
         if (player.getFlags().get(Flag.FACE_ENTITY)) {
@@ -444,8 +481,7 @@ public final class PlayerUpdate {
             appendForcedChat(player, cachedBuffer);
         }
         // Regular chat
-        if (player.getFlags().get(Flag.CHAT)
-                && !noChat) {
+        if (player.getFlags().get(Flag.CHAT) && !noChat) {
             appendChat(player, cachedBuffer);
         }
         // Face entity
@@ -453,8 +489,7 @@ public final class PlayerUpdate {
             appendFaceEntity(player, cachedBuffer);
         }
         // Appearance
-        if (player.getFlags().get(Flag.APPEARANCE)
-                || forceAppearance) {
+        if (player.getFlags().get(Flag.APPEARANCE) || forceAppearance) {
             appendAppearance(player, cachedBuffer);
         }
         // Face coordinates
@@ -471,9 +506,7 @@ public final class PlayerUpdate {
         }
 
         /** Cache the block if possible. */
-        if (player != thisPlayer
-                && !forceAppearance
-                && !noChat) {
+        if (player != thisPlayer && !forceAppearance && !noChat) {
             player.setCachedUpdateBlock(cachedBuffer.getBuffer());
 
         }
@@ -486,11 +519,12 @@ public final class PlayerUpdate {
      * Update the forced chat block.
      * 
      * @param player
-     *        the player to update for.
+     *            the player to update for.
      * @param out
-     *        the packet to write to.
+     *            the packet to write to.
      */
-    private static void appendForcedChat(Player player, PacketBuffer.WriteBuffer out) {
+    private static void appendForcedChat(Player player,
+            PacketBuffer.WriteBuffer out) {
         out.writeString(player.getForcedText());
     }
 
@@ -498,11 +532,12 @@ public final class PlayerUpdate {
      * Update the face entity block.
      * 
      * @param player
-     *        the player to update for.
+     *            the player to update for.
      * @param out
-     *        the packet to write to.
+     *            the packet to write to.
      */
-    private static void appendFaceEntity(Player player, PacketBuffer.WriteBuffer out) {
+    private static void appendFaceEntity(Player player,
+            PacketBuffer.WriteBuffer out) {
         out.writeShort(player.getFaceIndex(), ByteOrder.LITTLE);
     }
 
@@ -510,12 +545,14 @@ public final class PlayerUpdate {
      * Update the face coordinate block.
      * 
      * @param player
-     *        the player to update for.
+     *            the player to update for.
      * @param out
-     *        the packet to write to.
+     *            the packet to write to.
      */
-    private static void appendFaceCoordinate(Player player, PacketBuffer.WriteBuffer out) {
-        out.writeShort(player.getFaceCoordinates().getX(), ValueType.A, ByteOrder.LITTLE);
+    private static void appendFaceCoordinate(Player player,
+            PacketBuffer.WriteBuffer out) {
+        out.writeShort(player.getFaceCoordinates().getX(), ValueType.A,
+                ByteOrder.LITTLE);
         out.writeShort(player.getFaceCoordinates().getY(), ByteOrder.LITTLE);
     }
 
@@ -523,11 +560,12 @@ public final class PlayerUpdate {
      * Update the animation block.
      * 
      * @param player
-     *        the player to update for.
+     *            the player to update for.
      * @param out
-     *        the packet to write to.
+     *            the packet to write to.
      */
-    private static void appendAnimation(Player player, PacketBuffer.WriteBuffer out) {
+    private static void appendAnimation(Player player,
+            PacketBuffer.WriteBuffer out) {
         out.writeShort(player.getAnimation().getId(), ByteOrder.LITTLE);
         out.writeByte(player.getAnimation().getDelay(), ValueType.C);
     }
@@ -536,11 +574,12 @@ public final class PlayerUpdate {
      * Update the primary hitmark block.
      * 
      * @param player
-     *        the player to update for.
+     *            the player to update for.
      * @param out
-     *        the packet to write to.
+     *            the packet to write to.
      */
-    private static void appendPrimaryHit(Player player, PacketBuffer.WriteBuffer out) throws Exception {
+    private static void appendPrimaryHit(Player player,
+            PacketBuffer.WriteBuffer out) throws Exception {
         out.writeByte(player.getPrimaryHit().getDamage());
         out.writeByte(player.getPrimaryHit().getType().getId(), ValueType.A);
 
@@ -552,19 +591,22 @@ public final class PlayerUpdate {
             }
         }
 
-        out.writeByte(player.getSkills()[Misc.HITPOINTS].getLevel(), ValueType.C);
-        out.writeByte(player.getSkills()[Misc.HITPOINTS].getLevelForExperience());
+        out.writeByte(player.getSkills()[Misc.HITPOINTS].getLevel(),
+                ValueType.C);
+        out.writeByte(player.getSkills()[Misc.HITPOINTS]
+                .getLevelForExperience());
     }
 
     /**
      * Update the secondary hitmark block.
      * 
      * @param player
-     *        the player to update for.
+     *            the player to update for.
      * @param out
-     *        the packet to write to.
+     *            the packet to write to.
      */
-    private static void appendSecondaryHit(Player player, PacketBuffer.WriteBuffer out) throws Exception {
+    private static void appendSecondaryHit(Player player,
+            PacketBuffer.WriteBuffer out) throws Exception {
         out.writeByte(player.getSecondaryHit().getDamage());
         out.writeByte(player.getSecondaryHit().getType().getId(), ValueType.S);
 
@@ -577,16 +619,18 @@ public final class PlayerUpdate {
         }
 
         out.writeByte(player.getSkills()[Misc.HITPOINTS].getLevel());
-        out.writeByte(player.getSkills()[Misc.HITPOINTS].getLevelForExperience(), ValueType.C);
+        out.writeByte(
+                player.getSkills()[Misc.HITPOINTS].getLevelForExperience(),
+                ValueType.C);
     }
 
     /**
      * Update the graphics block.
      * 
      * @param player
-     *        the player to update for.
+     *            the player to update for.
      * @param out
-     *        the packet to write to.
+     *            the packet to write to.
      */
     private static void appendGfx(Player player, PacketBuffer.WriteBuffer out) {
         out.writeShort(player.getGfx().getId(), ByteOrder.LITTLE);
@@ -599,7 +643,7 @@ public final class PlayerUpdate {
      * assumes that there is a required attribute update afterwards.
      * 
      * @param out
-     *        the buffer to append to.
+     *            the buffer to append to.
      */
     public static void appendStand(PacketBuffer.WriteBuffer out) {
         out.writeBits(2, 0); // 0 - no movement.
@@ -610,13 +654,14 @@ public final class PlayerUpdate {
      * (sector 2,1).
      * 
      * @param out
-     *        the buffer to append to
+     *            the buffer to append to
      * @param direction
-     *        the walking direction
+     *            the walking direction
      * @param attributesUpdate
-     *        whether or not a player attributes update is required
+     *            whether or not a player attributes update is required
      */
-    public static void appendWalk(PacketBuffer.WriteBuffer out, int direction, boolean attributesUpdate) {
+    public static void appendWalk(PacketBuffer.WriteBuffer out, int direction,
+            boolean attributesUpdate) {
         out.writeBits(2, 1); // 1 - walking.
 
         /** Append the actual sector. */
@@ -629,15 +674,16 @@ public final class PlayerUpdate {
      * (sector 2,2).
      * 
      * @param out
-     *        the buffer to append to.
+     *            the buffer to append to.
      * @param direction
-     *        the walking direction.
+     *            the walking direction.
      * @param direction2
-     *        the running direction.
+     *            the running direction.
      * @param attributesUpdate
-     *        whether or not a player attributes update is required.
+     *            whether or not a player attributes update is required.
      */
-    public static void appendRun(PacketBuffer.WriteBuffer out, int direction, int direction2, boolean attributesUpdate) {
+    public static void appendRun(PacketBuffer.WriteBuffer out, int direction,
+            int direction2, boolean attributesUpdate) {
         out.writeBits(2, 2); // 2 - running.
 
         /** Append the actual sector. */
@@ -652,19 +698,21 @@ public final class PlayerUpdate {
      * called the "teleport update".
      * 
      * @param out
-     *        the buffer to append to.
+     *            the buffer to append to.
      * @param localX
-     *        the local X coordinate.
+     *            the local X coordinate.
      * @param localY
-     *        the local Y coordinate.
+     *            the local Y coordinate.
      * @param z
-     *        the Z coordinate.
+     *            the Z coordinate.
      * @param discardMovementQueue
-     *        whether or not the client should discard the movement queue.
+     *            whether or not the client should discard the movement queue.
      * @param attributesUpdate
-     *        whether or not a plater attributes update is required.
+     *            whether or not a plater attributes update is required.
      */
-    public static void appendPlacement(PacketBuffer.WriteBuffer out, int localX, int localY, int z, boolean discardMovementQueue, boolean attributesUpdate) {
+    public static void appendPlacement(PacketBuffer.WriteBuffer out,
+            int localX, int localY, int z, boolean discardMovementQueue,
+            boolean attributesUpdate) {
         out.writeBits(2, 3); // 3 - placement.
 
         /** Append the actual sector. */

@@ -47,7 +47,11 @@ public abstract class PacketBuffer {
     }
 
     /** The bit masks. */
-    public static final int[] BIT_MASK = { 0, 0x1, 0x3, 0x7, 0xf, 0x1f, 0x3f, 0x7f, 0xff, 0x1ff, 0x3ff, 0x7ff, 0xfff, 0x1fff, 0x3fff, 0x7fff, 0xffff, 0x1ffff, 0x3ffff, 0x7ffff, 0xfffff, 0x1fffff, 0x3fffff, 0x7fffff, 0xffffff, 0x1ffffff, 0x3ffffff, 0x7ffffff, 0xfffffff, 0x1fffffff, 0x3fffffff, 0x7fffffff, -1 };
+    public static final int[] BIT_MASK = { 0, 0x1, 0x3, 0x7, 0xf, 0x1f, 0x3f,
+            0x7f, 0xff, 0x1ff, 0x3ff, 0x7ff, 0xfff, 0x1fff, 0x3fff, 0x7fff,
+            0xffff, 0x1ffff, 0x3ffff, 0x7ffff, 0xfffff, 0x1fffff, 0x3fffff,
+            0x7fffff, 0xffffff, 0x1ffffff, 0x3ffffff, 0x7ffffff, 0xfffffff,
+            0x1fffffff, 0x3fffffff, 0x7fffffff, -1 };
 
     /** The current AccessType of the buffer. */
     private AccessType accessType = AccessType.BYTE_ACCESS;
@@ -59,7 +63,7 @@ public abstract class PacketBuffer {
      * Create a new {@link ReadBuffer} with the specified backing buffer.
      * 
      * @param buffer
-     *        the backing buffer to use.
+     *            the backing buffer to use.
      * @return the new buffer.
      */
     public static final ReadBuffer newReadBuffer(ByteBuffer buffer) {
@@ -70,7 +74,7 @@ public abstract class PacketBuffer {
      * Create a new {@link ReadBuffer} at the specified size.
      * 
      * @param size
-     *        the size of the buffer.
+     *            the size of the buffer.
      * @return the new buffer.
      */
     public static final ReadBuffer newReadBuffer(int size) {
@@ -81,7 +85,7 @@ public abstract class PacketBuffer {
      * Create a new {@link WriteBuffer} with the specified backing buffer.
      * 
      * @param buffer
-     *        the backing buffer to use.
+     *            the backing buffer to use.
      * @return the new buffer.
      */
     public static final WriteBuffer newWriteBuffer(ByteBuffer buffer) {
@@ -92,7 +96,7 @@ public abstract class PacketBuffer {
      * Create a new {@link WriteBuffer} at the specified size.
      * 
      * @param size
-     *        the size of the buffer.
+     *            the size of the buffer.
      * @return the new buffer.
      */
     public static final WriteBuffer newWriteBuffer(int size) {
@@ -112,7 +116,7 @@ public abstract class PacketBuffer {
      * Handles the internal switching of the access type.
      * 
      * @param type
-     *        the new access type
+     *            the new access type
      */
     abstract void switchAccessType(AccessType type);
 
@@ -120,7 +124,7 @@ public abstract class PacketBuffer {
      * Sets the AccessType of this StreamBuffer.
      * 
      * @param accessType
-     *        the new AccessType
+     *            the new AccessType
      */
     public void setAccessType(AccessType accessType) {
         this.accessType = accessType;
@@ -140,7 +144,7 @@ public abstract class PacketBuffer {
      * Sets the bit position.
      * 
      * @param bitPosition
-     *        the new bit position
+     *            the new bit position
      */
     public void setBitPosition(int bitPosition) {
         this.bitPosition = bitPosition;
@@ -169,7 +173,7 @@ public abstract class PacketBuffer {
          * Creates a new InBuffer.
          * 
          * @param buffer
-         *        the buffer
+         *            the buffer
          */
         private ReadBuffer(ByteBuffer buffer) {
             this.buffer = buffer;
@@ -178,7 +182,8 @@ public abstract class PacketBuffer {
         @Override
         void switchAccessType(AccessType type) {
             if (type == AccessType.BIT_ACCESS) {
-                throw new UnsupportedOperationException("Reading bits is not implemented!");
+                throw new UnsupportedOperationException(
+                        "Reading bits is not implemented!");
             }
         }
 
@@ -186,25 +191,25 @@ public abstract class PacketBuffer {
          * Reads a value as a byte.
          * 
          * @param signed
-         *        the signedness
+         *            the signedness
          * @param type
-         *        the value type
+         *            the value type
          * @return the value
          */
         public int readByte(boolean signed, ValueType type) {
             int value = buffer.get();
             switch (type) {
-                case A:
-                    value = value - 128;
-                    break;
-                case C:
-                    value = -value;
-                    break;
-                case S:
-                    value = 128 - value;
-                    break;
-                case STANDARD:
-                    break;
+            case A:
+                value = value - 128;
+                break;
+            case C:
+                value = -value;
+                break;
+            case S:
+                value = 128 - value;
+                break;
+            case STANDARD:
+                break;
             }
             return signed ? value : value & 0xff;
         }
@@ -222,7 +227,7 @@ public abstract class PacketBuffer {
          * Reads a standard byte.
          * 
          * @param signed
-         *        the signedness
+         *            the signedness
          * @return the value
          */
         public int readByte(boolean signed) {
@@ -233,7 +238,7 @@ public abstract class PacketBuffer {
          * Reads a signed byte.
          * 
          * @param type
-         *        the value type
+         *            the value type
          * @return the value
          */
         public int readByte(ValueType type) {
@@ -244,28 +249,30 @@ public abstract class PacketBuffer {
          * Reads a short value.
          * 
          * @param signed
-         *        the signedness
+         *            the signedness
          * @param type
-         *        the value type
+         *            the value type
          * @param order
-         *        the byte order
+         *            the byte order
          * @return the value
          */
         public int readShort(boolean signed, ValueType type, ByteOrder order) {
             int value = 0;
             switch (order) {
-                case BIG:
-                    value |= readByte(false) << 8;
-                    value |= readByte(false, type);
-                    break;
-                case MIDDLE:
-                    throw new UnsupportedOperationException("Middle-endian short is impossible!");
-                case INVERSE_MIDDLE:
-                    throw new UnsupportedOperationException("Inverse-middle-endian short is impossible!");
-                case LITTLE:
-                    value |= readByte(false, type);
-                    value |= readByte(false) << 8;
-                    break;
+            case BIG:
+                value |= readByte(false) << 8;
+                value |= readByte(false, type);
+                break;
+            case MIDDLE:
+                throw new UnsupportedOperationException(
+                        "Middle-endian short is impossible!");
+            case INVERSE_MIDDLE:
+                throw new UnsupportedOperationException(
+                        "Inverse-middle-endian short is impossible!");
+            case LITTLE:
+                value |= readByte(false, type);
+                value |= readByte(false) << 8;
+                break;
             }
             return signed ? value : value & 0xffff;
         }
@@ -283,7 +290,7 @@ public abstract class PacketBuffer {
          * Reads a standard big-endian short.
          * 
          * @param signed
-         *        the signedness
+         *            the signedness
          * @return the value
          */
         public int readShort(boolean signed) {
@@ -294,7 +301,7 @@ public abstract class PacketBuffer {
          * Reads a signed big-endian short.
          * 
          * @param type
-         *        the value type
+         *            the value type
          * @return the value
          */
         public int readShort(ValueType type) {
@@ -305,9 +312,9 @@ public abstract class PacketBuffer {
          * Reads a big-endian short.
          * 
          * @param signed
-         *        the signedness
+         *            the signedness
          * @param type
-         *        the value type
+         *            the value type
          * @return the value
          */
         public int readShort(boolean signed, ValueType type) {
@@ -318,7 +325,7 @@ public abstract class PacketBuffer {
          * Reads a signed standard short.
          * 
          * @param order
-         *        the byte order
+         *            the byte order
          * @return the value
          */
         public int readShort(ByteOrder order) {
@@ -329,9 +336,9 @@ public abstract class PacketBuffer {
          * Reads a standard short.
          * 
          * @param signed
-         *        the signedness
+         *            the signedness
          * @param order
-         *        the byte order
+         *            the byte order
          * @return the value
          */
         public int readShort(boolean signed, ByteOrder order) {
@@ -342,9 +349,9 @@ public abstract class PacketBuffer {
          * Reads a signed short.
          * 
          * @param type
-         *        the value type
+         *            the value type
          * @param order
-         *        the byte order
+         *            the byte order
          * @return the value
          */
         public int readShort(ValueType type, ByteOrder order) {
@@ -355,40 +362,40 @@ public abstract class PacketBuffer {
          * Reads an integer.
          * 
          * @param signed
-         *        the signedness
+         *            the signedness
          * @param type
-         *        the value type
+         *            the value type
          * @param order
-         *        the byte order
+         *            the byte order
          * @return the value
          */
         public long readInt(boolean signed, ValueType type, ByteOrder order) {
             long value = 0;
             switch (order) {
-                case BIG:
-                    value |= readByte(false) << 24;
-                    value |= readByte(false) << 16;
-                    value |= readByte(false) << 8;
-                    value |= readByte(false, type);
-                    break;
-                case MIDDLE:
-                    value |= readByte(false) << 8;
-                    value |= readByte(false, type);
-                    value |= readByte(false) << 24;
-                    value |= readByte(false) << 16;
-                    break;
-                case INVERSE_MIDDLE:
-                    value |= readByte(false) << 16;
-                    value |= readByte(false) << 24;
-                    value |= readByte(false, type);
-                    value |= readByte(false) << 8;
-                    break;
-                case LITTLE:
-                    value |= readByte(false, type);
-                    value |= readByte(false) << 8;
-                    value |= readByte(false) << 16;
-                    value |= readByte(false) << 24;
-                    break;
+            case BIG:
+                value |= readByte(false) << 24;
+                value |= readByte(false) << 16;
+                value |= readByte(false) << 8;
+                value |= readByte(false, type);
+                break;
+            case MIDDLE:
+                value |= readByte(false) << 8;
+                value |= readByte(false, type);
+                value |= readByte(false) << 24;
+                value |= readByte(false) << 16;
+                break;
+            case INVERSE_MIDDLE:
+                value |= readByte(false) << 16;
+                value |= readByte(false) << 24;
+                value |= readByte(false, type);
+                value |= readByte(false) << 8;
+                break;
+            case LITTLE:
+                value |= readByte(false, type);
+                value |= readByte(false) << 8;
+                value |= readByte(false) << 16;
+                value |= readByte(false) << 24;
+                break;
             }
             return signed ? value : value & 0xffffffffL;
         }
@@ -406,7 +413,7 @@ public abstract class PacketBuffer {
          * Reads a standard big-endian integer.
          * 
          * @param signed
-         *        the signedness
+         *            the signedness
          * @return the value
          */
         public long readInt(boolean signed) {
@@ -417,7 +424,7 @@ public abstract class PacketBuffer {
          * Reads a signed big-endian integer.
          * 
          * @param type
-         *        the value type
+         *            the value type
          * @return the value
          */
         public int readInt(ValueType type) {
@@ -428,9 +435,9 @@ public abstract class PacketBuffer {
          * Reads a big-endian integer.
          * 
          * @param signed
-         *        the signedness
+         *            the signedness
          * @param type
-         *        the value type
+         *            the value type
          * @return the value
          */
         public long readInt(boolean signed, ValueType type) {
@@ -441,7 +448,7 @@ public abstract class PacketBuffer {
          * Reads a signed standard integer.
          * 
          * @param order
-         *        the byte order
+         *            the byte order
          * @return the value
          */
         public int readInt(ByteOrder order) {
@@ -452,9 +459,9 @@ public abstract class PacketBuffer {
          * Reads a standard integer.
          * 
          * @param signed
-         *        the signedness
+         *            the signedness
          * @param order
-         *        the byte order
+         *            the byte order
          * @return the value
          */
         public long readInt(boolean signed, ByteOrder order) {
@@ -465,9 +472,9 @@ public abstract class PacketBuffer {
          * Reads a signed integer.
          * 
          * @param type
-         *        the value type
+         *            the value type
          * @param order
-         *        the byte order
+         *            the byte order
          * @return the value
          */
         public int readInt(ValueType type, ByteOrder order) {
@@ -478,38 +485,40 @@ public abstract class PacketBuffer {
          * Reads a signed long value.
          * 
          * @param type
-         *        the value type
+         *            the value type
          * @param order
-         *        the byte order
+         *            the byte order
          * @return the value
          */
         public long readLong(ValueType type, ByteOrder order) {
             long value = 0;
             switch (order) {
-                case BIG:
-                    value |= (long) readByte(false) << 56L;
-                    value |= (long) readByte(false) << 48L;
-                    value |= (long) readByte(false) << 40L;
-                    value |= (long) readByte(false) << 32L;
-                    value |= (long) readByte(false) << 24L;
-                    value |= (long) readByte(false) << 16L;
-                    value |= (long) readByte(false) << 8L;
-                    value |= readByte(false, type);
-                    break;
-                case MIDDLE:
-                    throw new UnsupportedOperationException("middle-endian long is not implemented!");
-                case INVERSE_MIDDLE:
-                    throw new UnsupportedOperationException("inverse-middle-endian long is not implemented!");
-                case LITTLE:
-                    value |= readByte(false, type);
-                    value |= (long) readByte(false) << 8L;
-                    value |= (long) readByte(false) << 16L;
-                    value |= (long) readByte(false) << 24L;
-                    value |= (long) readByte(false) << 32L;
-                    value |= (long) readByte(false) << 40L;
-                    value |= (long) readByte(false) << 48L;
-                    value |= (long) readByte(false) << 56L;
-                    break;
+            case BIG:
+                value |= (long) readByte(false) << 56L;
+                value |= (long) readByte(false) << 48L;
+                value |= (long) readByte(false) << 40L;
+                value |= (long) readByte(false) << 32L;
+                value |= (long) readByte(false) << 24L;
+                value |= (long) readByte(false) << 16L;
+                value |= (long) readByte(false) << 8L;
+                value |= readByte(false, type);
+                break;
+            case MIDDLE:
+                throw new UnsupportedOperationException(
+                        "middle-endian long is not implemented!");
+            case INVERSE_MIDDLE:
+                throw new UnsupportedOperationException(
+                        "inverse-middle-endian long is not implemented!");
+            case LITTLE:
+                value |= readByte(false, type);
+                value |= (long) readByte(false) << 8L;
+                value |= (long) readByte(false) << 16L;
+                value |= (long) readByte(false) << 24L;
+                value |= (long) readByte(false) << 32L;
+                value |= (long) readByte(false) << 40L;
+                value |= (long) readByte(false) << 48L;
+                value |= (long) readByte(false) << 56L;
+                break;
             }
             return value;
         }
@@ -527,7 +536,7 @@ public abstract class PacketBuffer {
          * Reads a signed big-endian long
          * 
          * @param type
-         *        the value type
+         *            the value type
          * @return the value
          */
         public long readLong(ValueType type) {
@@ -538,7 +547,7 @@ public abstract class PacketBuffer {
          * Reads a signed standard long.
          * 
          * @param order
-         *        the byte order
+         *            the byte order
          * @return the value
          */
         public long readLong(ByteOrder order) {
@@ -564,7 +573,7 @@ public abstract class PacketBuffer {
          * position.
          * 
          * @param amount
-         *        the amount to read
+         *            the amount to read
          * @return a buffer filled with the data
          */
         public byte[] readBytes(int amount) {
@@ -576,9 +585,9 @@ public abstract class PacketBuffer {
          * position.
          * 
          * @param amount
-         *        the amount of bytes
+         *            the amount of bytes
          * @param type
-         *        the value type of each byte
+         *            the value type of each byte
          * @return a buffer filled with the data
          */
         public byte[] readBytes(int amount, ValueType type) {
@@ -595,9 +604,9 @@ public abstract class PacketBuffer {
          * position.
          * 
          * @param amount
-         *        the amount of bytes
+         *            the amount of bytes
          * @param type
-         *        the value type of each byte
+         *            the value type of each byte
          * @return a buffer filled with the data
          */
         public byte[] readBytesReverse(int amount, ValueType type) {
@@ -606,17 +615,17 @@ public abstract class PacketBuffer {
             for (int i = buffer.position() + amount - 1; i >= buffer.position(); i--) {
                 int value = buffer.get(i);
                 switch (type) {
-                    case A:
-                        value -= 128;
-                        break;
-                    case C:
-                        value = -value;
-                        break;
-                    case S:
-                        value = 128 - value;
-                        break;
-                    case STANDARD:
-                        break;
+                case A:
+                    value -= 128;
+                    break;
+                case C:
+                    value = -value;
+                    break;
+                case S:
+                    value = 128 - value;
+                    break;
+                case STANDARD:
+                    break;
                 }
                 data[dataPosition++] = (byte) value;
             }
@@ -651,7 +660,7 @@ public abstract class PacketBuffer {
          * Creates a new OutBuffer.
          * 
          * @param size
-         *        the size
+         *            the size
          */
         private WriteBuffer(ByteBuffer buffer) {
             this.buffer = buffer;
@@ -660,12 +669,12 @@ public abstract class PacketBuffer {
         @Override
         void switchAccessType(AccessType type) {
             switch (type) {
-                case BIT_ACCESS:
-                    setBitPosition(buffer.position() * 8);
-                    break;
-                case BYTE_ACCESS:
-                    buffer.position((getBitPosition() + 7) / 8);
-                    break;
+            case BIT_ACCESS:
+                setBitPosition(buffer.position() * 8);
+                break;
+            case BYTE_ACCESS:
+                buffer.position((getBitPosition() + 7) / 8);
+                break;
             }
         }
 
@@ -673,7 +682,7 @@ public abstract class PacketBuffer {
          * Writes a packet header.
          * 
          * @param value
-         *        the value
+         *            the value
          * @param cipher
          */
         public WriteBuffer writeHeader(int value) {
@@ -687,7 +696,7 @@ public abstract class PacketBuffer {
          * the packet.
          * 
          * @param value
-         *        the value
+         *            the value
          */
         public WriteBuffer writeVariablePacketHeader(int value) {
             writeHeader(value);
@@ -702,7 +711,7 @@ public abstract class PacketBuffer {
          * "finishVariableShortPacketHeader must be called to finish the packet.
          * 
          * @param value
-         *        the value
+         *            the value
          */
         public WriteBuffer writeVariableShortPacketHeader(int value) {
             writeHeader(value);
@@ -718,7 +727,8 @@ public abstract class PacketBuffer {
          */
         public WriteBuffer finishVariablePacketHeader() {
             resizeBuffer(1);
-            buffer.put(lengthPosition, (byte) (buffer.position() - lengthPosition - 1));
+            buffer.put(lengthPosition, (byte) (buffer.position()
+                    - lengthPosition - 1));
             return this;
         }
 
@@ -729,7 +739,8 @@ public abstract class PacketBuffer {
          */
         public WriteBuffer finishVariableShortPacketHeader() {
             resizeBuffer(2);
-            buffer.putShort(lengthPosition, (short) (buffer.position() - lengthPosition - 2));
+            buffer.putShort(lengthPosition, (short) (buffer.position()
+                    - lengthPosition - 2));
             return this;
         }
 
@@ -763,7 +774,7 @@ public abstract class PacketBuffer {
          * reverse.
          * 
          * @param data
-         *        the data to write
+         *            the data to write
          */
         public WriteBuffer writeBytesReverse(byte[] data) {
             for (int i = data.length - 1; i >= 0; i--) {
@@ -776,16 +787,17 @@ public abstract class PacketBuffer {
          * Writes the value as a variable amount of bits.
          * 
          * @param amount
-         *        the amount of bits
+         *            the amount of bits
          * @param value
-         *        the value
+         *            the value
          */
         public WriteBuffer writeBits(int amount, int value) {
             if (getAccessType() != AccessType.BIT_ACCESS) {
                 throw new IllegalStateException("Illegal access type.");
             }
             if (amount < 0 || amount > 32) {
-                throw new IllegalArgumentException("Number of bits must be between 1 and 32 inclusive.");
+                throw new IllegalArgumentException(
+                        "Number of bits must be between 1 and 32 inclusive.");
             }
 
             int bytePos = getBitPosition() >> 3;
@@ -827,7 +839,7 @@ public abstract class PacketBuffer {
          * Writes a boolean bit flag.
          * 
          * @param flag
-         *        the flag
+         *            the flag
          */
         public WriteBuffer writeBit(boolean flag) {
             writeBits(1, flag ? 1 : 0);
@@ -838,9 +850,9 @@ public abstract class PacketBuffer {
          * Writes a value as a byte.
          * 
          * @param value
-         *        the value
+         *            the value
          * @param type
-         *        the value type
+         *            the value type
          */
         public WriteBuffer writeByte(int value, ValueType type) {
             resizeBuffer(1);
@@ -848,17 +860,17 @@ public abstract class PacketBuffer {
                 throw new IllegalStateException("Illegal access type.");
             }
             switch (type) {
-                case A:
-                    value += 128;
-                    break;
-                case C:
-                    value = -value;
-                    break;
-                case S:
-                    value = 128 - value;
-                    break;
-                case STANDARD:
-                    break;
+            case A:
+                value += 128;
+                break;
+            case C:
+                value = -value;
+                break;
+            case S:
+                value = 128 - value;
+                break;
+            case STANDARD:
+                break;
             }
             buffer.put((byte) value);
             return this;
@@ -868,7 +880,7 @@ public abstract class PacketBuffer {
          * Writes a value as a normal byte.
          * 
          * @param value
-         *        the value
+         *            the value
          */
         public WriteBuffer writeByte(int value) {
             writeByte(value, ValueType.STANDARD);
@@ -879,26 +891,28 @@ public abstract class PacketBuffer {
          * Writes a value as a short.
          * 
          * @param value
-         *        the value
+         *            the value
          * @param type
-         *        the value type
+         *            the value type
          * @param order
-         *        the byte order
+         *            the byte order
          */
         public WriteBuffer writeShort(int value, ValueType type, ByteOrder order) {
             switch (order) {
-                case BIG:
-                    writeByte(value >> 8);
-                    writeByte(value, type);
-                    break;
-                case MIDDLE:
-                    throw new IllegalArgumentException("Middle-endian short is impossible!");
-                case INVERSE_MIDDLE:
-                    throw new IllegalArgumentException("Inverse-middle-endian short is impossible!");
-                case LITTLE:
-                    writeByte(value, type);
-                    writeByte(value >> 8);
-                    break;
+            case BIG:
+                writeByte(value >> 8);
+                writeByte(value, type);
+                break;
+            case MIDDLE:
+                throw new IllegalArgumentException(
+                        "Middle-endian short is impossible!");
+            case INVERSE_MIDDLE:
+                throw new IllegalArgumentException(
+                        "Inverse-middle-endian short is impossible!");
+            case LITTLE:
+                writeByte(value, type);
+                writeByte(value >> 8);
+                break;
             }
             return this;
         }
@@ -907,7 +921,7 @@ public abstract class PacketBuffer {
          * Writes a value as a normal big-endian short.
          * 
          * @param value
-         *        the value.
+         *            the value.
          */
         public WriteBuffer writeShort(int value) {
             writeShort(value, ValueType.STANDARD, ByteOrder.BIG);
@@ -918,9 +932,9 @@ public abstract class PacketBuffer {
          * Writes a value as a big-endian short.
          * 
          * @param value
-         *        the value
+         *            the value
          * @param type
-         *        the value type
+         *            the value type
          */
         public WriteBuffer writeShort(int value, ValueType type) {
             writeShort(value, type, ByteOrder.BIG);
@@ -931,9 +945,9 @@ public abstract class PacketBuffer {
          * Writes a value as a standard short.
          * 
          * @param value
-         *        the value
+         *            the value
          * @param order
-         *        the byte order
+         *            the byte order
          */
         public WriteBuffer writeShort(int value, ByteOrder order) {
             writeShort(value, ValueType.STANDARD, order);
@@ -944,38 +958,38 @@ public abstract class PacketBuffer {
          * Writes a value as an int.
          * 
          * @param value
-         *        the value
+         *            the value
          * @param type
-         *        the value type
+         *            the value type
          * @param order
-         *        the byte order
+         *            the byte order
          */
         public WriteBuffer writeInt(int value, ValueType type, ByteOrder order) {
             switch (order) {
-                case BIG:
-                    writeByte(value >> 24);
-                    writeByte(value >> 16);
-                    writeByte(value >> 8);
-                    writeByte(value, type);
-                    break;
-                case MIDDLE:
-                    writeByte(value >> 8);
-                    writeByte(value, type);
-                    writeByte(value >> 24);
-                    writeByte(value >> 16);
-                    break;
-                case INVERSE_MIDDLE:
-                    writeByte(value >> 16);
-                    writeByte(value >> 24);
-                    writeByte(value, type);
-                    writeByte(value >> 8);
-                    break;
-                case LITTLE:
-                    writeByte(value, type);
-                    writeByte(value >> 8);
-                    writeByte(value >> 16);
-                    writeByte(value >> 24);
-                    break;
+            case BIG:
+                writeByte(value >> 24);
+                writeByte(value >> 16);
+                writeByte(value >> 8);
+                writeByte(value, type);
+                break;
+            case MIDDLE:
+                writeByte(value >> 8);
+                writeByte(value, type);
+                writeByte(value >> 24);
+                writeByte(value >> 16);
+                break;
+            case INVERSE_MIDDLE:
+                writeByte(value >> 16);
+                writeByte(value >> 24);
+                writeByte(value, type);
+                writeByte(value >> 8);
+                break;
+            case LITTLE:
+                writeByte(value, type);
+                writeByte(value >> 8);
+                writeByte(value >> 16);
+                writeByte(value >> 24);
+                break;
             }
             return this;
         }
@@ -984,7 +998,7 @@ public abstract class PacketBuffer {
          * Writes a value as a standard big-endian int.
          * 
          * @param value
-         *        the value
+         *            the value
          */
         public WriteBuffer writeInt(int value) {
             writeInt(value, ValueType.STANDARD, ByteOrder.BIG);
@@ -995,9 +1009,9 @@ public abstract class PacketBuffer {
          * Writes a value as a big-endian int.
          * 
          * @param value
-         *        the value
+         *            the value
          * @param type
-         *        the value type
+         *            the value type
          */
         public WriteBuffer writeInt(int value, ValueType type) {
             writeInt(value, type, ByteOrder.BIG);
@@ -1008,9 +1022,9 @@ public abstract class PacketBuffer {
          * Writes a value as a standard int.
          * 
          * @param value
-         *        the value
+         *            the value
          * @param order
-         *        the byte order
+         *            the byte order
          */
         public WriteBuffer writeInt(int value, ByteOrder order) {
             writeInt(value, ValueType.STANDARD, order);
@@ -1021,38 +1035,40 @@ public abstract class PacketBuffer {
          * Writes a value as a long.
          * 
          * @param value
-         *        the value
+         *            the value
          * @param type
-         *        the value type
+         *            the value type
          * @param order
-         *        the byte order
+         *            the byte order
          */
         public WriteBuffer writeLong(long value, ValueType type, ByteOrder order) {
             switch (order) {
-                case BIG:
-                    writeByte((int) (value >> 56));
-                    writeByte((int) (value >> 48));
-                    writeByte((int) (value >> 40));
-                    writeByte((int) (value >> 32));
-                    writeByte((int) (value >> 24));
-                    writeByte((int) (value >> 16));
-                    writeByte((int) (value >> 8));
-                    writeByte((int) value, type);
-                    break;
-                case MIDDLE:
-                    throw new UnsupportedOperationException("Middle-endian long is not implemented!");
-                case INVERSE_MIDDLE:
-                    throw new UnsupportedOperationException("Inverse-middle-endian long is not implemented!");
-                case LITTLE:
-                    writeByte((int) value, type);
-                    writeByte((int) (value >> 8));
-                    writeByte((int) (value >> 16));
-                    writeByte((int) (value >> 24));
-                    writeByte((int) (value >> 32));
-                    writeByte((int) (value >> 40));
-                    writeByte((int) (value >> 48));
-                    writeByte((int) (value >> 56));
-                    break;
+            case BIG:
+                writeByte((int) (value >> 56));
+                writeByte((int) (value >> 48));
+                writeByte((int) (value >> 40));
+                writeByte((int) (value >> 32));
+                writeByte((int) (value >> 24));
+                writeByte((int) (value >> 16));
+                writeByte((int) (value >> 8));
+                writeByte((int) value, type);
+                break;
+            case MIDDLE:
+                throw new UnsupportedOperationException(
+                        "Middle-endian long is not implemented!");
+            case INVERSE_MIDDLE:
+                throw new UnsupportedOperationException(
+                        "Inverse-middle-endian long is not implemented!");
+            case LITTLE:
+                writeByte((int) value, type);
+                writeByte((int) (value >> 8));
+                writeByte((int) (value >> 16));
+                writeByte((int) (value >> 24));
+                writeByte((int) (value >> 32));
+                writeByte((int) (value >> 40));
+                writeByte((int) (value >> 48));
+                writeByte((int) (value >> 56));
+                break;
             }
             return this;
         }
@@ -1061,7 +1077,7 @@ public abstract class PacketBuffer {
          * Writes a value as a standard big-endian long.
          * 
          * @param value
-         *        the value
+         *            the value
          */
         public WriteBuffer writeLong(long value) {
             writeLong(value, ValueType.STANDARD, ByteOrder.BIG);
@@ -1072,9 +1088,9 @@ public abstract class PacketBuffer {
          * Writes a value as a big-endian long.
          * 
          * @param value
-         *        the value
+         *            the value
          * @param type
-         *        the value type
+         *            the value type
          */
         public WriteBuffer writeLong(long value, ValueType type) {
             writeLong(value, type, ByteOrder.BIG);
@@ -1085,9 +1101,9 @@ public abstract class PacketBuffer {
          * Writes a value as a standard long.
          * 
          * @param value
-         *        the value
+         *            the value
          * @param order
-         *        the byte order
+         *            the byte order
          */
         public WriteBuffer writeLong(long value, ByteOrder order) {
             writeLong(value, ValueType.STANDARD, order);
@@ -1098,7 +1114,7 @@ public abstract class PacketBuffer {
          * Writes a RuneScape string value.
          * 
          * @param string
-         *        the string
+         *            the string
          */
         public WriteBuffer writeString(String string) {
             for (byte value : string.getBytes()) {
@@ -1112,7 +1128,7 @@ public abstract class PacketBuffer {
          * Checks if this buffer needs to be resized and does so if needed.
          * 
          * @param given
-         *        the given amount of bytes.
+         *            the given amount of bytes.
          */
         public void resizeBuffer(int given) {
             if ((buffer.position() + given + 1) >= buffer.capacity()) {
@@ -1121,7 +1137,8 @@ public abstract class PacketBuffer {
                 int newLength = (buffer.capacity() * 2);
                 buffer = ByteBuffer.allocate(newLength);
                 buffer.position(oldPosition);
-                System.arraycopy(oldBuffer, 0, buffer.array(), 0, oldBuffer.length);
+                System.arraycopy(oldBuffer, 0, buffer.array(), 0,
+                        oldBuffer.length);
                 resizeBuffer(given);
             }
         }

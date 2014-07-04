@@ -10,7 +10,7 @@ import server.world.entity.player.Player;
  * 
  * @author lare96
  */
-@PacketOpcodeHeader( { 86 })
+@PacketOpcodeHeader({ 86 })
 public class DecodeRotateCameraPacket extends PacketDecoder {
 
     @Override

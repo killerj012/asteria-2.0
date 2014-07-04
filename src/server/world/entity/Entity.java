@@ -27,7 +27,7 @@ public abstract class Entity {
     private int poisonHits;
 
     /** The strength of the poison. */
-	private PoisonType poisonStrength = PoisonType.MILD;
+    private PoisonType poisonStrength = PoisonType.MILD;
 
     /** If this entity retaliates automatically. */
     private boolean isAutoRetaliate;
@@ -51,7 +51,8 @@ public abstract class Entity {
     private CombatBuilder combatBuilder = new CombatBuilder(this);
 
     /** Used for placing actions at the end of the walking queue. */
-    private MovementQueueListener movementListener = new MovementQueueListener(this);
+    private MovementQueueListener movementListener = new MovementQueueListener(
+            this);
 
     /** Update flags for this entity. */
     private UpdateFlags flags = new UpdateFlags();
@@ -140,7 +141,7 @@ public abstract class Entity {
      * Moves this entity to another position.
      * 
      * @param position
-     *        the new position to move this entity on.
+     *            the new position to move this entity on.
      */
     public abstract void move(Position position);
 
@@ -173,7 +174,7 @@ public abstract class Entity {
      * Play an animation for this entity.
      * 
      * @param animation
-     *        the animation to play.
+     *            the animation to play.
      */
     public void animation(Animation animation) {
         this.getAnimation().setAs(animation);
@@ -184,7 +185,7 @@ public abstract class Entity {
      * Play a gfx for this entity.
      * 
      * @param gfx
-     *        the gfx to play.
+     *            the gfx to play.
      */
     public void gfx(Gfx gfx) {
         this.getGfx().setAs(gfx);
@@ -195,7 +196,7 @@ public abstract class Entity {
      * Force chat for this entity.
      * 
      * @param forcedText
-     *        the text to force.
+     *            the text to force.
      */
     public void forceChat(String forcedText) {
         this.forcedText = forcedText;
@@ -206,7 +207,7 @@ public abstract class Entity {
      * Make this entity face another entity.
      * 
      * @param faceIndex
-     *        the index of the entity to face.
+     *            the index of the entity to face.
      */
     public void faceEntity(int faceIndex) {
         this.faceIndex = faceIndex;
@@ -217,7 +218,7 @@ public abstract class Entity {
      * Make this entity face the specified coordinates.
      * 
      * @param position
-     *        the position to face.
+     *            the position to face.
      */
     public void facePosition(Position position) {
         this.getFaceCoordinates().setX(2 * position.getX() + 1);
@@ -229,7 +230,7 @@ public abstract class Entity {
      * Deals one damage to this entity.
      * 
      * @param hit
-     *        the damage to be dealt.
+     *            the damage to be dealt.
      */
     public void dealDamage(Hit hit) {
         int writeDamage = hit.getDamage();
@@ -262,7 +263,7 @@ public abstract class Entity {
      * Deal secondary damage to this entity.
      * 
      * @param secondaryHit
-     *        the damage to be dealt.
+     *            the damage to be dealt.
      */
     private void dealSecondaryDamage(Hit secondaryHit) {
         int writeDamage = secondaryHit.getDamage();
@@ -295,9 +296,9 @@ public abstract class Entity {
      * Deals two damage splats to this entity.
      * 
      * @param hit
-     *        the first hit.
+     *            the first hit.
      * @param secondHit
-     *        the second hit.
+     *            the second hit.
      */
     public void dealDoubleDamage(Hit hit, Hit secondHit) {
         dealDamage(hit);
@@ -308,11 +309,11 @@ public abstract class Entity {
      * Deals three damage splats to this entity.
      * 
      * @param hit
-     *        the first hit.
+     *            the first hit.
      * @param secondHit
-     *        the second hit.
+     *            the second hit.
      * @param thirdHit
-     *        the third hit.
+     *            the third hit.
      */
     public void dealTripleDamage(Hit hit, Hit secondHit, final Hit thirdHit) {
         dealDoubleDamage(hit, secondHit);
@@ -330,15 +331,16 @@ public abstract class Entity {
      * Deals four damage splats to this entity.
      * 
      * @param hit
-     *        the first hit.
+     *            the first hit.
      * @param secondHit
-     *        the second hit.
+     *            the second hit.
      * @param thirdHit
-     *        the third hit.
+     *            the third hit.
      * @param fourthHit
-     *        the fourth hit.
+     *            the fourth hit.
      */
-    public void dealQuadrupleDamage(Hit hit, Hit secondHit, final Hit thirdHit, final Hit fourthHit) {
+    public void dealQuadrupleDamage(Hit hit, Hit secondHit, final Hit thirdHit,
+            final Hit fourthHit) {
         dealDoubleDamage(hit, secondHit);
 
         TaskFactory.getFactory().submit(new Worker(1, false) {
@@ -354,7 +356,7 @@ public abstract class Entity {
      * Set the slot for the entity.
      * 
      * @param slot
-     *        the slot.
+     *            the slot.
      */
     public void setSlot(int slot) {
         this.slot = slot;
@@ -391,7 +393,7 @@ public abstract class Entity {
      * Sets the primary direction for this entity.
      * 
      * @param primaryDirection
-     *        the primary direction to set.
+     *            the primary direction to set.
      */
     public void setPrimaryDirection(int primaryDirection) {
         this.primaryDirection = primaryDirection;
@@ -410,7 +412,7 @@ public abstract class Entity {
      * Sets the secondary direction for this entity.
      * 
      * @param secondaryDirection
-     *        the secondary direction to set.
+     *            the secondary direction to set.
      */
     public void setSecondaryDirection(int secondaryDirection) {
         this.secondaryDirection = secondaryDirection;
@@ -429,7 +431,7 @@ public abstract class Entity {
      * Sets if this entity needs placement.
      * 
      * @param needsPlacement
-     *        true if this entity needs placement.
+     *            true if this entity needs placement.
      */
     public void setNeedsPlacement(boolean needsPlacement) {
         this.needsPlacement = needsPlacement;
@@ -448,7 +450,7 @@ public abstract class Entity {
      * Sets if this entity is reset movement queue.
      * 
      * @param resetMovementQueue
-     *        true if the entity is reset movement queue.
+     *            true if the entity is reset movement queue.
      */
     public void setResetMovementQueue(boolean resetMovementQueue) {
         this.resetMovementQueue = resetMovementQueue;
@@ -539,7 +541,7 @@ public abstract class Entity {
      * Set if this entity has died.
      * 
      * @param hasDied
-     *        the hasDied to set.
+     *            the hasDied to set.
      */
     public void setHasDied(boolean hasDied) {
         this.hasDied = hasDied;
@@ -558,7 +560,7 @@ public abstract class Entity {
      * Sets the death ticks.
      * 
      * @param deathTicks
-     *        the deathTicks to set.
+     *            the deathTicks to set.
      */
     public void setDeathTicks(int deathTicks) {
         this.deathTicks = deathTicks;
@@ -602,7 +604,7 @@ public abstract class Entity {
      * Sets if this entity is in retaliate mode.
      * 
      * @param isAutoRetaliate
-     *        the isAutoRetaliate to set.
+     *            the isAutoRetaliate to set.
      */
     public void setAutoRetaliate(boolean isAutoRetaliate) {
         this.isAutoRetaliate = isAutoRetaliate;
@@ -630,7 +632,7 @@ public abstract class Entity {
      * Sets if this entity is registered,
      * 
      * @param unregistered
-     *        the unregistered to set.
+     *            the unregistered to set.
      */
     public void setUnregistered(boolean unregistered) {
         this.unregistered = unregistered;
@@ -649,7 +651,7 @@ public abstract class Entity {
      * Sets the wilderness interface.
      * 
      * @param wildernessInterface
-     *        the wildernessInterface to set.
+     *            the wildernessInterface to set.
      */
     public void setWildernessInterface(boolean wildernessInterface) {
         this.wildernessInterface = wildernessInterface;
@@ -668,7 +670,7 @@ public abstract class Entity {
      * Sets the multicombat interface.
      * 
      * @param multiCombatInterface
-     *        the multiCombatInterface to set.
+     *            the multiCombatInterface to set.
      */
     public void setMultiCombatInterface(boolean multiCombatInterface) {
         this.multiCombatInterface = multiCombatInterface;
@@ -692,7 +694,7 @@ public abstract class Entity {
 
     /**
      * @param following
-     *        the following to set
+     *            the following to set
      */
     public void setFollowing(boolean following) {
         this.following = following;
@@ -707,7 +709,7 @@ public abstract class Entity {
 
     /**
      * @param followWorker
-     *        the followWorker to set
+     *            the followWorker to set
      */
     public void setFollowWorker(Worker followWorker) {
         this.followWorker = followWorker;
@@ -722,7 +724,7 @@ public abstract class Entity {
 
     /**
      * @param followingEntity
-     *        the followingEntity to set
+     *            the followingEntity to set
      */
     public void setFollowingEntity(Entity followingEntity) {
         this.followingEntity = followingEntity;
@@ -744,7 +746,7 @@ public abstract class Entity {
 
     /**
      * @param poisonHits
-     *        the poisonHits to set
+     *            the poisonHits to set
      */
     public void setPoisonHits(int poisonHits) {
         this.poisonHits = poisonHits;
@@ -753,15 +755,15 @@ public abstract class Entity {
     /**
      * @return the poisonStrength
      */
-	public PoisonType getPoisonStrength() {
+    public PoisonType getPoisonStrength() {
         return poisonStrength;
     }
 
     /**
      * @param poisonStrength
-     *        the poisonStrength to set
+     *            the poisonStrength to set
      */
-	public void setPoisonStrength(PoisonType poisonStrength) {
+    public void setPoisonStrength(PoisonType poisonStrength) {
         this.poisonStrength = poisonStrength;
     }
 
@@ -778,7 +780,7 @@ public abstract class Entity {
 
     /**
      * @param currentlyCasting
-     *        the currentlyCasting to set
+     *            the currentlyCasting to set
      */
     public void setCurrentlyCasting(CombatSpell currentlyCasting) {
         this.currentlyCasting = currentlyCasting;
@@ -800,7 +802,7 @@ public abstract class Entity {
 
     /**
      * @param lastDirection
-     *        the lastDirection to set
+     *            the lastDirection to set
      */
     public void setLastDirection(int lastDirection) {
         this.lastDirection = lastDirection;

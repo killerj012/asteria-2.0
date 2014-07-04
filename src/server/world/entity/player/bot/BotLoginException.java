@@ -11,9 +11,9 @@ public class BotLoginException extends RuntimeException {
      * Create a new {@link BotLoginException}.
      * 
      * @param bot
-     *        the bot that threw the exception.
+     *            the bot that threw the exception.
      * @param reason
-     *        the reason the exception was thrown.
+     *            the reason the exception was thrown.
      */
     public BotLoginException(Bot bot, String reason) {
         super(bot + " failed to login! reason[" + reason + "]");

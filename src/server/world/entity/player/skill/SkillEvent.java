@@ -17,21 +17,10 @@ public abstract class SkillEvent {
      * The indexes for all of the various non-combat skills in the event reset
      * array.
      */
-    protected static final int PRAYER = 0,
-            COOKING = 1,
-            WOODCUTTING = 2,
-            FLETCHING = 3,
-            FISHING = 4,
-            FIREMAKING = 5,
-            CRAFTING = 6,
-            SMITHING = 7,
-            MINING = 8,
-            HERBLORE = 9,
-            AGILITY = 10,
-            THIEVING = 11,
-            SLAYER = 12,
-            FARMING = 13,
-            RUNECRAFTING = 14;
+    protected static final int PRAYER = 0, COOKING = 1, WOODCUTTING = 2,
+            FLETCHING = 3, FISHING = 4, FIREMAKING = 5, CRAFTING = 6,
+            SMITHING = 7, MINING = 8, HERBLORE = 9, AGILITY = 10,
+            THIEVING = 11, SLAYER = 12, FARMING = 13, RUNECRAFTING = 14;
 
     /** A set of every unique {@link SkillEvent} that has fireable events. */
     private static Set<SkillEvent> skillEvents = new HashSet<SkillEvent>();
@@ -40,7 +29,7 @@ public abstract class SkillEvent {
      * Fired when the <code>fireSkillEvent(Player)</code> method is invoked.
      * 
      * @param player
-     *        the player that this event will be fired for.
+     *            the player that this event will be fired for.
      */
     public abstract void fireResetEvent(Player player);
 
@@ -62,9 +51,9 @@ public abstract class SkillEvent {
      * Adds experience for this skill.
      * 
      * @param player
-     *        the player to add experience for.
+     *            the player to add experience for.
      * @param amount
-     *        the amount to add.
+     *            the amount to add.
      */
     public void exp(Player player, int amount) {
         SkillManager.addExperience(player, amount, skillConstant().ordinal());
@@ -75,7 +64,7 @@ public abstract class SkillEvent {
      * {@link SkillEvent}s.
      * 
      * @param player
-     *        the player to fire the policy for.
+     *            the player to fire the policy for.
      */
     public static void fireSkillEvents(Player player) {
 

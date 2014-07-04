@@ -28,7 +28,7 @@ public class Hit {
          * Create a new {@link HitType}.
          * 
          * @param id
-         *        the id of this hit type.
+         *            the id of this hit type.
          */
         private HitType(int id) {
             this.id = id;
@@ -48,7 +48,7 @@ public class Hit {
      * Create a new {@link Hit} with a {@link HitType} of <code>NORMAL</code>.
      * 
      * @param damage
-     *        the amount of damage in this hit.
+     *            the amount of damage in this hit.
      */
     public Hit(int damage) {
         this(damage, HitType.NORMAL);
@@ -58,9 +58,9 @@ public class Hit {
      * Create a new {@link Hit}.
      * 
      * @param damage
-     *        the amount of damage in this hit.
+     *            the amount of damage in this hit.
      * @param type
-     *        the type of hit this is.
+     *            the type of hit this is.
      */
     public Hit(int damage, HitType type) {
         this.damage = damage;

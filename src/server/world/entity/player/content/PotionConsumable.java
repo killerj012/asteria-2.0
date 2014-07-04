@@ -35,8 +35,7 @@ public enum PotionConsumable implements GenericAction<Player> {
         }
     },
 
-    ENERGY_POTIONS(3008, 3010, 3012, 3014)
-    {
+    ENERGY_POTIONS(3008, 3010, 3012, 3014) {
         @Override
         public void fireAction(Player player) {
             doEnergyPotion(player);
@@ -44,8 +43,7 @@ public enum PotionConsumable implements GenericAction<Player> {
         }
     },
 
-    SUPER_ENERGY_POTIONS(3016, 3018, 3020, 3022)
-    {
+    SUPER_ENERGY_POTIONS(3016, 3018, 3020, 3022) {
         @Override
         public void fireAction(Player player) {
             doSuperEnergyPotion(player);
@@ -53,8 +51,7 @@ public enum PotionConsumable implements GenericAction<Player> {
         }
     },
 
-    MAGIC_POTIONS(3040, 3042, 3044, 3046)
-    {
+    MAGIC_POTIONS(3040, 3042, 3044, 3046) {
         @Override
         public void fireAction(Player player) {
             doBasicEffect(player, MAGIC, BoostType.NORMAL);
@@ -62,8 +59,7 @@ public enum PotionConsumable implements GenericAction<Player> {
         }
     },
 
-    DEFENCE_POTIONS(2432, 133, 135, 137)
-    {
+    DEFENCE_POTIONS(2432, 133, 135, 137) {
         @Override
         public void fireAction(Player player) {
             doBasicEffect(player, DEFENCE, BoostType.NORMAL);
@@ -71,8 +67,7 @@ public enum PotionConsumable implements GenericAction<Player> {
         }
     },
 
-    STRENGTH_POTIONS(113, 115, 117, 119)
-    {
+    STRENGTH_POTIONS(113, 115, 117, 119) {
         @Override
         public void fireAction(Player player) {
             doBasicEffect(player, STRENGTH, BoostType.NORMAL);
@@ -80,8 +75,7 @@ public enum PotionConsumable implements GenericAction<Player> {
         }
     },
 
-    ATTACK_POTIONS(2428, 121, 123, 125)
-    {
+    ATTACK_POTIONS(2428, 121, 123, 125) {
         @Override
         public void fireAction(Player player) {
             doBasicEffect(player, ATTACK, BoostType.NORMAL);
@@ -89,8 +83,7 @@ public enum PotionConsumable implements GenericAction<Player> {
         }
     },
 
-    SUPER_DEFENCE_POTIONS(2442, 163, 165, 167)
-    {
+    SUPER_DEFENCE_POTIONS(2442, 163, 165, 167) {
         @Override
         public void fireAction(Player player) {
             doBasicEffect(player, DEFENCE, BoostType.SUPER);
@@ -98,8 +91,7 @@ public enum PotionConsumable implements GenericAction<Player> {
         }
     },
 
-    SUPER_ATTACK_POTIONS(2436, 145, 147, 149)
-    {
+    SUPER_ATTACK_POTIONS(2436, 145, 147, 149) {
         @Override
         public void fireAction(Player player) {
             doBasicEffect(player, ATTACK, BoostType.SUPER);
@@ -107,8 +99,7 @@ public enum PotionConsumable implements GenericAction<Player> {
         }
     },
 
-    SUPER_STRENGTH_POTIONS(2440, 157, 159, 161)
-    {
+    SUPER_STRENGTH_POTIONS(2440, 157, 159, 161) {
         @Override
         public void fireAction(Player player) {
             doBasicEffect(player, STRENGTH, BoostType.SUPER);
@@ -116,8 +107,7 @@ public enum PotionConsumable implements GenericAction<Player> {
         }
     },
 
-    SUPER_RESTORE_POTIONS(3024, 3026, 3028, 3030)
-    {
+    SUPER_RESTORE_POTIONS(3024, 3026, 3028, 3030) {
         @Override
         public void fireAction(Player player) {
             doPrayerPotion(player, true);
@@ -125,8 +115,7 @@ public enum PotionConsumable implements GenericAction<Player> {
         }
     },
 
-    PRAYER_POTIONS(2434, 139, 141, 143)
-    {
+    PRAYER_POTIONS(2434, 139, 141, 143) {
         @Override
         public void fireAction(Player player) {
             doPrayerPotion(player, false);
@@ -134,8 +123,7 @@ public enum PotionConsumable implements GenericAction<Player> {
         }
     },
 
-    ANTI_FIRE_POTIONS(2452, 2454, 2456, 2458)
-    {
+    ANTI_FIRE_POTIONS(2452, 2454, 2456, 2458) {
         @Override
         public void fireAction(Player player) {
             antiFire(player);
@@ -147,13 +135,14 @@ public enum PotionConsumable implements GenericAction<Player> {
     private final int[] ids;
 
     /** The enum set of potions. */
-    private static final Set<PotionConsumable> ALL_POTIONS = EnumSet.allOf(PotionConsumable.class);
+    private static final Set<PotionConsumable> ALL_POTIONS = EnumSet
+            .allOf(PotionConsumable.class);
 
     /**
      * Create a new {@link PotionConsumable}.
      * 
      * @param ids
-     *        the id's for the different potion doses.
+     *            the id's for the different potion doses.
      */
     private PotionConsumable(int... ids) {
         this.ids = ids;
@@ -163,7 +152,7 @@ public enum PotionConsumable implements GenericAction<Player> {
      * Get a {@link PotionConsumable} by its potion id.
      * 
      * @param id
-     *        the id of the potion.
+     *            the id of the potion.
      * @return the potion consumable instance.
      */
     private static PotionConsumable forId(int id) {
@@ -181,15 +170,14 @@ public enum PotionConsumable implements GenericAction<Player> {
      * Gets the potion replacement dose.
      * 
      * @param item
-     *        the higher potion dose.
+     *            the higher potion dose.
      * @return the lower potion dose.
      */
     private static Item getReplacementItem(Item item) {
         PotionConsumable potion = forId(item.getId());
         int length = potion.getIds().length;
         for (int index = 0; index < length; index++) {
-            if (potion.getIds()[index] == item.getId()
-                    && index + 1 < length) {
+            if (potion.getIds()[index] == item.getId() && index + 1 < length) {
                 return new Item(potion.getIds()[index + 1]);
             }
         }
@@ -212,9 +200,9 @@ public enum PotionConsumable implements GenericAction<Player> {
      * Does the prayer potion action.
      * 
      * @param player
-     *        the player to do this action for.
+     *            the player to do this action for.
      * @param isRestorePotion
-     *        true if this potion is a restore potion.
+     *            true if this potion is a restore potion.
      */
     private static void doPrayerPotion(Player player, boolean isRestorePotion) {
         Skill skill = player.getSkills()[PRAYER];
@@ -233,7 +221,7 @@ public enum PotionConsumable implements GenericAction<Player> {
      * Does the energy potion action.
      * 
      * @param player
-     *        the player to do this action for.
+     *            the player to do this action for.
      */
     private static void doEnergyPotion(Player player) {
         player.incrementRunEnergy(10);
@@ -243,7 +231,7 @@ public enum PotionConsumable implements GenericAction<Player> {
      * Does the super energy potion action.
      * 
      * @param player
-     *        the player to do this action for.
+     *            the player to do this action for.
      */
     private static void doSuperEnergyPotion(Player player) {
         player.incrementRunEnergy(10);
@@ -253,12 +241,11 @@ public enum PotionConsumable implements GenericAction<Player> {
      * Does the restore potion action.
      * 
      * @param player
-     *        the player to do this action for.
+     *            the player to do this action for.
      */
     private static void getRestoreStats(Player player) {
         for (int index = 0; index <= 6; index++) {
-            if ((index == PRAYER)
-                    || (index == HITPOINTS)) {
+            if ((index == PRAYER) || (index == HITPOINTS)) {
                 continue;
             }
             Skill skill = player.getSkills()[index];
@@ -273,19 +260,22 @@ public enum PotionConsumable implements GenericAction<Player> {
      * Does the ant-fire potion action.
      * 
      * @param player
-     *        the player to do this action for..
+     *            the player to do this action for..
      */
     private static void antiFire(final Player player) {
         player.incrementDragonFireImmunity(360);
 
-        player.getPacketBuilder().sendMessage("Your immunity against dragon fire has been increased.");
+        player.getPacketBuilder().sendMessage(
+                "Your immunity against dragon fire has been increased.");
 
         TaskFactory.getFactory().submit(new Worker(30, false) {
             @Override
             public void fire() {
                 player.decrementDragonFireImmunity(30);
                 if (player.getDragonFireImmunity() == 30) {
-                    player.getPacketBuilder().sendMessage("Your resistance to dragon fire is about to wear off!");
+                    player.getPacketBuilder()
+                            .sendMessage(
+                                    "Your resistance to dragon fire is about to wear off!");
                 } else if (player.getDragonFireImmunity() <= 0) {
                     cancel();
                 }
@@ -293,7 +283,8 @@ public enum PotionConsumable implements GenericAction<Player> {
 
             @Override
             public void fireOnCancel() {
-                player.getPacketBuilder().sendMessage("Your resistance to dragon fire has worn off!");
+                player.getPacketBuilder().sendMessage(
+                        "Your resistance to dragon fire has worn off!");
                 player.setDragonFireImmunity(0);
             }
 
@@ -304,27 +295,23 @@ public enum PotionConsumable implements GenericAction<Player> {
      * Does the basic effect potion action.
      * 
      * @param player
-     *        the player to do this action for.
+     *            the player to do this action for.
      * @param skillId
-     *        the skill to boost.
+     *            the skill to boost.
      * @param type
-     *        the boost type.
+     *            the boost type.
      */
     private static void doBasicEffect(Player player, int skillId, BoostType type) {
         Skill skill = player.getSkills()[skillId];
         int realLevel = skill.getLevelForExperience();
-        int boostLevel = Math.round(realLevel
-                * type.getBoostAmount());
-        int cap = realLevel
-                + boostLevel;
+        int boostLevel = Math.round(realLevel * type.getBoostAmount());
+        int cap = realLevel + boostLevel;
         if (type == BoostType.NORMAL) {
             boostLevel += 1;
         }
 
-        if ((skill.getLevel() + boostLevel) > (realLevel
-                + boostLevel + 1)) {
-            boostLevel = (realLevel + boostLevel)
-                    - skill.getLevel();
+        if ((skill.getLevel() + boostLevel) > (realLevel + boostLevel + 1)) {
+            boostLevel = (realLevel + boostLevel) - skill.getLevel();
         }
 
         skill.increaseLevel(boostLevel, cap);
@@ -335,11 +322,11 @@ public enum PotionConsumable implements GenericAction<Player> {
      * Handles the consumption of the actual potion.
      * 
      * @param player
-     *        the player consuming the potion.
+     *            the player consuming the potion.
      * @param item
-     *        the potion being consumed.
+     *            the potion being consumed.
      * @param slot
-     *        the inventory slot the potion is in.
+     *            the inventory slot the potion is in.
      * @return true if the potion was consumed.
      */
     public static boolean consume(Player player, Item item, int slot) {
@@ -382,7 +369,7 @@ public enum PotionConsumable implements GenericAction<Player> {
          * Create a new {@link BoostType}.
          * 
          * @param boostAmount
-         *        the boost amount.
+         *            the boost amount.
          */
         private BoostType(float boostAmount) {
             this.boostAmount = boostAmount;

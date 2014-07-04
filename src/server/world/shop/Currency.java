@@ -55,7 +55,7 @@ public enum Currency {
      * Create a new {@link Currency}.
      * 
      * @param currency
-     *        holds the functions for this particular currency.
+     *            holds the functions for this particular currency.
      */
     private Currency(GenericCurrency currency) {
         this.currency = currency;

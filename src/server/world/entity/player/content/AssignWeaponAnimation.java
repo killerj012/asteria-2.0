@@ -23,35 +23,51 @@ public class AssignWeaponAnimation {
         for (ItemDefinition def : ItemDefinition.getDefinitions()) {
 
             /** Filter items. */
-            if (def == null || def.isNoted() || def.getEquipmentSlot() != Misc.EQUIPMENT_SLOT_WEAPON) {
+            if (def == null || def.isNoted()
+                    || def.getEquipmentSlot() != Misc.EQUIPMENT_SLOT_WEAPON) {
                 continue;
             }
 
             /** Load the map with the correct data. */
             if (def.getItemName().endsWith("2h sword")) {
-                weaponAnimation[def.getItemId()] = new WeaponAnimationIndex(2561, 2064, 2563);
+                weaponAnimation[def.getItemId()] = new WeaponAnimationIndex(
+                        2561, 2064, 2563);
             } else if (def.getItemName().equalsIgnoreCase("granite maul")) {
-                weaponAnimation[def.getItemId()] = new WeaponAnimationIndex(1662, 1663, 1664);
+                weaponAnimation[def.getItemId()] = new WeaponAnimationIndex(
+                        1662, 1663, 1664);
             } else if (def.getItemName().equalsIgnoreCase("boxing gloves")) {
-                weaponAnimation[def.getItemId()] = new WeaponAnimationIndex(3677, 3680, -1);
+                weaponAnimation[def.getItemId()] = new WeaponAnimationIndex(
+                        3677, 3680, -1);
             } else if (def.getItemName().endsWith("whip")) {
-                weaponAnimation[def.getItemId()] = new WeaponAnimationIndex(1832, 1660, 1661);
+                weaponAnimation[def.getItemId()] = new WeaponAnimationIndex(
+                        1832, 1660, 1661);
             } else if (def.getItemName().equalsIgnoreCase("fixed device")) {
-                weaponAnimation[def.getItemId()] = new WeaponAnimationIndex(2316, 2317, 2322);
-            } else if (def.getItemName().endsWith("halberd") || def.getItemName().contains("guthan")) {
-                weaponAnimation[def.getItemId()] = new WeaponAnimationIndex(809, 1146, 1210);
+                weaponAnimation[def.getItemId()] = new WeaponAnimationIndex(
+                        2316, 2317, 2322);
+            } else if (def.getItemName().endsWith("halberd")
+                    || def.getItemName().contains("guthan")) {
+                weaponAnimation[def.getItemId()] = new WeaponAnimationIndex(
+                        809, 1146, 1210);
             } else if (def.getItemName().startsWith("Dharoks")) {
-                weaponAnimation[def.getItemId()] = new WeaponAnimationIndex(2065, 1663, 1664);
+                weaponAnimation[def.getItemId()] = new WeaponAnimationIndex(
+                        2065, 1663, 1664);
             } else if (def.getItemName().startsWith("Ahrims")) {
-                weaponAnimation[def.getItemId()] = new WeaponAnimationIndex(809, 1146, 1210);
+                weaponAnimation[def.getItemId()] = new WeaponAnimationIndex(
+                        809, 1146, 1210);
             } else if (def.getItemName().startsWith("Veracs")) {
-                weaponAnimation[def.getItemId()] = new WeaponAnimationIndex(1832, 1830, 1831);
-            } else if (def.getItemName().startsWith("Karils") || def.getItemName().equals("Crossbow")) {
-                weaponAnimation[def.getItemId()] = new WeaponAnimationIndex(2074, 2076, 2077);
-            } else if (def.getItemName().endsWith("shortbow") || def.getItemName().endsWith("longbow")) {
-                weaponAnimation[def.getItemId()] = new WeaponAnimationIndex(808, 819, 824);
+                weaponAnimation[def.getItemId()] = new WeaponAnimationIndex(
+                        1832, 1830, 1831);
+            } else if (def.getItemName().startsWith("Karils")
+                    || def.getItemName().equals("Crossbow")) {
+                weaponAnimation[def.getItemId()] = new WeaponAnimationIndex(
+                        2074, 2076, 2077);
+            } else if (def.getItemName().endsWith("shortbow")
+                    || def.getItemName().endsWith("longbow")) {
+                weaponAnimation[def.getItemId()] = new WeaponAnimationIndex(
+                        808, 819, 824);
             } else if (def.getItemName().equalsIgnoreCase("dragon longsword")) {
-                weaponAnimation[def.getItemId()] = new WeaponAnimationIndex(809, -1, -1);
+                weaponAnimation[def.getItemId()] = new WeaponAnimationIndex(
+                        809, -1, -1);
             }
         }
     }
@@ -60,9 +76,9 @@ public class AssignWeaponAnimation {
      * Assigns the correct animation for the player based on the item.
      * 
      * @param player
-     *        the player to assign the animation for.
+     *            the player to assign the animation for.
      * @param item
-     *        the item to base the animation on.
+     *            the item to base the animation on.
      */
     public static void assignAnimation(Player player, Item item) {
 
@@ -106,13 +122,14 @@ public class AssignWeaponAnimation {
          * Create a new {@link WeaponAnimationIndex}.
          * 
          * @param standingAnimation
-         *        the standing animation for this player.
+         *            the standing animation for this player.
          * @param walkingAnimation
-         *        the walking animation for this player.
+         *            the walking animation for this player.
          * @param runningAnimation
-         *        the running animation for this player.
+         *            the running animation for this player.
          */
-        public WeaponAnimationIndex(int standingAnimation, int walkingAnimation, int runningAnimation) {
+        public WeaponAnimationIndex(int standingAnimation,
+                int walkingAnimation, int runningAnimation) {
             this.standingAnimation = standingAnimation;
             this.walkingAnimation = walkingAnimation;
             this.runningAnimation = runningAnimation;
@@ -129,7 +146,7 @@ public class AssignWeaponAnimation {
          * Sets this container's values with another container's values.
          * 
          * @param index
-         *        the other container to set this container to.
+         *            the other container to set this container to.
          * @return this container after the values have been set.
          */
         public WeaponAnimationIndex setAs(WeaponAnimationIndex index) {
@@ -179,7 +196,7 @@ public class AssignWeaponAnimation {
          * Sets the standing animation for this player.
          * 
          * @param standingAnimation
-         *        the new standing animation to set.
+         *            the new standing animation to set.
          */
         public void setStandingAnimation(int standingAnimation) {
             this.standingAnimation = standingAnimation;
@@ -189,7 +206,7 @@ public class AssignWeaponAnimation {
          * Sets the walking animation for this player.
          * 
          * @param walkingAnimation
-         *        the new walking animation to set.
+         *            the new walking animation to set.
          */
         public void setWalkingAnimation(int walkingAnimation) {
             this.walkingAnimation = walkingAnimation;
@@ -199,7 +216,7 @@ public class AssignWeaponAnimation {
          * Sets the running animation for this player.
          * 
          * @param runningAnimation
-         *        the new running animation to set.
+         *            the new running animation to set.
          */
         public void setRunningAnimation(int runningAnimation) {
             this.runningAnimation = runningAnimation;

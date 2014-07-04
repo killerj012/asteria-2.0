@@ -88,9 +88,9 @@ public class ChainExecutor {
      * Create a new {@link ChainExecutor}.
      * 
      * @param name
-     *        the name desired for this factory executor.
+     *            the name desired for this factory executor.
      * @param fireRate
-     *        the rate to fire tasks at.
+     *            the rate to fire tasks at.
      */
     public ChainExecutor(String name, WorkRate fireRate) {
         this.name = name;
@@ -101,7 +101,7 @@ public class ChainExecutor {
      * Create a new {@link ChainExecutor}.
      * 
      * @param name
-     *        the name desired for this factory executor.
+     *            the name desired for this factory executor.
      */
     public ChainExecutor(String name) {
         this.name = name;
@@ -111,7 +111,7 @@ public class ChainExecutor {
      * Create a new {@link ChainExecutor}.
      * 
      * @param fireRate
-     *        the rate to fire tasks at.
+     *            the rate to fire tasks at.
      */
     public ChainExecutor(WorkRate fireRate) {
         this.fireRate = fireRate;
@@ -134,7 +134,8 @@ public class ChainExecutor {
 
         /** Makes sure we aren't running an empty executor. */
         if (internalWorkers.isEmpty()) {
-            throw new IllegalStateException("[" + this.getName() + "]: Empty task executors cannot be ran!");
+            throw new IllegalStateException("[" + this.getName()
+                    + "]: Empty task executors cannot be ran!");
         }
 
         /** Sets the flag that determines if this factory executor is running. */
@@ -201,7 +202,10 @@ public class ChainExecutor {
          * canceling.
          */
         if (!this.isRunningExecutor()) {
-            throw new IllegalStateException("[" + this.getName() + "]: You cannot cancel an executor which has already been shutdown!");
+            throw new IllegalStateException(
+                    "["
+                            + this.getName()
+                            + "]: You cannot cancel an executor which has already been shutdown!");
         }
 
         /** Cancels this executor. */
@@ -232,23 +236,30 @@ public class ChainExecutor {
      * Append a new worker to the executor's chain.
      * 
      * @param worker
-     *        the worker to append to the chain.
+     *            the worker to append to the chain.
      */
     public void append(ChainWorker worker) {
 
         /** Make sure this executor isn't running. */
         if (isRunningExecutor()) {
-            throw new IllegalStateException("[" + this.getName() + "]: Cannot add worker to a running executor!");
+            throw new IllegalStateException("[" + this.getName()
+                    + "]: Cannot add worker to a running executor!");
         }
 
         /** Make sure the worker being appended isn't malformed. */
         if (worker == null) {
-            throw new IllegalStateException("[" + this.getName() + "]: Cannot add malformed worker with a value of null to a executor!");
+            throw new IllegalStateException(
+                    "["
+                            + this.getName()
+                            + "]: Cannot add malformed worker with a value of null to a executor!");
         }
 
         /** Make sure the worker being appended has a positive delay. */
         if (worker.delay() < 1) {
-            throw new IllegalStateException("[" + this.getName() + "]: Cannot add worker with a delay value of below 1 to a executor!");
+            throw new IllegalStateException(
+                    "["
+                            + this.getName()
+                            + "]: Cannot add worker with a delay value of below 1 to a executor!");
         }
 
         /** Append the new worker to the chain. */
@@ -259,24 +270,31 @@ public class ChainExecutor {
      * Append new workers to the executor's chain.
      * 
      * @param workers
-     *        the workers to append to the chain.
+     *            the workers to append to the chain.
      */
     public void appendAll(Collection<? extends ChainWorker> workers) {
 
         /** Make sure this executor isn't running. */
         if (this.isRunningExecutor()) {
-            throw new IllegalStateException("[" + this.getName() + "]: Cannot add workers to a running executor!");
+            throw new IllegalStateException("[" + this.getName()
+                    + "]: Cannot add workers to a running executor!");
         }
 
         /** Make sure the workers being appended aren't malformed. */
         if (workers == null || workers.contains(null)) {
-            throw new IllegalStateException("[" + this.getName() + "]: Cannot add malformed workers with a value of null to a executor!");
+            throw new IllegalStateException(
+                    "["
+                            + this.getName()
+                            + "]: Cannot add malformed workers with a value of null to a executor!");
         }
 
         /** Make sure the workers being appended have a positive delay. */
         for (ChainWorker e : workers) {
             if (e.delay() < 1) {
-                throw new IllegalStateException("[" + this.getName() + "]: Cannot add workers with delay values of below 1 to a executor!");
+                throw new IllegalStateException(
+                        "["
+                                + this.getName()
+                                + "]: Cannot add workers with delay values of below 1 to a executor!");
             }
         }
 
@@ -288,25 +306,32 @@ public class ChainExecutor {
      * Append new workers to the executor's chain.
      * 
      * @param workers
-     *        the workers to append to the chain.
+     *            the workers to append to the chain.
      */
     public void appendAll(ChainWorker[] workers) {
 
         /** Make sure this executor isn't running. */
         if (this.isRunningExecutor()) {
-            throw new IllegalStateException("[" + this.getName() + "]: Cannot add workers to a running executor!");
+            throw new IllegalStateException("[" + this.getName()
+                    + "]: Cannot add workers to a running executor!");
         }
 
         for (ChainWorker e : workers) {
 
             /** Make sure the workers being appended aren't malformed. */
             if (e == null) {
-                throw new IllegalStateException("[" + this.getName() + "]: Cannot add malformed workers with a value of null to a executor!");
+                throw new IllegalStateException(
+                        "["
+                                + this.getName()
+                                + "]: Cannot add malformed workers with a value of null to a executor!");
             }
 
             /** Make sure the workers being appended have a positive delay. */
             if (e.delay() < 1) {
-                throw new IllegalStateException("[" + this.getName() + "]: Cannot add workers with delay values of below 1 to a executor!");
+                throw new IllegalStateException(
+                        "["
+                                + this.getName()
+                                + "]: Cannot add workers with delay values of below 1 to a executor!");
             }
 
             /** Append the new workers to the chain. */
@@ -327,7 +352,7 @@ public class ChainExecutor {
      * Sets a new name for this {@link ChainExecutor}.
      * 
      * @param name
-     *        the new name for this {@link ChainExecutor}.
+     *            the new name for this {@link ChainExecutor}.
      */
     public void setName(String name) {
         this.name = name;
@@ -348,8 +373,8 @@ public class ChainExecutor {
      * shutdown.
      * 
      * @param shouldEmpty
-     *        if this {@link ChainExecutor} should be emptied when it is
-     *        canceled and/or shutdown.
+     *            if this {@link ChainExecutor} should be emptied when it is
+     *            canceled and/or shutdown.
      */
     public void setShouldEmpty(boolean shouldEmpty) {
         this.shouldEmpty = shouldEmpty;

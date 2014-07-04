@@ -23,11 +23,11 @@ public class NpcDialogueAction implements DialogueAction {
      * Create a new {@link NpcDialogueAction}.
      * 
      * @param npcId
-     *        the id of the npc sending this dialogue.
+     *            the id of the npc sending this dialogue.
      * @param expression
-     *        the expression that this npc is making.
+     *            the expression that this npc is making.
      * @param lines
-     *        the lines that will be sent.
+     *            the lines that will be sent.
      */
     public NpcDialogueAction(int npcId, Expression expression, String... lines) {
         this.npcId = npcId;
@@ -39,9 +39,9 @@ public class NpcDialogueAction implements DialogueAction {
      * Create a new {@link NpcDialogueAction} with the default expression.
      * 
      * @param npcId
-     *        the id of the npc sending this dialogue.
+     *            the id of the npc sending this dialogue.
      * @param lines
-     *        the lines that will be sent.
+     *            the lines that will be sent.
      */
     public NpcDialogueAction(int npcId, String... lines) {
         this(npcId, Expression.CALM, lines);

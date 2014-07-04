@@ -14,10 +14,11 @@ public class WorldFullException extends RuntimeException {
      * Create a new {@link WorldFullException}.
      * 
      * @param entity
-     *        the entity trying to be added to the world.
+     *            the entity trying to be added to the world.
      */
     public WorldFullException(Entity entity) {
-        super(entity + " cannot be added to the game because the world is full!");
+        super(entity
+                + " cannot be added to the game because the world is full!");
     }
 
     /** The generated serial version UID. */

@@ -42,11 +42,11 @@ public class NpcDropTable {
      * Create a new {@link NpcDropTable}.
      * 
      * @param npc
-     *        the npc(s) who use this drop table.
+     *            the npc(s) who use this drop table.
      * @param dynamic
-     *        the dynamic drop table assigned to this npc.
+     *            the dynamic drop table assigned to this npc.
      * @param rare
-     *        the rare table assigned to this npc.
+     *            the rare table assigned to this npc.
      */
     public NpcDropTable(int[] npcs, NpcDrop[] dynamic, NpcDrop[] rare) {
         this.npcs = npcs;
@@ -61,7 +61,7 @@ public class NpcDropTable {
      * will return a different set of items each time.
      * 
      * @param player
-     *        the player these items are being calculated for.
+     *            the player these items are being calculated for.
      * @return the calculated items that will be dropped.
      */
     public Item[] calculateDrops(Player player) {
@@ -73,8 +73,7 @@ public class NpcDropTable {
         Item[] item = new Item[getDropLength()];
 
         /** Gamble all items in the dynamic table. */
-        if (dynamic != null
-                && dynamic.length > 0) {
+        if (dynamic != null && dynamic.length > 0) {
             for (NpcDrop drop : dynamic) {
                 if (drop == null) {
                     continue;
@@ -93,8 +92,7 @@ public class NpcDropTable {
         }
 
         /** Gamble one item in the rare table. */
-        if (rare != null
-                && rare.length > 0) {
+        if (rare != null && rare.length > 0) {
 
             /** The bet modification value. */
             BetModification betMod = getBetModification(player);
@@ -140,8 +138,7 @@ public class NpcDropTable {
     public void calculateDropsDebug() {
 
         /** Gamble one item in the rare table. */
-        if (rare != null
-                && rare.length > 0) {
+        if (rare != null && rare.length > 0) {
 
             for (int i = 0; i < 1000000; i++) {
 
@@ -155,9 +152,7 @@ public class NpcDropTable {
                 if (rollRound <= rareDrop.getBet()) {
                     System.out.println("RARE ITEM DROPPED[item = "
                             + rareDrop.toItem().getDefinition().getItemName()
-                            + ", kills= "
-                            + (i + 1)
-                            + "]");
+                            + ", kills= " + (i + 1) + "]");
                     System.exit(0);
                 }
             }
@@ -187,13 +182,14 @@ public class NpcDropTable {
      * chance of a rare item being dropped.
      * 
      * @param player
-     *        the player these items are being dropped for.
+     *            the player these items are being dropped for.
      * @return the modification to the <code>bet</code>.
      */
     private static BetModification getBetModification(Player player) {
 
         /** Check if we have a ring of wealth equipped. */
-        if (player.getEquipment().getContainer().getItemId(Misc.EQUIPMENT_SLOT_RING) == 2572) {
+        if (player.getEquipment().getContainer()
+                .getItemId(Misc.EQUIPMENT_SLOT_RING) == 2572) {
 
             /** Chance to drop a rare item is increased by 0.025, which is 2.5%. */
             return new BetModification(0.025) {
@@ -202,10 +198,15 @@ public class NpcDropTable {
 
                     /** Item dropped, do ring of wealth stuff. */
                     if (roll.nextBoolean()) {
-                        player.getEquipment().removeItem(Misc.EQUIPMENT_SLOT_RING);
-                        player.getPacketBuilder().sendMessage("Your ring of wealth takes effect and crumbles into dust!");
+                        player.getEquipment().removeItem(
+                                Misc.EQUIPMENT_SLOT_RING);
+                        player.getPacketBuilder()
+                                .sendMessage(
+                                        "Your ring of wealth takes effect and crumbles into dust!");
                     } else {
-                        player.getPacketBuilder().sendMessage("Your ring of wealth takes effect and keeps itself intact!");
+                        player.getPacketBuilder()
+                                .sendMessage(
+                                        "Your ring of wealth takes effect and keeps itself intact!");
                     }
                 }
 
@@ -248,7 +249,8 @@ public class NpcDropTable {
          * The default bet modification. We use this so we do not have to check
          * for <code>null</code> values.
          */
-        public static final BetModification DEFAULT_BET_MOD = new BetModification(0.0) {
+        public static final BetModification DEFAULT_BET_MOD = new BetModification(
+                0.0) {
             @Override
             public void itemPassed(Player player, NpcDrop item) {
 
@@ -269,7 +271,7 @@ public class NpcDropTable {
          * Create a new {@link BetModification}.
          * 
          * @param mod
-         *        the fixed bet modification.
+         *            the fixed bet modification.
          */
         public BetModification(double mod) {
             this.mod = mod;
@@ -279,9 +281,9 @@ public class NpcDropTable {
          * What happens when the item drops.
          * 
          * @param player
-         *        the player who is receiving the drops.
+         *            the player who is receiving the drops.
          * @param item
-         *        the item being dropped.
+         *            the item being dropped.
          */
         public abstract void itemPassed(Player player, NpcDrop item);
 
@@ -290,9 +292,9 @@ public class NpcDropTable {
          * be dropped.
          * 
          * @param player
-         *        the player who is receiving the drops.
+         *            the player who is receiving the drops.
          * @param item
-         *        the item being dropped.
+         *            the item being dropped.
          */
         public abstract void itemFailed(Player player, NpcDrop item);
 
@@ -333,13 +335,13 @@ public class NpcDropTable {
          * Create a new {@link DeathDrop}.
          * 
          * @param id
-         *        the id of item that will be dropped.
+         *            the id of item that will be dropped.
          * @param minimum
-         *        the minimum amount of item that will be dropped.
+         *            the minimum amount of item that will be dropped.
          * @param maximum
-         *        the maximum amount of item that will be dropped.
+         *            the maximum amount of item that will be dropped.
          * @param bet
-         *        the chance that this item will be dropped.
+         *            the chance that this item will be dropped.
          */
         public NpcDrop(int id, int minimum, int maximum, double bet) {
             this.id = id;

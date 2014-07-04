@@ -24,9 +24,9 @@ public class Position {
      * is set to 0.
      * 
      * @param x
-     *        the X coordinate.
+     *            the X coordinate.
      * @param y
-     *        the Y coordinate.
+     *            the Y coordinate.
      */
     public Position(int x, int y) {
         this(x, y, 0);
@@ -36,11 +36,11 @@ public class Position {
      * Creates a new Position with the specified coordinates.
      * 
      * @param x
-     *        the X coordinate.
+     *            the X coordinate.
      * @param y
-     *        the Y coordinate.
+     *            the Y coordinate.
      * @param z
-     *        the Z coordinate.
+     *            the Z coordinate.
      */
     public Position(int x, int y, int z) {
         this.setX(x);
@@ -59,22 +59,28 @@ public class Position {
      * Checks if this position is in the specified location.
      * 
      * @param other
-     *        the location to check for.
+     *            the location to check for.
      * @return true if this location was in the specified location.
      */
     public boolean inLocation(Location other) {
-        return this.x > other.getSouthWest().getX() && this.x < other.getNorthEast().getX() && this.y > other.getSouthWest().getY() && this.y < other.getNorthEast().getY() ? true : false;
+        return this.x > other.getSouthWest().getX()
+                && this.x < other.getNorthEast().getX()
+                && this.y > other.getSouthWest().getY()
+                && this.y < other.getNorthEast().getY() ? true : false;
     }
 
     /**
      * Checks if this position is in the specified location (inclusive).
      * 
      * @param other
-     *        the location to check for.
+     *            the location to check for.
      * @return true if this location was in the specified location.
      */
     public boolean inLocationInclusive(Location other) {
-        return this.x >= other.getSouthWest().getX() && this.x <= other.getNorthEast().getX() && this.y >= other.getSouthWest().getY() && this.y <= other.getNorthEast().getY() ? true : false;
+        return this.x >= other.getSouthWest().getX()
+                && this.x <= other.getNorthEast().getX()
+                && this.y >= other.getSouthWest().getY()
+                && this.y <= other.getNorthEast().getY() ? true : false;
     }
 
     /**
@@ -83,7 +89,7 @@ public class Position {
      * (if the other position gets modified, so will the entity's).
      * 
      * @param other
-     *        the other position.
+     *            the other position.
      */
     public Position setAs(Position other) {
         this.x = other.x;
@@ -96,9 +102,9 @@ public class Position {
      * Moves the position.
      * 
      * @param amountX
-     *        the amount of X coordinates.
+     *            the amount of X coordinates.
      * @param amountY
-     *        the amount of Y coordinates.
+     *            the amount of Y coordinates.
      * @return this position.
      */
     public Position move(int amountX, int amountY) {
@@ -111,11 +117,11 @@ public class Position {
      * Moves the position.
      * 
      * @param amountX
-     *        the amount of X coordinates.
+     *            the amount of X coordinates.
      * @param amountY
-     *        the amount of Y coordinates.
+     *            the amount of Y coordinates.
      * @param amountZ
-     *        the amount of Z coordinates.
+     *            the amount of Z coordinates.
      * @return this position.
      */
     public Position move(int amountX, int amountY, int amountZ) {
@@ -148,7 +154,7 @@ public class Position {
      * Sets the X coordinate.
      * 
      * @param x
-     *        the X coordinate.
+     *            the X coordinate.
      */
     public void setX(int x) {
         this.x = x;
@@ -167,7 +173,7 @@ public class Position {
      * Sets the Y coordinate.
      * 
      * @param y
-     *        the Y coordinate.
+     *            the Y coordinate.
      */
     public void setY(int y) {
         this.y = y;
@@ -186,7 +192,7 @@ public class Position {
      * Sets the Z coordinate.
      * 
      * @param z
-     *        the Z coordinate.
+     *            the Z coordinate.
      */
     public void setZ(int z) {
         this.z = z;
@@ -223,7 +229,7 @@ public class Position {
      * Gets the local X coordinate relative to the base Position.
      * 
      * @param base
-     *        the base Position.
+     *            the base Position.
      * @return the local X coordinate.
      */
     public int getLocalX(Position base) {
@@ -234,7 +240,7 @@ public class Position {
      * Gets the local Y coordinate relative to the base Position.
      * 
      * @param base
-     *        the base Position.
+     *            the base Position.
      * @return the local Y coordinate.
      */
     public int getLocalY(Position base) {
@@ -290,7 +296,7 @@ public class Position {
      * Checks if this position is viewable from the other position.
      * 
      * @param other
-     *        the other position.
+     *            the other position.
      * @return true if it is viewable, false otherwise.
      */
     public boolean isViewableFrom(Position other) {
@@ -305,15 +311,16 @@ public class Position {
      * Checks if this position is within distance of another position.
      * 
      * @param position
-     *        the position to check the distance for.
+     *            the position to check the distance for.
      * @param distance
-     *        the distance to check.
+     *            the distance to check.
      * @return true if this position is within the distance of another position.
      */
     public boolean withinDistance(Position position, int distance) {
         if (this.getZ() != position.getZ())
             return false;
 
-        return Math.abs(position.getX() - this.getX()) <= distance && Math.abs(position.getY() - this.getY()) <= distance;
+        return Math.abs(position.getX() - this.getX()) <= distance
+                && Math.abs(position.getY() - this.getY()) <= distance;
     }
 }

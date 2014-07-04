@@ -33,7 +33,7 @@ public class BotLoginTask extends SequentialTask {
      * Create a new {@link BotLoginTask}.
      * 
      * @param bot
-     *        the bot to login.
+     *            the bot to login.
      */
     public BotLoginTask(Bot bot) {
         this.bot = bot;
@@ -44,7 +44,8 @@ public class BotLoginTask extends SequentialTask {
         try {
             /** Initialize the connection. */
             bot.setSocket(new Socket());
-            bot.getSocket().connect(new InetSocketAddress("127.0.0.1", Main.PORT), 5000);
+            bot.getSocket().connect(
+                    new InetSocketAddress("127.0.0.1", Main.PORT), 5000);
             bot.getSocket().setSoTimeout(5000);
             bot.getSocket().setTcpNoDelay(true);
             SecureRandom rand = new SecureRandom();
@@ -57,7 +58,8 @@ public class BotLoginTask extends SequentialTask {
             WriteBuffer outBuffer = PacketBuffer.newWriteBuffer();
             outBuffer.writeByte(14);
             outBuffer.writeByte(rand.nextInt());
-            out.write(outBuffer.getBuffer().array(), 0, outBuffer.getBuffer().position());
+            out.write(outBuffer.getBuffer().array(), 0, outBuffer.getBuffer()
+                    .position());
 
             /** Read the initial response. **/
             ReadBuffer inBuffer = PacketBuffer.newReadBuffer(80);
@@ -67,7 +69,8 @@ public class BotLoginTask extends SequentialTask {
             int opcode = inBuffer.readByte();
 
             if (opcode != 0) {
-                throw new BotLoginException(bot, "invalid response opcode: " + opcode);
+                throw new BotLoginException(bot, "invalid response opcode: "
+                        + opcode);
             }
 
             /** Initialize the ISAAC seed. **/
@@ -104,7 +107,8 @@ public class BotLoginTask extends SequentialTask {
             outBuffer.writeBytes(block.getBuffer());
 
             /** And ship the packet out to the server. */
-            out.write(outBuffer.getBuffer().array(), 0, outBuffer.getBuffer().position());
+            out.write(outBuffer.getBuffer().array(), 0, outBuffer.getBuffer()
+                    .position());
             out.flush();
 
             /** Receive the final response. */
@@ -113,7 +117,8 @@ public class BotLoginTask extends SequentialTask {
             opcode = inBuffer.readByte();
 
             if (opcode != 2) {
-                throw new BotLoginException(bot, "login rejected from server, opcode: " + opcode);
+                throw new BotLoginException(bot,
+                        "login rejected from server, opcode: " + opcode);
             }
 
             /** Set the player instance. */

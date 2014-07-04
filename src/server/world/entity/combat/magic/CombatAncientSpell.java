@@ -19,7 +19,8 @@ import server.world.map.Location;
 public abstract class CombatAncientSpell extends CombatSpell {
 
     @Override
-    public void endCast(Entity cast, Entity castOn, boolean spellAccurate, int damageInflicted) {
+    public void endCast(Entity cast, Entity castOn, boolean spellAccurate,
+            int damageInflicted) {
 
         /** Multitarget support with the proper radius. */
         if (spellAccurate) {
@@ -35,7 +36,11 @@ public abstract class CombatAncientSpell extends CombatSpell {
                         continue;
                     }
 
-                    if (npc.getPosition().withinDistance(castOn.getPosition(), spellRadius()) && npc != cast && npc.getSlot() != castOn.getSlot() && npc.getDefinition().isAttackable()) {
+                    if (npc.getPosition().withinDistance(castOn.getPosition(),
+                            spellRadius())
+                            && npc != cast
+                            && npc.getSlot() != castOn.getSlot()
+                            && npc.getDefinition().isAttackable()) {
                         npc.gfx(cast.getCurrentlyCasting().endGfx());
                         int damage = Misc.random(this.maximumStrength());
                         npc.dealDamage(new Hit(damage));
@@ -49,7 +54,10 @@ public abstract class CombatAncientSpell extends CombatSpell {
                         continue;
                     }
 
-                    if (player.getPosition().withinDistance(castOn.getPosition(), spellRadius()) && player != cast && player.getSlot() != castOn.getSlot()) {
+                    if (player.getPosition().withinDistance(
+                            castOn.getPosition(), spellRadius())
+                            && player != cast
+                            && player.getSlot() != castOn.getSlot()) {
                         player.gfx(cast.getCurrentlyCasting().endGfx());
                         int damage = Misc.random(this.maximumStrength());
                         player.dealDamage(new Hit(damage));
@@ -72,13 +80,14 @@ public abstract class CombatAncientSpell extends CombatSpell {
      * The effect this spell has on the target(s).
      * 
      * @param cast
-     *        the entity casting this spell.
+     *            the entity casting this spell.
      * @param castOn
-     *        the person being hit by this spell.
+     *            the person being hit by this spell.
      * @param damageInflicted
-     *        the damage inflicted.
+     *            the damage inflicted.
      */
-    public abstract void spellEffect(Entity cast, Entity castOn, int damageInflicted);
+    public abstract void spellEffect(Entity cast, Entity castOn,
+            int damageInflicted);
 
     /**
      * The radius of this spell.

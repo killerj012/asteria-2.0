@@ -11,10 +11,13 @@ import server.core.GenericTaskPool;
 public final class TaskExecutors {
 
     /** An executor that handles short lived concurrent game related tasks. */
-    private static final GenericTaskPool concurrent = new GenericTaskPool("ConcurrentThread", Runtime.getRuntime().availableProcessors(), Thread.MAX_PRIORITY);
+    private static final GenericTaskPool concurrent = new GenericTaskPool(
+            "ConcurrentThread", Runtime.getRuntime().availableProcessors(),
+            Thread.MAX_PRIORITY);
 
     /** An executor that handles short lived sequential game related tasks. */
-    private static final GenericTaskPool sequential = new GenericTaskPool("SequentialThread", 1, Thread.NORM_PRIORITY);
+    private static final GenericTaskPool sequential = new GenericTaskPool(
+            "SequentialThread", 1, Thread.NORM_PRIORITY);
 
     /** To prevent instantiation. */
     private TaskExecutors() {

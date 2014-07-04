@@ -25,7 +25,7 @@ public class CombatPrayerWorker extends Worker {
      * Create a new {@link CombatPrayerWorker}.
      * 
      * @param player
-     *        the player attached to this worker.
+     *            the player attached to this worker.
      */
     public CombatPrayerWorker(Player player) {
         super(1, false);
@@ -42,7 +42,8 @@ public class CombatPrayerWorker extends Worker {
                 prayerTicks[i]++;
                 cancelWorker = false;
 
-                if (prayerTicks[i] >= calculateDrainRate(CombatPrayer.getPrayer(i))) {
+                if (prayerTicks[i] >= calculateDrainRate(CombatPrayer
+                        .getPrayer(i))) {
                     player.getSkills()[Misc.PRAYER].decreaseLevel(1);
                     SkillManager.refresh(player, Misc.PRAYER);
                     prayerTicks[i] = 0;
@@ -61,7 +62,8 @@ public class CombatPrayerWorker extends Worker {
 
         /** Check the prayer level. */
         if (player.getSkills()[Misc.PRAYER].getLevel() < 1) {
-            player.getPacketBuilder().sendMessage("You've run out of prayer points!");
+            player.getPacketBuilder().sendMessage(
+                    "You've run out of prayer points!");
             CombatPrayer.deactivateAllPrayer(player);
             this.cancel();
             return;
@@ -72,7 +74,7 @@ public class CombatPrayerWorker extends Worker {
      * Calculates the amount of ticks needed to drain 1 level of prayer.
      * 
      * @param prayer
-     *        the prayer being calculated.
+     *            the prayer being calculated.
      * @return the amount of ticks needed to drain 1 level of prayer.
      */
     private int calculateDrainRate(CombatPrayer prayer) {

@@ -20,9 +20,9 @@ public class PlayerDialogueAction implements DialogueAction {
      * Create a new {@link PlayerDialogueAction}.
      * 
      * @param expression
-     *        the expression of the dialogue.
+     *            the expression of the dialogue.
      * @param lines
-     *        the lines that will be sent.
+     *            the lines that will be sent.
      */
     public PlayerDialogueAction(Expression expression, String... lines) {
         this.expression = expression;
@@ -33,7 +33,7 @@ public class PlayerDialogueAction implements DialogueAction {
      * Create a new {@link PlayerDialogueAction} with the default expression.
      * 
      * @param lines
-     *        the lines that will be sent.
+     *            the lines that will be sent.
      */
     public PlayerDialogueAction(String... lines) {
         this(Expression.CALM, lines);

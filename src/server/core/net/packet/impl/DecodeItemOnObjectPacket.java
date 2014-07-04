@@ -38,7 +38,8 @@ public class DecodeItemOnObjectPacket extends PacketDecoder {
         player.getMovementQueueListener().submit(new Runnable() {
             @Override
             public void run() {
-                if (Misc.canClickObject(player.getPosition(), new Position(objectX, objectY), size)) {
+                if (Misc.canClickObject(player.getPosition(), new Position(
+                        objectX, objectY), size)) {
                     switch (objectId) {
 
                     }

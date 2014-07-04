@@ -14,12 +14,12 @@ import server.world.item.ItemContainer.ContainerPolicy;
  * @author Vix
  */
 public class InventoryContainer {
-    
+
     /**
      * The id of the inventory container
      */
     public static final int DEFAULT_INVENTORY_CONTAINER_ID = 3214;
-    
+
     /**
      * The id of the inventory when you have the bank open.
      */
@@ -32,13 +32,14 @@ public class InventoryContainer {
      * The item container that holds and manages all of the items in this
      * inventory.
      */
-    private ItemContainer container = new ItemContainer(ContainerPolicy.NORMAL_POLICY, 28);
+    private ItemContainer container = new ItemContainer(
+            ContainerPolicy.NORMAL_POLICY, 28);
 
     /**
      * Create a new {@link InventoryContainer}.
      * 
      * @param player
-     *        the player's inventory being managed.
+     *            the player's inventory being managed.
      */
     public InventoryContainer(Player player) {
         this.player = player;
@@ -46,25 +47,28 @@ public class InventoryContainer {
 
     /**
      * Sends the items on this inventory to the specified interface.
-     * @param interfaceId The interface id.
+     * 
+     * @param interfaceId
+     *            The interface id.
      */
     public void refresh(int interfaceId) {
         checkForZero();
-        player.getPacketBuilder().sendUpdateItems(interfaceId, container.toArray());
+        player.getPacketBuilder().sendUpdateItems(interfaceId,
+                container.toArray());
     }
-    
+
     /**
      * Sends the items on this inventory to the default container.
      */
     public void refresh() {
-	refresh(DEFAULT_INVENTORY_CONTAINER_ID);
+        refresh(DEFAULT_INVENTORY_CONTAINER_ID);
     }
 
     /**
      * Adds an item into the inventory's container.
      * 
      * @param item
-     *        the item to add to this container.
+     *            the item to add to this container.
      */
     public void addItem(Item item) {
 
@@ -74,9 +78,11 @@ public class InventoryContainer {
         }
 
         /** Check if we have enough space for this item. */
-        if (!container.contains(item.getId()) && !item.getDefinition().isStackable()) {
+        if (!container.contains(item.getId())
+                && !item.getDefinition().isStackable()) {
             if (container.freeSlot() == -1) {
-                player.getPacketBuilder().sendMessage("You don't have enough space in your inventory!");
+                player.getPacketBuilder().sendMessage(
+                        "You don't have enough space in your inventory!");
                 return;
             }
         }
@@ -85,7 +91,8 @@ public class InventoryContainer {
          * Set the amount to the amount of free slots you have if there isn't
          * enough space.
          */
-        if (item.getAmount() > container.freeSlots() && !item.getDefinition().isStackable()) {
+        if (item.getAmount() > container.freeSlots()
+                && !item.getDefinition().isStackable()) {
             item.setAmount(container.freeSlots());
         }
 
@@ -100,7 +107,7 @@ public class InventoryContainer {
      * Adds a set of items into the inventory.
      * 
      * @param item
-     *        the set of items to add.
+     *            the set of items to add.
      */
     public void addItemSet(Item[] item) {
         for (Item addItem : item) {
@@ -116,7 +123,7 @@ public class InventoryContainer {
      * Adds a collection of items into the inventory.
      * 
      * @param item
-     *        the set of items to add.
+     *            the set of items to add.
      */
     public void addItemCollection(Collection<Item> collection) {
         for (Item addItem : collection) {
@@ -132,9 +139,9 @@ public class InventoryContainer {
      * Overrides the specified slot with a new item.
      * 
      * @param item
-     *        the item to override the slot with.
+     *            the item to override the slot with.
      * @param slot
-     *        the slot to override.
+     *            the slot to override.
      */
     public void overrideItemSlot(Item item, int slot) {
 
@@ -154,7 +161,7 @@ public class InventoryContainer {
      * Deletes an item from this inventory's container.
      * 
      * @param item
-     *        the item to delete from this container.
+     *            the item to delete from this container.
      */
     public void deleteItem(Item item) {
 
@@ -183,7 +190,7 @@ public class InventoryContainer {
      * Deletes a set of items from the inventory.
      * 
      * @param item
-     *        the set of items to delete.
+     *            the set of items to delete.
      */
     public void deleteItemSet(Item[] item) {
         for (Item deleteItem : item) {
@@ -199,9 +206,9 @@ public class InventoryContainer {
      * Replaces an existing item in the inventory with a new one.
      * 
      * @param oldItem
-     *        the item to replace.
+     *            the item to replace.
      * @param newItem
-     *        the item to add.
+     *            the item to add.
      */
     public void replaceItem(Item oldItem, Item newItem) {
 
@@ -216,9 +223,9 @@ public class InventoryContainer {
      * Deletes an item from the specified slot in this inventory.
      * 
      * @param item
-     *        the item to remove.
+     *            the item to remove.
      * @param slot
-     *        the slot to remove this item from.
+     *            the slot to remove this item from.
      */
     public void deleteItemSlot(Item item, int slot) {
 
@@ -236,7 +243,8 @@ public class InventoryContainer {
          * Block if no item exists on this slot or this container does not
          * contain the item.
          */
-        if (container.getItem(slot) == null || !container.contains(item.getId())) {
+        if (container.getItem(slot) == null
+                || !container.contains(item.getId())) {
             return;
         }
 
@@ -251,9 +259,9 @@ public class InventoryContainer {
      * Exchanges the slots of two items in the inventory container.
      * 
      * @param initialSlot
-     *        the current slot of the item.
+     *            the current slot of the item.
      * @param exchangeSlot
-     *        the destination slot for this item.
+     *            the destination slot for this item.
      */
     public void exchangeItemSlot(int initialSlot, int exchangeSlot) {
         container.swap(initialSlot, exchangeSlot);

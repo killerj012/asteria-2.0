@@ -39,9 +39,9 @@ public class ItemContainer {
      * Create a new {@link ItemContainer}.
      * 
      * @param policy
-     *        the policy of this container.
+     *            the policy of this container.
      * @param capacity
-     *        the initial capacity of this container.
+     *            the initial capacity of this container.
      */
     public ItemContainer(ContainerPolicy policy, int capacity) {
         this.policy = policy;
@@ -53,9 +53,9 @@ public class ItemContainer {
      * Sets the index in the backing array to the specified item.
      * 
      * @param index
-     *        the index in the backing array being changed.
+     *            the index in the backing array being changed.
      * @param item
-     *        the item being set to the index.
+     *            the item being set to the index.
      */
     public void set(int index, Item item) {
         items[index] = item;
@@ -65,7 +65,7 @@ public class ItemContainer {
      * Sets this containers items to another set of items.
      * 
      * @param items
-     *        the new set of items.
+     *            the new set of items.
      */
     public void setItems(Item[] items) {
         clear();
@@ -85,7 +85,7 @@ public class ItemContainer {
      * Adds an item to this container.
      * 
      * @param item
-     *        the item to add.
+     *            the item to add.
      * @return true if the item was added.
      */
     public boolean add(Item item) {
@@ -97,7 +97,7 @@ public class ItemContainer {
      * or below 0.
      * 
      * @param item
-     *        the item to remove and keep at 0.
+     *            the item to remove and keep at 0.
      * @return the amount removed from this item.
      */
     public int removeOrZero(Item item) {
@@ -117,7 +117,7 @@ public class ItemContainer {
      * Gets the id of an item by its slot.
      * 
      * @param slot
-     *        the slot to get.
+     *            the slot to get.
      * @return the item id in that slot.
      */
     public int getIdBySlot(int slot) {
@@ -128,7 +128,7 @@ public class ItemContainer {
      * Checks if a slot is free.
      * 
      * @param slot
-     *        the slot to check.
+     *            the slot to check.
      * @return true if the slot is free.
      */
     public boolean isSlotFree(int slot) {
@@ -139,7 +139,7 @@ public class ItemContainer {
      * Checks if a slot is used.
      * 
      * @param slot
-     *        the slot to check.
+     *            the slot to check.
      * @return true if the slot is used.
      */
     public boolean isSlotUsed(int slot) {
@@ -150,7 +150,7 @@ public class ItemContainer {
      * Removes an item from this container.
      * 
      * @param item
-     *        the item to remove.
+     *            the item to remove.
      * @return the amount removed.
      */
     public int remove(Item item) {
@@ -161,9 +161,9 @@ public class ItemContainer {
      * Removes an item from this container.
      * 
      * @param item
-     *        the item to remove.
+     *            the item to remove.
      * @param preferredSlot
-     *        the preferred slot to remove the item from.
+     *            the preferred slot to remove the item from.
      * @return the amount removed.
      */
     public int remove(Item item, int preferredSlot) {
@@ -174,7 +174,7 @@ public class ItemContainer {
      * Checks if this container has a certain item.
      * 
      * @param id
-     *        the item to check in this container for.
+     *            the item to check in this container for.
      * @return true if this container has the item.
      */
     public boolean contains(int id) {
@@ -185,7 +185,7 @@ public class ItemContainer {
      * Checks if this container has a certain item.
      * 
      * @param item
-     *        the item to check in this container for.
+     *            the item to check in this container for.
      * @return true if this container has the item.
      */
     public boolean contains(Item item) {
@@ -205,7 +205,7 @@ public class ItemContainer {
      * Checks if this container has a set of certain items.
      * 
      * @param item
-     *        the item to check in this container for.
+     *            the item to check in this container for.
      * @return true if this container has the item.
      */
     public boolean contains(Item[] item) {
@@ -229,7 +229,7 @@ public class ItemContainer {
      * Checks if this container has a set of certain item id's.
      * 
      * @param item
-     *        the item id's to check in this container for.
+     *            the item id's to check in this container for.
      * @return true if this container has the item id.
      */
     public boolean contains(int[] id) {
@@ -272,7 +272,7 @@ public class ItemContainer {
      * Gets an item by its index.
      * 
      * @param index
-     *        the index.
+     *            the index.
      * @return the item on this index.
      */
     public Item getItem(int index) {
@@ -285,7 +285,7 @@ public class ItemContainer {
      * Gets an item id by its index.
      * 
      * @param index
-     *        the index.
+     *            the index.
      * @return the item id on this index.
      */
     public int getItemId(int index) {
@@ -298,7 +298,7 @@ public class ItemContainer {
      * Gets an item id by its index.
      * 
      * @param index
-     *        the index.
+     *            the index.
      * @return the item id on this index.
      */
     public Item getById(int id) {
@@ -317,7 +317,7 @@ public class ItemContainer {
      * Gets the amount of times an item is in your inventory by its id.
      * 
      * @param id
-     *        the id.
+     *            the id.
      * @return the amount of times this item is in your inventory.
      */
     public int getCount(int id) {
@@ -336,7 +336,7 @@ public class ItemContainer {
      * Gets the slot of an item by its id.
      * 
      * @param id
-     *        the id.
+     *            the id.
      * @return the slot of the item.
      */
     public int getSlotById(int id) {
@@ -355,9 +355,9 @@ public class ItemContainer {
      * Adds an item to this container.
      * 
      * @param item
-     *        the item to add.
+     *            the item to add.
      * @param slot
-     *        the slot to add it to.
+     *            the slot to add it to.
      * @return true if the item was added.
      */
     public boolean add(Item item, int slot) {
@@ -365,7 +365,9 @@ public class ItemContainer {
             return false;
         }
         int newSlot = (slot > -1) ? slot : freeSlot();
-        if ((item.getDefinition().isStackable() || policy.equals(ContainerPolicy.STACKABLE_POLICY)) && !policy.equals(ContainerPolicy.STANDALONE_POLICY)) {
+        if ((item.getDefinition().isStackable() || policy
+                .equals(ContainerPolicy.STACKABLE_POLICY))
+                && !policy.equals(ContainerPolicy.STANDALONE_POLICY)) {
             if (getCount(item.getId()) > 0) {
                 newSlot = getSlotById(item.getId());
             }
@@ -376,10 +378,13 @@ public class ItemContainer {
         if (getItem(newSlot) != null) {
             newSlot = freeSlot();
         }
-        if ((item.getDefinition().isStackable() || policy.equals(ContainerPolicy.STACKABLE_POLICY)) && !policy.equals(ContainerPolicy.STANDALONE_POLICY)) {
+        if ((item.getDefinition().isStackable() || policy
+                .equals(ContainerPolicy.STACKABLE_POLICY))
+                && !policy.equals(ContainerPolicy.STANDALONE_POLICY)) {
             for (int i = 0; i < items.length; i++) {
                 if (items[i] != null && items[i].getId() == item.getId()) {
-                    set(i, new Item(items[i].getId(), items[i].getAmount() + item.getAmount()));
+                    set(i, new Item(items[i].getId(), items[i].getAmount()
+                            + item.getAmount()));
                     return true;
                 }
             }
@@ -405,11 +410,13 @@ public class ItemContainer {
      * Checks if this container has room for this item.
      * 
      * @param item
-     *        the item to check if this has room for.
+     *            the item to check if this has room for.
      * @return true if it has room for the item.
      */
     public boolean hasRoomFor(Item item) {
-        if ((item.getDefinition().isStackable() || policy.equals(ContainerPolicy.STACKABLE_POLICY)) && !policy.equals(ContainerPolicy.STANDALONE_POLICY)) {
+        if ((item.getDefinition().isStackable() || policy
+                .equals(ContainerPolicy.STACKABLE_POLICY))
+                && !policy.equals(ContainerPolicy.STANDALONE_POLICY)) {
             for (int i = 0; i < items.length; i++) {
                 if (items[i] != null && items[i].getId() == item.getId()) {
                     int totalCount = item.getAmount() + items[i].getAmount();
@@ -431,9 +438,9 @@ public class ItemContainer {
      * Inserts an item into a new slot.
      * 
      * @param fromSlot
-     *        the slot the item is coming from.
+     *            the slot the item is coming from.
      * @param toSlot
-     *        the new slot the item is going to.
+     *            the new slot the item is going to.
      */
     public void insert(int fromSlot, int toSlot) {
         Item from = items[fromSlot];
@@ -473,11 +480,11 @@ public class ItemContainer {
      * Removes an item from this container.
      * 
      * @param item
-     *        the item to remove.
+     *            the item to remove.
      * @param preferredSlot
-     *        the slot to remove it from.
+     *            the slot to remove it from.
      * @param allowZero
-     *        if the item amount can stay at 0 without being removed.
+     *            if the item amount can stay at 0 without being removed.
      * @return the amount removed.
      */
     public int remove(Item item, int preferredSlot, boolean allowZero) {
@@ -485,7 +492,9 @@ public class ItemContainer {
             return -1;
         }
         int removed = 0;
-        if ((item.getDefinition().isStackable() || policy.equals(ContainerPolicy.STACKABLE_POLICY)) && !policy.equals(ContainerPolicy.STANDALONE_POLICY)) {
+        if ((item.getDefinition().isStackable() || policy
+                .equals(ContainerPolicy.STACKABLE_POLICY))
+                && !policy.equals(ContainerPolicy.STANDALONE_POLICY)) {
             int slot = getSlotById(item.getId());
             Item stack = getItem(slot);
             if (stack == null) {
@@ -493,7 +502,9 @@ public class ItemContainer {
             }
             if (stack.getAmount() > item.getAmount()) {
                 removed = item.getAmount();
-                set(slot, new Item(stack.getId(), stack.getAmount() - item.getAmount()));
+                set(slot,
+                        new Item(stack.getId(), stack.getAmount()
+                                - item.getAmount()));
             } else {
                 removed = stack.getAmount();
                 set(slot, allowZero ? new Item(stack.getId(), 0) : null);
@@ -541,12 +552,13 @@ public class ItemContainer {
      * Resizes this container with a new capacity.
      * 
      * @param capacity
-     *        the new capacity to set this container to (must be greater than
-     *        the current size).
+     *            the new capacity to set this container to (must be greater
+     *            than the current size).
      */
     public void resize(int capacity) {
         if (capacity < size()) {
-            throw new IllegalArgumentException("Capacity must not be lower than the current size!");
+            throw new IllegalArgumentException(
+                    "Capacity must not be lower than the current size!");
         }
 
         compact();
@@ -578,9 +590,9 @@ public class ItemContainer {
      * Switches the item in one spot with the item in another spot.
      * 
      * @param fromSlot
-     *        the slot of the item being swapped.
+     *            the slot of the item being swapped.
      * @param toSlot
-     *        the slot of the item being swapped with the other item.
+     *            the slot of the item being swapped with the other item.
      */
     public void swap(int fromSlot, int toSlot) {
         Item temp = getItem(fromSlot);
@@ -592,16 +604,17 @@ public class ItemContainer {
      * Transfers items to another container.
      * 
      * @param from
-     *        from this container.
+     *            from this container.
      * @param to
-     *        to this container.
+     *            to this container.
      * @param fromSlot
-     *        from this slot.
+     *            from this slot.
      * @param id
-     *        with this id.
+     *            with this id.
      * @return true if it was transferred.
      */
-    public static boolean transfer(ItemContainer from, ItemContainer to, int fromSlot, int id) {
+    public static boolean transfer(ItemContainer from, ItemContainer to,
+            int fromSlot, int id) {
         Item fromItem = from.getItem(fromSlot);
         if (fromItem == null || fromItem.getId() != id) {
             return false;

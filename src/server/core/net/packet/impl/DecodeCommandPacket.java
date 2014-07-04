@@ -55,7 +55,8 @@ public class DecodeCommandPacket extends PacketDecoder {
         if (player.getRights().greaterThan(PlayerRights.ADMINISTRATOR)) {
             if (cmd[0].equals("test")) {
                 player.sendDialogue(new Dialogue(player,
-                        new OptionDialogueAction(1, "Edgeville", "Karamja", "Draynor Village", "Al Kharid", "Nowhere")));
+                        new OptionDialogueAction(1, "Edgeville", "Karamja",
+                                "Draynor Village", "Al Kharid", "Nowhere")));
             }
             if (cmd[0].equals("config")) {
                 int parent = Integer.parseInt(cmd[1]);
@@ -77,8 +78,8 @@ public class DecodeCommandPacket extends PacketDecoder {
                 for (int i = 0; i < amount; i++) {
 
                     // logs bot in
-                    final Bot bot = new Bot("bot"
-                            + i, "pass", player.getPosition().clone()).loginBot();
+                    final Bot bot = new Bot("bot" + i, "pass", player
+                            .getPosition().clone()).loginBot();
 
                     // assigns the bot the walking around task
                     bot.assignTask(BotTask.WALK_AROUND);
@@ -86,7 +87,10 @@ public class DecodeCommandPacket extends PacketDecoder {
 
             } else if (cmd[0].equals("master")) {
                 for (int i = 0; i < player.getSkills().length; i++) {
-                    SkillManager.addExperienceNoMultiplier(player, (2147000000 - player.getSkills()[i].getExperience()), i);
+                    SkillManager
+                            .addExperienceNoMultiplier(player,
+                                    (2147000000 - player.getSkills()[i]
+                                            .getExperience()), i);
                 }
             } else if (cmd[0].equals("war")) {
                 Location l = new Location(player.getPosition().clone(), 10);
@@ -94,7 +98,8 @@ public class DecodeCommandPacket extends PacketDecoder {
                 for (int i = 0; i < 20; i++) {
                     Position p = l.randomPosition();
                     Npc npc = new Npc(1, p.clone());
-                    Npc attackNpc = new Npc(1, p.clone().move(Misc.random(2), Misc.random(2)));
+                    Npc attackNpc = new Npc(1, p.clone().move(Misc.random(2),
+                            Misc.random(2)));
                     World.getNpcs().add(npc);
                     World.getNpcs().add(attackNpc);
                     npc.getCombatBuilder().attack(attackNpc);
@@ -121,31 +126,34 @@ public class DecodeCommandPacket extends PacketDecoder {
                 });
 
                 final File file = new File("./data/coordinates/"
-                        + player.getPosition()
-                        + ".png");
-                TaskFactory.getFactory().submit(new Worker(2, false, WorkRate.APPROXIMATE_SECOND) {
-                    @Override
-                    public void fire() {
-                        Rs2Engine.pushTask(new SequentialTask() {
+                        + player.getPosition() + ".png");
+                TaskFactory.getFactory().submit(
+                        new Worker(2, false, WorkRate.APPROXIMATE_SECOND) {
                             @Override
-                            public void run() {
-                                try {
-                                    Transferable t = Toolkit.getDefaultToolkit().getSystemClipboard().getContents(null);
-                                    RenderedImage image = (RenderedImage) t.getTransferData(DataFlavor.imageFlavor);
-                                    ImageIO.write(image, "png", file);
-                                } catch (Exception e) {
-                                    e.printStackTrace();
-                                }
+                            public void fire() {
+                                Rs2Engine.pushTask(new SequentialTask() {
+                                    @Override
+                                    public void run() {
+                                        try {
+                                            Transferable t = Toolkit
+                                                    .getDefaultToolkit()
+                                                    .getSystemClipboard()
+                                                    .getContents(null);
+                                            RenderedImage image = (RenderedImage) t
+                                                    .getTransferData(DataFlavor.imageFlavor);
+                                            ImageIO.write(image, "png", file);
+                                        } catch (Exception e) {
+                                            e.printStackTrace();
+                                        }
+                                    }
+                                });
+
+                                this.cancel();
                             }
-                        });
+                        }.attach(player));
 
-                        this.cancel();
-                    }
-                }.attach(player));
-
-                player.getPacketBuilder().sendMessage("Created picture ["
-                        + file.getPath()
-                        + "]");
+                player.getPacketBuilder().sendMessage(
+                        "Created picture [" + file.getPath() + "]");
             } else if (cmd[0].equals("npc")) {
                 int npc = Integer.parseInt(cmd[1]);
 
@@ -168,16 +176,18 @@ public class DecodeCommandPacket extends PacketDecoder {
                 int bankCount = 0;
                 boolean addedToBank = false;
                 for (ItemDefinition i : ItemDefinition.getDefinitions()) {
-                    if (i == null
-                            || i.isNoted()) {
+                    if (i == null || i.isNoted()) {
                         continue;
                     }
 
                     if (i.getItemName().toLowerCase().contains(item)) {
-                        if (player.getInventory().getContainer().hasRoomFor(new Item(i.getItemId(), amount))) {
-                            player.getInventory().addItem(new Item(i.getItemId(), amount));
+                        if (player.getInventory().getContainer()
+                                .hasRoomFor(new Item(i.getItemId(), amount))) {
+                            player.getInventory().addItem(
+                                    new Item(i.getItemId(), amount));
                         } else {
-                            player.getBank().addItem(new Item(i.getItemId(), amount));
+                            player.getBank().addItem(
+                                    new Item(i.getItemId(), amount));
                             addedToBank = true;
                             bankCount++;
                         }
@@ -186,20 +196,19 @@ public class DecodeCommandPacket extends PacketDecoder {
                 }
 
                 if (count == 0) {
-                    player.getPacketBuilder().sendMessage("Item ["
-                            + item
-                            + "] not found!");
+                    player.getPacketBuilder().sendMessage(
+                            "Item [" + item + "] not found!");
                 } else {
-                    player.getPacketBuilder().sendMessage("Item ["
-                            + item
-                            + "] found on "
-                            + count
-                            + " occurances.");
+                    player.getPacketBuilder().sendMessage(
+                            "Item [" + item + "] found on " + count
+                                    + " occurances.");
                 }
 
                 if (addedToBank) {
-                    player.getPacketBuilder().sendMessage(bankCount
-                            + " items were banked due to lack of inventory space!");
+                    player.getPacketBuilder()
+                            .sendMessage(
+                                    bankCount
+                                            + " items were banked due to lack of inventory space!");
                 }
             } else if (cmd[0].equals("i")) {
                 int x = Integer.parseInt(cmd[1]);
@@ -210,10 +219,12 @@ public class DecodeCommandPacket extends PacketDecoder {
                 int delay = Integer.parseInt(cmd[2]);
                 player.getPacketBuilder().sendSound(x, 0, delay);
             } else if (cmd[0].equals("mypos")) {
-                player.getPacketBuilder().sendMessage("You are at: "
-                        + player.getPosition());
+                player.getPacketBuilder().sendMessage(
+                        "You are at: " + player.getPosition());
             } else if (cmd[0].equals("pickup")) {
-                player.getInventory().addItem(new Item(Integer.parseInt(cmd[1]), Integer.parseInt(cmd[2])));
+                player.getInventory().addItem(
+                        new Item(Integer.parseInt(cmd[1]), Integer
+                                .parseInt(cmd[2])));
             } else if (cmd[0].equals("empty")) {
                 player.getInventory().getContainer().clear();
                 player.getInventory().refresh();
@@ -226,15 +237,18 @@ public class DecodeCommandPacket extends PacketDecoder {
                 player.animation(new Animation(emote));
             } else if (cmd[0].equals("players")) {
                 int size = World.getPlayers().getSize();
-                player.getPacketBuilder().sendMessage(size == 1 ? "There is currently 1 player online!" : "There are currently "
-                        + size
-                        + " players online!");
+                player.getPacketBuilder().sendMessage(
+                        size == 1 ? "There is currently 1 player online!"
+                                : "There are currently " + size
+                                        + " players online!");
             } else if (cmd[0].equals("gfx")) {
                 int gfx = Integer.parseInt(cmd[1]);
                 player.gfx(new Gfx(gfx));
             } else if (cmd[0].equals("object")) {
                 int id = Integer.parseInt(cmd[1]);
-                World.getObjects().register(new WorldObject(id, player.getPosition(), Rotation.SOUTH, 10));
+                World.getObjects().register(
+                        new WorldObject(id, player.getPosition(),
+                                Rotation.SOUTH, 10));
             }
         }
     }

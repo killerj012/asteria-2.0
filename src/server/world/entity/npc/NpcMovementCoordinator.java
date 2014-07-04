@@ -37,7 +37,7 @@ public class NpcMovementCoordinator {
      * Create a new {@link NpcMovementCoordinator}.
      * 
      * @param npc
-     *        the npc we are coordinating movement for.
+     *            the npc we are coordinating movement for.
      */
     public NpcMovementCoordinator(Npc npc) {
         this.npc = npc;
@@ -54,7 +54,8 @@ public class NpcMovementCoordinator {
          * Block if this coordinator isn't set to coordinate or if the npc is in
          * combat.
          */
-        if (!coordinator.isCoordinate() || npc.getCombatBuilder().isAttacking() || npc.getCombatBuilder().isBeingAttacked()) {
+        if (!coordinator.isCoordinate() || npc.getCombatBuilder().isAttacking()
+                || npc.getCombatBuilder().isBeingAttacked()) {
             return;
         }
 
@@ -62,21 +63,22 @@ public class NpcMovementCoordinator {
         if (Misc.random(13) == 5) {
             switch (coordinateState) {
 
-                /** Coordinate the npc away from its original position. */
-                case HOME:
-                    if (npc.getMovementQueue().isMovementDone()) {
-                        npc.getMovementQueue().walk(generateLocalPosition(coordinator.getRadius()));
-                        coordinateState = CoordinateState.AWAY;
-                    }
-                    break;
+            /** Coordinate the npc away from its original position. */
+            case HOME:
+                if (npc.getMovementQueue().isMovementDone()) {
+                    npc.getMovementQueue().walk(
+                            generateLocalPosition(coordinator.getRadius()));
+                    coordinateState = CoordinateState.AWAY;
+                }
+                break;
 
-                /** Coordinate the npc back to its original position. */
-                case AWAY:
-                    if (npc.getMovementQueue().isMovementDone()) {
-                        npc.getMovementQueue().walk(npc.getOriginalPosition());
-                        coordinateState = CoordinateState.HOME;
-                    }
-                    break;
+            /** Coordinate the npc back to its original position. */
+            case AWAY:
+                if (npc.getMovementQueue().isMovementDone()) {
+                    npc.getMovementQueue().walk(npc.getOriginalPosition());
+                    coordinateState = CoordinateState.HOME;
+                }
+                break;
             }
         }
     }
@@ -85,31 +87,39 @@ public class NpcMovementCoordinator {
      * Generates a local position to this npc within the given radius.
      * 
      * @param radius
-     *        the radius to generate the local position within.
+     *            the radius to generate the local position within.
      * @return the generated local position.
      */
     private Position generateLocalPosition(int radius) {
         switch (Misc.random(3)) {
 
-            /** Northwest, north, and west directions. */
-            case 0:
-                return new Position(npc.getPosition().getX() + Misc.random(radius), npc.getPosition().getY() + Misc.random(radius), npc.getPosition().getZ());
+        /** Northwest, north, and west directions. */
+        case 0:
+            return new Position(npc.getPosition().getX() + Misc.random(radius),
+                    npc.getPosition().getY() + Misc.random(radius), npc
+                            .getPosition().getZ());
 
-                /** Southeast, south, and east directions. */
-            case 1:
-                return new Position(npc.getPosition().getX() - Misc.random(radius), npc.getPosition().getY() - Misc.random(radius), npc.getPosition().getZ());
+            /** Southeast, south, and east directions. */
+        case 1:
+            return new Position(npc.getPosition().getX() - Misc.random(radius),
+                    npc.getPosition().getY() - Misc.random(radius), npc
+                            .getPosition().getZ());
 
-                /** Southwest, south, and west directions. */
-            case 2:
-                return new Position(npc.getPosition().getX() + Misc.random(radius), npc.getPosition().getY() - Misc.random(radius), npc.getPosition().getZ());
+            /** Southwest, south, and west directions. */
+        case 2:
+            return new Position(npc.getPosition().getX() + Misc.random(radius),
+                    npc.getPosition().getY() - Misc.random(radius), npc
+                            .getPosition().getZ());
 
-                /** Northeast, north, and east directions. */
-            case 3:
-                return new Position(npc.getPosition().getX() - Misc.random(radius), npc.getPosition().getY() + Misc.random(radius), npc.getPosition().getZ());
+            /** Northeast, north, and east directions. */
+        case 3:
+            return new Position(npc.getPosition().getX() - Misc.random(radius),
+                    npc.getPosition().getY() + Misc.random(radius), npc
+                            .getPosition().getZ());
 
-                /** Invalid number, no directions. */
-            default:
-                throw new IllegalStateException("Invalid number range!");
+            /** Invalid number, no directions. */
+        default:
+            throw new IllegalStateException("Invalid number range!");
         }
     }
 
@@ -117,7 +127,7 @@ public class NpcMovementCoordinator {
      * Set a new coordinator for this npc.
      * 
      * @param coordinator
-     *        the new coordinator to set.
+     *            the new coordinator to set.
      */
     public void setCoordinator(Coordinator coordinator) {
         this.coordinator = coordinator;
@@ -127,7 +137,7 @@ public class NpcMovementCoordinator {
      * Set if this coordinator should coordinate.
      * 
      * @param coordinate
-     *        true if this coordinator should coordinate.
+     *            true if this coordinator should coordinate.
      */
     public void setCoordinate(boolean coordinate) {
         coordinator.coordinate = coordinate;
@@ -137,7 +147,7 @@ public class NpcMovementCoordinator {
      * Set the radius of the coordinator.
      * 
      * @param radius
-     *        the radius of the coordinator.
+     *            the radius of the coordinator.
      */
     public void setRadius(int radius) {
         coordinator.radius = radius;

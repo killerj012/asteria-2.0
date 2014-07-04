@@ -9,7 +9,7 @@ import java.util.concurrent.Future;
  * 
  * @author lare96
  * @param <T>
- *        the type of result returned by this task.
+ *            the type of result returned by this task.
  */
 public interface TaskFuture<T> extends Callable<T> {
 

@@ -17,7 +17,7 @@ public abstract class Minigame {
      * Fired when an {@link Player} logs in while in the minigame boundary.
      * 
      * @param player
-     *        the player logging in.
+     *            the player logging in.
      */
     public abstract void fireOnLogin(Player player);
 
@@ -26,7 +26,7 @@ public abstract class Minigame {
      * normally).
      * 
      * @param player
-     *        the player who got forcibly logged out.
+     *            the player who got forcibly logged out.
      */
     public abstract void fireOnForcedLogout(Player player);
 
@@ -34,7 +34,7 @@ public abstract class Minigame {
      * Determines if a {@link Player} is in the minigame.
      * 
      * @param player
-     *        the player to determine for.
+     *            the player to determine for.
      * @return true if they are in the minigame.
      */
     public abstract boolean inMinigame(Player player);
@@ -50,7 +50,7 @@ public abstract class Minigame {
      * Fired when an {@link Player} enters the minigame (or waiting room).
      * 
      * @param player
-     *        the player entering the minigame (or waiting room).
+     *            the player entering the minigame (or waiting room).
      */
     public void fireOnEnter(Player player) {
 
@@ -60,7 +60,7 @@ public abstract class Minigame {
      * Fired when an {@link Player} exits the minigame (or waiting room).
      * 
      * @param player
-     *        the player entering the minigame (or waiting room).
+     *            the player entering the minigame (or waiting room).
      */
     public void fireOnExit(Player player) {
 
@@ -70,7 +70,7 @@ public abstract class Minigame {
      * Fired when a {@link Player} dies within the minigame.
      * 
      * @param player
-     *        the player who died within the minigame.
+     *            the player who died within the minigame.
      */
     public void fireOnDeath(Player player) {
 
@@ -80,9 +80,9 @@ public abstract class Minigame {
      * Fired when a {@link Entity} is killed within the minigame.
      * 
      * @param player
-     *        the player who killed the entity.
+     *            the player who killed the entity.
      * @param other
-     *        the entity that was killed.
+     *            the entity that was killed.
      */
     public void fireOnKill(Player player, Entity other) {
 
@@ -92,11 +92,11 @@ public abstract class Minigame {
      * If a {@link Player} can equip items while in this minigame.
      * 
      * @param player
-     *        the player trying to equip items.
+     *            the player trying to equip items.
      * @param item
-     *        the item the player is trying to equip.
+     *            the item the player is trying to equip.
      * @param equipmentSlot
-     *        the equipment slot the player is trying to equip to.
+     *            the equipment slot the player is trying to equip to.
      * @return true by default.
      */
     public boolean canEquip(Player player, Item item, int equipmentSlot) {
@@ -107,11 +107,11 @@ public abstract class Minigame {
      * If a {@link Player} can unequip items while in this minigame.
      * 
      * @param player
-     *        the player trying to unequip items.
+     *            the player trying to unequip items.
      * @param item
-     *        the item the player is trying to unequip.
+     *            the item the player is trying to unequip.
      * @param equipmentSlot
-     *        the equipment slot the player is trying to unequip from.
+     *            the equipment slot the player is trying to unequip from.
      * @return true by default.
      */
     public boolean canUnequip(Player player, Item item, int equipmentSlot) {
@@ -122,9 +122,9 @@ public abstract class Minigame {
      * If a {@link Player} can trade while in this minigame.
      * 
      * @param player
-     *        the player offering to trade.
+     *            the player offering to trade.
      * @param other
-     *        the player being offered to trade.
+     *            the player being offered to trade.
      * @return false by default;
      */
     public boolean canTrade(Player player, Player other) {
@@ -135,9 +135,9 @@ public abstract class Minigame {
      * If a {@link Player} can fight while in this minigame.
      * 
      * @param player
-     *        the player trying to attack.
+     *            the player trying to attack.
      * @param other
-     *        the entity being attacked.
+     *            the entity being attacked.
      * @return false by default.
      */
     public boolean canHit(Player player, Entity other) {
@@ -149,7 +149,7 @@ public abstract class Minigame {
      * in this minigame.
      * 
      * @param player
-     *        the player trying to logout.
+     *            the player trying to logout.
      * @return false by default.
      */
     public boolean canFormalLogout(Player player) {
@@ -160,7 +160,7 @@ public abstract class Minigame {
      * If a {@link Player} can teleport while in this minigame.
      * 
      * @param player
-     *        the player trying to teleport.
+     *            the player trying to teleport.
      * @return false by default.
      */
     public boolean canTeleport(Player player) {
@@ -171,7 +171,7 @@ public abstract class Minigame {
      * If a {@link Player} can keep their items on death.
      * 
      * @param player
-     *        the player trying to keep their items.
+     *            the player trying to keep their items.
      * @return true by default.
      */
     public boolean canKeepItems() {
@@ -182,7 +182,7 @@ public abstract class Minigame {
      * The position that a {@link Player} will be returned to once dead.
      * 
      * @param player
-     *        the player we are returning to the position.
+     *            the player we are returning to the position.
      * @return the death position by default.
      */
     public Position getDeathPosition(Player player) {

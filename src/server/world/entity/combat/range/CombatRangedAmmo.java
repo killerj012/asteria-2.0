@@ -79,23 +79,24 @@ public enum CombatRangedAmmo {
      * Create a new {@link CombatRangedAmmo}.
      * 
      * @param name
-     *        the name of this ammo.
+     *            the name of this ammo.
      * @param rangedStrength
-     *        the strength of this ammo.
+     *            the strength of this ammo.
      * @param projectileId
-     *        the projectile data for of this ammo.
+     *            the projectile data for of this ammo.
      * @param delay
-     *        the projectile data for of this ammo.
+     *            the projectile data for of this ammo.
      * @param speed
-     *        the projectile data for of this ammo.
+     *            the projectile data for of this ammo.
      * @param startHeight
-     *        the projectile data for of this ammo.
+     *            the projectile data for of this ammo.
      * @param endHeight
-     *        the projectile data for of this ammo.
+     *            the projectile data for of this ammo.
      * @param graphicId
-     *        the graphic id of this ammo.
+     *            the graphic id of this ammo.
      */
-    private CombatRangedAmmo(String name, int rangedStrength, int projectileId, int delay, int speed, int startHeight, int endHeight, int graphicId) {
+    private CombatRangedAmmo(String name, int rangedStrength, int projectileId,
+            int delay, int speed, int startHeight, int endHeight, int graphicId) {
         this.name = name;
         this.rangedStrength = rangedStrength;
         this.projectileId = projectileId;
@@ -110,19 +111,25 @@ public enum CombatRangedAmmo {
      * Gets the ammo you're using.
      * 
      * @param player
-     *        the player to calculate for.
+     *            the player to calculate for.
      * @return the ammo being used.
      */
     public static CombatRangedAmmo getAmmo(Player player) {
-        if (player.getWeapon() == WeaponInterface.SHORTBOW || player.getWeapon() == WeaponInterface.LONGBOW || player.getWeapon() == WeaponInterface.CROSSBOW) {
+        if (player.getWeapon() == WeaponInterface.SHORTBOW
+                || player.getWeapon() == WeaponInterface.LONGBOW
+                || player.getWeapon() == WeaponInterface.CROSSBOW) {
             for (CombatRangedAmmo tableItem : CombatRangedAmmo.values()) {
-                if (player.getEquipment().getContainer().getItem(Misc.EQUIPMENT_SLOT_ARROWS).getDefinition().getItemName().startsWith(tableItem.getName())) {
+                if (player.getEquipment().getContainer()
+                        .getItem(Misc.EQUIPMENT_SLOT_ARROWS).getDefinition()
+                        .getItemName().startsWith(tableItem.getName())) {
                     return tableItem;
                 }
             }
         } else {
             for (CombatRangedAmmo tableItem : CombatRangedAmmo.values()) {
-                if (player.getEquipment().getContainer().getItem(Misc.EQUIPMENT_SLOT_WEAPON).getDefinition().getItemName().startsWith(tableItem.getName())) {
+                if (player.getEquipment().getContainer()
+                        .getItem(Misc.EQUIPMENT_SLOT_WEAPON).getDefinition()
+                        .getItemName().startsWith(tableItem.getName())) {
                     return tableItem;
                 }
             }

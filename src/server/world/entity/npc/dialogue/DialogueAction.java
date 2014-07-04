@@ -12,7 +12,7 @@ public interface DialogueAction {
      * The actual action the will be fired at the specified dialogue stage.
      * 
      * @param dialogue
-     *        the dialogue this action is being fired for.
+     *            the dialogue this action is being fired for.
      */
     public void fire(Dialogue dialogue);
 }

@@ -43,13 +43,14 @@ public final class EventSelector {
      * Initialize the core components of the {@link EventSelector}.
      * 
      * @throws Exception
-     *         if any errors occur during the initialization.
+     *             if any errors occur during the initialization.
      */
     public static void init() throws Exception {
 
         /** Check if we have already started the selector. */
         if (server != null && selector != null) {
-            throw new IllegalStateException("The event selctor has already been started!");
+            throw new IllegalStateException(
+                    "The event selctor has already been started!");
         }
 
         /** Create the logger. */
@@ -95,11 +96,13 @@ public final class EventSelector {
 
                 /** Unable to restart! So throw an exception. */
                 ex.printStackTrace();
-                throw new IllegalStateException("Unable to restart reactor after shutdown!");
+                throw new IllegalStateException(
+                        "Unable to restart reactor after shutdown!");
             }
         }
 
-        for (Iterator<SelectionKey> iterator = getSelector().selectedKeys().iterator(); iterator.hasNext();) {
+        for (Iterator<SelectionKey> iterator = getSelector().selectedKeys()
+                .iterator(); iterator.hasNext();) {
             SelectionKey key = iterator.next();
 
             /** Remove the key if its invalid. */
@@ -144,12 +147,14 @@ public final class EventSelector {
                         /** Decode the packet opcode. */
                         if (session.getPacketOpcode() == -1) {
                             session.setPacketOpcode(session.getInData().get() & 0xff);
-                            session.setPacketOpcode(session.getPacketOpcode() - session.getDecryptor().getKey() & 0xff);
+                            session.setPacketOpcode(session.getPacketOpcode()
+                                    - session.getDecryptor().getKey() & 0xff);
                         }
 
                         /** Decode the packet length. */
                         if (session.getPacketLength() == -1) {
-                            session.setPacketLength(Misc.packetLengths[session.getPacketOpcode()]);
+                            session.setPacketLength(Misc.packetLengths[session
+                                    .getPacketOpcode()]);
 
                             if (session.getPacketLength() == -1) {
                                 if (!session.getInData().hasRemaining()) {
@@ -158,12 +163,14 @@ public final class EventSelector {
                                     break;
                                 }
 
-                                session.setPacketLength(session.getInData().get() & 0xff);
+                                session.setPacketLength(session.getInData()
+                                        .get() & 0xff);
                             }
                         }
 
                         /** Decode the packet payload. */
-                        if (session.getInData().remaining() >= session.getPacketLength()) {
+                        if (session.getInData().remaining() >= session
+                                .getPacketLength()) {
 
                             /**
                              * Gets the buffer's position before this packet is
@@ -175,17 +182,23 @@ public final class EventSelector {
                              * Creates a new buffer for reading packets backed
                              * by the set data.
                              */
-                            PacketBuffer.ReadBuffer in = PacketBuffer.newReadBuffer(session.getInData());
+                            PacketBuffer.ReadBuffer in = PacketBuffer
+                                    .newReadBuffer(session.getInData());
 
                             /**
                              * Decode and handle the packet with the previously
                              * created buffer.
                              */
                             try {
-                                if (PacketDecoder.getPackets()[session.getPacketOpcode()] != null) {
-                                    PacketDecoder.getPackets()[session.getPacketOpcode()].decode(session.getPlayer(), in);
+                                if (PacketDecoder.getPackets()[session
+                                        .getPacketOpcode()] != null) {
+                                    PacketDecoder.getPackets()[session
+                                            .getPacketOpcode()].decode(
+                                            session.getPlayer(), in);
                                 } else {
-                                    logger.info(session.getPlayer() + " unhandled packet " + session.getPacketOpcode());
+                                    logger.info(session.getPlayer()
+                                            + " unhandled packet "
+                                            + session.getPacketOpcode());
                                 }
 
                                 /**
@@ -200,9 +213,11 @@ public final class EventSelector {
                                  * this packet.
                                  */
                             } finally {
-                                int read = session.getInData().position() - positionBefore;
+                                int read = session.getInData().position()
+                                        - positionBefore;
 
-                                for (int i = read; i < session.getPacketLength(); i++) {
+                                for (int i = read; i < session
+                                        .getPacketLength(); i++) {
                                     session.getInData().get();
                                 }
                             }

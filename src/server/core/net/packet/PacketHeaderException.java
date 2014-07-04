@@ -12,10 +12,11 @@ public class PacketHeaderException extends RuntimeException {
      * Create a new {@link PacketHeaderException}.
      * 
      * @param decoder
-     *        the decoder throwing this exception.
+     *            the decoder throwing this exception.
      */
     public PacketHeaderException(PacketDecoder decoder) {
-        super("No PacketOpcodeHeader detected for this packet: " + decoder.getClass().getSimpleName());
+        super("No PacketOpcodeHeader detected for this packet: "
+                + decoder.getClass().getSimpleName());
     }
 
     /** The generated serial version UID. */

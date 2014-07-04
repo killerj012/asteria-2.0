@@ -16,10 +16,10 @@ public abstract class EventListener extends Worker {
      * Create a new {@link EventListener}.
      * 
      * @param shutdownOnFire
-     *        if the listener should be shut down once the logic has fired.
+     *            if the listener should be shut down once the logic has fired.
      * @param rateOfFire
-     *        the rate in which the event will be checked and the logic will be
-     *        fired in ticks.
+     *            the rate in which the event will be checked and the logic will
+     *            be fired in ticks.
      */
     public EventListener(boolean shutdownOnFire, int rateOfFire) {
         super(rateOfFire, true);
@@ -30,7 +30,7 @@ public abstract class EventListener extends Worker {
      * Create a new {@link EventListener}.
      * 
      * @param shutdownOnFire
-     *        if the listener should be shut down once the logic has fired.
+     *            if the listener should be shut down once the logic has fired.
      */
     public EventListener(boolean shutdownOnFire) {
         super(1, false);
@@ -41,8 +41,8 @@ public abstract class EventListener extends Worker {
      * Create a new {@link EventListener}.
      * 
      * @param rateOfFire
-     *        the rate in which the event will be checked and the logic will be
-     *        fired in ticks.
+     *            the rate in which the event will be checked and the logic will
+     *            be fired in ticks.
      */
     public EventListener(int rateOfFire) {
         super(rateOfFire, true);

@@ -14,7 +14,8 @@ import server.util.Misc.Stopwatch;
 public class HostThrottler {
 
     /** A {@link Logger} for printing debugging info. */
-    private static Logger logger = Logger.getLogger(HostThrottler.class.getSimpleName());
+    private static Logger logger = Logger.getLogger(HostThrottler.class
+            .getSimpleName());
 
     /** A map of hosts and their respective timers. */
     private static ConcurrentHashMap<String, Stopwatch> timeMap = new ConcurrentHashMap<String, Stopwatch>();
@@ -41,7 +42,7 @@ public class HostThrottler {
      * certain time interval
      * 
      * @param host
-     *        the host being throttled.
+     *            the host being throttled.
      * @return true if the host is allowed to pass.
      */
     public static boolean throttleHost(String host) {
@@ -56,7 +57,8 @@ public class HostThrottler {
             long time = timeMap.get(host).elapsed();
 
             /** Get how many existing connections this host has. */
-            Integer connection = HostGateway.getHostMap().get(host) == null ? 0 : HostGateway.getHostMap().get(host);
+            Integer connection = HostGateway.getHostMap().get(host) == null ? 0
+                    : HostGateway.getHostMap().get(host);
 
             /**
              * If the time since the last connection is less than
@@ -65,8 +67,10 @@ public class HostThrottler {
              * <code>AMOUNT_OF_CONNECTIONS_PER_SECOND</code> then the host is
              * connecting too fast.
              */
-            if (time < THROTTLE_TIME_INTERVAL && connection.intValue() >= AMOUNT_OF_CONNECTIONS_PER_INTERVAL) {
-                logger.warning("Session request from " + host + " denied: connecting too fast!");
+            if (time < THROTTLE_TIME_INTERVAL
+                    && connection.intValue() >= AMOUNT_OF_CONNECTIONS_PER_INTERVAL) {
+                logger.warning("Session request from " + host
+                        + " denied: connecting too fast!");
                 return false;
             }
 

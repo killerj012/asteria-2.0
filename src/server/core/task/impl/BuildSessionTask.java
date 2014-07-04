@@ -30,7 +30,8 @@ public class BuildSessionTask extends SequentialTask {
         try {
 
             /** Accept the connection. */
-            while ((socket = EventSelector.getServer().accept()) != null || eventCount.get() <= MAXIMUM_ACCEPT_EVENT) {
+            while ((socket = EventSelector.getServer().accept()) != null
+                    || eventCount.get() <= MAXIMUM_ACCEPT_EVENT) {
 
                 /** Check if the connection is valid. */
                 if (socket == null) {
@@ -39,7 +40,8 @@ public class BuildSessionTask extends SequentialTask {
                 }
 
                 /** Block if we fail the security check. */
-                if (!HostGateway.enter(socket.socket().getInetAddress().getHostAddress())) {
+                if (!HostGateway.enter(socket.socket().getInetAddress()
+                        .getHostAddress())) {
                     socket.close();
                     eventCount.incrementAndGet();
                     continue;
@@ -47,7 +49,8 @@ public class BuildSessionTask extends SequentialTask {
 
                 /** Otherwise create a new session. */
                 socket.configureBlocking(false);
-                SelectionKey newKey = socket.register(EventSelector.getSelector(), SelectionKey.OP_READ);
+                SelectionKey newKey = socket.register(
+                        EventSelector.getSelector(), SelectionKey.OP_READ);
                 newKey.attach(new Session(newKey));
                 eventCount.incrementAndGet();
             }

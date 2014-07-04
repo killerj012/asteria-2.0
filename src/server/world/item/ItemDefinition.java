@@ -73,7 +73,7 @@ public class ItemDefinition {
      * Sets the item id
      * 
      * @param itemId
-     *        the itemId to set.
+     *            the itemId to set.
      */
     public void setItemId(int itemId) {
         this.itemId = itemId;
@@ -92,7 +92,7 @@ public class ItemDefinition {
      * Sets the item name
      * 
      * @param itemName
-     *        the itemName to set.
+     *            the itemName to set.
      */
     public void setItemName(String itemName) {
         this.itemName = itemName;
@@ -111,7 +111,7 @@ public class ItemDefinition {
      * Sets the item description
      * 
      * @param itemDescription
-     *        the itemDescription to set.
+     *            the itemDescription to set.
      */
     public void setItemDescription(String itemDescription) {
         this.itemDescription = itemDescription;
@@ -130,7 +130,7 @@ public class ItemDefinition {
      * Sets the equipment slot
      * 
      * @param equipmentSlot
-     *        the equipmentSlot to set.
+     *            the equipmentSlot to set.
      */
     public void setEquipmentSlot(int equipmentSlot) {
         this.equipmentSlot = equipmentSlot;
@@ -149,7 +149,7 @@ public class ItemDefinition {
      * Sets if this item is noted.
      * 
      * @param isNoted
-     *        the isNoted to set.
+     *            the isNoted to set.
      */
     public void setNoted(boolean isNoted) {
         this.isNoted = isNoted;
@@ -168,7 +168,7 @@ public class ItemDefinition {
      * Sets if this item is noteable.
      * 
      * @param isNoteable
-     *        the isNoteable to set.
+     *            the isNoteable to set.
      */
     public void setNoteable(boolean isNoteable) {
         this.isNoteable = isNoteable;
@@ -187,7 +187,7 @@ public class ItemDefinition {
      * Sets if this item is stackable
      * 
      * @param isStackable
-     *        the isStackable to set.
+     *            the isStackable to set.
      */
     public void setStackable(boolean isStackable) {
         this.isStackable = isStackable;
@@ -206,7 +206,7 @@ public class ItemDefinition {
      * Sets the un-noted id.
      * 
      * @param unNotedId
-     *        the unNotedId to set.
+     *            the unNotedId to set.
      */
     public void setUnNotedId(int unNotedId) {
         this.unNotedId = unNotedId;
@@ -225,7 +225,7 @@ public class ItemDefinition {
      * Sets the noted id.
      * 
      * @param notedId
-     *        the notedId to set.
+     *            the notedId to set.
      */
     public void setNotedId(int notedId) {
         this.notedId = notedId;
@@ -244,7 +244,7 @@ public class ItemDefinition {
      * Sets if this is a members item.
      * 
      * @param membersItem
-     *        the membersItem to set.
+     *            the membersItem to set.
      */
     public void setMembersItem(boolean membersItem) {
         this.membersItem = membersItem;
@@ -263,7 +263,7 @@ public class ItemDefinition {
      * Sets the special store price.
      * 
      * @param specialStorePrice
-     *        the specialStorePrice to set.
+     *            the specialStorePrice to set.
      */
     public void setSpecialStorePrice(int specialStorePrice) {
         this.specialStorePrice = specialStorePrice;
@@ -282,7 +282,7 @@ public class ItemDefinition {
      * Sets the general store price.
      * 
      * @param generalStorePrice
-     *        the generalStorePrice to set.
+     *            the generalStorePrice to set.
      */
     public void setGeneralStorePrice(int generalStorePrice) {
         this.generalStorePrice = generalStorePrice;
@@ -301,7 +301,7 @@ public class ItemDefinition {
      * Sets the low alch value.
      * 
      * @param lowAlchValue
-     *        the lowAlchValue to set.
+     *            the lowAlchValue to set.
      */
     public void setLowAlchValue(int lowAlchValue) {
         this.lowAlchValue = lowAlchValue;
@@ -320,7 +320,7 @@ public class ItemDefinition {
      * Sets the high alch value.
      * 
      * @param highAlchValue
-     *        the highAlchValue to set.
+     *            the highAlchValue to set.
      */
     public void setHighAlchValue(int highAlchValue) {
         this.highAlchValue = highAlchValue;
@@ -339,7 +339,7 @@ public class ItemDefinition {
      * Sets the weight.
      * 
      * @param weight
-     *        the weight to set.
+     *            the weight to set.
      */
     public void setWeight(double weight) {
         this.weight = weight;
@@ -358,7 +358,7 @@ public class ItemDefinition {
      * Sets the bonus.
      * 
      * @param bonus
-     *        the bonus to set.
+     *            the bonus to set.
      */
     public void setBonus(int[] bonus) {
         this.bonus = bonus;
@@ -377,7 +377,7 @@ public class ItemDefinition {
      * Sets the definitions
      * 
      * @param definitions
-     *        the definitions to set.
+     *            the definitions to set.
      */
     public static void setDefinitions(ItemDefinition[] definitions) {
         ItemDefinition.definitions = definitions;

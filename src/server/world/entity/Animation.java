@@ -17,9 +17,9 @@ public class Animation {
      * Create a new {@link Animation}.
      * 
      * @param id
-     *        the id of the animation.
+     *            the id of the animation.
      * @param delay
-     *        the delay of the animation.
+     *            the delay of the animation.
      */
     public Animation(int id, int delay) {
         this.id = id;
@@ -30,7 +30,7 @@ public class Animation {
      * Create a new {@link Animation}.
      * 
      * @param id
-     *        the id of the animation.
+     *            the id of the animation.
      */
     public Animation(int id) {
         this(id, 0);
@@ -65,7 +65,7 @@ public class Animation {
      * Sets the values for this animation as the values from another animation.
      * 
      * @param other
-     *        the other animation.
+     *            the other animation.
      * @return this animation.
      */
     public Animation setAs(Animation other) {

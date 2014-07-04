@@ -31,15 +31,16 @@ public class StaticGroundItem extends GroundItem {
      * Create a new {@link StaticGroundItem}.
      * 
      * @param item
-     *        the actual item.
+     *            the actual item.
      * @param position
-     *        the position of the item.
+     *            the position of the item.
      * @param removeOnProcess
-     *        if this item should be removed like a normal world item.
+     *            if this item should be removed like a normal world item.
      * @param respawnOnPickup
-     *        if this item should respawn once picked up.
+     *            if this item should respawn once picked up.
      */
-    public StaticGroundItem(Item item, Position position, boolean removeOnProcess, boolean respawnOnPickup) {
+    public StaticGroundItem(Item item, Position position,
+            boolean removeOnProcess, boolean respawnOnPickup) {
         super(item, position, null);
 
         /**
@@ -48,7 +49,8 @@ public class StaticGroundItem extends GroundItem {
          * flag both.
          */
         if (removeOnProcess && respawnOnPickup) {
-            throw new IllegalStateException("Static ground items cannot be configured to be removed and respawned at the same time!");
+            throw new IllegalStateException(
+                    "Static ground items cannot be configured to be removed and respawned at the same time!");
         }
 
         /** Set the appropriate values. */

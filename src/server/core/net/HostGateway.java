@@ -14,7 +14,8 @@ import java.util.logging.Logger;
 public class HostGateway {
 
     /** A {@link Logger} for printing debugging info. */
-    private static Logger logger = Logger.getLogger(HostGateway.class.getSimpleName());
+    private static Logger logger = Logger.getLogger(HostGateway.class
+            .getSimpleName());
 
     /** The maximum amount of connections per host. */
     public static final int MAX_CONNECTIONS_PER_HOST = 1;
@@ -34,7 +35,7 @@ public class HostGateway {
      * Checks the host into the gateway.
      * 
      * @param host
-     *        the host that needs to be checked.
+     *            the host that needs to be checked.
      * @return true if the host can connect, false if it has reached the maximum
      *         amount of connections.
      */
@@ -45,7 +46,8 @@ public class HostGateway {
          * check it.
          */
         if (host.equals("127.0.0.1") || host.equals("localhost")) {
-            logger.info("Session request from " + host + "<unlimited> accepted.");
+            logger.info("Session request from " + host
+                    + "<unlimited> accepted.");
             return true;
         }
 
@@ -56,7 +58,8 @@ public class HostGateway {
 
         /** Reject if this host is banned. */
         if (disabledHosts.contains(host)) {
-            logger.warning("Session request from IP banned host<" + host + "> rejected.");
+            logger.warning("Session request from IP banned host<" + host
+                    + "> rejected.");
             return false;
         }
 
@@ -70,13 +73,15 @@ public class HostGateway {
 
         /** If they've reached the connection limit, return false. */
         if (amount == MAX_CONNECTIONS_PER_HOST) {
-            logger.warning("Session request from " + host + "<" + amount + "> over connection limit, rejected.");
+            logger.warning("Session request from " + host + "<" + amount
+                    + "> over connection limit, rejected.");
             return false;
         }
 
         /** Otherwise, replace the key with the next value if it was present. */
         hostMap.putIfAbsent(host, amount + 1);
-        logger.info("Session request from " + host + "<" + hostMap.get(host) + "> accepted.");
+        logger.info("Session request from " + host + "<" + hostMap.get(host)
+                + "> accepted.");
         return true;
     }
 
@@ -84,7 +89,7 @@ public class HostGateway {
      * Unchecks the host from the gateway.
      * 
      * @param host
-     *        the host that needs to be unchecked.
+     *            the host that needs to be unchecked.
      */
     public static void exit(String host) {
 

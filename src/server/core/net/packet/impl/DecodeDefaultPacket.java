@@ -10,7 +10,7 @@ import server.world.entity.player.Player;
  * 
  * @author lare96
  */
-@PacketOpcodeHeader( { 0 })
+@PacketOpcodeHeader({ 0 })
 public class DecodeDefaultPacket extends PacketDecoder {
 
     @Override

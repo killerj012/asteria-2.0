@@ -42,27 +42,30 @@ public class Projectile {
      * Create a new {@link Projectile}.
      * 
      * @param start
-     *        the starting position of the projectile.
+     *            the starting position of the projectile.
      * @param end
-     *        the ending position of the projectile.
+     *            the ending position of the projectile.
      * @param lockon
-     *        the lock on value of the projectile.
+     *            the lock on value of the projectile.
      * @param projectileId
-     *        the id of the projectile.
+     *            the id of the projectile.
      * @param speed
-     *        the speed of the projectile.
+     *            the speed of the projectile.
      * @param delay
-     *        the delay of the projectile.
+     *            the delay of the projectile.
      * @param startHeight
-     *        the starting height of the projectile.
+     *            the starting height of the projectile.
      * @param endHeight
-     *        the ending height of the projectile.
+     *            the ending height of the projectile.
      * @param curve
-     *        the curve angle of the projectile.
+     *            the curve angle of the projectile.
      */
-    public Projectile(Position start, Position end, int lockon, int projectileId, int speed, int delay, int startHeight, int endHeight, int curve) {
+    public Projectile(Position start, Position end, int lockon,
+            int projectileId, int speed, int delay, int startHeight,
+            int endHeight, int curve) {
         this.start = start;
-        this.offset = new Position((end.getX() - start.getX()), (end.getY() - start.getY()));
+        this.offset = new Position((end.getX() - start.getX()),
+                (end.getY() - start.getY()));
         this.lockon = lockon;
         this.projectileId = projectileId;
         this.delay = delay;
@@ -76,24 +79,28 @@ public class Projectile {
      * Create a new {@link Projectile}.
      * 
      * @param source
-     *        the entity that is firing this projectile.
+     *            the entity that is firing this projectile.
      * @param victim
-     *        the victim that this projectile is being fired at.
+     *            the victim that this projectile is being fired at.
      * @param projectileId
-     *        the id of the projectile.
+     *            the id of the projectile.
      * @param speed
-     *        the speed of the projectile.
+     *            the speed of the projectile.
      * @param delay
-     *        the delay of the projectile.
+     *            the delay of the projectile.
      * @param startHeight
-     *        the starting height of the projectile.
+     *            the starting height of the projectile.
      * @param endHeight
-     *        the ending height of the projectile.
+     *            the ending height of the projectile.
      * @param curve
-     *        the curve angle of the projectile.
+     *            the curve angle of the projectile.
      */
-    public Projectile(Entity source, Entity victim, int projectileId, int delay, int speed, int startHeight, int endHeight, int curve) {
-        this(source.getPosition(), victim.getPosition(), (victim.type() == EntityType.PLAYER ? -victim.getSlot() - 1 : victim.getSlot() + 1), projectileId, delay, speed, startHeight, endHeight, curve);
+    public Projectile(Entity source, Entity victim, int projectileId,
+            int delay, int speed, int startHeight, int endHeight, int curve) {
+        this(source.getPosition(), victim.getPosition(),
+                (victim.type() == EntityType.PLAYER ? -victim.getSlot() - 1
+                        : victim.getSlot() + 1), projectileId, delay, speed,
+                startHeight, endHeight, curve);
     }
 
     /**
@@ -107,7 +114,9 @@ public class Projectile {
             }
 
             if (start.isViewableFrom(player.getPosition())) {
-                player.getPacketBuilder().sendProjectile(start, offset, 0, speed, projectileId, startHeight, endHeight, lockon, delay);
+                player.getPacketBuilder().sendProjectile(start, offset, 0,
+                        speed, projectileId, startHeight, endHeight, lockon,
+                        delay);
 
             }
         }
@@ -124,8 +133,12 @@ public class Projectile {
             }
 
             if (start.isViewableFrom(player.getPosition())) {
-                player.getPacketBuilder().sendProjectile(start, offset, 0, speed, projectileId, startHeight, endHeight, lockon, delay);
-                player.getPacketBuilder().sendProjectile(start, offset, 0, speed, projectileId, startHeight, endHeight, lockon, delay);
+                player.getPacketBuilder().sendProjectile(start, offset, 0,
+                        speed, projectileId, startHeight, endHeight, lockon,
+                        delay);
+                player.getPacketBuilder().sendProjectile(start, offset, 0,
+                        speed, projectileId, startHeight, endHeight, lockon,
+                        delay);
             }
         }
     }

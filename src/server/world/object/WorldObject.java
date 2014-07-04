@@ -47,7 +47,7 @@ public class WorldObject {
          * Create a new {@link Rotation}.
          * 
          * @param faceId
-         *        the id of the direction.
+         *            the id of the direction.
          */
         private Rotation(int faceId) {
             this.faceId = faceId;
@@ -67,13 +67,13 @@ public class WorldObject {
      * Create a new {@link WorldObject}.
      * 
      * @param id
-     *        the id of the object.
+     *            the id of the object.
      * @param position
-     *        the position of the object.
+     *            the position of the object.
      * @param rotation
-     *        the direction this object is facing.
+     *            the direction this object is facing.
      * @param type
-     *        the type of object that this is.
+     *            the type of object that this is.
      */
     public WorldObject(int id, Position position, Rotation rotation, int type) {
         this.id = id;
@@ -90,10 +90,8 @@ public class WorldObject {
 
         WorldObject object = (WorldObject) obj;
 
-        return object.id == id
-                && object.position.equals(position)
-                && object.rotation == rotation
-                && object.type == type;
+        return object.id == id && object.position.equals(position)
+                && object.rotation == rotation && object.type == type;
     }
 
     /**

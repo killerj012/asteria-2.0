@@ -66,9 +66,9 @@ public class Palette {
          * Creates a tile.
          * 
          * @param x
-         *        The x coordinate.
+         *            The x coordinate.
          * @param y
-         *        The y coordinate.
+         *            The y coordinate.
          */
         public PaletteTile(int x, int y) {
             this(x, y, 0);
@@ -78,11 +78,11 @@ public class Palette {
          * Creates a tile.
          * 
          * @param x
-         *        The x coordinate.
+         *            The x coordinate.
          * @param y
-         *        The y coordinate.
+         *            The y coordinate.
          * @param z
-         *        The z coordinate.
+         *            The z coordinate.
          */
         public PaletteTile(int x, int y, int z) {
             this(x, y, z, DIRECTION_NORMAL);
@@ -92,13 +92,13 @@ public class Palette {
          * Creates a tile.
          * 
          * @param x
-         *        The x coordinate.
+         *            The x coordinate.
          * @param y
-         *        The y coordinate.
+         *            The y coordinate.
          * @param z
-         *        The z coordinate.
+         *            The z coordinate.
          * @param rot
-         *        The rotation.
+         *            The rotation.
          */
         public PaletteTile(int x, int y, int z, int rot) {
             this.x = x;
@@ -154,11 +154,11 @@ public class Palette {
      * Gets a tile.
      * 
      * @param x
-     *        X position.
+     *            X position.
      * @param y
-     *        Y position.
+     *            Y position.
      * @param z
-     *        Z position.
+     *            Z position.
      * @return The tile.
      */
     public PaletteTile getTile(int x, int y, int z) {
@@ -169,13 +169,13 @@ public class Palette {
      * Sets a tile.
      * 
      * @param x
-     *        X position.
+     *            X position.
      * @param y
-     *        Y position.
+     *            Y position.
      * @param z
-     *        Z position.
+     *            Z position.
      * @param tile
-     *        The tile.
+     *            The tile.
      */
     public void setTile(int x, int y, int z, PaletteTile tile) {
         tiles[x][y][z] = tile;

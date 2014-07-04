@@ -18,9 +18,9 @@ public class OptionDialogueAction implements DialogueAction {
      * Create a new {@link OpdationDialogueAction}.
      * 
      * @param optionId
-     *        the id of the options being presented.
+     *            the id of the options being presented.
      * @param options
-     *        the options that will be presented.
+     *            the options that will be presented.
      */
     public OptionDialogueAction(int optionId, String... options) {
         this.optionId = optionId;

@@ -14,7 +14,7 @@ public abstract class PlayerFileEvent {
      * Create a new {@link PlayerFileEvent}.
      * 
      * @param player
-     *        the player taking part in this event.
+     *            the player taking part in this event.
      */
     public PlayerFileEvent(Player player) {
         this.player = player;

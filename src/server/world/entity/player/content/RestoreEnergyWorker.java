@@ -19,7 +19,7 @@ public class RestoreEnergyWorker extends Worker {
      * Create a new {@link RestoreEnergyWorker}.
      * 
      * @param player
-     *        the player we are restoring run energy for.
+     *            the player we are restoring run energy for.
      */
     public RestoreEnergyWorker() {
         super(5, false, WorkRate.APPROXIMATE_SECOND);

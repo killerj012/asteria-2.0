@@ -32,7 +32,7 @@ public enum WorkRate {
      * Create a new {@link WorkRate}.
      * 
      * @param tickRate
-     *        the delay of this work rate in ticks.
+     *            the delay of this work rate in ticks.
      */
     private WorkRate(int tickRate) {
         this.tickRate = tickRate;

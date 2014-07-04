@@ -54,11 +54,11 @@ public class GroundItem {
      * Create a new {@link GroundItem}.
      * 
      * @param item
-     *        the actual item.
+     *            the actual item.
      * @param position
-     *        the position of the item.
+     *            the position of the item.
      * @param player
-     *        the player who owns this item.
+     *            the player who owns this item.
      */
     public GroundItem(Item item, Position position, Player player) {
         this.item = item;
@@ -91,20 +91,21 @@ public class GroundItem {
 
         /** Removes the ground item image depending on the state of the item. */
         switch (state) {
-            case SEEN_BY_NO_ONE:
-                for (Player p : World.getPlayers()) {
-                    if (p == null) {
-                        continue;
-                    }
-
-                    if (p.getPosition().withinDistance(getPosition(), 60)) {
-                        p.getPacketBuilder().removeGroundItem(this);
-                    }
+        case SEEN_BY_NO_ONE:
+            for (Player p : World.getPlayers()) {
+                if (p == null) {
+                    continue;
                 }
-                break;
-            case SEEN_BY_OWNER:
-                World.getPlayer(player.getUsernameHash()).getPacketBuilder().removeGroundItem(this);
-                break;
+
+                if (p.getPosition().withinDistance(getPosition(), 60)) {
+                    p.getPacketBuilder().removeGroundItem(this);
+                }
+            }
+            break;
+        case SEEN_BY_OWNER:
+            World.getPlayer(player.getUsernameHash()).getPacketBuilder()
+                    .removeGroundItem(this);
+            break;
         }
     }
 
@@ -117,38 +118,38 @@ public class GroundItem {
         switch (state) {
 
         /** Change the state. */
-            case SEEN_BY_OWNER:
-                state = ItemState.SEEN_BY_EVERYONE;
+        case SEEN_BY_OWNER:
+            state = ItemState.SEEN_BY_EVERYONE;
 
-                /** Show the item for everyone. */
-            case SEEN_BY_EVERYONE:
-                if (itemPicked) {
-                    break;
-                }
-
-                for (Player p : World.getPlayers()) {
-                    if (p == null
-                            || p.getUsername().equals(player.getUsername())) {
-                        continue;
-                    }
-
-                    if (p.getPosition().withinDistance(getPosition(), 60)) {
-                        p.getPacketBuilder().sendGroundItem(new GroundItem(item, position, player));
-                    }
-                }
-
-                player = null;
-                state = ItemState.SEEN_BY_NO_ONE;
+            /** Show the item for everyone. */
+        case SEEN_BY_EVERYONE:
+            if (itemPicked) {
                 break;
+            }
 
-            /** Show the item for no one. */
-            case SEEN_BY_NO_ONE:
-                if (itemPicked) {
-                    break;
+            for (Player p : World.getPlayers()) {
+                if (p == null || p.getUsername().equals(player.getUsername())) {
+                    continue;
                 }
 
-                World.getGroundItems().unregister(this);
+                if (p.getPosition().withinDistance(getPosition(), 60)) {
+                    p.getPacketBuilder().sendGroundItem(
+                            new GroundItem(item, position, player));
+                }
+            }
+
+            player = null;
+            state = ItemState.SEEN_BY_NO_ONE;
+            break;
+
+        /** Show the item for no one. */
+        case SEEN_BY_NO_ONE:
+            if (itemPicked) {
                 break;
+            }
+
+            World.getGroundItems().unregister(this);
+            break;
         }
     }
 
@@ -157,7 +158,7 @@ public class GroundItem {
      * up.
      * 
      * @param player
-     *        the player trying to pick this item up.
+     *            the player trying to pick this item up.
      */
     protected void fireOnPickup(Player player) {
         if (!itemPicked) {
@@ -171,8 +172,7 @@ public class GroundItem {
     public boolean equals(Object obj) {
         if (obj instanceof GroundItem) {
             GroundItem w = (GroundItem) obj;
-            if (w.getItem().equals(item)
-                    && w.getPosition().equals(position)) {
+            if (w.getItem().equals(item) && w.getPosition().equals(position)) {
                 return true;
             }
         }
@@ -219,7 +219,7 @@ public class GroundItem {
      * Sets the current state of this item.
      * 
      * @param state
-     *        the new state to set.
+     *            the new state to set.
      */
     protected void setState(ItemState state) {
         this.state = state;
@@ -238,7 +238,7 @@ public class GroundItem {
      * Sets the {@link Worker} performing processing on this item.
      * 
      * @param processor
-     *        the new processor to set.
+     *            the new processor to set.
      */
     protected void setProcessor(Worker processor) {
         this.processor = processor;
@@ -257,7 +257,7 @@ public class GroundItem {
      * Sets if this item was picked up.
      * 
      * @param itemPicked
-     *        if this item was picked up.
+     *            if this item was picked up.
      */
     protected void setItemPicked(boolean itemPicked) {
         this.itemPicked = itemPicked;
@@ -282,7 +282,7 @@ public class GroundItem {
          * Create a new {@link GroundItemWorker}.
          * 
          * @param item
-         *        the item this worker has been assigned to fire events for.
+         *            the item this worker has been assigned to fire events for.
          */
         public GroundItemWorker(GroundItem item) {
             super(1, false, WorkRate.EXACT_MINUTE);

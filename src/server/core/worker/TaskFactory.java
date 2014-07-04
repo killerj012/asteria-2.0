@@ -69,7 +69,7 @@ public final class TaskFactory {
      * <code>pendingWorkers</code> queue.
      * 
      * @param worker
-     *        the new worker to submit to the queue.
+     *            the new worker to submit to the queue.
      */
     public void submit(Worker worker) {
         if (worker.isInitialRun()) {
@@ -96,7 +96,7 @@ public final class TaskFactory {
      * Stops all {@link Worker}s with this key attachment.
      * 
      * @param key
-     *        the key to stop all workers with.
+     *            the key to stop all workers with.
      */
     public void cancelWorkers(Object key) {
         for (Worker c : workers) {
@@ -114,7 +114,7 @@ public final class TaskFactory {
      * Retrieves a list of {@link Worker}s with this key attachment.
      * 
      * @param key
-     *        the workers with this key that will be added to the list.
+     *            the workers with this key that will be added to the list.
      * @return a list of workers with this key attachment.
      */
     public LinkedList<Worker> retrieveWorkers(Object key) {

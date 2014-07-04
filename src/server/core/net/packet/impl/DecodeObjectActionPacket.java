@@ -24,95 +24,103 @@ public class DecodeObjectActionPacket extends PacketDecoder {
     // see if you're actually near them or not.
 
     /** The various packet opcodes. */
-    private static final int FIRST_CLICK = 132,
-            SECOND_CLICK = 252,
+    private static final int FIRST_CLICK = 132, SECOND_CLICK = 252,
             THIRD_CLICK = 70;
 
     @Override
     public void decode(final Player player, ReadBuffer in) {
         switch (player.getSession().getPacketOpcode()) {
-            case FIRST_CLICK:
-                final int objectX = in.readShort(true, ValueType.A, ByteOrder.LITTLE);
-                final int objectId = in.readShort(false);
-                final int objectY = in.readShort(false, ValueType.A);
-                final int objSize = 1;
+        case FIRST_CLICK:
+            final int objectX = in.readShort(true, ValueType.A,
+                    ByteOrder.LITTLE);
+            final int objectId = in.readShort(false);
+            final int objectY = in.readShort(false, ValueType.A);
+            final int objSize = 1;
 
-                player.facePosition(new Position(objectX, objectY));
-                player.getMovementQueueListener().submit(new Runnable() {
-                    @Override
-                    public void run() {
-                        if (Misc.canClickObject(player.getPosition(), new Position(objectX, objectY, player.getPosition().getZ()), objSize)) {
+            player.facePosition(new Position(objectX, objectY));
+            player.getMovementQueueListener().submit(new Runnable() {
+                @Override
+                public void run() {
+                    if (Misc.canClickObject(player.getPosition(), new Position(
+                            objectX, objectY, player.getPosition().getZ()),
+                            objSize)) {
 
-                            switch (objectId) {
+                        switch (objectId) {
 
-                                case 3193:
-                                case 2213:
-                                    player.getBank().open();
-                                    break;
-                                case 409:
-                                    int level = player.getSkills()[Misc.PRAYER].getLevelForExperience();
+                        case 3193:
+                        case 2213:
+                            player.getBank().open();
+                            break;
+                        case 409:
+                            int level = player.getSkills()[Misc.PRAYER]
+                                    .getLevelForExperience();
 
-                                    if (player.getSkills()[Misc.PRAYER].getLevel() < level) {
-                                        player.animation(new Animation(645));
-                                        player.getSkills()[Misc.PRAYER].setLevel(level);
-                                        player.getPacketBuilder().sendMessage("You recharge your prayer points.");
-                                        SkillManager.refresh(player, Misc.PRAYER);
-                                    } else {
-                                        player.getPacketBuilder().sendMessage("You already have full prayer points.");
-                                    }
-                                    break;
-                                case 6552:
-                                    if (player.getSpellbook() == Spellbook.ANCIENT) {
-                                        Spellbook.convert(player, Spellbook.NORMAL);
-                                    } else if (player.getSpellbook() == Spellbook.NORMAL) {
-                                        Spellbook.convert(player, Spellbook.ANCIENT);
-                                    }
-                                    break;
+                            if (player.getSkills()[Misc.PRAYER].getLevel() < level) {
+                                player.animation(new Animation(645));
+                                player.getSkills()[Misc.PRAYER].setLevel(level);
+                                player.getPacketBuilder().sendMessage(
+                                        "You recharge your prayer points.");
+                                SkillManager.refresh(player, Misc.PRAYER);
+                            } else {
+                                player.getPacketBuilder().sendMessage(
+                                        "You already have full prayer points.");
                             }
+                            break;
+                        case 6552:
+                            if (player.getSpellbook() == Spellbook.ANCIENT) {
+                                Spellbook.convert(player, Spellbook.NORMAL);
+                            } else if (player.getSpellbook() == Spellbook.NORMAL) {
+                                Spellbook.convert(player, Spellbook.ANCIENT);
+                            }
+                            break;
                         }
                     }
-                });
-                break;
+                }
+            });
+            break;
 
-            case SECOND_CLICK:
-                final int objId = in.readShort(false, ValueType.A, ByteOrder.LITTLE);
-                final int objY = in.readShort(true, ByteOrder.LITTLE);
-                final int objX = in.readShort(false, ValueType.A);
-                final int size = 1;
+        case SECOND_CLICK:
+            final int objId = in
+                    .readShort(false, ValueType.A, ByteOrder.LITTLE);
+            final int objY = in.readShort(true, ByteOrder.LITTLE);
+            final int objX = in.readShort(false, ValueType.A);
+            final int size = 1;
 
-                player.facePosition(new Position(objX, objY));
+            player.facePosition(new Position(objX, objY));
 
-                player.getMovementQueueListener().submit(new Runnable() {
-                    @Override
-                    public void run() {
-                        if (Misc.canClickObject(player.getPosition(), new Position(objX, objY, player.getPosition().getZ()), size)) {
-                            switch (objId) {
+            player.getMovementQueueListener().submit(new Runnable() {
+                @Override
+                public void run() {
+                    if (Misc.canClickObject(player.getPosition(), new Position(
+                            objX, objY, player.getPosition().getZ()), size)) {
+                        switch (objId) {
 
-                            }
                         }
                     }
-                });
-                break;
+                }
+            });
+            break;
 
-            case THIRD_CLICK:
-                final int x = in.readShort(true, ByteOrder.LITTLE);
-                final int y = in.readShort(false);
-                final int id = in.readShort(false, ValueType.A, ByteOrder.LITTLE);
-                final int objectSize = 1;
+        case THIRD_CLICK:
+            final int x = in.readShort(true, ByteOrder.LITTLE);
+            final int y = in.readShort(false);
+            final int id = in.readShort(false, ValueType.A, ByteOrder.LITTLE);
+            final int objectSize = 1;
 
-                player.facePosition(new Position(x, y));
+            player.facePosition(new Position(x, y));
 
-                player.getMovementQueueListener().submit(new Runnable() {
-                    @Override
-                    public void run() {
-                        if (Misc.canClickObject(player.getPosition(), new Position(x, y, player.getPosition().getZ()), objectSize)) {
-                            switch (id) {
+            player.getMovementQueueListener().submit(new Runnable() {
+                @Override
+                public void run() {
+                    if (Misc.canClickObject(player.getPosition(), new Position(
+                            x, y, player.getPosition().getZ()), objectSize)) {
+                        switch (id) {
 
-                            }
                         }
                     }
-                });
-                break;
+                }
+            });
+            break;
         }
     }
 }

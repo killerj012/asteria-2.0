@@ -13,9 +13,9 @@ public interface GenericCurrency {
      * Fired when currency is being taken away from the player.
      * 
      * @param player
-     *        the player the currency is being taken from.
+     *            the player the currency is being taken from.
      * @param amount
-     *        the amount being taken.
+     *            the amount being taken.
      */
     public void giveCurrency(Player player, int amount);
 
@@ -23,9 +23,9 @@ public interface GenericCurrency {
      * Fired when currency is being given to the player.
      * 
      * @param player
-     *        the player the currency is being given to.
+     *            the player the currency is being given to.
      * @param amount
-     *        the amount being given.
+     *            the amount being given.
      */
     public void recieveCurrency(Player player, int amount);
 
@@ -33,7 +33,7 @@ public interface GenericCurrency {
      * Gets the amount of this currency the player has.
      * 
      * @param player
-     *        the player the currency is being calculated for.
+     *            the player the currency is being calculated for.
      * @return the amount of this currency the player has.
      */
     public int getCurrencyAmount(Player player);
@@ -42,7 +42,7 @@ public interface GenericCurrency {
      * Fired when currency is being given to the player on a full inventory.
      * 
      * @param player
-     *        the player the currency is being given to.
+     *            the player the currency is being given to.
      * @return true if the currency can be added to the full inventory.
      */
     public boolean inventoryFull(Player player);

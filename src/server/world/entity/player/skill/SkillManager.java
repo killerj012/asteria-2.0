@@ -47,8 +47,7 @@ public final class SkillManager {
         RUNECRAFTING(4268, 4269, 4267, 4152, 4153, 4157, 4158);
 
         /** The lines that level up text will be printed on. */
-        private int firstLine,
-                secondLine;
+        private int firstLine, secondLine;
 
         /** The chatbox interface displayed on level up. */
         private int chatbox;
@@ -60,15 +59,16 @@ public final class SkillManager {
          * Create a new {@link SkillConstant}.
          * 
          * @param firstLine
-         *        the id of the first line sent when leveling up.
+         *            the id of the first line sent when leveling up.
          * @param secondLine
-         *        the id of the second line sent when leveling up.
+         *            the id of the second line sent when leveling up.
          * @param chatbox
-         *        the chatbox interface that will be sent.
+         *            the chatbox interface that will be sent.
          * @param refresh
-         *        the lines that will be used to refresh the skill.
+         *            the lines that will be used to refresh the skill.
          */
-        private SkillConstant(int firstLine, int secondLine, int chatbox, int... refresh) {
+        private SkillConstant(int firstLine, int secondLine, int chatbox,
+                int... refresh) {
             this.firstLine = firstLine;
             this.secondLine = secondLine;
             this.chatbox = chatbox;
@@ -115,7 +115,7 @@ public final class SkillManager {
          * Gets a skill constant by its id.
          * 
          * @param id
-         *        the id of the skill constant we are trying to get.
+         *            the id of the skill constant we are trying to get.
          * @return the skill constant with this id.
          */
         public static SkillConstant getSkill(int id) {
@@ -127,7 +127,7 @@ public final class SkillManager {
      * Calculate the total level.
      * 
      * @param player
-     *        the player to calculate the total level of.
+     *            the player to calculate the total level of.
      * @return the total level.
      */
     public static int totalLevel(Player player) {
@@ -136,7 +136,8 @@ public final class SkillManager {
         int totalLevel = 0;
 
         for (SkillConstant s : SkillConstant.values()) {
-            totalLevel += player.getSkills()[s.ordinal()].getLevelForExperience();
+            totalLevel += player.getSkills()[s.ordinal()]
+                    .getLevelForExperience();
         }
 
         return totalLevel;
@@ -146,15 +147,14 @@ public final class SkillManager {
      * Adds the specified amount of experience to a certain skill for a player.
      * 
      * @param player
-     *        the player being granted the experience.
+     *            the player being granted the experience.
      * @param amount
-     *        the amount of experience being given.
+     *            the amount of experience being given.
      * @param skill
-     *        the skill this experience is being given to.
+     *            the skill this experience is being given to.
      */
     public static void addExperience(Player player, int amount, int skill) {
-        if (amount
-                + player.getSkills()[skill].getExperience() < 0
+        if (amount + player.getSkills()[skill].getExperience() < 0
                 || player.getSkills()[skill].getExperience() > 2000000000) {
             return;
         }
@@ -163,11 +163,11 @@ public final class SkillManager {
         int experience = player.getSkills()[skill].getExperience();
         amount *= EXP_RATE_MULTIPLIER;
 
-        player.getSkills()[skill].setExperience(experience
-                + amount);
+        player.getSkills()[skill].setExperience(experience + amount);
 
         if (!(oldLevel >= 99)) {
-            int newLevel = player.getSkills()[skill].calculateLevelForExperience();
+            int newLevel = player.getSkills()[skill]
+                    .calculateLevelForExperience();
 
             if (oldLevel < newLevel) {
                 if (skill != 3) {
@@ -182,7 +182,9 @@ public final class SkillManager {
                 player.getFlags().flag(Flag.APPEARANCE);
             }
 
-            player.getPacketBuilder().sendSkill(skill, player.getSkills()[skill].getLevel(), player.getSkills()[skill].getExperience());
+            player.getPacketBuilder().sendSkill(skill,
+                    player.getSkills()[skill].getLevel(),
+                    player.getSkills()[skill].getExperience());
         }
         SkillManager.refresh(player, skill);
     }
@@ -192,15 +194,15 @@ public final class SkillManager {
      * without taking the multiplier into effect.
      * 
      * @param player
-     *        the player being granted the experience.
+     *            the player being granted the experience.
      * @param amount
-     *        the amount of experience being given.
+     *            the amount of experience being given.
      * @param skill
-     *        the skill this experience is being given to.
+     *            the skill this experience is being given to.
      */
-    public static void addExperienceNoMultiplier(Player player, int amount, int skill) {
-        if (amount
-                + player.getSkills()[skill].getExperience() < 0
+    public static void addExperienceNoMultiplier(Player player, int amount,
+            int skill) {
+        if (amount + player.getSkills()[skill].getExperience() < 0
                 || player.getSkills()[skill].getExperience() > 2000000000) {
             return;
         }
@@ -208,11 +210,11 @@ public final class SkillManager {
         int oldLevel = player.getSkills()[skill].getLevelForExperience();
         int experience = player.getSkills()[skill].getExperience();
 
-        player.getSkills()[skill].setExperience(experience
-                + amount);
+        player.getSkills()[skill].setExperience(experience + amount);
 
         if (!(oldLevel >= 99)) {
-            int newLevel = player.getSkills()[skill].calculateLevelForExperience();
+            int newLevel = player.getSkills()[skill]
+                    .calculateLevelForExperience();
 
             if (oldLevel < newLevel) {
                 if (skill != 3) {
@@ -227,7 +229,9 @@ public final class SkillManager {
                 player.getFlags().flag(Flag.APPEARANCE);
             }
 
-            player.getPacketBuilder().sendSkill(skill, player.getSkills()[skill].getLevel(), player.getSkills()[skill].getExperience());
+            player.getPacketBuilder().sendSkill(skill,
+                    player.getSkills()[skill].getLevel(),
+                    player.getSkills()[skill].getExperience());
         }
         SkillManager.refresh(player, skill);
     }
@@ -236,9 +240,9 @@ public final class SkillManager {
      * Sent when a the player reaches a new skill level.
      * 
      * @param player
-     *        the player leveling up.
+     *            the player leveling up.
      * @param skill
-     *        the skill advancing a level.
+     *            the skill advancing a level.
      */
     private static void levelUp(Player player, SkillConstant skill) {
 
@@ -246,23 +250,30 @@ public final class SkillManager {
         int totalLevel = 0;
 
         for (SkillConstant s : SkillConstant.values()) {
-            totalLevel += player.getSkills()[s.ordinal()].getLevelForExperience();
+            totalLevel += player.getSkills()[s.ordinal()]
+                    .getLevelForExperience();
         }
 
         /** Send the player an indication that they have leveled up. */
-        player.getPacketBuilder().sendString("Total Lvl: "
-                + totalLevel, 3984);
-        player.getPacketBuilder().sendString("@dre@Congratulations, you've just advanced "
-                + Misc.appendIndefiniteArticle(skill.name().toLowerCase().replaceAll("_", " "))
-                + " level!", skill.getFirstLine());
-        player.getPacketBuilder().sendString("Your "
-                + skill.name().toLowerCase().replaceAll("_", " ")
-                + " level is now "
-                + player.getSkills()[skill.ordinal()].getLevelForExperience()
-                + ".", skill.getSecondLine());
-        player.getPacketBuilder().sendMessage("Congratulations, you've just advanced "
-                + Misc.appendIndefiniteArticle(skill.name().toLowerCase().replaceAll("_", " "))
-                + " level!");
+        player.getPacketBuilder().sendString("Total Lvl: " + totalLevel, 3984);
+        player.getPacketBuilder().sendString(
+                "@dre@Congratulations, you've just advanced "
+                        + Misc.appendIndefiniteArticle(skill.name()
+                                .toLowerCase().replaceAll("_", " "))
+                        + " level!", skill.getFirstLine());
+        player.getPacketBuilder()
+                .sendString(
+                        "Your "
+                                + skill.name().toLowerCase()
+                                        .replaceAll("_", " ")
+                                + " level is now "
+                                + player.getSkills()[skill.ordinal()].getLevelForExperience()
+                                + ".", skill.getSecondLine());
+        player.getPacketBuilder().sendMessage(
+                "Congratulations, you've just advanced "
+                        + Misc.appendIndefiniteArticle(skill.name()
+                                .toLowerCase().replaceAll("_", " "))
+                        + " level!");
         player.getPacketBuilder().sendChatInterface(skill.getChatbox());
     }
 
@@ -270,9 +281,9 @@ public final class SkillManager {
      * Refreshes a players skill.
      * 
      * @param player
-     *        the player refreshing the skill.
+     *            the player refreshing the skill.
      * @param skill
-     *        the skill being refreshed.
+     *            the skill being refreshed.
      */
     public static void refresh(Player player, int skill) {
 
@@ -288,25 +299,24 @@ public final class SkillManager {
         int l = player.getSkills()[skill].getLevelForExperience();
         SkillConstant constant = SkillConstant.values()[skill];
 
-        player.getPacketBuilder().sendString(""
-                + player.getSkills()[skill].getLevel()
-                + "", constant.getRefresh()[0]);
-        player.getPacketBuilder().sendString(""
-                + l
-                + "", constant.getRefresh()[1]);
-        player.getPacketBuilder().sendString(""
-                + player.getSkills()[skill].getExperience()
-                + "", constant.getRefresh()[2]);
-        player.getPacketBuilder().sendString(""
-                + player.getSkills()[skill].getExperienceForNextLevel()
-                + "", constant.getRefresh()[3]);
+        player.getPacketBuilder().sendString(
+                "" + player.getSkills()[skill].getLevel() + "",
+                constant.getRefresh()[0]);
+        player.getPacketBuilder().sendString("" + l + "",
+                constant.getRefresh()[1]);
+        player.getPacketBuilder().sendString(
+                "" + player.getSkills()[skill].getExperience() + "",
+                constant.getRefresh()[2]);
+        player.getPacketBuilder()
+                .sendString(
+                        ""
+                                + player.getSkills()[skill].getExperienceForNextLevel()
+                                + "", constant.getRefresh()[3]);
 
         if (constant == SkillConstant.PRAYER) {
-            player.getPacketBuilder().sendString("Prayer: "
-                    + player.getSkills()[Misc.PRAYER].getLevel()
-                    + "/"
-                    + l
-                    + "", 687);
+            player.getPacketBuilder().sendString(
+                    "Prayer: " + player.getSkills()[Misc.PRAYER].getLevel()
+                            + "/" + l + "", 687);
         }
     }
 
@@ -314,7 +324,7 @@ public final class SkillManager {
      * Refreshes all the skills.
      * 
      * @param player
-     *        the player to refresh all skills for.
+     *            the player to refresh all skills for.
      */
     public static void refreshAll(Player player) {
         /** New local variable. */
@@ -323,19 +333,19 @@ public final class SkillManager {
         /** Refresh total level and stats. */
         for (SkillConstant s : SkillConstant.values()) {
             refresh(player, s.ordinal());
-            totalLevel += player.getSkills()[s.ordinal()].getLevelForExperience();
+            totalLevel += player.getSkills()[s.ordinal()]
+                    .getLevelForExperience();
         }
 
         /** Send new total level. */
-        player.getPacketBuilder().sendString("Total Lvl: "
-                + totalLevel, 3984);
+        player.getPacketBuilder().sendString("Total Lvl: " + totalLevel, 3984);
     }
 
     /**
      * Refreshes skills on login.
      * 
      * @param player
-     *        the player to refresh.
+     *            the player to refresh.
      */
     public static void login(Player player) {
         for (int i = 0; i < player.getSkills().length; i++) {

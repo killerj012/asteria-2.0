@@ -42,7 +42,8 @@ public class Npc extends Entity {
             statsBadlyWeakened = new boolean[3];
 
     /** The movement coordinator for this npc. */
-    private NpcMovementCoordinator movementCoordinator = new NpcMovementCoordinator(this);
+    private NpcMovementCoordinator movementCoordinator = new NpcMovementCoordinator(
+            this);
 
     /**
      * The npcs position from the moment of conception. This position never
@@ -60,9 +61,9 @@ public class Npc extends Entity {
      * Creates a new {@link Npc}.
      * 
      * @param npcId
-     *        the npc ID.
+     *            the npc ID.
      * @param position
-     *        the npcs position.
+     *            the npcs position.
      */
     public Npc(int npcId, Position position) {
         this.npcId = npcId;
@@ -147,7 +148,8 @@ public class Npc extends Entity {
 
     @Override
     public String toString() {
-        return "NPC[slot= " + getSlot() + ", name=" + getDefinition().getName() + "]";
+        return "NPC[slot= " + getSlot() + ", name=" + getDefinition().getName()
+                + "]";
     }
 
     @Override
@@ -159,7 +161,7 @@ public class Npc extends Entity {
      * Drops items for the player that killed this npc.
      * 
      * @param killer
-     *        the killer for this npc.
+     *            the killer for this npc.
      */
     public void dropDeathItems(Player killer) {
 
@@ -184,7 +186,11 @@ public class Npc extends Entity {
                 continue;
             }
 
-            World.getGroundItems().register(new GroundItem(drop, new Position(getPosition().getX(), getPosition().getY(), getPosition().getZ()), killer));
+            World.getGroundItems()
+                    .register(
+                            new GroundItem(drop, new Position(getPosition()
+                                    .getX(), getPosition().getY(),
+                                    getPosition().getZ()), killer));
         }
 
         for (Minigame minigame : MinigameFactory.getMinigames().values()) {
@@ -200,14 +206,15 @@ public class Npc extends Entity {
      * @return the respawn time in ticks.
      */
     public int getRespawnTime() {
-        return (getDefinition().getRespawnTime() == 0 ? 1 : getDefinition().getRespawnTime());
+        return (getDefinition().getRespawnTime() == 0 ? 1 : getDefinition()
+                .getRespawnTime());
     }
 
     /**
      * Increases this npcs health.
      * 
      * @param amount
-     *        the amount to increase by.
+     *            the amount to increase by.
      */
     public void increaseHealth(int amount) {
         if ((currentHealth + amount) > maxHealth) {
@@ -222,7 +229,7 @@ public class Npc extends Entity {
      * Decreases this npcs health.
      * 
      * @param amount
-     *        the amount to decrease by.
+     *            the amount to decrease by.
      */
     public void decreaseHealth(int amount) {
         if ((currentHealth - amount) < 0) {
@@ -255,7 +262,7 @@ public class Npc extends Entity {
      * Set this npc's visibility.
      * 
      * @param isVisible
-     *        if this npc should be visible or invisible.
+     *            if this npc should be visible or invisible.
      */
     public void setVisible(boolean isVisible) {
         this.isVisible = isVisible;
@@ -283,7 +290,7 @@ public class Npc extends Entity {
      * Sets this npc's current health.
      * 
      * @param currentHealth
-     *        the new health value to set.
+     *            the new health value to set.
      */
     public void setCurrentHealth(int currentHealth) {
         this.currentHealth = currentHealth;
@@ -302,7 +309,7 @@ public class Npc extends Entity {
      * Gets a npc definition.
      * 
      * @param id
-     *        the npc definition to get.
+     *            the npc definition to get.
      * @return the definition.
      */
     public NpcDefinition getDefinition() {
@@ -322,7 +329,7 @@ public class Npc extends Entity {
      * Sets if this npc was originally walking.
      * 
      * @param originalRandomWalk
-     *        the original random walk to set.
+     *            the original random walk to set.
      */
     public void setOriginalRandomWalk(boolean originalRandomWalk) {
         this.originalRandomWalk = originalRandomWalk;
@@ -332,7 +339,7 @@ public class Npc extends Entity {
      * Sets if this npc should respawn on death.
      * 
      * @param respawn
-     *        the respawn to set.
+     *            the respawn to set.
      */
     public void setRespawn(boolean respawn) {
         this.respawn = respawn;

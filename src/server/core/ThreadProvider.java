@@ -33,16 +33,17 @@ public class ThreadProvider implements ThreadFactory {
      * Create a new {@link ThreadProvider}.
      * 
      * @param threadName
-     *        the name of the prepared thread.
+     *            the name of the prepared thread.
      * @param threadPriority
-     *        the priority of the prepared thread.
+     *            the priority of the prepared thread.
      * @param daemonThread
-     *        if this thread is a daemon thread.
+     *            if this thread is a daemon thread.
      * @param keepThreadCount
-     *        if this provider should keep track of the amount of threads it
-     *        created.
+     *            if this provider should keep track of the amount of threads it
+     *            created.
      */
-    public ThreadProvider(String threadName, int threadPriority, boolean daemonThread, boolean keepThreadCount) {
+    public ThreadProvider(String threadName, int threadPriority,
+            boolean daemonThread, boolean keepThreadCount) {
         this.threadCount = keepThreadCount ? new AtomicInteger() : null;
         this.threadName = threadName;
         this.threadPriority = threadPriority;
@@ -53,8 +54,7 @@ public class ThreadProvider implements ThreadFactory {
     @Override
     public Thread newThread(Runnable r) {
         Thread thread = new Thread(r);
-        thread.setName(keepThreadCount ? threadName
-                + "-"
+        thread.setName(keepThreadCount ? threadName + "-"
                 + threadCount.incrementAndGet() : threadName);
         thread.setPriority(threadPriority);
         thread.setDaemon(daemonThread);

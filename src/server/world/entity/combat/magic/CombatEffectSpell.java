@@ -28,7 +28,8 @@ public abstract class CombatEffectSpell extends CombatSpell {
     }
 
     @Override
-    public void endCast(Entity cast, Entity castOn, boolean spellAccurate, int damageInflicted) {
+    public void endCast(Entity cast, Entity castOn, boolean spellAccurate,
+            int damageInflicted) {
         if (spellAccurate) {
             spellEffect(cast, castOn);
         }
@@ -38,9 +39,9 @@ public abstract class CombatEffectSpell extends CombatSpell {
      * The effect that will take place once the spell hits the target.
      * 
      * @param cast
-     *        the caster of the spell.
+     *            the caster of the spell.
      * @param castOn
-     *        the target being hit by the spell.
+     *            the target being hit by the spell.
      */
     public abstract void spellEffect(Entity cast, Entity castOn);
 }

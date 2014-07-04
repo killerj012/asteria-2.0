@@ -10,7 +10,7 @@ import server.world.entity.player.Player;
  * 
  * @author lare96
  */
-@PacketOpcodeHeader( { 95 })
+@PacketOpcodeHeader({ 95 })
 public class DecodeChatOptionsPacket extends PacketDecoder {
 
     @Override

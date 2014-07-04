@@ -25,7 +25,8 @@ public class DecodeItemOnPlayerPacket extends PacketDecoder {
         int something4 = in.readShort(false, ValueType.A, ByteOrder.LITTLE);
         final Player usedOn = World.getPlayers().get(playerId);
 
-        if (usedOn == null || !usedOn.getPosition().isViewableFrom(player.getPosition())) {
+        if (usedOn == null
+                || !usedOn.getPosition().isViewableFrom(player.getPosition())) {
             return;
         }
 
@@ -36,7 +37,8 @@ public class DecodeItemOnPlayerPacket extends PacketDecoder {
         player.getMovementQueueListener().submit(new Runnable() {
             @Override
             public void run() {
-                if (player.getPosition().withinDistance(usedOn.getPosition(), 1)) {
+                if (player.getPosition()
+                        .withinDistance(usedOn.getPosition(), 1)) {
                     switch (itemUsed) {
 
                     }

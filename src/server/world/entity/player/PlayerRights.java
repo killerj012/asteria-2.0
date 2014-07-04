@@ -19,7 +19,7 @@ public enum PlayerRights {
     /** A moderator, a player who has been appointed moderator position. */
     MODERATOR(1, 1),
 
-	/** An administrator, a player who has been appointed administrative power. */
+    /** An administrator, a player who has been appointed administrative power. */
     ADMINISTRATOR(2, 2),
 
     /** A developer, has total control over the entire server. */
@@ -35,9 +35,9 @@ public enum PlayerRights {
      * Create a new {@link PlayerRights}.
      * 
      * @param protocolValue
-     *        the value of this rank as seen by the protocol.
+     *            the value of this rank as seen by the protocol.
      * @param value
-     *        the value of this rank as seen by the server.
+     *            the value of this rank as seen by the server.
      */
     private PlayerRights(int protocolValue, int value) {
         this.protocolValue = protocolValue;
@@ -45,43 +45,43 @@ public enum PlayerRights {
     }
 
     /**
-	 * Determines if this right is greater than the argued right. Please note
-	 * that this method <b>does not</b> compare the {@link Object}s themselves,
-	 * but instead compares the value behind them as specified by
-	 * <code>value</code> in the <code>PlayerRights</code> enum.
-	 * 
-	 * @param other
-	 *            the argued right to compare.
-	 * @return true if this right is greater.
-	 */
+     * Determines if this right is greater than the argued right. Please note
+     * that this method <b>does not</b> compare the {@link Object}s themselves,
+     * but instead compares the value behind them as specified by
+     * <code>value</code> in the <code>PlayerRights</code> enum.
+     * 
+     * @param other
+     *            the argued right to compare.
+     * @return true if this right is greater.
+     */
     public boolean greaterThan(PlayerRights other) {
         return value > other.value;
     }
 
     /**
-	 * Determines if this right is lesser than the argued right. Please note
-	 * that this method <b>does not</b> compare the {@link Object}s themselves,
-	 * but instead compares the value behind them as specified by
-	 * <code>value</code> in the <code>PlayerRights</code> enum.
-	 * 
-	 * @param other
-	 *            the argued right to compare.
-	 * @return true if this right is lesser.
-	 */
+     * Determines if this right is lesser than the argued right. Please note
+     * that this method <b>does not</b> compare the {@link Object}s themselves,
+     * but instead compares the value behind them as specified by
+     * <code>value</code> in the <code>PlayerRights</code> enum.
+     * 
+     * @param other
+     *            the argued right to compare.
+     * @return true if this right is lesser.
+     */
     public boolean lessThan(PlayerRights other) {
         return !greaterThan(other);
     }
 
     /**
-	 * Determines if this right is equal in power to the argued right. Please
-	 * note that this method <b>does not</b> compare the {@link Object}s
-	 * themselves, but instead compares the value behind them as specified by
-	 * <code>value</code> in the <code>PlayerRights</code> enum.
-	 * 
-	 * @param other
-	 *            the argued right to compare.
-	 * @return true if this right is equal.
-	 */
+     * Determines if this right is equal in power to the argued right. Please
+     * note that this method <b>does not</b> compare the {@link Object}s
+     * themselves, but instead compares the value behind them as specified by
+     * <code>value</code> in the <code>PlayerRights</code> enum.
+     * 
+     * @param other
+     *            the argued right to compare.
+     * @return true if this right is equal.
+     */
     public boolean equalTo(PlayerRights other) {
         return value == other.value;
     }

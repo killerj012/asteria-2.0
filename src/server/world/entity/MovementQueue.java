@@ -39,7 +39,7 @@ public class MovementQueue {
      * Creates a new {@link MovementQueue}.
      * 
      * @param entity
-     *        the entity to create the new movement queue for.
+     *            the entity to create the new movement queue for.
      */
     public MovementQueue(Entity entity) {
         this.entity = entity;
@@ -76,7 +76,8 @@ public class MovementQueue {
             int y = Misc.DIRECTION_DELTA_Y[walkPoint.getDirection()];
 
             if (entity.isFollowing() && entity.getFollowingEntity() != null) {
-                if (entity.getPosition().clone().move(x, y).equals(entity.getFollowingEntity().getPosition())) {
+                if (entity.getPosition().clone().move(x, y)
+                        .equals(entity.getFollowingEntity().getPosition())) {
                     return;
                 }
             }
@@ -97,7 +98,8 @@ public class MovementQueue {
             int y = Misc.DIRECTION_DELTA_Y[runPoint.getDirection()];
 
             if (entity.isFollowing() && entity.getFollowingEntity() != null) {
-                if (entity.getPosition().clone().move(x, y).equals(entity.getFollowingEntity().getPosition())) {
+                if (entity.getPosition().clone().move(x, y)
+                        .equals(entity.getFollowingEntity().getPosition())) {
                     return;
                 }
             }
@@ -119,8 +121,10 @@ public class MovementQueue {
         }
 
         /** Check for region changes. */
-        int deltaX = entity.getPosition().getX() - entity.getCurrentRegion().getRegionX() * 8;
-        int deltaY = entity.getPosition().getY() - entity.getCurrentRegion().getRegionY() * 8;
+        int deltaX = entity.getPosition().getX()
+                - entity.getCurrentRegion().getRegionX() * 8;
+        int deltaY = entity.getPosition().getY()
+                - entity.getCurrentRegion().getRegionY() * 8;
         if (deltaX < 16 || deltaX >= 88 || deltaY < 16 || deltaY > 88) {
             if (!(entity instanceof Npc)) {
                 ((Player) entity).getPacketBuilder().sendMapRegion();
@@ -133,13 +137,14 @@ public class MovementQueue {
      * current position.
      * 
      * @param addX
-     *        the amount of spaces to walk to the x.
+     *            the amount of spaces to walk to the x.
      * @param addY
-     *        the amount of spaces to walk to the y.
+     *            the amount of spaces to walk to the y.
      */
     public void walk(int addX, int addY) {
         this.reset();
-        this.addToPath(new Position(entity.getPosition().getX() + addX, entity.getPosition().getY() + addY));
+        this.addToPath(new Position(entity.getPosition().getX() + addX, entity
+                .getPosition().getY() + addY));
         this.finish();
 
         if (entity instanceof Npc) {
@@ -152,7 +157,7 @@ public class MovementQueue {
      * current position.
      * 
      * @param position
-     *        the position the entity is moving too.
+     *            the position the entity is moving too.
      */
     public void walk(Position position) {
         this.reset();
@@ -194,7 +199,7 @@ public class MovementQueue {
      * Adds a position to the path.
      * 
      * @param position
-     *        the position.
+     *            the position.
      */
     public void addToPath(Position position) {
         if (waypoints.size() == 0) {
@@ -223,9 +228,9 @@ public class MovementQueue {
      * Adds a step.
      * 
      * @param x
-     *        the X coordinate
+     *            the X coordinate
      * @param y
-     *        the Y coordinate
+     *            the Y coordinate
      */
     private void addStep(int x, int y) {
         if (waypoints.size() >= 100) {
@@ -244,9 +249,9 @@ public class MovementQueue {
      * Locks this entity's movement for the desired time.
      * 
      * @param delay
-     *        the desired time.
+     *            the desired time.
      * @param time
-     *        the desired time unit.
+     *            the desired time unit.
      */
     public void lockMovementFor(int delay, WorkRate workRate) {
         if (this.isLockMovement()) {
@@ -274,7 +279,7 @@ public class MovementQueue {
      * Prompts this entity to follow another entity.
      * 
      * @param leader
-     *        the entity to follow.
+     *            the entity to follow.
      */
     public void follow(final Entity leader) {
         if (entity.isFollowing() && entity.getFollowingEntity() != leader) {
@@ -292,7 +297,10 @@ public class MovementQueue {
             entity.setFollowWorker(new Worker(1, true) {
                 @Override
                 public void fire() {
-                    if (!entity.isFollowing() || !entity.getPosition().withinDistance(leader.getPosition(), 20) || entity.isHasDied() || leader.isHasDied()) {
+                    if (!entity.isFollowing()
+                            || !entity.getPosition().withinDistance(
+                                    leader.getPosition(), 20)
+                            || entity.isHasDied() || leader.isHasDied()) {
                         entity.faceEntity(65535);
                         entity.setFollowing(false);
                         entity.setFollowingEntity(null);
@@ -310,7 +318,8 @@ public class MovementQueue {
                         return;
                     }
 
-                    if (entity.getPosition().equals(leader.getPosition().clone())) {
+                    if (entity.getPosition().equals(
+                            leader.getPosition().clone())) {
                         entity.getMovementQueue().reset();
 
                         int x = entity.getPosition().getX();
@@ -318,32 +327,42 @@ public class MovementQueue {
                         int z = entity.getPosition().getZ();
 
                         switch (Misc.random(3)) {
-                            case 0:
-                                if (/* entity.canMove(-1, 0) && */true) {
-                                    entity.getMovementQueue().walk(new Position(x - 1, y, z));
-                                }
-                                break;
-                            case 1:
-                                if (/* entity.canMove(-1, 0) && */true) {
-                                    entity.getMovementQueue().walk(new Position(x + 1, y, z));
-                                }
-                                break;
-                            case 2:
-                                if (/* entity.canMove(-1, 0) && */true) {
-                                    entity.getMovementQueue().walk(new Position(x, y - 1, z));
-                                }
-                                break;
+                        case 0:
+                            if (/* entity.canMove(-1, 0) && */true) {
+                                entity.getMovementQueue().walk(
+                                        new Position(x - 1, y, z));
+                            }
+                            break;
+                        case 1:
+                            if (/* entity.canMove(-1, 0) && */true) {
+                                entity.getMovementQueue().walk(
+                                        new Position(x + 1, y, z));
+                            }
+                            break;
+                        case 2:
+                            if (/* entity.canMove(-1, 0) && */true) {
+                                entity.getMovementQueue().walk(
+                                        new Position(x, y - 1, z));
+                            }
+                            break;
 
-                            case 3:
-                                if (/* entity.canMove(-1, 0) && */true) {
-                                    entity.getMovementQueue().walk(new Position(x, y + 1, z));
-                                }
-                                break;
+                        case 3:
+                            if (/* entity.canMove(-1, 0) && */true) {
+                                entity.getMovementQueue().walk(
+                                        new Position(x, y + 1, z));
+                            }
+                            break;
                         }
                         return;
                     }
 
-                    if (entity.getCombatBuilder().isAttacking() && entity.getPosition().withinDistance(entity.getCombatBuilder().getCurrentTarget().getPosition(), entity.getCombatBuilder().getCurrentStrategy().getDistance(entity))) {
+                    if (entity.getCombatBuilder().isAttacking()
+                            && entity.getPosition().withinDistance(
+                                    entity.getCombatBuilder()
+                                            .getCurrentTarget().getPosition(),
+                                    entity.getCombatBuilder()
+                                            .getCurrentStrategy()
+                                            .getDistance(entity))) {
                         entity.getMovementQueue().reset();
                         return;
                     }
@@ -355,7 +374,8 @@ public class MovementQueue {
                             // ...
                         }
 
-                        if (player.getPosition().withinDistance(leader.getPosition(), 1)) {
+                        if (player.getPosition().withinDistance(
+                                leader.getPosition(), 1)) {
                             return;
                         }
 
@@ -363,7 +383,9 @@ public class MovementQueue {
                         int y = leader.getPosition().getY();
                         // ClippedPathFinder.getPathFinder().findRoute(player,
                         // x, y, true, 0, 0);
-                        player.getMovementQueue().walk(new Position(x, y, player.getPosition().getZ()));
+                        player.getMovementQueue()
+                                .walk(new Position(x, y, player.getPosition()
+                                        .getZ()));
 
                     } else if (entity.type() == EntityType.NPC) {
                         Npc npc = (Npc) entity;
@@ -372,7 +394,8 @@ public class MovementQueue {
                             // ...
                         }
 
-                        if (npc.getPosition().withinDistance(leader.getPosition(), 1)) {
+                        if (npc.getPosition().withinDistance(
+                                leader.getPosition(), 1)) {
                             return;
                         }
 
@@ -380,7 +403,8 @@ public class MovementQueue {
                         int y = leader.getPosition().getY();
                         // ClippedPathFinder.getDumbPathFinder().findRoute(player,
                         // x, y, true, 0, 0);
-                        npc.getMovementQueue().walk(new Position(x, y, npc.getPosition().getZ()));
+                        npc.getMovementQueue().walk(
+                                new Position(x, y, npc.getPosition().getZ()));
                     }
                 }
             });
@@ -393,7 +417,7 @@ public class MovementQueue {
      * Toggles the running flag.
      * 
      * @param runToggled
-     *        the flag.
+     *            the flag.
      */
     public void setRunToggled(boolean runToggled) {
         this.runToggled = runToggled;
@@ -412,7 +436,7 @@ public class MovementQueue {
      * Toggles running for the current path only.
      * 
      * @param runPath
-     *        the flag.
+     *            the flag.
      */
     public void setRunPath(boolean runPath) {
         this.runPath = runPath;
@@ -440,7 +464,7 @@ public class MovementQueue {
      * Sets if this entity can move or not.
      * 
      * @param lockMovement
-     *        true if this entity cannot move.
+     *            true if this entity cannot move.
      */
     public void setLockMovement(boolean lockMovement) {
         this.lockMovement = lockMovement;
@@ -460,11 +484,11 @@ public class MovementQueue {
          * Creates a new Point.
          * 
          * @param x
-         *        the X coordinate.
+         *            the X coordinate.
          * @param y
-         *        the Y coordinate.
+         *            the Y coordinate.
          * @param direction
-         *        the direction to this point.
+         *            the direction to this point.
          */
         public Point(int x, int y, int direction) {
             super(x, y);
@@ -475,7 +499,7 @@ public class MovementQueue {
          * Sets the direction.
          * 
          * @param direction
-         *        the direction.
+         *            the direction.
          */
         public void setDirection(int direction) {
             this.direction = direction;

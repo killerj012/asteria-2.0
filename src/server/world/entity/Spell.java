@@ -18,9 +18,9 @@ public abstract class Spell {
      * Determines if the spell is able to be cast.
      * 
      * @param cast
-     *        the person casting the spell.
+     *            the person casting the spell.
      * @param castOn
-     *        the target of the spell.
+     *            the target of the spell.
      * @return true if the spell is successful.
      */
     public boolean prepareCast(Entity cast, Entity castOn) {
@@ -29,7 +29,9 @@ public abstract class Spell {
 
             /** Check the level required. */
             if (player.getSkills()[Misc.MAGIC].getLevel() < levelRequired()) {
-                player.getPacketBuilder().sendMessage("You need a Magic level of " + levelRequired() + " to cast this spell.");
+                player.getPacketBuilder().sendMessage(
+                        "You need a Magic level of " + levelRequired()
+                                + " to cast this spell.");
                 return false;
             }
 
@@ -38,7 +40,8 @@ public abstract class Spell {
                 Item[] compareItem = itemsRequired(player).clone();
                 CombatMagicStaff runeStaff = getStaff(player);
                 CombatMagicRuneCombination[] combinationRune = getCombinationRunes(player);
-                Item[] removeRune = new Item[compareItem.length + combinationRune.length];
+                Item[] removeRune = new Item[compareItem.length
+                        + combinationRune.length];
                 int slot = 0;
 
                 if (runeStaff != null) {
@@ -73,21 +76,32 @@ public abstract class Spell {
                         int runesNeeded = compareItem[i].getAmount();
 
                         if (compareItem[i].getId() == rune.getFirstRune()) {
-                            if (runesNeeded > player.getInventory().getContainer().getCount(rune.getCombinationRune())) {
+                            if (runesNeeded > player.getInventory()
+                                    .getContainer()
+                                    .getCount(rune.getCombinationRune())) {
                                 continue;
                             }
 
                             compareItem[i].decrementAmountBy(runesNeeded);
-                            removeRune[slot++] = new Item(rune.getCombinationRune(), runesNeeded);
-                            player.getInventory().getContainer().getById(rune.getCombinationRune()).decrementAmountBy(runesNeeded);
-                        } else if (compareItem[i].getId() == rune.getSecondRune()) {
-                            if (runesNeeded > player.getInventory().getContainer().getCount(rune.getCombinationRune())) {
+                            removeRune[slot++] = new Item(
+                                    rune.getCombinationRune(), runesNeeded);
+                            player.getInventory().getContainer()
+                                    .getById(rune.getCombinationRune())
+                                    .decrementAmountBy(runesNeeded);
+                        } else if (compareItem[i].getId() == rune
+                                .getSecondRune()) {
+                            if (runesNeeded > player.getInventory()
+                                    .getContainer()
+                                    .getCount(rune.getCombinationRune())) {
                                 continue;
                             }
 
                             compareItem[i].decrementAmountBy(runesNeeded);
-                            player.getInventory().getContainer().getById(rune.getCombinationRune()).decrementAmountBy(runesNeeded);
-                            removeRune[slot++] = new Item(rune.getCombinationRune(), runesNeeded);
+                            player.getInventory().getContainer()
+                                    .getById(rune.getCombinationRune())
+                                    .decrementAmountBy(runesNeeded);
+                            removeRune[slot++] = new Item(
+                                    rune.getCombinationRune(), runesNeeded);
                         }
 
                         if (compareItem[i].getAmount() == 0) {
@@ -97,9 +111,12 @@ public abstract class Spell {
                 }
 
                 if (!player.getInventory().getContainer().contains(compareItem)) {
-                    player.getPacketBuilder().sendMessage("You do not have the required items to cast this spell.");
+                    player.getPacketBuilder()
+                            .sendMessage(
+                                    "You do not have the required items to cast this spell.");
 
-                    if (cast.getCombatBuilder().isAttacking() || cast.getCombatBuilder().isBeingAttacked()) {
+                    if (cast.getCombatBuilder().isAttacking()
+                            || cast.getCombatBuilder().isBeingAttacked()) {
                         player.setAutocastSpell(null);
                         player.setAutocast(false);
                         player.getPacketBuilder().sendConfig(108, 0);
@@ -115,10 +132,14 @@ public abstract class Spell {
 
             /** Check the equipment required. */
             if (this.equipmentRequired(player) != null) {
-                if (!player.getEquipment().getContainer().contains(this.equipmentRequired(player))) {
-                    player.getPacketBuilder().sendMessage("You do not have the required equipment to cast this spell.");
+                if (!player.getEquipment().getContainer()
+                        .contains(this.equipmentRequired(player))) {
+                    player.getPacketBuilder()
+                            .sendMessage(
+                                    "You do not have the required equipment to cast this spell.");
 
-                    if (cast.getCombatBuilder().isAttacking() || cast.getCombatBuilder().isBeingAttacked()) {
+                    if (cast.getCombatBuilder().isAttacking()
+                            || cast.getCombatBuilder().isBeingAttacked()) {
                         player.setAutocastSpell(null);
                         player.setAutocast(false);
                         player.getPacketBuilder().sendConfig(108, 0);
@@ -136,13 +157,14 @@ public abstract class Spell {
      * Gets the staff that the player is currently wielding if any.
      * 
      * @param player
-     *        the player that will be checked for a staff.
+     *            the player that will be checked for a staff.
      * @return the staff that the player is currently wielding.
      */
     public CombatMagicStaff getStaff(Player player) {
         for (CombatMagicStaff runeStaff : CombatMagicStaff.values()) {
             for (int itemId : runeStaff.getStaffIds()) {
-                if (itemId == player.getEquipment().getContainer().getItemId(Misc.EQUIPMENT_SLOT_WEAPON)) {
+                if (itemId == player.getEquipment().getContainer()
+                        .getItemId(Misc.EQUIPMENT_SLOT_WEAPON)) {
                     return runeStaff;
                 }
             }
@@ -154,15 +176,18 @@ public abstract class Spell {
      * Gets the combination runes in the players inventory if any.
      * 
      * @param player
-     *        the player that will be checked for rune.
+     *            the player that will be checked for rune.
      * @return the runes in the players inventory.
      */
     public CombatMagicRuneCombination[] getCombinationRunes(Player player) {
-        CombatMagicRuneCombination[] array = new CombatMagicRuneCombination[CombatMagicRuneCombination.values().length];
+        CombatMagicRuneCombination[] array = new CombatMagicRuneCombination[CombatMagicRuneCombination
+                .values().length];
         int slot = 0;
 
-        for (CombatMagicRuneCombination rune : CombatMagicRuneCombination.values()) {
-            if (player.getInventory().getContainer().contains(rune.getCombinationRune())) {
+        for (CombatMagicRuneCombination rune : CombatMagicRuneCombination
+                .values()) {
+            if (player.getInventory().getContainer()
+                    .contains(rune.getCombinationRune())) {
                 array[slot++] = rune;
             }
         }
@@ -194,7 +219,7 @@ public abstract class Spell {
      * The items required to cast this spell.
      * 
      * @param player
-     *        the player's inventory to check.
+     *            the player's inventory to check.
      * 
      * @return the items required to cast this spell.
      */
@@ -204,7 +229,7 @@ public abstract class Spell {
      * The equipment required to cast this spell.
      * 
      * @param player
-     *        the player's equipment to check.
+     *            the player's equipment to check.
      * 
      * @return the equipment required to cast this spell.
      */
@@ -214,9 +239,9 @@ public abstract class Spell {
      * Invoked when the spell is cast.
      * 
      * @param cast
-     *        the person casting the spell.
+     *            the person casting the spell.
      * @param castOn
-     *        the target of the spell.
+     *            the target of the spell.
      */
     public abstract void castSpell(Entity cast, Entity castOn);
 }

@@ -35,7 +35,8 @@ public class ReadPlayerFileEvent extends PlayerFileEvent {
     private static final String DIR = "data/players";
 
     /** A {@link Logger} for printing debugging info. */
-    private static Logger logger = Logger.getLogger(ReadPlayerFileEvent.class.getName());
+    private static Logger logger = Logger.getLogger(ReadPlayerFileEvent.class
+            .getName());
 
     /** Used to determine the client's response to the login request. */
     private int returnCode = Misc.LOGIN_RESPONSE_OK;
@@ -44,7 +45,7 @@ public class ReadPlayerFileEvent extends PlayerFileEvent {
      * Create a new {@link ReadPlayerFileEvent}.
      * 
      * @param player
-     *        the player who's character file will be read.
+     *            the player who's character file will be read.
      */
     public ReadPlayerFileEvent(Player player) {
         super(player);
@@ -53,15 +54,13 @@ public class ReadPlayerFileEvent extends PlayerFileEvent {
     @Override
     public void run() {
         try {
-            Path path = Paths.get(DIR, getPlayer().getUsername()
-                    + ".json");
+            Path path = Paths.get(DIR, getPlayer().getUsername() + ".json");
             File file = path.toFile();
 
             /** We are logging in for the first time. */
             if (!file.exists()) {
                 SkillManager.login(getPlayer());
-                logger.info(getPlayer()
-                        + " is logging in for the first time!");
+                logger.info(getPlayer() + " is logging in for the first time!");
                 returnCode = Misc.LOGIN_RESPONSE_OK;
                 return;
             }
@@ -73,29 +72,42 @@ public class ReadPlayerFileEvent extends PlayerFileEvent {
 
             final String username = reader.get("username").getAsString();
             final String password = reader.get("password").getAsString();
-            final Position position = new Position(reader.get("x").getAsInt(), reader.get("y").getAsInt(), reader.get("z").getAsInt());
-            final PlayerRights rights = PlayerRights.valueOf(reader.get("staff-rights").getAsString());
+            final Position position = new Position(reader.get("x").getAsInt(),
+                    reader.get("y").getAsInt(), reader.get("z").getAsInt());
+            final PlayerRights rights = PlayerRights.valueOf(reader.get(
+                    "staff-rights").getAsString());
             final int gender = reader.get("gender").getAsInt();
-            final int[] appearance = builder.fromJson(reader.get("appearance").getAsJsonArray(), int[].class);
-            final int[] colors = builder.fromJson(reader.get("colors").getAsJsonArray(), int[].class);
+            final int[] appearance = builder.fromJson(reader.get("appearance")
+                    .getAsJsonArray(), int[].class);
+            final int[] colors = builder.fromJson(reader.get("colors")
+                    .getAsJsonArray(), int[].class);
             final boolean runToggled = reader.get("run-toggled").getAsBoolean();
             final boolean newPlayer = reader.get("new-player").getAsBoolean();
-            final Item[] inventory = builder.fromJson(reader.get("inventory").getAsJsonArray(), Item[].class);
-            final Item[] bank = builder.fromJson(reader.get("bank").getAsJsonArray(), Item[].class);
-            final Item[] equipment = builder.fromJson(reader.get("equipment").getAsJsonArray(), Item[].class);
-            final Skill[] skills = builder.fromJson(reader.get("skills").getAsJsonArray(), Skill[].class);
-            final Long[] friends = builder.fromJson(reader.get("friends").getAsJsonArray(), Long[].class);
-            final Long[] ignores = builder.fromJson(reader.get("ignores").getAsJsonArray(), Long[].class);
+            final Item[] inventory = builder.fromJson(reader.get("inventory")
+                    .getAsJsonArray(), Item[].class);
+            final Item[] bank = builder.fromJson(reader.get("bank")
+                    .getAsJsonArray(), Item[].class);
+            final Item[] equipment = builder.fromJson(reader.get("equipment")
+                    .getAsJsonArray(), Item[].class);
+            final Skill[] skills = builder.fromJson(reader.get("skills")
+                    .getAsJsonArray(), Skill[].class);
+            final Long[] friends = builder.fromJson(reader.get("friends")
+                    .getAsJsonArray(), Long[].class);
+            final Long[] ignores = builder.fromJson(reader.get("ignores")
+                    .getAsJsonArray(), Long[].class);
             final int runEnergy = reader.get("run-energy").getAsInt();
-            final Spellbook book = Spellbook.valueOf(reader.get("spell-book").getAsString());
+            final Spellbook book = Spellbook.valueOf(reader.get("spell-book")
+                    .getAsString());
             final boolean banned = reader.get("is-banned").getAsBoolean();
-            final boolean retaliate = reader.get("auto-retaliate").getAsBoolean();
-            final FightType fightType = FightType.valueOf(reader.get("fight-type").getAsString());
+            final boolean retaliate = reader.get("auto-retaliate")
+                    .getAsBoolean();
+            final FightType fightType = FightType.valueOf(reader.get(
+                    "fight-type").getAsString());
             final int skullTimer = reader.get("skull-timer").getAsInt();
             final boolean acceptAid = reader.get("accept-aid").getAsBoolean();
             final int poisonHits = reader.get("poison-hits").getAsInt();
-			final PoisonType poisonStrength = PoisonType.valueOf(reader.get(
-					"poison-strength").getAsString());
+            final PoisonType poisonStrength = PoisonType.valueOf(reader.get(
+                    "poison-strength").getAsString());
             final int teleblockTimer = reader.get("teleblock-timer").getAsInt();
             final int specialAmount = reader.get("special-amount").getAsInt();
 

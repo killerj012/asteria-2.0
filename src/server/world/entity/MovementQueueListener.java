@@ -24,7 +24,7 @@ public class MovementQueueListener {
      * Create a new {@link MovementQueueListener}.
      * 
      * @param entity
-     *        the entity that this listener is for.
+     *            the entity that this listener is for.
      */
     public MovementQueueListener(Entity entity) {
         this.entity = entity;
@@ -38,7 +38,7 @@ public class MovementQueueListener {
      * the new action.
      * 
      * @param action
-     *        the action to run once the walking queue is finished.
+     *            the action to run once the walking queue is finished.
      */
     public void submit(final Runnable action) {
 
@@ -48,9 +48,9 @@ public class MovementQueueListener {
                 listener.cancel();
             }
         }
-        
+
         if (entity.isFollowing()) {
-        	entity.setFollowing(false);
+            entity.setFollowing(false);
         }
 
         /** And begin listening for a new action. */
@@ -58,7 +58,8 @@ public class MovementQueueListener {
 
             @Override
             public boolean listenForEvent() {
-                return entity.getMovementQueue().isMovementDone() || entity.isUnregistered() ? false : true;
+                return entity.getMovementQueue().isMovementDone()
+                        || entity.isUnregistered() ? false : true;
 
             }
 

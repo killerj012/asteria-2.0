@@ -27,15 +27,16 @@ import server.world.object.RegisterableWorldObject;
 public final class World {
 
     /** A logger for printing information. */
-    private static Logger logger = Logger.getLogger(World.class.getSimpleName());
+    private static Logger logger = Logger
+            .getLogger(World.class.getSimpleName());
 
     /** All registered players. */
-	private static final EntityContainer<Player> players = new EntityContainer<Player>(
-			1000);
+    private static final EntityContainer<Player> players = new EntityContainer<Player>(
+            1000);
 
     /** All registered NPCs. */
-	private static final EntityContainer<Npc> npcs = new EntityContainer<Npc>(
-			1500);
+    private static final EntityContainer<Npc> npcs = new EntityContainer<Npc>(
+            1500);
 
     /** The registerable container for ground item management. */
     private static RegisterableGroundItem registerableGroundItems;
@@ -47,7 +48,7 @@ public final class World {
      * Initialize the utilities of the {@link World}.
      * 
      * @throws Exception
-     *         if any errors occur during initialization.
+     *             if any errors occur during initialization.
      */
     public static void init() {
         try {
@@ -65,7 +66,7 @@ public final class World {
             AssignWeaponAnimation.class.newInstance();
             AssignWeaponInterface.class.newInstance();
             AssignSkillRequirement.class.newInstance();
-			CombatPoisonData.class.newInstance();
+            CombatPoisonData.class.newInstance();
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -115,7 +116,8 @@ public final class World {
                     continue;
                 }
 
-                Rs2Engine.pushTask(new PlayerParallelUpdateTask(player, phaser));
+                Rs2Engine
+                        .pushTask(new PlayerParallelUpdateTask(player, phaser));
             }
 
             phaser.arriveAndAwaitAdvance();
@@ -157,7 +159,7 @@ public final class World {
      * username. hash.
      * 
      * @param username
-     *        The username hash.
+     *            The username hash.
      * @return The <code>Player</code> object representing the player or
      *         {@code null} if no such player exists.
      */
@@ -178,7 +180,7 @@ public final class World {
      * Sends a message to all online {@link Player}s.
      * 
      * @param message
-     *        the message to send that will be sent to everyone online.
+     *            the message to send that will be sent to everyone online.
      */
     public void sendMessage(String message) {
         for (Player p : players) {
@@ -207,7 +209,7 @@ public final class World {
      * Saves the game for a single player.
      * 
      * @param player
-     *        the player to save the game for.
+     *            the player to save the game for.
      */
     public static void savePlayer(final Player player) {
 
@@ -223,8 +225,7 @@ public final class World {
                 synchronized (player) {
                     WritePlayerFileEvent save = new WritePlayerFileEvent(player);
                     save.run();
-                    logger.info(player
-                            + " game successfully saved!");
+                    logger.info(player + " game successfully saved!");
                 }
             }
         });

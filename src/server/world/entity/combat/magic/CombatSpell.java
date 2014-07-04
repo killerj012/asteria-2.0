@@ -73,9 +73,9 @@ public abstract class CombatSpell extends Spell {
      * The mid-cast projectile for this spell.
      * 
      * @param cast
-     *        the person casting the spell.
+     *            the person casting the spell.
      * @param castOn
-     *        the target of the spell.
+     *            the target of the spell.
      * 
      * @return the projectile for this spell.
      */
@@ -92,13 +92,14 @@ public abstract class CombatSpell extends Spell {
      * Invoked when the spell hits the target.
      * 
      * @param cast
-     *        the person casting the spell.
+     *            the person casting the spell.
      * @param castOn
-     *        the target of the spell.
+     *            the target of the spell.
      * @param spellAccurate
-     *        if the spell actually hit the player.
+     *            if the spell actually hit the player.
      * @param damageInflicted
-     *        the amount of damage that was inflicted.
+     *            the amount of damage that was inflicted.
      */
-    public abstract void endCast(Entity cast, Entity castOn, boolean spellAccurate, int damageInflicted);
+    public abstract void endCast(Entity cast, Entity castOn,
+            boolean spellAccurate, int damageInflicted);
 }

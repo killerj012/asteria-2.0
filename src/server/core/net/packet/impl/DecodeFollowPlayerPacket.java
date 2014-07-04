@@ -21,7 +21,8 @@ public class DecodeFollowPlayerPacket extends PacketDecoder {
         int followId = in.readShort(false, ByteOrder.LITTLE);
         Player follow = World.getPlayers().get(followId);
 
-        if (follow == null || !follow.getPosition().isViewableFrom(player.getPosition())) {
+        if (follow == null
+                || !follow.getPosition().isViewableFrom(player.getPosition())) {
             return;
         }
 

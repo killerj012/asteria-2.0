@@ -66,8 +66,7 @@ import server.world.map.Position;
 public class Player extends Entity {
 
     /** The welcome message. */
-    public static final String WELCOME_MESSAGE = "Welcome to "
-            + Main.NAME
+    public static final String WELCOME_MESSAGE = "Welcome to " + Main.NAME
             + "!";
 
     /** A message sent to a player that has killed another player. */
@@ -77,7 +76,8 @@ public class Player extends Entity {
     public static final Item[] STARTER_PACKAGE = { new Item(995, 10000) };
 
     /** A {@link Logger} for printing debugging info. */
-    private static Logger logger = Logger.getLogger(Player.class.getSimpleName());
+    private static Logger logger = Logger.getLogger(Player.class
+            .getSimpleName());
 
     /** The network for this player. */
     private final Session session;
@@ -164,8 +164,7 @@ public class Player extends Entity {
     private int headIcon = -1;
 
     /** The players skull stuff. */
-    private int skullIcon = -1,
-            skullTimer;
+    private int skullIcon = -1, skullTimer;
 
     /** Teleblock stuff. */
     private int teleblockTimer;
@@ -196,8 +195,7 @@ public class Player extends Entity {
     private boolean newPlayer = true;
 
     /** Options for banking. */
-    private boolean insertItem,
-            withdrawAsNote;
+    private boolean insertItem, withdrawAsNote;
 
     /** The conversation id the character is in. */
     private int npcDialogue;
@@ -212,7 +210,7 @@ public class Player extends Entity {
     private final Set<Npc> npcs = new LinkedHashSet<Npc>();
 
     /** The players rights. */
-	private PlayerRights rights;
+    private PlayerRights rights;
 
     /** The players current spellbook. */
     private Spellbook spellbook = Spellbook.NORMAL;
@@ -227,8 +225,7 @@ public class Player extends Entity {
     private int gender = Misc.GENDER_MALE;
 
     /** The appearance. */
-    private int[] appearance = new int[7],
-            colors = new int[5];
+    private int[] appearance = new int[7], colors = new int[5];
 
     /** The player's bonuses. */
     private int[] playerBonus = new int[12];
@@ -276,15 +273,15 @@ public class Player extends Entity {
      * Creates a new {@link Player}.
      * 
      * @param session
-     *        the session to create the player from.
+     *            the session to create the player from.
      */
     public Player(Session session) {
         this.session = session;
 
-		/** Set the player's rights. */
-		rights = session.getHost().equals("127.0.0.1")
-				|| session.getHost().equals("localhost") ? PlayerRights.DEVELOPER
-				: PlayerRights.PLAYER;
+        /** Set the player's rights. */
+        rights = session.getHost().equals("127.0.0.1")
+                || session.getHost().equals("localhost") ? PlayerRights.DEVELOPER
+                : PlayerRights.PLAYER;
 
         /** Set the default appearance. */
         getAppearance()[Misc.APPEARANCE_SLOT_CHEST] = 18;
@@ -321,7 +318,7 @@ public class Player extends Entity {
                 if (getDeathTicks() == 0) {
                     getMovementQueue().reset();
                     setPoisonHits(0);
-					setPoisonStrength(PoisonType.MILD);
+                    setPoisonStrength(PoisonType.MILD);
                 } else if (getDeathTicks() == 1) {
                     animation(DEATH);
                     SkillEvent.fireSkillEvents(player);
@@ -335,7 +332,8 @@ public class Player extends Entity {
                         minigame.fireOnDeath(player);
 
                         if (!minigame.canKeepItems()) {
-                            if (player.getRights().lessThan(PlayerRights.ADMINISTRATOR)) {
+                            if (player.getRights().lessThan(
+                                    PlayerRights.ADMINISTRATOR)) {
                                 dropDeathItems(killer);
                             }
                         }
@@ -347,12 +345,15 @@ public class Player extends Entity {
 
                         move(minigame.getDeathPosition(player));
                     } else {
-                        if (player.getRights().lessThan(PlayerRights.ADMINISTRATOR)) {
+                        if (player.getRights().lessThan(
+                                PlayerRights.ADMINISTRATOR)) {
                             deathHook(killer);
                             move(new Position(3093, 3244));
                         } else {
                             if (killer != null) {
-                                killer.getPacketBuilder().sendMessage("Sorry, but you cannot kill administrators.");
+                                killer.getPacketBuilder()
+                                        .sendMessage(
+                                                "Sorry, but you cannot kill administrators.");
                             }
                         }
                     }
@@ -371,10 +372,13 @@ public class Player extends Entity {
                     getCombatBuilder().resetDamage();
                     getPacketBuilder().sendMessage("Oh dear, you're dead!");
                     getPacketBuilder().walkableInterface(65535);
-                    player.getSkills()[Misc.PRAYER].setLevel(player.getSkills()[Misc.PRAYER].getLevelForExperience());
+                    player.getSkills()[Misc.PRAYER]
+                            .setLevel(player.getSkills()[Misc.PRAYER]
+                                    .getLevelForExperience());
                     CombatPrayer.deactivateAllPrayer(player);
                     SkillManager.refresh(player, Misc.PRAYER);
-                    heal(player.getSkills()[Misc.HITPOINTS].getLevelForExperience());
+                    heal(player.getSkills()[Misc.HITPOINTS]
+                            .getLevelForExperience());
                     setHasDied(false);
                     setDeathTicks(0);
                     getFlags().flag(Flag.APPEARANCE);
@@ -397,7 +401,7 @@ public class Player extends Entity {
      * on the teleport spell.
      * 
      * @param position
-     *        the position to teleport to.
+     *            the position to teleport to.
      */
     public void teleport(final TeleportSpell spell) {
         if (teleportStage > 0) {
@@ -405,32 +409,36 @@ public class Player extends Entity {
         }
 
         if (wildernessLevel >= 20) {
-            player.getPacketBuilder().sendMessage("You must be below level 20 wilderness to teleport!");
+            player.getPacketBuilder().sendMessage(
+                    "You must be below level 20 wilderness to teleport!");
             return;
         }
 
         if (teleblockTimer > 0) {
             if ((teleblockTimer * 600) == 600) {
-                getPacketBuilder().sendMessage("You'll be able to teleport in a second! Just wait!");
+                getPacketBuilder().sendMessage(
+                        "You'll be able to teleport in a second! Just wait!");
                 return;
             } else if ((teleblockTimer * 600) >= 1000
                     && (teleblockTimer * 600) <= 60000) {
-                getPacketBuilder().sendMessage("You must wait approximately "
-                        + ((teleblockTimer * 600) / 1000)
-                        + " seconds in order to teleport!");
+                getPacketBuilder().sendMessage(
+                        "You must wait approximately "
+                                + ((teleblockTimer * 600) / 1000)
+                                + " seconds in order to teleport!");
                 return;
             } else if ((teleblockTimer * 600) > 60000) {
-                getPacketBuilder().sendMessage("You must wait approximately "
-                        + ((teleblockTimer * 600) / 60000)
-                        + " minutes in order to teleport!");
+                getPacketBuilder().sendMessage(
+                        "You must wait approximately "
+                                + ((teleblockTimer * 600) / 60000)
+                                + " minutes in order to teleport!");
                 return;
             }
         }
 
         if (!getSkills()[Misc.MAGIC].reqLevel(spell.levelRequired())) {
-            getPacketBuilder().sendMessage("You need a magic level of "
-                    + spell.levelRequired()
-                    + " to teleport here!");
+            getPacketBuilder().sendMessage(
+                    "You need a magic level of " + spell.levelRequired()
+                            + " to teleport here!");
             return;
         }
 
@@ -449,11 +457,10 @@ public class Player extends Entity {
                 }
 
                 if (!getInventory().getContainer().contains(item)) {
-                    getPacketBuilder().sendMessage("You need "
-                            + item.getAmount()
-                            + " "
-                            + item.getDefinition().getItemName()
-                            + " to teleport here!");
+                    getPacketBuilder().sendMessage(
+                            "You need " + item.getAmount() + " "
+                                    + item.getDefinition().getItemName()
+                                    + " to teleport here!");
                     return;
                 }
 
@@ -471,47 +478,47 @@ public class Player extends Entity {
         SkillManager.addExperience(this, spell.baseExperience(), Misc.MAGIC);
 
         switch (spell.type()) {
-            case NORMAL_SPELLBOOK_TELEPORT:
-                animation(new Animation(714));
+        case NORMAL_SPELLBOOK_TELEPORT:
+            animation(new Animation(714));
 
-                TaskFactory.getFactory().submit(new Worker(1, false) {
-                    @Override
-                    public void fire() {
-                        if (teleportStage == 1) {
-                            gfx(new Gfx(308));
-                            teleportStage = 2;
-                        } else if (teleportStage == 2) {
-                            teleportStage = 3;
-                        } else if (teleportStage == 3) {
-                            move(spell.teleportTo());
-                            animation(new Animation(715));
-                            teleportStage = 0;
-                            this.cancel();
-                        }
+            TaskFactory.getFactory().submit(new Worker(1, false) {
+                @Override
+                public void fire() {
+                    if (teleportStage == 1) {
+                        gfx(new Gfx(308));
+                        teleportStage = 2;
+                    } else if (teleportStage == 2) {
+                        teleportStage = 3;
+                    } else if (teleportStage == 3) {
+                        move(spell.teleportTo());
+                        animation(new Animation(715));
+                        teleportStage = 0;
+                        this.cancel();
                     }
-                }.attach(this));
-                break;
-            case ANCIENTS_SPELLBOOK_TELEPORT:
-                animation(new Animation(1979));
+                }
+            }.attach(this));
+            break;
+        case ANCIENTS_SPELLBOOK_TELEPORT:
+            animation(new Animation(1979));
 
-                TaskFactory.getFactory().submit(new Worker(1, false) {
-                    @Override
-                    public void fire() {
-                        if (teleportStage == 1) {
-                            gfx(new Gfx(392));
-                            teleportStage = 2;
-                        } else if (teleportStage == 2) {
-                            teleportStage = 3;
-                        } else if (teleportStage == 3) {
-                            teleportStage = 4;
-                        } else if (teleportStage == 4) {
-                            move(spell.teleportTo());
-                            teleportStage = 0;
-                            this.cancel();
-                        }
+            TaskFactory.getFactory().submit(new Worker(1, false) {
+                @Override
+                public void fire() {
+                    if (teleportStage == 1) {
+                        gfx(new Gfx(392));
+                        teleportStage = 2;
+                    } else if (teleportStage == 2) {
+                        teleportStage = 3;
+                    } else if (teleportStage == 3) {
+                        teleportStage = 4;
+                    } else if (teleportStage == 4) {
+                        move(spell.teleportTo());
+                        teleportStage = 0;
+                        this.cancel();
                     }
-                }.attach(this));
-                break;
+                }
+            }.attach(this));
+            break;
         }
     }
 
@@ -520,7 +527,7 @@ public class Player extends Entity {
      * on the spellbook they have open.
      * 
      * @param position
-     *        the position to teleport to.
+     *            the position to teleport to.
      */
     public void teleport(final Position position) {
         teleport(new TeleportSpell() {
@@ -594,17 +601,10 @@ public class Player extends Entity {
 
     @Override
     public String toString() {
-        return getUsername() == null ? "SESSION[host= "
-                + session.getHost()
-                + ", stage= "
-                + session.getStage().name()
-                + "]" : "PLAYER[username= "
-                + getUsername()
-                + ", host= "
-                + session.getHost()
-                + ", rights= "
-                + rights
-                + "]";
+        return getUsername() == null ? "SESSION[host= " + session.getHost()
+                + ", stage= " + session.getStage().name() + "]"
+                : "PLAYER[username= " + getUsername() + ", host= "
+                        + session.getHost() + ", rights= " + rights + "]";
     }
 
     /**
@@ -619,14 +619,16 @@ public class Player extends Entity {
      * The hook fired when this player is killed.
      * 
      * @param killer
-     *        the player who killed this player (if any).
+     *            the player who killed this player (if any).
      */
     public void deathHook(Player killer) {
         if (killer == null) {
             dropDeathItems(null);
             return;
         }
-        killer.getPacketBuilder().sendMessage(Misc.randomElement(DEATH_MESSAGES).replaceAll("-player-", username));
+        killer.getPacketBuilder().sendMessage(
+                Misc.randomElement(DEATH_MESSAGES).replaceAll("-player-",
+                        username));
         dropDeathItems(killer);
     }
 
@@ -656,7 +658,10 @@ public class Player extends Entity {
                     continue;
                 }
 
-                World.getGroundItems().register(killer == null ? new StaticGroundItem(item, getPosition(), true, false) : new GroundItem(item, getPosition(), killer));
+                World.getGroundItems().register(
+                        killer == null ? new StaticGroundItem(item,
+                                getPosition(), true, false) : new GroundItem(
+                                item, getPosition(), killer));
             }
             return;
         }
@@ -699,7 +704,10 @@ public class Player extends Entity {
                 continue;
             }
 
-            World.getGroundItems().register(killer == null ? new StaticGroundItem(item, getPosition(), true, false) : new GroundItem(item, getPosition(), killer));
+            World.getGroundItems().register(
+                    killer == null ? new StaticGroundItem(item, getPosition(),
+                            true, false) : new GroundItem(item, getPosition(),
+                            killer));
         }
     }
 
@@ -707,21 +715,20 @@ public class Player extends Entity {
      * Move the player based on their current position.
      * 
      * @param addX
-     *        the x offset.
+     *            the x offset.
      * @param addY
-     *        the y offset.
+     *            the y offset.
      */
     public void move(int addX, int addY) {
-        move(new Position(player.getPosition().getX()
-                + addX, player.getPosition().getY()
-                + addY));
+        move(new Position(player.getPosition().getX() + addX, player
+                .getPosition().getY() + addY));
     }
 
     /**
      * Heals this player.
      * 
      * @param amount
-     *        the amount of heal this player by.
+     *            the amount of heal this player by.
      */
     public void heal(int amount) {
         int level = getSkills()[Misc.HITPOINTS].getLevelForExperience();
@@ -739,9 +746,11 @@ public class Player extends Entity {
      * Loads client configurations.
      */
     public void loadConfigs() {
-        getPacketBuilder().sendConfig(173, getMovementQueue().isRunToggled() ? 1 : 0);
+        getPacketBuilder().sendConfig(173,
+                getMovementQueue().isRunToggled() ? 1 : 0);
         getPacketBuilder().sendConfig(172, isAutoRetaliate() ? 0 : 1);
-        getPacketBuilder().sendConfig(fightType.getParentId(), fightType.getChildId());
+        getPacketBuilder().sendConfig(fightType.getParentId(),
+                fightType.getChildId());
         getPacketBuilder().sendConfig(427, isAcceptAid() ? 1 : 0);
         getPacketBuilder().sendConfig(108, 0);
         getPacketBuilder().sendConfig(301, 0);
@@ -752,7 +761,7 @@ public class Player extends Entity {
      * Starts a dialogue.
      * 
      * @param d
-     *        the dialogue to start.
+     *            the dialogue to start.
      */
     public void sendDialogue(Dialogue d) {
         if (d.getDialogues().length == 0) {
@@ -818,19 +827,14 @@ public class Player extends Entity {
         combatLevel = 0;
 
         if (ran > attstr) {
-            combatLevel = ((defLvl) * 0.25)
-                    + ((hitLvl) * 0.25)
-                    + ((prayLvl) * 0.125)
-                    + ((ranLvl) * 0.4875);
+            combatLevel = ((defLvl) * 0.25) + ((hitLvl) * 0.25)
+                    + ((prayLvl) * 0.125) + ((ranLvl) * 0.4875);
         } else if (mag > attstr) {
-            combatLevel = (((defLvl) * 0.25)
-                    + ((hitLvl) * 0.25)
+            combatLevel = (((defLvl) * 0.25) + ((hitLvl) * 0.25)
                     + ((ranLvl) * 0.125) + ((magLvl) * 0.4875));
         } else {
-            combatLevel = (((defLvl) * 0.25)
-                    + ((hitLvl) * 0.25)
-                    + ((prayLvl) * 0.125)
-                    + ((attLvl) * 0.325) + ((strLvl) * 0.325));
+            combatLevel = (((defLvl) * 0.25) + ((hitLvl) * 0.25)
+                    + ((prayLvl) * 0.125) + ((attLvl) * 0.325) + ((strLvl) * 0.325));
         }
 
         return (int) combatLevel;
@@ -844,7 +848,8 @@ public class Player extends Entity {
 
         /** Update the wilderness info. */
         if (Location.inWilderness(this)) {
-            int calculateY = this.getPosition().getY() > 6400 ? this.getPosition().getY() - 6400 : this.getPosition().getY();
+            int calculateY = this.getPosition().getY() > 6400 ? this
+                    .getPosition().getY() - 6400 : this.getPosition().getY();
             wildernessLevel = (((calculateY - 3520) / 8) + 1);
 
             if (!this.isWildernessInterface()) {
@@ -853,8 +858,8 @@ public class Player extends Entity {
                 this.setWildernessInterface(true);
             }
 
-            this.getPacketBuilder().sendString("@yel@Level: "
-                    + wildernessLevel, 199);
+            this.getPacketBuilder().sendString(
+                    "@yel@Level: " + wildernessLevel, 199);
         } else {
             this.getPacketBuilder().sendPlayerMenu("Attack", 3);
             this.getPacketBuilder().walkableInterface(-1);
@@ -883,9 +888,7 @@ public class Player extends Entity {
         }
 
         for (Item item : this.getEquipment().getContainer().toArray()) {
-            if (item == null
-                    || item.getId() < 1
-                    || item.getAmount() < 1) {
+            if (item == null || item.getId() < 1 || item.getAmount() < 1) {
                 continue;
             }
 
@@ -899,13 +902,9 @@ public class Player extends Entity {
 
         for (int i = 0; i < playerBonus.length; i++) {
             if (playerBonus[i] >= 0) {
-                send = Misc.BONUS_NAMES[i]
-                        + ": +"
-                        + playerBonus[i];
+                send = Misc.BONUS_NAMES[i] + ": +" + playerBonus[i];
             } else {
-                send = Misc.BONUS_NAMES[i]
-                        + ": -"
-                        + Math.abs(playerBonus[i]);
+                send = Misc.BONUS_NAMES[i] + ": -" + Math.abs(playerBonus[i]);
             }
 
             if (i == 10) {
@@ -927,7 +926,7 @@ public class Player extends Entity {
      * Sets the username.
      * 
      * @param username
-     *        the username
+     *            the username
      */
     public void setUsername(String username) {
         this.username = username;
@@ -946,7 +945,7 @@ public class Player extends Entity {
      * Sets the password.
      * 
      * @param password
-     *        the password
+     *            the password
      */
     public void setPassword(String password) {
         this.password = password;
@@ -998,7 +997,7 @@ public class Player extends Entity {
 
     /**
      * @param newPlayer
-     *        the newPlayer to set
+     *            the newPlayer to set
      */
     public void setNewPlayer(boolean newPlayer) {
         this.newPlayer = newPlayer;
@@ -1013,7 +1012,7 @@ public class Player extends Entity {
 
     /**
      * @param withdrawAsNote
-     *        the withdrawAsNote to set
+     *            the withdrawAsNote to set
      */
     public void setWithdrawAsNote(boolean withdrawAsNote) {
         this.withdrawAsNote = withdrawAsNote;
@@ -1028,7 +1027,7 @@ public class Player extends Entity {
 
     /**
      * @param insertItem
-     *        the insertItem to set
+     *            the insertItem to set
      */
     public void setInsertItem(boolean insertItem) {
         this.insertItem = insertItem;
@@ -1043,7 +1042,7 @@ public class Player extends Entity {
 
     /**
      * @param incorrectPassword
-     *        the incorrectPassword to set
+     *            the incorrectPassword to set
      */
     public void setIncorrectPassword(boolean incorrectPassword) {
         this.incorrectPassword = incorrectPassword;
@@ -1065,7 +1064,7 @@ public class Player extends Entity {
 
     /**
      * @param friends
-     *        the friends to set
+     *            the friends to set
      */
     public void setFriends(List<Long> friends) {
         this.friends = friends;
@@ -1080,7 +1079,7 @@ public class Player extends Entity {
 
     /**
      * @param ignores
-     *        the ignores to set
+     *            the ignores to set
      */
     public void setIgnores(List<Long> ignores) {
         this.ignores = ignores;
@@ -1109,54 +1108,49 @@ public class Player extends Entity {
 
     /**
      * @param runEnergy
-     *        the runEnergy to set
+     *            the runEnergy to set
      */
     public void decrementRunEnergy() {
         this.runEnergy -= 1;
-        getPacketBuilder().sendString(getRunEnergy()
-                + "%", 149);
+        getPacketBuilder().sendString(getRunEnergy() + "%", 149);
     }
 
     /**
      * @param runEnergy
-     *        the runEnergy to set
+     *            the runEnergy to set
      */
     public void decrementRunEnergy(int amount) {
         if ((runEnergy - amount) < 1) {
             runEnergy = 0;
-            getPacketBuilder().sendString(getRunEnergy()
-                    + "%", 149);
+            getPacketBuilder().sendString(getRunEnergy() + "%", 149);
             return;
         }
 
         this.runEnergy -= amount;
-        getPacketBuilder().sendString(getRunEnergy()
-                + "%", 149);
+        getPacketBuilder().sendString(getRunEnergy() + "%", 149);
     }
 
     /**
      * @param runEnergy
-     *        the runEnergy to set
+     *            the runEnergy to set
      */
     public void incrementRunEnergy() {
         this.runEnergy += 1;
-        getPacketBuilder().sendString(getRunEnergy()
-                + "%", 149);
+        getPacketBuilder().sendString(getRunEnergy() + "%", 149);
     }
 
     /**
      * @param runEnergy
-     *        the runEnergy to set
+     *            the runEnergy to set
      */
     public void incrementRunEnergy(int amount) {
         this.runEnergy += amount;
-        getPacketBuilder().sendString(getRunEnergy()
-                + "%", 149);
+        getPacketBuilder().sendString(getRunEnergy() + "%", 149);
     }
 
     /**
      * @param runEnergy
-     *        the runEnergy to set
+     *            the runEnergy to set
      */
     public void setRunEnergy(int runEnergy) {
         this.runEnergy = runEnergy;
@@ -1186,7 +1180,7 @@ public class Player extends Entity {
 
     /**
      * @param option
-     *        the option to set
+     *            the option to set
      */
     public void setOption(int option) {
         this.option = option;
@@ -1201,7 +1195,7 @@ public class Player extends Entity {
 
     /**
      * @param headIcon
-     *        the headIcon to set
+     *            the headIcon to set
      */
     public void setHeadIcon(int headIcon) {
         this.headIcon = headIcon;
@@ -1216,7 +1210,7 @@ public class Player extends Entity {
 
     /**
      * @param openShopId
-     *        the openShopId to set
+     *            the openShopId to set
      */
     public void setOpenShopId(int openShopId) {
         this.openShopId = openShopId;
@@ -1231,7 +1225,7 @@ public class Player extends Entity {
 
     /**
      * @param skullIcon
-     *        the skullIcon to set
+     *            the skullIcon to set
      */
     public void setSkullIcon(int skullIcon) {
         this.skullIcon = skullIcon;
@@ -1246,7 +1240,7 @@ public class Player extends Entity {
 
     /**
      * @param spellbook
-     *        the spellbook to set
+     *            the spellbook to set
      */
     public void setSpellbook(Spellbook spellbook) {
         this.spellbook = spellbook;
@@ -1261,7 +1255,7 @@ public class Player extends Entity {
 
     /**
      * @param playerBonus
-     *        the playerBonus to set
+     *            the playerBonus to set
      */
     public void setPlayerBonus(int[] playerBonus) {
         this.playerBonus = playerBonus;
@@ -1336,7 +1330,7 @@ public class Player extends Entity {
 
     /**
      * @param isVisible
-     *        the isVisible to set
+     *            the isVisible to set
      */
     public void setVisible(boolean isVisible) {
         this.isVisible = isVisible;
@@ -1372,7 +1366,7 @@ public class Player extends Entity {
 
     /**
      * @param isBanned
-     *        the isBanned to set
+     *            the isBanned to set
      */
     public void setBanned(boolean isBanned) {
         this.isBanned = isBanned;
@@ -1387,7 +1381,7 @@ public class Player extends Entity {
 
     /**
      * @param weapon
-     *        the weapon to set.
+     *            the weapon to set.
      */
     public void setWeapon(WeaponInterface weapon) {
         this.weapon = weapon;
@@ -1409,7 +1403,7 @@ public class Player extends Entity {
 
     /**
      * @param trainable
-     *        the trainable to set.
+     *            the trainable to set.
      */
     public void setTrainable(Skill[] trainable) {
         this.skills = trainable;
@@ -1431,7 +1425,7 @@ public class Player extends Entity {
 
     /**
      * @param fightType
-     *        the fightType to set
+     *            the fightType to set
      */
     public void setFightType(FightType fightType) {
         this.fightType = fightType;
@@ -1453,7 +1447,7 @@ public class Player extends Entity {
 
     /**
      * @param prayerDrain
-     *        the prayerDrain to set
+     *            the prayerDrain to set
      */
     public void setPrayerDrain(CombatPrayerWorker prayerDrain) {
         this.prayerDrain = prayerDrain;
@@ -1468,7 +1462,7 @@ public class Player extends Entity {
 
     /**
      * @param teleportStage
-     *        the teleportStage to set
+     *            the teleportStage to set
      */
     public void setTeleportStage(int teleportStage) {
         this.teleportStage = teleportStage;
@@ -1483,7 +1477,7 @@ public class Player extends Entity {
 
     /**
      * @param skullTimer
-     *        the skullTimer to set
+     *            the skullTimer to set
      */
     public void setSkullTimer(int skullTimer) {
         this.skullTimer = skullTimer;
@@ -1502,7 +1496,7 @@ public class Player extends Entity {
 
     /**
      * @param acceptAid
-     *        the acceptAid to set
+     *            the acceptAid to set
      */
     public void setAcceptAid(boolean acceptAid) {
         this.acceptAid = acceptAid;
@@ -1517,7 +1511,7 @@ public class Player extends Entity {
 
     /**
      * @param castSpell
-     *        the castSpell to set
+     *            the castSpell to set
      */
     public void setCastSpell(CombatSpell castSpell) {
         this.castSpell = castSpell;
@@ -1532,7 +1526,7 @@ public class Player extends Entity {
 
     /**
      * @param autocast
-     *        the autocast to set
+     *            the autocast to set
      */
     public void setAutocast(boolean autocast) {
         this.autocast = autocast;
@@ -1547,7 +1541,7 @@ public class Player extends Entity {
 
     /**
      * @param teleblockTimer
-     *        the teleblockTimer to set
+     *            the teleblockTimer to set
      */
     public void setTeleblockTimer(int teleblockTimer) {
         this.teleblockTimer = teleblockTimer;
@@ -1566,7 +1560,7 @@ public class Player extends Entity {
 
     /**
      * @param autocastSpell
-     *        the autocastSpell to set
+     *            the autocastSpell to set
      */
     public void setAutocastSpell(CombatSpell autocastSpell) {
         this.autocastSpell = autocastSpell;
@@ -1581,7 +1575,7 @@ public class Player extends Entity {
 
     /**
      * @param specialPercentage
-     *        the specialPercentage to set
+     *            the specialPercentage to set
      */
     public void setSpecialPercentage(int specialPercentage) {
         this.specialPercentage = specialPercentage;
@@ -1596,7 +1590,7 @@ public class Player extends Entity {
 
     /**
      * @param fireAmmo
-     *        the fireAmmo to set
+     *            the fireAmmo to set
      */
     public void setFireAmmo(int fireAmmo) {
         this.fireAmmo = fireAmmo;
@@ -1611,7 +1605,7 @@ public class Player extends Entity {
 
     /**
      * @param combatSpecial
-     *        the combatSpecial to set
+     *            the combatSpecial to set
      */
     public void setCombatSpecial(CombatSpecial combatSpecial) {
         this.combatSpecial = combatSpecial;
@@ -1626,7 +1620,7 @@ public class Player extends Entity {
 
     /**
      * @param specialActivated
-     *        the specialActivated to set
+     *            the specialActivated to set
      */
     public void setSpecialActivated(boolean specialActivated) {
         this.specialActivated = specialActivated;
@@ -1657,7 +1651,7 @@ public class Player extends Entity {
 
     /**
      * @param rangedAmmo
-     *        the rangedAmmo to set
+     *            the rangedAmmo to set
      */
     public void setRangedAmmo(CombatRangedAmmo rangedAmmo) {
         this.rangedAmmo = rangedAmmo;
@@ -1676,7 +1670,7 @@ public class Player extends Entity {
      * Sets the cached update block.
      * 
      * @param cachedUpdateBlock
-     *        the cached update block.
+     *            the cached update block.
      */
     public void setCachedUpdateBlock(ByteBuffer cachedUpdateBlock) {
         this.cachedUpdateBlock = cachedUpdateBlock;
@@ -1691,7 +1685,7 @@ public class Player extends Entity {
 
     /**
      * @param usernameHash
-     *        the usernameHash to set
+     *            the usernameHash to set
      */
     public void setUsernameHash(long usernameHash) {
         this.usernameHash = usernameHash;
@@ -1706,7 +1700,7 @@ public class Player extends Entity {
 
     /**
      * @param examplePoints
-     *        the examplePoints to set
+     *            the examplePoints to set
      */
     public void setExamplePoints(int examplePoints) {
         this.examplePoints = examplePoints;

@@ -20,9 +20,9 @@ public abstract class PacketDecoder {
      * Reads data from an incoming packets and fires logic based on that data.
      * 
      * @param player
-     *        the player to fire the logic for.
+     *            the player to fire the logic for.
      * @param in
-     *        the buffer for reading the data within the packet.
+     *            the buffer for reading the data within the packet.
      */
     public abstract void decode(Player player, PacketBuffer.ReadBuffer in);
 
@@ -31,7 +31,7 @@ public abstract class PacketDecoder {
      * opcode.
      * 
      * @param packet
-     *        the decoder to add to the array.
+     *            the decoder to add to the array.
      */
     public static void addDecoder(PacketDecoder packet) {
 
@@ -41,7 +41,8 @@ public abstract class PacketDecoder {
         }
 
         /** Gets all of the data from the header. */
-        int packetOpcodes[] = packet.getClass().getAnnotation(PacketOpcodeHeader.class).value();
+        int packetOpcodes[] = packet.getClass()
+                .getAnnotation(PacketOpcodeHeader.class).value();
 
         /** Add the decoder for all of the opcodes. */
         for (int opcode : packetOpcodes) {

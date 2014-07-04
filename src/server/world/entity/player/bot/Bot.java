@@ -19,7 +19,8 @@ import server.world.map.Position;
 public class Bot {
 
     /** Provides threads that will login bots. */
-    private static ThreadProvider provider = new ThreadProvider("BotThread", Thread.MIN_PRIORITY, true, false);
+    private static ThreadProvider provider = new ThreadProvider("BotThread",
+            Thread.MIN_PRIORITY, true, false);
 
     /** The username of this bot. */
     private String username;
@@ -52,9 +53,9 @@ public class Bot {
      * Create a new {@link Bot}.
      * 
      * @param username
-     *        the username of this bot.
+     *            the username of this bot.
      * @param password
-     *        the password of this bot.
+     *            the password of this bot.
      */
     public Bot(String username, String password, Position position) {
         this.username = username;
@@ -66,7 +67,7 @@ public class Bot {
      * Assigns a task to this bot.
      * 
      * @param newTask
-     *        the task to assign to this bot.
+     *            the task to assign to this bot.
      */
     public void assignTask(BotTask newTask) {
 
@@ -102,7 +103,8 @@ public class Bot {
 
         /** We don't have any task to stop. */
         if (task == null) {
-            throw new IllegalStateException("Bot does not have any tasks to stop!");
+            throw new IllegalStateException(
+                    "Bot does not have any tasks to stop!");
         }
 
         /** And stop the task! */
@@ -151,7 +153,7 @@ public class Bot {
      * 
      * @return this bot for chaining.
      * @throws Exception
-     *         if any errors occur while trying to destroy the bot.
+     *             if any errors occur while trying to destroy the bot.
      */
     public Bot disposeBot() throws Exception {
 
@@ -203,7 +205,7 @@ public class Bot {
      * Sets the instance of the player created when this bot logged in.
      * 
      * @param player
-     *        the instance of the player created when this bot logged in.
+     *            the instance of the player created when this bot logged in.
      */
     public void setPlayer(Player player) {
         this.player = player;
@@ -222,7 +224,7 @@ public class Bot {
      * Sets the socket used to connect by this bot.
      * 
      * @param socket
-     *        the socket used to connect by this bot.
+     *            the socket used to connect by this bot.
      */
     public void setSocket(Socket socket) {
         this.socket = socket;
@@ -242,7 +244,8 @@ public class Bot {
      * Sets the worker that will be used to handle tasks assigned to this bot.
      * 
      * @param botWorker
-     *        the worker that will be used to handle tasks assigned to this bot.
+     *            the worker that will be used to handle tasks assigned to this
+     *            bot.
      */
     public void setBotWorker(Worker botWorker) {
         this.botWorker = botWorker;

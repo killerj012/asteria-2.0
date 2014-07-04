@@ -22,22 +22,25 @@ public final class GenericTaskPool {
      * Create a new {@link GenericTaskPool}.
      * 
      * @param poolName
-     *        the name of the threads in this pool.
+     *            the name of the threads in this pool.
      * @param poolSize
-     *        the maximum amount of threads to have in this pool.
+     *            the maximum amount of threads to have in this pool.
      * @param poolPriority
-     *        the priority of the threads in this pool.
+     *            the priority of the threads in this pool.
      */
     @SuppressWarnings("unused")
     public GenericTaskPool(String poolName, int poolSize, int poolPriority) {
         if (Rs2Engine.THREAD_IDLE_TIMEOUT < 1) {
-            throw new IllegalStateException("Idle thread timeout value must be greater than 0!");
+            throw new IllegalStateException(
+                    "Idle thread timeout value must be greater than 0!");
         }
 
         taskPool = (ThreadPoolExecutor) Executors.newFixedThreadPool(poolSize);
-        taskPool.setThreadFactory(new ThreadProvider(poolName, poolPriority, true, false));
+        taskPool.setThreadFactory(new ThreadProvider(poolName, poolPriority,
+                true, false));
         taskPool.setRejectedExecutionHandler(new TaskRejectedHook());
-        taskPool.setKeepAliveTime(Rs2Engine.THREAD_IDLE_TIMEOUT, TimeUnit.MINUTES);
+        taskPool.setKeepAliveTime(Rs2Engine.THREAD_IDLE_TIMEOUT,
+                TimeUnit.MINUTES);
         taskPool.allowCoreThreadTimeOut(true);
 
         if (!Rs2Engine.INITIALLY_IDLE) {

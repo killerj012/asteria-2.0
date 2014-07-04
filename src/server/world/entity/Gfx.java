@@ -17,9 +17,9 @@ public class Gfx {
      * Create a new {@link Gfx}.
      * 
      * @param id
-     *        the id of the graphic.
+     *            the id of the graphic.
      * @param delay
-     *        the delay for the graphic.
+     *            the delay for the graphic.
      */
     public Gfx(int id, int delay) {
         this.id = id;
@@ -30,7 +30,7 @@ public class Gfx {
      * Create a new {@link Gfx}.
      * 
      * @param id
-     *        the id of the graphic.
+     *            the id of the graphic.
      */
     public Gfx(int id) {
         this(id, 0);
@@ -65,7 +65,7 @@ public class Gfx {
      * Sets the values for this graphic as values form another graphic.
      * 
      * @param other
-     *        the other graphic to set the values from.
+     *            the other graphic to set the values from.
      * @return this graphic.
      */
     public Gfx setAs(Gfx other) {

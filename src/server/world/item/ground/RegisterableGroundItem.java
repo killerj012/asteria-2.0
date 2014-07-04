@@ -23,9 +23,9 @@ public class RegisterableGroundItem {
      * Fires the pickup event for a {@link GroundItem}.
      * 
      * @param item
-     *        the item's pickup event to fire.
+     *            the item's pickup event to fire.
      * @param player
-     *        the player that fired the pickup event.
+     *            the player that fired the pickup event.
      */
     public void firePickupEvent(GroundItem item, Player player) {
 
@@ -37,9 +37,9 @@ public class RegisterableGroundItem {
      * Searches the database for an item and returns it if found.
      * 
      * @param itemId
-     *        the id of the item to search for.
+     *            the id of the item to search for.
      * @param position
-     *        the position of the item to search for.
+     *            the position of the item to search for.
      */
     public GroundItem searchDatabase(int itemId, Position position) {
         for (GroundItem item : itemList) {
@@ -48,7 +48,8 @@ public class RegisterableGroundItem {
 
             }
 
-            if (item.getItem().getId() == itemId && item.getPosition().equals(position)) {
+            if (item.getItem().getId() == itemId
+                    && item.getPosition().equals(position)) {
                 return item;
             }
         }
@@ -59,7 +60,7 @@ public class RegisterableGroundItem {
      * Registers a new ground item to the game world.
      * 
      * @param registerable
-     *        the ground item to register.
+     *            the ground item to register.
      */
     public void register(GroundItem registerable) {
 
@@ -75,19 +76,23 @@ public class RegisterableGroundItem {
      * items with the same id.
      * 
      * @param registerable
-     *        the ground item to register and stack if applicable.
+     *            the ground item to register and stack if applicable.
      */
     public void registerAndStack(GroundItem registerable) {
         int itemCount = 0;
 
-        for (Iterator<GroundItem> iterator = itemList.iterator(); iterator.hasNext();) {
+        for (Iterator<GroundItem> iterator = itemList.iterator(); iterator
+                .hasNext();) {
             GroundItem item = iterator.next();
 
             if (item == null) {
                 continue;
             }
 
-            if (item.getItem().getId() == registerable.getItem().getId() && item.getPosition().equals(registerable.getPosition()) && item.getPlayer().getUsername().equals(registerable.getPlayer().getUsername())) {
+            if (item.getItem().getId() == registerable.getItem().getId()
+                    && item.getPosition().equals(registerable.getPosition())
+                    && item.getPlayer().getUsername()
+                            .equals(registerable.getPlayer().getUsername())) {
                 itemCount += item.getItem().getAmount();
                 item.fireOnUnregister();
                 iterator.remove();
@@ -107,7 +112,7 @@ public class RegisterableGroundItem {
      * Unregisters an existing ground item from the game world.
      * 
      * @param registerable
-     *        the ground item to unregister.
+     *            the ground item to unregister.
      */
     public void unregister(GroundItem registerable) {
 
@@ -122,7 +127,7 @@ public class RegisterableGroundItem {
      * Fired when the player loads a new region.
      * 
      * @param player
-     *        the player loading a new region.
+     *            the player loading a new region.
      */
     public void loadNewRegion(Player player) {
 
@@ -137,13 +142,19 @@ public class RegisterableGroundItem {
 
             player.getPacketBuilder().removeGroundItem(databaseItem);
 
-            if (databaseItem.getState() == ItemState.SEEN_BY_NO_ONE || databaseItem.getState() == null && databaseItem.getPosition().withinDistance(player.getPosition(), 60)) {
+            if (databaseItem.getState() == ItemState.SEEN_BY_NO_ONE
+                    || databaseItem.getState() == null
+                    && databaseItem.getPosition().withinDistance(
+                            player.getPosition(), 60)) {
                 player.getPacketBuilder().sendGroundItem(databaseItem);
                 continue;
             }
 
             if (databaseItem.getPlayer() != null) {
-                if (databaseItem.getPlayer().getUsername().equals(player.getUsername()) && databaseItem.getPosition().withinDistance(player.getPosition(), 60)) {
+                if (databaseItem.getPlayer().getUsername()
+                        .equals(player.getUsername())
+                        && databaseItem.getPosition().withinDistance(
+                                player.getPosition(), 60)) {
                     player.getPacketBuilder().sendGroundItem(databaseItem);
                     continue;
                 }

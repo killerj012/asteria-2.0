@@ -13,8 +13,8 @@ public abstract class OnFireEventListener extends Worker {
      * Create a new {@link OnFireEventListener}.
      * 
      * @param rateOfFire
-     *        the rate in which the event will be checked and the logic will be
-     *        fired in ticks.
+     *            the rate in which the event will be checked and the logic will
+     *            be fired in ticks.
      */
     public OnFireEventListener(int rateOfFire) {
         super(rateOfFire, true);
@@ -36,8 +36,8 @@ public abstract class OnFireEventListener extends Worker {
     public abstract boolean fireLogicUntil();
 
     /**
-     * The actual logic that will be fired until <code>fireLogicUntil</code>
-     * is flagged.
+     * The actual logic that will be fired until <code>fireLogicUntil</code> is
+     * flagged.
      */
     public abstract void run();
 

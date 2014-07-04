@@ -19,7 +19,7 @@ public class MinigameFactory {
      * Gets the instance of the minigame the player is currently in.
      * 
      * @param player
-     *        the player to get the instance for.
+     *            the player to get the instance for.
      * @return the instance of the minigame.
      */
     public static Minigame getMinigame(Player player) {
@@ -35,7 +35,7 @@ public class MinigameFactory {
      * Determines if the player is even in a minigame.
      * 
      * @param player
-     *        the player to check for.
+     *            the player to check for.
      * @return true if the player is in a minigame.
      */
     public static boolean inMinigame(Player player) {

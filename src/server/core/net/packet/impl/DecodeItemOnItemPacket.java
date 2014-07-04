@@ -12,7 +12,7 @@ import server.world.item.Item;
  * 
  * @author lare96
  */
-@PacketOpcodeHeader( { 53 })
+@PacketOpcodeHeader({ 53 })
 public class DecodeItemOnItemPacket extends PacketDecoder {
 
     @Override
@@ -22,8 +22,10 @@ public class DecodeItemOnItemPacket extends PacketDecoder {
         in.readShort();
         in.readShort();
 
-        Item itemUsed = player.getInventory().getContainer().getItem(itemFirstClickSlot);
-        Item itemOn = player.getInventory().getContainer().getItem(itemSecondClickSlot);
+        Item itemUsed = player.getInventory().getContainer()
+                .getItem(itemFirstClickSlot);
+        Item itemOn = player.getInventory().getContainer()
+                .getItem(itemSecondClickSlot);
 
         if (itemUsed == null || itemOn == null) {
             return;

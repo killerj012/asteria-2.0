@@ -83,7 +83,7 @@ public class NpcDefinition {
      * Sets an array containing all of the npc definitions.
      * 
      * @param npcDefinition
-     *        the new array to set.
+     *            the new array to set.
      */
     public static void setNpcDefinition(NpcDefinition[] npcDefinition) {
         NpcDefinition.npcDefinition = npcDefinition;
@@ -102,7 +102,7 @@ public class NpcDefinition {
      * Sets the id of the npc.
      * 
      * @param id
-     *        the id to set.
+     *            the id to set.
      */
     public void setId(int id) {
         this.id = id;
@@ -121,7 +121,7 @@ public class NpcDefinition {
      * Sets the name for this npc.
      * 
      * @param name
-     *        the name to set.
+     *            the name to set.
      */
     public void setName(String name) {
         this.name = name;
@@ -140,7 +140,7 @@ public class NpcDefinition {
      * Sets the examine info for this npc.
      * 
      * @param examine
-     *        the examine info to set.
+     *            the examine info to set.
      */
     public void setExamine(String examine) {
         this.examine = examine;
@@ -159,7 +159,7 @@ public class NpcDefinition {
      * Sets the combat level for this npc.
      * 
      * @param combatLevel
-     *        the combat level to set.
+     *            the combat level to set.
      */
     public void setCombatLevel(int combat) {
         this.combat = combat;
@@ -178,7 +178,7 @@ public class NpcDefinition {
      * Sets the size of this npc.
      * 
      * @param size
-     *        the npc size to set.
+     *            the npc size to set.
      */
     public void setNpcSize(int size) {
         this.size = size;
@@ -197,7 +197,7 @@ public class NpcDefinition {
      * Sets if this npc is attackable.
      * 
      * @param attackable
-     *        the attackable to set.
+     *            the attackable to set.
      */
     public void setAttackable(boolean attackable) {
         this.attackable = attackable;
@@ -216,7 +216,7 @@ public class NpcDefinition {
      * Sets if this npc is aggressive.
      * 
      * @param aggressive
-     *        the aggressive to set.
+     *            the aggressive to set.
      */
     public void setAggressive(boolean aggressive) {
         this.aggressive = aggressive;
@@ -235,7 +235,7 @@ public class NpcDefinition {
      * Sets if this npc retreats or not when their health is low.
      * 
      * @param retreats
-     *        the retreats to set.
+     *            the retreats to set.
      */
     public void setRetreats(boolean retreats) {
         this.retreats = retreats;
@@ -254,7 +254,7 @@ public class NpcDefinition {
      * Sets if this npc is poisonous.
      * 
      * @param poisonous
-     *        the poisonous to set.
+     *            the poisonous to set.
      */
     public void setPoisonous(boolean poisonous) {
         this.poisonous = poisonous;
@@ -273,7 +273,7 @@ public class NpcDefinition {
      * Sets the respawn time for this npc.
      * 
      * @param respawnTime
-     *        the respawn time to set.
+     *            the respawn time to set.
      */
     public void setRespawnTime(int respawn) {
         this.respawn = respawn;
@@ -292,7 +292,7 @@ public class NpcDefinition {
      * Sets the maximum damage this npc is allowed to deal.
      * 
      * @param maxHit
-     *        the max hit to set.
+     *            the max hit to set.
      */
     public void setMaxHit(int maxHit) {
         this.maxHit = maxHit;
@@ -311,7 +311,7 @@ public class NpcDefinition {
      * Sets the amount of hitpoints this npc has.
      * 
      * @param hitpoints
-     *        the hitpoints to set.
+     *            the hitpoints to set.
      */
     public void setHitpoints(int hitpoints) {
         this.hitpoints = hitpoints;
@@ -330,7 +330,7 @@ public class NpcDefinition {
      * Sets how fast this npc can attack.
      * 
      * @param attackSpeed
-     *        the attack speed to set.
+     *            the attack speed to set.
      */
     public void setAttackSpeed(int attackSpeed) {
         this.attackSpeed = attackSpeed;
@@ -349,7 +349,7 @@ public class NpcDefinition {
      * Sets the attacking animation for this npc.
      * 
      * @param attackAnimation
-     *        the attack animation to set.
+     *            the attack animation to set.
      */
     public void setAttackAnimation(int attackAnim) {
         this.attackAnim = attackAnim;
@@ -368,7 +368,7 @@ public class NpcDefinition {
      * Sets the defending animation for this npc.
      * 
      * @param defenceAnimation
-     *        the defence animation to set.
+     *            the defence animation to set.
      */
     public void setDefenceAnimation(int defenceAnim) {
         this.defenceAnim = defenceAnim;
@@ -387,7 +387,7 @@ public class NpcDefinition {
      * Sets the death animation for this npc.
      * 
      * @param deathAnimation
-     *        the death animation to set.
+     *            the death animation to set.
      */
     public void setDeathAnimation(int deathAnim) {
         this.deathAnim = deathAnim;
@@ -406,7 +406,7 @@ public class NpcDefinition {
      * Sets the attack bonus.
      * 
      * @param attackBonus
-     *        the attack bonus to set.
+     *            the attack bonus to set.
      */
     public void setAttackBonus(int attackBonus) {
         this.attackBonus = attackBonus;
@@ -425,7 +425,7 @@ public class NpcDefinition {
      * Sets the melee resistance.
      * 
      * @param defenceMelee
-     *        the defence melee to set.
+     *            the defence melee to set.
      */
     public void setDefenceMelee(int defenceMelee) {
         this.defenceMelee = defenceMelee;
@@ -444,7 +444,7 @@ public class NpcDefinition {
      * Sets the range resistance.
      * 
      * @param defenceRange
-     *        the defence range to set.
+     *            the defence range to set.
      */
     public void setDefenceRange(int defenceRange) {
         this.defenceRange = defenceRange;
@@ -463,7 +463,7 @@ public class NpcDefinition {
      * Sets the magic resistance.
      * 
      * @param defenceMage
-     *        the defence mage to set.
+     *            the defence mage to set.
      */
     public void setDefenceMage(int defenceMage) {
         this.defenceMage = defenceMage;

@@ -30,15 +30,28 @@ public class DecodePickupItemPacket extends PacketDecoder {
         player.getMovementQueueListener().submit(new Runnable() {
             @Override
             public void run() {
-                if (player.getPosition().equals(new Position(itemX, itemY, player.getPosition().getZ()))) {
-                    GroundItem worldItem = World.getGroundItems().searchDatabase(itemId, new Position(itemX, itemY, player.getPosition().getZ()));
+                if (player.getPosition()
+                        .equals(new Position(itemX, itemY, player.getPosition()
+                                .getZ()))) {
+                    GroundItem worldItem = World.getGroundItems()
+                            .searchDatabase(
+                                    itemId,
+                                    new Position(itemX, itemY, player
+                                            .getPosition().getZ()));
 
                     if (worldItem == null) {
                         return;
                     }
 
-                    if (!player.getInventory().getContainer().hasRoomFor(new Item(itemId, worldItem.getItem().getAmount()))) {
-                        player.getPacketBuilder().sendMessage("You don't have enough free inventory space to pickup this item.");
+                    if (!player
+                            .getInventory()
+                            .getContainer()
+                            .hasRoomFor(
+                                    new Item(itemId, worldItem.getItem()
+                                            .getAmount()))) {
+                        player.getPacketBuilder()
+                                .sendMessage(
+                                        "You don't have enough free inventory space to pickup this item.");
                         return;
                     }
 

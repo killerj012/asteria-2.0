@@ -36,44 +36,59 @@ public class DefaultMeleeCombatStrategy implements CombatStrategy {
         /** Determine the animation that will be used. */
         if (entity.type() == EntityType.NPC) {
             Npc npc = (Npc) entity;
-            npc.animation(new Animation(npc.getDefinition().getAttackAnimation()));
+            npc.animation(new Animation(npc.getDefinition()
+                    .getAttackAnimation()));
         } else if (entity.type() == EntityType.PLAYER) {
             Player player = (Player) entity;
 
             if (!player.isSpecialActivated()) {
-                Item item = player.getEquipment().getContainer().getItem(Misc.EQUIPMENT_SLOT_WEAPON);
+                Item item = player.getEquipment().getContainer()
+                        .getItem(Misc.EQUIPMENT_SLOT_WEAPON);
 
                 if (item != null) {
-                    if (item.getDefinition().getItemName().startsWith("Dharoks")) {
+                    if (item.getDefinition().getItemName()
+                            .startsWith("Dharoks")) {
                         if (player.getFightType() == FightType.BATTLEAXE_SMASH) {
                             player.animation(new Animation(2067));
                         } else {
                             player.animation(new Animation(2066));
                         }
-                    } else if (item.getDefinition().getItemName().equals("Granite maul")) {
+                    } else if (item.getDefinition().getItemName()
+                            .equals("Granite maul")) {
                         player.animation(new Animation(1665));
-                    } else if (item.getDefinition().getItemName().equals("Tzhaar-ket-om")) {
+                    } else if (item.getDefinition().getItemName()
+                            .equals("Tzhaar-ket-om")) {
                         player.animation(new Animation(2661));
-                    } else if (item.getDefinition().getItemName().endsWith("wand")) {
-                        player.animation(new Animation(FightType.UNARMED_KICK.getAnimation()));
-                    } else if (item.getDefinition().getItemName().startsWith("Torags")) {
+                    } else if (item.getDefinition().getItemName()
+                            .endsWith("wand")) {
+                        player.animation(new Animation(FightType.UNARMED_KICK
+                                .getAnimation()));
+                    } else if (item.getDefinition().getItemName()
+                            .startsWith("Torags")) {
                         player.animation(new Animation(2068));
-                    } else if (item.getDefinition().getItemName().startsWith("Veracs")) {
+                    } else if (item.getDefinition().getItemName()
+                            .startsWith("Veracs")) {
                         player.animation(new Animation(2062));
                     } else {
-                        player.animation(new Animation(player.getFightType().getAnimation()));
+                        player.animation(new Animation(player.getFightType()
+                                .getAnimation()));
                     }
                 } else {
-                    player.animation(new Animation(player.getFightType().getAnimation()));
+                    player.animation(new Animation(player.getFightType()
+                            .getAnimation()));
                 }
             } else {
-                return player.getCombatSpecial().getSpecialStrategy().calculateHit(player, victim);
+                return player.getCombatSpecial().getSpecialStrategy()
+                        .calculateHit(player, victim);
             }
         }
 
-        return new CombatHitContainer(new Hit[] { CombatFactory.getMeleeHit(entity) }, CombatType.MELEE, true) {
+        return new CombatHitContainer(
+                new Hit[] { CombatFactory.getMeleeHit(entity) },
+                CombatType.MELEE, true) {
             @Override
-            public void onHit(Entity attacker, Entity victim, int damage, boolean accurate) {
+            public void onHit(Entity attacker, Entity victim, int damage,
+                    boolean accurate) {
             }
         };
     }

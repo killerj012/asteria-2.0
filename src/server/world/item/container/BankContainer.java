@@ -17,13 +17,14 @@ public class BankContainer {
     private Player player;
 
     /** The item container that holds and manages all of the items in this bank. */
-    private ItemContainer container = new ItemContainer(ContainerPolicy.STACKABLE_POLICY, 250);
+    private ItemContainer container = new ItemContainer(
+            ContainerPolicy.STACKABLE_POLICY, 250);
 
     /**
      * Create a new {@link BankContainer}.
      * 
      * @param player
-     *        the player's bank being managed.
+     *            the player's bank being managed.
      */
     public BankContainer(Player player) {
         this.player = player;
@@ -38,7 +39,8 @@ public class BankContainer {
         Item[] bankItems = container.toArray();
         Item[] inventoryItems = player.getInventory().getContainer().toArray();
         player.getPacketBuilder().sendUpdateItems(5382, bankItems);
-        player.getPacketBuilder().sendUpdateItems(InventoryContainer.BANK_INVENTORY_CONTAINER_ID, inventoryItems);
+        player.getPacketBuilder().sendUpdateItems(
+                InventoryContainer.BANK_INVENTORY_CONTAINER_ID, inventoryItems);
     }
 
     /**
@@ -46,9 +48,9 @@ public class BankContainer {
      * inventory. This is used for when a player is manually depositing an item.
      * 
      * @param slot
-     *        the slot from your inventory.
+     *            the slot from your inventory.
      * @param item
-     *        the item to deposit into your bank.
+     *            the item to deposit into your bank.
      */
     public void addItem(int slot, Item item) {
 
@@ -76,7 +78,8 @@ public class BankContainer {
 
         /** Block if the bank is full and we don't have this item inside. */
         if (freeBankingSlots == -1 && !container.contains(item.getId())) {
-            player.getPacketBuilder().sendMessage("You don't have enough space to deposit this item!");
+            player.getPacketBuilder().sendMessage(
+                    "You don't have enough space to deposit this item!");
             return;
 
             /**
@@ -85,22 +88,26 @@ public class BankContainer {
              */
         } else if (freeBankingSlots == -1 && container.contains(item.getId())) {
             player.getInventory().deleteItemSlot(item, slot);
-            container.getItem(container.getSlotById(item.getId())).incrementAmountBy(item.getAmount());
+            container.getItem(container.getSlotById(item.getId()))
+                    .incrementAmountBy(item.getAmount());
             checkForZero();
-            player.getInventory().refresh(InventoryContainer.BANK_INVENTORY_CONTAINER_ID);
+            player.getInventory().refresh(
+                    InventoryContainer.BANK_INVENTORY_CONTAINER_ID);
             Item[] bankItems = container.toArray();
             player.getPacketBuilder().sendUpdateItems(5382, bankItems);
             return;
         }
 
         /** Changes a noted item into a regular item. */
-        int depositItem = item.getDefinition().isNoted() ? item.getDefinition().getUnNotedId() : item.getId();
+        int depositItem = item.getDefinition().isNoted() ? item.getDefinition()
+                .getUnNotedId() : item.getId();
 
         /** Either add or stack the item. */
         if (!container.contains(item.getId())) {
             container.add(new Item(depositItem, item.getAmount()));
         } else if (container.contains(item.getId())) {
-            container.getItem(container.getSlotById(depositItem)).incrementAmountBy(item.getAmount());
+            container.getItem(container.getSlotById(depositItem))
+                    .incrementAmountBy(item.getAmount());
         }
 
         /** Remove the item from the player's inventory. */
@@ -108,7 +115,8 @@ public class BankContainer {
 
         /** Refresh the bank and inventory. */
         checkForZero();
-        player.getInventory().refresh(InventoryContainer.BANK_INVENTORY_CONTAINER_ID);
+        player.getInventory().refresh(
+                InventoryContainer.BANK_INVENTORY_CONTAINER_ID);
         Item[] bankItems = container.toArray();
         player.getPacketBuilder().sendUpdateItems(5382, bankItems);
     }
@@ -119,7 +127,7 @@ public class BankContainer {
      * the player's bank.
      * 
      * @param item
-     *        the item to deposit into your bank.
+     *            the item to deposit into your bank.
      */
     public void addItem(Item item) {
 
@@ -128,7 +136,8 @@ public class BankContainer {
 
         /** Block if the bank is full and we don't have this item inside. */
         if (freeBankingSlots == -1 && !container.contains(item.getId())) {
-            player.getPacketBuilder().sendMessage("You don't have enough space to deposit this item!");
+            player.getPacketBuilder().sendMessage(
+                    "You don't have enough space to deposit this item!");
             return;
 
             /**
@@ -136,22 +145,26 @@ public class BankContainer {
              * inside.
              */
         } else if (freeBankingSlots == -1 && container.contains(item.getId())) {
-            container.getItem(container.getSlotById(item.getId())).incrementAmountBy(item.getAmount());
+            container.getItem(container.getSlotById(item.getId()))
+                    .incrementAmountBy(item.getAmount());
             checkForZero();
-            player.getInventory().refresh(InventoryContainer.BANK_INVENTORY_CONTAINER_ID);
+            player.getInventory().refresh(
+                    InventoryContainer.BANK_INVENTORY_CONTAINER_ID);
             Item[] bankItems = container.toArray();
             player.getPacketBuilder().sendUpdateItems(5382, bankItems);
             return;
         }
 
         /** Changes a noted item into a regular item. */
-        int depositItem = item.getDefinition().isNoted() ? item.getDefinition().getUnNotedId() : item.getId();
+        int depositItem = item.getDefinition().isNoted() ? item.getDefinition()
+                .getUnNotedId() : item.getId();
 
         /** Either add or stack the item. */
         if (!container.contains(item.getId())) {
             container.add(new Item(depositItem, item.getAmount()));
         } else if (container.contains(item.getId())) {
-            container.getItem(container.getSlotById(depositItem)).incrementAmountBy(item.getAmount());
+            container.getItem(container.getSlotById(depositItem))
+                    .incrementAmountBy(item.getAmount());
         }
     }
 
@@ -160,9 +173,9 @@ public class BankContainer {
      * inventory. This is used for when a player is manually depositing an item.
      * 
      * @param slot
-     *        the slot from your bank.
+     *            the slot from your bank.
      * @param item
-     *        the item to withdraw from your bank.
+     *            the item to withdraw from your bank.
      */
     public void deleteItem(int slot, Item item) {
 
@@ -173,7 +186,8 @@ public class BankContainer {
         int withdrawAmount = container.getCount(item.getId());
 
         /** Packet validation check. */
-        if (item.getAmount() < 1 || item.getId() < 0 || !container.contains(item.getId())) {
+        if (item.getAmount() < 1 || item.getId() < 0
+                || !container.contains(item.getId())) {
             return;
         }
 
@@ -186,34 +200,44 @@ public class BankContainer {
         }
 
         /** If we are withdrawing more than the free slots we have. */
-        if (item.getAmount() > player.getInventory().getContainer().freeSlots() && !item.getDefinition().isStackable() && !player.isWithdrawAsNote()) {
+        if (item.getAmount() > player.getInventory().getContainer().freeSlots()
+                && !item.getDefinition().isStackable()
+                && !player.isWithdrawAsNote()) {
             item.setAmount(player.getInventory().getContainer().freeSlots());
         }
 
         /** Check the inventory space. */
-        if (!item.getDefinition().isStackable() && !item.getDefinition().isNoted() && !player.isWithdrawAsNote()) {
-            if (player.getInventory().getContainer().freeSlots() < item.getAmount()) {
-                player.getPacketBuilder().sendMessage("You do not have enough space in your inventory!");
+        if (!item.getDefinition().isStackable()
+                && !item.getDefinition().isNoted()
+                && !player.isWithdrawAsNote()) {
+            if (player.getInventory().getContainer().freeSlots() < item
+                    .getAmount()) {
+                player.getPacketBuilder().sendMessage(
+                        "You do not have enough space in your inventory!");
                 return;
             }
         } else {
             if (player.getInventory().getContainer().freeSlots() < 1) {
-                player.getPacketBuilder().sendMessage("You do not have enough space in your inventory!");
+                player.getPacketBuilder().sendMessage(
+                        "You do not have enough space in your inventory!");
                 return;
             }
         }
 
         /** Check if the item can be withdrawn as a note. */
         if (player.isWithdrawAsNote() && !withdrawItemNoted) {
-            player.getPacketBuilder().sendMessage("This item can't be withdrawn as a note.");
+            player.getPacketBuilder().sendMessage(
+                    "This item can't be withdrawn as a note.");
             return;
         }
 
         /** Withdraw the item. */
         if (!player.isWithdrawAsNote()) {
-            player.getInventory().addItem(new Item(item.getId(), item.getAmount()));
+            player.getInventory().addItem(
+                    new Item(item.getId(), item.getAmount()));
         } else if (player.isWithdrawAsNote()) {
-            player.getInventory().addItem(new Item(item.getId() + 1, item.getAmount()));
+            player.getInventory().addItem(
+                    new Item(item.getId() + 1, item.getAmount()));
         }
 
         /** Remove the item from the player's bank. */
@@ -223,7 +247,8 @@ public class BankContainer {
         checkForZero();
         container.compact();
         Item[] bankItems = container.toArray();
-        player.getInventory().refresh(InventoryContainer.BANK_INVENTORY_CONTAINER_ID);
+        player.getInventory().refresh(
+                InventoryContainer.BANK_INVENTORY_CONTAINER_ID);
         player.getPacketBuilder().sendUpdateItems(5382, bankItems);
     }
 
@@ -233,7 +258,7 @@ public class BankContainer {
      * the player's bank.
      * 
      * @param item
-     *        the item to withdraw from your bank.
+     *            the item to withdraw from your bank.
      */
     public void deleteItem(Item item) {
 

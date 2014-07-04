@@ -55,20 +55,25 @@ public final class Rs2Engine implements Runnable {
      * Initialize the core components of the {@link Rs2Engine}.
      * 
      * @throws Exception
-     *         if any errors occur during the initialization.
+     *             if any errors occur during the initialization.
      */
     public static void init() throws Exception {
 
         /** Check if we have already started the engine. */
         if (gameExecutor != null) {
-            throw new IllegalStateException("The engine has already been started!");
+            throw new IllegalStateException(
+                    "The engine has already been started!");
         }
 
         /** Create the game executor. */
-        gameExecutor = Executors.newSingleThreadScheduledExecutor(new ThreadProvider(Rs2Engine.class.getName(), Thread.MAX_PRIORITY, false, false));
+        gameExecutor = Executors
+                .newSingleThreadScheduledExecutor(new ThreadProvider(
+                        Rs2Engine.class.getName(), Thread.MAX_PRIORITY, false,
+                        false));
 
         /** Start ticking the game executor */
-        gameExecutor.scheduleAtFixedRate(new Rs2Engine(), 0, 600, TimeUnit.MILLISECONDS);
+        gameExecutor.scheduleAtFixedRate(new Rs2Engine(), 0, 600,
+                TimeUnit.MILLISECONDS);
 
         /** Start miscellaneous tasks. */
         TaskFactory.getFactory().submit(new RestoreStatWorker());
@@ -81,7 +86,7 @@ public final class Rs2Engine implements Runnable {
      * based on the {@link Task}s <code>context()</code> implementation.
      * 
      * @param t
-     *        the task to be pushed to the engine.
+     *            the task to be pushed to the engine.
      */
     public static void pushTask(Task t) {
         t.context();
@@ -94,7 +99,7 @@ public final class Rs2Engine implements Runnable {
      * <code>context()</code> implementation.
      * 
      * @param t
-     *        the task to be pushed to the engine.
+     *            the task to be pushed to the engine.
      */
     public static <T> Future<T> pushTask(TaskFuture<T> t) {
         return t.context();

@@ -25,26 +25,27 @@ public class DecodeRequestPacket extends PacketDecoder {
         Player request = World.getPlayers().get(requestId);
 
         /** Make sure the player to is real and close to us. */
-        if (request == null || !request.getPosition().isViewableFrom(player.getPosition())) {
+        if (request == null
+                || !request.getPosition().isViewableFrom(player.getPosition())) {
             return;
         }
 
         SkillEvent.fireSkillEvents(player);
 
         switch (player.getSession().getPacketOpcode()) {
-            case 139:
+        case 139:
 
-                /** Check if we can trade based on the minigame we're in. */
-                for (Minigame minigame : MinigameFactory.getMinigames().values()) {
-                    if (minigame.inMinigame(player)) {
-                        if (!minigame.canTrade(player, request)) {
-                            return;
-                        }
+            /** Check if we can trade based on the minigame we're in. */
+            for (Minigame minigame : MinigameFactory.getMinigames().values()) {
+                if (minigame.inMinigame(player)) {
+                    if (!minigame.canTrade(player, request)) {
+                        return;
                     }
                 }
+            }
 
-                player.getTradeSession().request(request);
-                break;
+            player.getTradeSession().request(request);
+            break;
 
         }
     }

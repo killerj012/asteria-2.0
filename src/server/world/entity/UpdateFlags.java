@@ -16,7 +16,7 @@ public class UpdateFlags {
      * Flag an update flag.
      * 
      * @param flag
-     *        the update flag you are flagging.
+     *            the update flag you are flagging.
      */
     public void flag(Flag flag) {
         bits.set(flag.ordinal());
@@ -26,7 +26,7 @@ public class UpdateFlags {
      * Gets the value of an update flag.
      * 
      * @param flag
-     *        the flag to get the value of.
+     *            the flag to get the value of.
      * @return the value of the flag.
      */
     public boolean get(Flag flag) {

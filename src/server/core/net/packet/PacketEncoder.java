@@ -32,7 +32,7 @@ public final class PacketEncoder {
      * Create a new {@link PacketEncoder}.
      * 
      * @param player
-     *        the player sending these packets.
+     *            the player sending these packets.
      */
     public PacketEncoder(Player player) {
         this.player = player;
@@ -42,12 +42,13 @@ public final class PacketEncoder {
      * Shows or hides a layer on an interface.
      * 
      * @param interfaceIndex
-     *        the layer to show or hide.
+     *            the layer to show or hide.
      * @param hidden
-     *        true if the layer should be hidden.
+     *            true if the layer should be hidden.
      * @return this packet encoder.
      */
-    public PacketEncoder sendHideInterfaceLayer(int interfaceIndex, boolean hidden) {
+    public PacketEncoder sendHideInterfaceLayer(int interfaceIndex,
+            boolean hidden) {
         WriteBuffer out = PacketBuffer.newWriteBuffer(4);
         out.writeHeader(171);
         out.writeByte(hidden ? 1 : 0);
@@ -60,9 +61,9 @@ public final class PacketEncoder {
      * Updates the special bar meter.
      * 
      * @param amount
-     *        the amount to update it with.
+     *            the amount to update it with.
      * @param barId
-     *        the id of the bar.
+     *            the id of the bar.
      * @return this packet encoder.
      */
     public PacketEncoder updateSpecialBar(int amount, int barId) {
@@ -79,7 +80,7 @@ public final class PacketEncoder {
      * Displays a string on an empty chatbox interface.
      * 
      * @param s
-     *        the string to display.
+     *            the string to display.
      * @return this packet encoder.
      */
     public PacketEncoder sendChatboxString(String s) {
@@ -93,23 +94,22 @@ public final class PacketEncoder {
      * Plays an animation for this object.
      * 
      * @param position
-     *        the position of the object.
+     *            the position of the object.
      * @param animation
-     *        the animation to play.
+     *            the animation to play.
      * @param type
-     *        the type of object.
+     *            the type of object.
      * @param orientation
-     *        the orientation of this object.
+     *            the orientation of this object.
      * @return this packet encoder.
      */
-    public PacketEncoder sendObjectAnimation(Position position, int animation, int type, int orientation) {
+    public PacketEncoder sendObjectAnimation(Position position, int animation,
+            int type, int orientation) {
         sendCoordinates(position);
         WriteBuffer out = PacketBuffer.newWriteBuffer(5);
         out.writeHeader(160);
-        out.writeByte(((0 & 7) << 4)
-                + (0 & 7), ValueType.S);
-        out.writeByte((type << 2)
-                + (orientation & 3), ValueType.S);
+        out.writeByte(((0 & 7) << 4) + (0 & 7), ValueType.S);
+        out.writeByte((type << 2) + (orientation & 3), ValueType.S);
         out.writeShort(animation, ValueType.A);
         player.getSession().encode(out);
         return this;
@@ -119,23 +119,25 @@ public final class PacketEncoder {
      * Plays an animation for this object visible to everyone.
      * 
      * @param position
-     *        the position of the object.
+     *            the position of the object.
      * @param animation
-     *        the animation to play.
+     *            the animation to play.
      * @param type
-     *        the type of object.
+     *            the type of object.
      * @param orientation
-     *        the orientation of this object.
+     *            the orientation of this object.
      * @return this packet encoder.
      */
-    public PacketEncoder sendGlobalObjectAnimation(Position position, int animation, int type, int orientation) {
+    public PacketEncoder sendGlobalObjectAnimation(Position position,
+            int animation, int type, int orientation) {
         for (Player player : this.player.getPlayers()) {
             if (player == null) {
                 continue;
             }
 
             if (player.getPosition().isViewableFrom(position)) {
-                player.getPacketBuilder().sendObjectAnimation(position, animation, type, orientation);
+                player.getPacketBuilder().sendObjectAnimation(position,
+                        animation, type, orientation);
             }
         }
         return this;
@@ -145,17 +147,18 @@ public final class PacketEncoder {
      * Creates a graphic for a single player.
      * 
      * @param id
-     *        the id of the graphic.
+     *            the id of the graphic.
      * @param position
-     *        the position of the graphic.
+     *            the position of the graphic.
      * @param level
-     *        the level (how high) the graphic is.
+     *            the level (how high) the graphic is.
      * @return this packet encoder.
      */
     public PacketEncoder sendGraphic(int id, Position position, int level) {
         sendCoordinates(position);
         PacketBuffer.WriteBuffer out = PacketBuffer.newWriteBuffer(7);
-        out.writeHeader(4).writeByte(0).writeShort(id).writeByte(level).writeShort(0);
+        out.writeHeader(4).writeByte(0).writeShort(id).writeByte(level)
+                .writeShort(0);
         player.getSession().encode(out);
         return this;
     }
@@ -164,14 +167,15 @@ public final class PacketEncoder {
      * Creates a graphic for everyone within viewing distance.
      * 
      * @param id
-     *        the id of the graphic.
+     *            the id of the graphic.
      * @param position
-     *        the position of the graphic.
+     *            the position of the graphic.
      * @param level
-     *        the level (how high) the graphic is.
+     *            the level (how high) the graphic is.
      * @return this packet encoder.
      */
-    public PacketEncoder sendViewableGraphic(int id, Position position, int level) {
+    public PacketEncoder sendViewableGraphic(int id, Position position,
+            int level) {
         for (Player player : this.player.getPlayers()) {
             if (player == null) {
                 continue;
@@ -188,11 +192,11 @@ public final class PacketEncoder {
      * Plays a sound from the cache.
      * 
      * @param id
-     *        the id of the sound.
+     *            the id of the sound.
      * @param type
-     *        the type of sound.
+     *            the type of sound.
      * @param delay
-     *        the delay before the sound plays.
+     *            the delay before the sound plays.
      * @return this packet encoder.
      */
     public PacketEncoder sendSound(int id, int type, int delay) {
@@ -206,20 +210,25 @@ public final class PacketEncoder {
      * Sends the welcome interface used upon login.
      * 
      * @param recoveryChange
-     *        the last time you set your recovery questions.
+     *            the last time you set your recovery questions.
      * @param memberWarning
-     *        if you should be warned about your membership running out.
+     *            if you should be warned about your membership running out.
      * @param messages
-     *        the amount of messages you have.
+     *            the amount of messages you have.
      * @param lastLoginIP
-     *        the last IP you logged in from.
+     *            the last IP you logged in from.
      * @param lastLogin
-     *        the last time you logged in.
+     *            the last time you logged in.
      * @return this packet encoder.
      */
-    public PacketEncoder sendWelcomeInterface(int recoveryChange, boolean memberWarning, int messages, int lastLoginIP, int lastLogin) {
+    public PacketEncoder sendWelcomeInterface(int recoveryChange,
+            boolean memberWarning, int messages, int lastLoginIP, int lastLogin) {
         PacketBuffer.WriteBuffer out = PacketBuffer.newWriteBuffer(20);
-        out.writeHeader(176).writeByte(recoveryChange, ValueType.C).writeShort(messages, ValueType.A).writeByte(memberWarning ? 1 : 0).writeInt(lastLoginIP, ByteOrder.INVERSE_MIDDLE).writeShort(lastLogin);
+        out.writeHeader(176).writeByte(recoveryChange, ValueType.C)
+                .writeShort(messages, ValueType.A)
+                .writeByte(memberWarning ? 1 : 0)
+                .writeInt(lastLoginIP, ByteOrder.INVERSE_MIDDLE)
+                .writeShort(lastLogin);
         player.getSession().encode(out);
         return this;
     }
@@ -228,9 +237,9 @@ public final class PacketEncoder {
      * Plays an interface animation.
      * 
      * @param interfaceId
-     *        the interface to play the animation on.
+     *            the interface to play the animation on.
      * @param animation
-     *        the animation to play.
+     *            the animation to play.
      * @return this packet encoder.
      */
     public PacketEncoder interfaceAnimation(int interfaceId, int animation) {
@@ -244,7 +253,7 @@ public final class PacketEncoder {
      * Sends the multicombat icon.
      * 
      * @param state
-     *        the state of the multicombat icon (0 = off/1 = on).
+     *            the state of the multicombat icon (0 = off/1 = on).
      * @return this packet encoder.
      */
     public PacketEncoder sendMultiCombatInterface(int state) {
@@ -258,16 +267,17 @@ public final class PacketEncoder {
      * Sends items to the selected slot on the interface.
      * 
      * @param frame
-     *        the frame to display the items on.
+     *            the frame to display the items on.
      * @param item
-     *        the item to display on the interface.
+     *            the item to display on the interface.
      * @param slot
-     *        the slot to display the items on.
+     *            the slot to display the items on.
      * @return this packet encoder.
      */
     public PacketEncoder sendItemOnInterfaceSlot(int frame, Item item, int slot) {
         PacketBuffer.WriteBuffer out = PacketBuffer.newWriteBuffer(32);
-        out.writeVariableShortPacketHeader(34).writeShort(frame).writeByte(slot).writeShort(item.getId() + 1);
+        out.writeVariableShortPacketHeader(34).writeShort(frame)
+                .writeByte(slot).writeShort(item.getId() + 1);
 
         if (item.getAmount() > 254) {
             out.writeByte(255).writeShort(item.getAmount());
@@ -284,14 +294,15 @@ public final class PacketEncoder {
      * Sends the head model of a mob to an interface.
      * 
      * @param id
-     *        the id of the head model.
+     *            the id of the head model.
      * @param size
-     *        the size of the head model.
+     *            the size of the head model.
      * @return this packet encoder.
      */
     public PacketEncoder sendMobHeadModel(int id, int size) {
         PacketBuffer.WriteBuffer out = PacketBuffer.newWriteBuffer(5);
-        out.writeHeader(75).writeShort(id, ValueType.A, ByteOrder.LITTLE).writeShort(size, ValueType.A, ByteOrder.LITTLE);
+        out.writeHeader(75).writeShort(id, ValueType.A, ByteOrder.LITTLE)
+                .writeShort(size, ValueType.A, ByteOrder.LITTLE);
         player.getSession().encode(out);
         return this;
     }
@@ -301,7 +312,7 @@ public final class PacketEncoder {
      * world.
      * 
      * @param palette
-     *        the instance of the region to create.
+     *            the instance of the region to create.
      * @return this packet builder.
      */
     public PacketEncoder sendCustomMapRegion(Palette palette) {
@@ -317,10 +328,8 @@ public final class PacketEncoder {
                     PaletteTile tile = palette.getTile(x, y, z);
                     out.writeBits(1, tile != null ? 1 : 0);
                     if (tile != null) {
-                        out.writeBits(26, tile.getX() << 14
-                                | tile.getY() << 3
-                                | tile.getZ() << 24
-                                | tile.getRotation() << 1);
+                        out.writeBits(26, tile.getX() << 14 | tile.getY() << 3
+                                | tile.getZ() << 24 | tile.getRotation() << 1);
                     }
                 }
             }
@@ -336,7 +345,7 @@ public final class PacketEncoder {
      * Sends the head model of a player to an interface.
      * 
      * @param i
-     *        the size of the head model.
+     *            the size of the head model.
      * @return this packet encoder.
      */
     public PacketEncoder sendPlayerHeadModel(int size) {
@@ -350,7 +359,7 @@ public final class PacketEncoder {
      * Flashes the selected sidebar.
      * 
      * @param id
-     *        the id of the sidebar to flash.
+     *            the id of the sidebar to flash.
      * @return this packet encoder.
      */
     public PacketEncoder flashSelectedSidebar(int id) {
@@ -376,7 +385,7 @@ public final class PacketEncoder {
      * Changes the state of the minimap.
      * 
      * @param state
-     *        the new state of the minimap.
+     *            the new state of the minimap.
      * @return this packet encoder.
      */
     public PacketEncoder sendMapState(int state) {
@@ -402,20 +411,22 @@ public final class PacketEncoder {
      * Spins the camera.
      * 
      * @param x
-     *        the x coordinate within the loaded map.
+     *            the x coordinate within the loaded map.
      * @param y
-     *        the y coordinate within the loaded map.
+     *            the y coordinate within the loaded map.
      * @param height
-     *        the height of the camera.
+     *            the height of the camera.
      * @param speed
-     *        the speed of the camera.
+     *            the speed of the camera.
      * @param angle
-     *        the angle of the camera.
+     *            the angle of the camera.
      * @return this packet encoder.
      */
-    public PacketEncoder sendCameraSpin(int x, int y, int height, int speed, int angle) {
+    public PacketEncoder sendCameraSpin(int x, int y, int height, int speed,
+            int angle) {
         PacketBuffer.WriteBuffer out = PacketBuffer.newWriteBuffer(7);
-        out.writeHeader(177).writeByte(x / 64).writeByte(y / 64).writeShort(height).writeByte(speed).writeByte(angle);
+        out.writeHeader(177).writeByte(x / 64).writeByte(y / 64)
+                .writeShort(height).writeByte(speed).writeByte(angle);
         player.getSession().encode(out);
         return this;
     }
@@ -424,20 +435,22 @@ public final class PacketEncoder {
      * Moves the camera.
      * 
      * @param x
-     *        the x coordinate within the loaded map.
+     *            the x coordinate within the loaded map.
      * @param y
-     *        the y coordinate within the loaded map.
+     *            the y coordinate within the loaded map.
      * @param height
-     *        the height of the camera.
+     *            the height of the camera.
      * @param speed
-     *        the speed of the camera.
+     *            the speed of the camera.
      * @param angle
-     *        the angle of the camera.
+     *            the angle of the camera.
      * @return this packet encoder.
      */
-    public PacketEncoder sendCameraMovement(int x, int y, int height, int speed, int angle) {
+    public PacketEncoder sendCameraMovement(int x, int y, int height,
+            int speed, int angle) {
         PacketBuffer.WriteBuffer out = PacketBuffer.newWriteBuffer(7);
-        out.writeHeader(166).writeByte(x / 64).writeByte(y / 64).writeShort(height).writeByte(speed).writeByte(angle);
+        out.writeHeader(166).writeByte(x / 64).writeByte(y / 64)
+                .writeShort(height).writeByte(speed).writeByte(angle);
         player.getSession().encode(out);
         return this;
     }
@@ -446,7 +459,7 @@ public final class PacketEncoder {
      * Shakes the screen.
      * 
      * @param intensity
-     *        the intensity of the shake.
+     *            the intensity of the shake.
      * @return this packet encoder.
      */
     public PacketEncoder sendScreenShake(int intensity) {
@@ -455,7 +468,8 @@ public final class PacketEncoder {
         }
 
         PacketBuffer.WriteBuffer out = PacketBuffer.newWriteBuffer(5);
-        out.writeHeader(35).writeByte(intensity).writeByte(intensity).writeByte(intensity).writeByte(intensity);
+        out.writeHeader(35).writeByte(intensity).writeByte(intensity)
+                .writeByte(intensity).writeByte(intensity);
         player.getSession().encode(out);
         return this;
     }
@@ -476,7 +490,7 @@ public final class PacketEncoder {
      * Plays music from the cache.
      * 
      * @param id
-     *        the id of the music to play.
+     *            the id of the music to play.
      * @return this packet encoder.
      */
     public PacketEncoder sendMusic(int id) {
@@ -490,7 +504,7 @@ public final class PacketEncoder {
      * Sends the system update time.
      * 
      * @param time
-     *        the amount of time to send.
+     *            the amount of time to send.
      * @return this packet encoder.
      */
     public PacketEncoder systemUpdate(int time) {
@@ -504,14 +518,16 @@ public final class PacketEncoder {
      * Changes the color on an interface.
      * 
      * @param interfaceId
-     *        the interface.
+     *            the interface.
      * @param color
-     *        the new color.
+     *            the new color.
      * @return this packer builder.
      */
     public PacketEncoder changeColorOnInterface(int interfaceId, int color) {
         PacketBuffer.WriteBuffer out = PacketBuffer.newWriteBuffer(5);
-        out.writeHeader(122).writeShort(interfaceId, ValueType.A, ByteOrder.LITTLE).writeShort(color, ValueType.A, ByteOrder.LITTLE);
+        out.writeHeader(122)
+                .writeShort(interfaceId, ValueType.A, ByteOrder.LITTLE)
+                .writeShort(color, ValueType.A, ByteOrder.LITTLE);
         player.getSession().encode(out);
         return this;
     }
@@ -520,16 +536,17 @@ public final class PacketEncoder {
      * Sends an item to an interface.
      * 
      * @param id
-     *        the id of the item.
+     *            the id of the item.
      * @param zoom
-     *        the zoom of the item.
+     *            the zoom of the item.
      * @param model
-     *        the model of the item.
+     *            the model of the item.
      * @return this packet encoder.
      */
     public PacketEncoder sendItemOnInterface(int id, int zoom, int model) {
         PacketBuffer.WriteBuffer out = PacketBuffer.newWriteBuffer(7);
-        out.writeHeader(246).writeShort(id, PacketBuffer.ByteOrder.LITTLE).writeShort(zoom).writeShort(model);
+        out.writeHeader(246).writeShort(id, PacketBuffer.ByteOrder.LITTLE)
+                .writeShort(zoom).writeShort(model);
         player.getSession().encode(out);
         return this;
     }
@@ -538,29 +555,36 @@ public final class PacketEncoder {
      * Creates a projectile for the specified player.
      * 
      * @param position
-     *        the position of the projectile.
+     *            the position of the projectile.
      * @param offset
-     *        the offset position of the projectile.
+     *            the offset position of the projectile.
      * @param angle
-     *        the angle of the projectile.
+     *            the angle of the projectile.
      * @param speed
-     *        the speed of the projectile.
+     *            the speed of the projectile.
      * @param gfxMoving
-     *        the rate that projectile gfx moves in.
+     *            the rate that projectile gfx moves in.
      * @param startHeight
-     *        the starting height of the projectile.
+     *            the starting height of the projectile.
      * @param endHeight
-     *        the ending height of the projectile.
+     *            the ending height of the projectile.
      * @param lockon
-     *        the lockon value of this projectile.
+     *            the lockon value of this projectile.
      * @param time
-     *        the time it takes for this projectile to hit its desired position.
+     *            the time it takes for this projectile to hit its desired
+     *            position.
      * @return this packet encoder.
      */
-    public PacketEncoder sendProjectile(Position position, Position offset, int angle, int speed, int gfxMoving, int startHeight, int endHeight, int lockon, int time) {
+    public PacketEncoder sendProjectile(Position position, Position offset,
+            int angle, int speed, int gfxMoving, int startHeight,
+            int endHeight, int lockon, int time) {
         this.sendCoordinates(position);
         PacketBuffer.WriteBuffer out = PacketBuffer.newWriteBuffer(16);
-        out.writeHeader(117).writeByte(angle).writeByte(offset.getY()).writeByte(offset.getX()).writeShort(lockon).writeShort(gfxMoving).writeByte(startHeight).writeByte(endHeight).writeShort(time).writeShort(speed).writeByte(16).writeByte(64);
+        out.writeHeader(117).writeByte(angle).writeByte(offset.getY())
+                .writeByte(offset.getX()).writeShort(lockon)
+                .writeShort(gfxMoving).writeByte(startHeight)
+                .writeByte(endHeight).writeShort(time).writeShort(speed)
+                .writeByte(16).writeByte(64);
         player.getSession().encode(out);
         return this;
     }
@@ -569,33 +593,38 @@ public final class PacketEncoder {
      * Creates a global projectile.
      * 
      * @param position
-     *        the position of the projectile.
+     *            the position of the projectile.
      * @param offset
-     *        the offset position of the projectile.
+     *            the offset position of the projectile.
      * @param angle
-     *        the angle of the projectile.
+     *            the angle of the projectile.
      * @param speed
-     *        the speed of the projectile.
+     *            the speed of the projectile.
      * @param gfxMoving
-     *        the rate that projectile gfx moves in.
+     *            the rate that projectile gfx moves in.
      * @param startHeight
-     *        the starting height of the projectile.
+     *            the starting height of the projectile.
      * @param endHeight
-     *        the ending height of the projectile.
+     *            the ending height of the projectile.
      * @param lockon
-     *        the lockon value of this projectile.
+     *            the lockon value of this projectile.
      * @param time
-     *        the time it takes for this projectile to hit its desired position.
+     *            the time it takes for this projectile to hit its desired
+     *            position.
      * @return this packet encoder.
      */
-    public static void sendGlobalProjectile(Position position, Position offset, int angle, int speed, int gfxMoving, int startHeight, int endHeight, int lockon, int time) {
+    public static void sendGlobalProjectile(Position position, Position offset,
+            int angle, int speed, int gfxMoving, int startHeight,
+            int endHeight, int lockon, int time) {
         for (Player player : World.getPlayers()) {
             if (player == null) {
                 continue;
             }
 
             if (player.getPosition().isViewableFrom(position)) {
-                player.getPacketBuilder().sendProjectile(position, offset, angle, speed, gfxMoving, startHeight, endHeight, lockon, time);
+                player.getPacketBuilder().sendProjectile(position, offset,
+                        angle, speed, gfxMoving, startHeight, endHeight,
+                        lockon, time);
             }
         }
     }
@@ -604,9 +633,9 @@ public final class PacketEncoder {
      * Sends a client config.
      * 
      * @param id
-     *        the id of the config.
+     *            the id of the config.
      * @param state
-     *        the state to put this config in.
+     *            the state to put this config in.
      * @return this packet encoder.
      */
     public PacketEncoder sendConfig(int id, int state) {
@@ -621,14 +650,19 @@ public final class PacketEncoder {
      * Sends the image of an object to the world.
      * 
      * @param object
-     *        the object to send.
+     *            the object to send.
      * @return this packet encoder.
      */
     public PacketEncoder sendObject(WorldObject object) {
         sendCoordinates(object.getPosition());
         PacketBuffer.WriteBuffer out = PacketBuffer.newWriteBuffer(5);
-        out.writeHeader(151).writeByte(0, ValueType.S).writeShort(object.getId(), ByteOrder.LITTLE).writeByte((object.getType() << 2)
-                + (object.getRotation().getFaceId() & 3), ValueType.S);
+        out.writeHeader(151)
+                .writeByte(0, ValueType.S)
+                .writeShort(object.getId(), ByteOrder.LITTLE)
+                .writeByte(
+                        (object.getType() << 2)
+                                + (object.getRotation().getFaceId() & 3),
+                        ValueType.S);
         player.getSession().encode(out);
         return this;
     }
@@ -637,14 +671,17 @@ public final class PacketEncoder {
      * Removes the image of an object from the world.
      * 
      * @param object
-     *        the object to remove.
+     *            the object to remove.
      * @return this packet encoder.
      */
     public PacketEncoder removeObject(WorldObject object) {
         sendCoordinates(object.getPosition());
         PacketBuffer.WriteBuffer out = PacketBuffer.newWriteBuffer(3);
-        out.writeHeader(101).writeByte((object.getType() << 2)
-                + (object.getRotation().getFaceId() & 3), ValueType.C).writeByte(0);
+        out.writeHeader(101)
+                .writeByte(
+                        (object.getType() << 2)
+                                + (object.getRotation().getFaceId() & 3),
+                        ValueType.C).writeByte(0);
         player.getSession().encode(out);
         return this;
     }
@@ -653,9 +690,9 @@ public final class PacketEncoder {
      * Replaces the image of an object with a new one.
      * 
      * @param position
-     *        the position of the old object.
+     *            the position of the old object.
      * @param object
-     *        the new object to take its place.
+     *            the new object to take its place.
      * @return this packet encoder.
      */
     public PacketEncoder replaceObject(Position position, int object) {
@@ -668,16 +705,17 @@ public final class PacketEncoder {
      * Sends the players skills to the client.
      * 
      * @param skillID
-     *        the id of the skill being sent.
+     *            the id of the skill being sent.
      * @param level
-     *        the level of the skill being sent.
+     *            the level of the skill being sent.
      * @param exp
-     *        the experience of the skill being sent.
+     *            the experience of the skill being sent.
      * @return this packet encoder.
      */
     public PacketEncoder sendSkill(int skillID, int level, int exp) {
         PacketBuffer.WriteBuffer out = PacketBuffer.newWriteBuffer(8);
-        out.writeHeader(134).writeByte(skillID).writeInt(exp, ByteOrder.MIDDLE).writeByte(level);
+        out.writeHeader(134).writeByte(skillID).writeInt(exp, ByteOrder.MIDDLE)
+                .writeByte(level);
         player.getSession().encode(out);
         return this;
     }
@@ -698,7 +736,7 @@ public final class PacketEncoder {
      * Sends the list of people you have on your friends and ignores list.
      * 
      * @param i
-     *        the world you're in? Not completely sure what this is.
+     *            the world you're in? Not completely sure what this is.
      * @return this packet encoder.
      */
     public PacketEncoder sendPrivateMessagingList(int i) {
@@ -712,16 +750,18 @@ public final class PacketEncoder {
      * Sends the chat options.
      * 
      * @param publicChat
-     *        the public chat option.
+     *            the public chat option.
      * @param privateChat
-     *        the private chat option.
+     *            the private chat option.
      * @param tradeBlock
-     *        the trade/challenge option.
+     *            the trade/challenge option.
      * @return this packet encoder.
      */
-    public PacketEncoder sendChatOptions(int publicChat, int privateChat, int tradeBlock) {
+    public PacketEncoder sendChatOptions(int publicChat, int privateChat,
+            int tradeBlock) {
         PacketBuffer.WriteBuffer out = PacketBuffer.newWriteBuffer(4);
-        out.writeHeader(206).writeByte(publicChat).writeByte(privateChat).writeByte(tradeBlock);
+        out.writeHeader(206).writeByte(publicChat).writeByte(privateChat)
+                .writeByte(tradeBlock);
         player.getSession().encode(out);
         return this;
     }
@@ -730,9 +770,9 @@ public final class PacketEncoder {
      * Loads a player in your friends list.
      * 
      * @param playerName
-     *        the player's name.
+     *            the player's name.
      * @param world
-     *        the world they are on.
+     *            the world they are on.
      * @return this packet encoder.
      */
     public PacketEncoder loadPrivateMessage(long playerName, int world) {
@@ -750,14 +790,16 @@ public final class PacketEncoder {
      * Sends a hint arrow on the specified coordinates.
      * 
      * @param coordinates
-     *        the coordinates to send the arrow on.
+     *            the coordinates to send the arrow on.
      * @param position
-     *        the position of the arrow on the coordinates.
+     *            the position of the arrow on the coordinates.
      * @return this packet encoder.
      */
-    public PacketEncoder sendPositionHintArrow(Position coordinates, int position) {
+    public PacketEncoder sendPositionHintArrow(Position coordinates,
+            int position) {
         PacketBuffer.WriteBuffer out = PacketBuffer.newWriteBuffer(7);
-        out.writeHeader(254).writeByte(position).writeShort(coordinates.getX()).writeShort(coordinates.getY()).writeByte(coordinates.getZ());
+        out.writeHeader(254).writeByte(position).writeShort(coordinates.getX())
+                .writeShort(coordinates.getY()).writeByte(coordinates.getZ());
         player.getSession().encode(out);
         return this;
     }
@@ -766,18 +808,23 @@ public final class PacketEncoder {
      * Send a private message to another player.
      * 
      * @param name
-     *        the name of the player you are sending the message to.
+     *            the name of the player you are sending the message to.
      * @param rights
-     *        your player rights.
+     *            your player rights.
      * @param chatMessage
-     *        the message.
+     *            the message.
      * @param messageSize
-     *        the message size.
+     *            the message size.
      * @return this packet encoder.
      */
-    public PacketEncoder sendPrivateMessage(long name, int rights, byte[] chatMessage, int messageSize) {
-        PacketBuffer.WriteBuffer out = PacketBuffer.newWriteBuffer(messageSize + 15);
-        out.writeVariablePacketHeader(196).writeLong(name).writeInt(player.getPrivateMessage().getLastPrivateMessageId()).writeByte(rights).writeBytes(chatMessage, messageSize).finishVariablePacketHeader();
+    public PacketEncoder sendPrivateMessage(long name, int rights,
+            byte[] chatMessage, int messageSize) {
+        PacketBuffer.WriteBuffer out = PacketBuffer
+                .newWriteBuffer(messageSize + 15);
+        out.writeVariablePacketHeader(196).writeLong(name)
+                .writeInt(player.getPrivateMessage().getLastPrivateMessageId())
+                .writeByte(rights).writeBytes(chatMessage, messageSize)
+                .finishVariablePacketHeader();
         player.getSession().encode(out);
         return this;
     }
@@ -786,9 +833,9 @@ public final class PacketEncoder {
      * Sends a hint arrow on an entity.
      * 
      * @param type
-     *        the type of entity.
+     *            the type of entity.
      * @param id
-     *        the id of the entity.
+     *            the id of the entity.
      * @return this packet encoder.
      */
     public PacketEncoder sendEntityHintArrow(int type, int id) {
@@ -802,14 +849,20 @@ public final class PacketEncoder {
      * Sends the players current coordinates to the client.
      * 
      * @param position
-     *        the coordinates.
+     *            the coordinates.
      * @return this packet encoder.
      */
     public PacketEncoder sendCoordinates(Position position) {
         PacketBuffer.WriteBuffer out = PacketBuffer.newWriteBuffer(3);
-        out.writeHeader(85).writeByte(position.getY()
-                - (player.getCurrentRegion().getRegionY() * 8), ValueType.C).writeByte(position.getX()
-                - (player.getCurrentRegion().getRegionX() * 8), ValueType.C);
+        out.writeHeader(85)
+                .writeByte(
+                        position.getY()
+                                - (player.getCurrentRegion().getRegionY() * 8),
+                        ValueType.C)
+                .writeByte(
+                        position.getX()
+                                - (player.getCurrentRegion().getRegionX() * 8),
+                        ValueType.C);
         player.getSession().encode(out);
         return this;
     }
@@ -818,7 +871,7 @@ public final class PacketEncoder {
      * Opens a walkable interface for this player.
      * 
      * @param id
-     *        the walkable interface to open.
+     *            the walkable interface to open.
      * @return this packet encoder.
      */
     public PacketEncoder walkableInterface(int id) {
@@ -832,13 +885,16 @@ public final class PacketEncoder {
      * Sends the image of a ground item to the world.
      * 
      * @param item
-     *        the item to send.
+     *            the item to send.
      * @return this packet encoder.
      */
     public PacketEncoder sendGroundItem(GroundItem item) {
         sendCoordinates(item.getPosition());
         PacketBuffer.WriteBuffer out = PacketBuffer.newWriteBuffer(6);
-        out.writeHeader(44).writeShort(item.getItem().getId(), ValueType.A, ByteOrder.LITTLE).writeShort(item.getItem().getAmount()).writeByte(0);
+        out.writeHeader(44)
+                .writeShort(item.getItem().getId(), ValueType.A,
+                        ByteOrder.LITTLE)
+                .writeShort(item.getItem().getAmount()).writeByte(0);
         player.getSession().encode(out);
         return this;
     }
@@ -847,13 +903,14 @@ public final class PacketEncoder {
      * Removes the image of a ground item from the world.
      * 
      * @param item
-     *        the item to remove.
+     *            the item to remove.
      * @return this packet encoder.
      */
     public PacketEncoder removeGroundItem(GroundItem item) {
         sendCoordinates(item.getPosition());
         PacketBuffer.WriteBuffer out = PacketBuffer.newWriteBuffer(4);
-        out.writeHeader(156).writeByte(0, ValueType.S).writeShort(item.getItem().getId());
+        out.writeHeader(156).writeByte(0, ValueType.S)
+                .writeShort(item.getItem().getId());
         player.getSession().encode(out);
         return this;
     }
@@ -862,14 +919,18 @@ public final class PacketEncoder {
      * Sends player context menus.
      * 
      * @param option
-     *        the option.
+     *            the option.
      * @param slot
-     *        the slot for the option to be placed in.
+     *            the slot for the option to be placed in.
      * @return this packet encoder.
      */
     public PacketEncoder sendPlayerMenu(String option, int slot) {
-        PacketBuffer.WriteBuffer out = PacketBuffer.newWriteBuffer(option.length() + 6);
-        out.writeVariablePacketHeader(104).writeByte(slot, PacketBuffer.ValueType.C).writeByte(0, PacketBuffer.ValueType.A).writeString(option).finishVariablePacketHeader();
+        PacketBuffer.WriteBuffer out = PacketBuffer.newWriteBuffer(option
+                .length() + 6);
+        out.writeVariablePacketHeader(104)
+                .writeByte(slot, PacketBuffer.ValueType.C)
+                .writeByte(0, PacketBuffer.ValueType.A).writeString(option)
+                .finishVariablePacketHeader();
         player.getSession().encode(out);
         return this;
     }
@@ -878,14 +939,16 @@ public final class PacketEncoder {
      * Sends a string to an interface.
      * 
      * @param text
-     *        the string to send.
+     *            the string to send.
      * @param id
-     *        where the string should be sent.
+     *            where the string should be sent.
      * @return this packet encoder.
      */
     public PacketEncoder sendString(String text, int id) {
-        PacketBuffer.WriteBuffer out = PacketBuffer.newWriteBuffer(text.length() + 6);
-        out.writeVariableShortPacketHeader(126).writeString(text).writeShort(id, ValueType.A).finishVariableShortPacketHeader();
+        PacketBuffer.WriteBuffer out = PacketBuffer.newWriteBuffer(text
+                .length() + 6);
+        out.writeVariableShortPacketHeader(126).writeString(text)
+                .writeShort(id, ValueType.A).finishVariableShortPacketHeader();
         player.getSession().encode(out);
         return this;
     }
@@ -894,16 +957,17 @@ public final class PacketEncoder {
      * Sends the equipment you current have on to the client.
      * 
      * @param slot
-     *        the equipment slot.
+     *            the equipment slot.
      * @param itemID
-     *        the item id.
+     *            the item id.
      * @param itemAmount
-     *        the item amount.
+     *            the item amount.
      * @return this packet encoder.
      */
     public PacketEncoder sendEquipment(int slot, int itemID, int itemAmount) {
         PacketBuffer.WriteBuffer out = PacketBuffer.newWriteBuffer(32);
-        out.writeVariableShortPacketHeader(34).writeShort(1688).writeByte(slot).writeShort(itemID + 1);
+        out.writeVariableShortPacketHeader(34).writeShort(1688).writeByte(slot)
+                .writeShort(itemID + 1);
 
         if (itemAmount > 254) {
             out.writeByte(255).writeShort(itemAmount);
@@ -920,16 +984,20 @@ public final class PacketEncoder {
      * Updates an array of items on an interface.
      * 
      * @param interfaceId
-     *        the interface to send the items on.
+     *            the interface to send the items on.
      * @param items
-     *        the items to send.
+     *            the items to send.
      * @return this packet encoder.
      */
     public PacketEncoder sendUpdateItems(int interfaceId, Item[] items) {
         PacketBuffer.WriteBuffer out = PacketBuffer.newWriteBuffer(2048);
         out.writeVariableShortPacketHeader(53).writeShort(interfaceId);
         if (items == null) {
-            out.writeShort(0).writeByte(0).writeShort(0, PacketBuffer.ValueType.A, PacketBuffer.ByteOrder.LITTLE).finishVariableShortPacketHeader();
+            out.writeShort(0)
+                    .writeByte(0)
+                    .writeShort(0, PacketBuffer.ValueType.A,
+                            PacketBuffer.ByteOrder.LITTLE)
+                    .finishVariableShortPacketHeader();
             player.getSession().encode(out);
             return this;
         }
@@ -938,14 +1006,17 @@ public final class PacketEncoder {
             if (item != null) {
                 if (item.getAmount() > 254) {
                     out.writeByte(255);
-                    out.writeInt(item.getAmount(), PacketBuffer.ByteOrder.INVERSE_MIDDLE);
+                    out.writeInt(item.getAmount(),
+                            PacketBuffer.ByteOrder.INVERSE_MIDDLE);
                 } else {
                     out.writeByte(item.getAmount());
                 }
-                out.writeShort(item.getId() + 1, PacketBuffer.ValueType.A, PacketBuffer.ByteOrder.LITTLE);
+                out.writeShort(item.getId() + 1, PacketBuffer.ValueType.A,
+                        PacketBuffer.ByteOrder.LITTLE);
             } else {
                 out.writeByte(0);
-                out.writeShort(0, PacketBuffer.ValueType.A, PacketBuffer.ByteOrder.LITTLE);
+                out.writeShort(0, PacketBuffer.ValueType.A,
+                        PacketBuffer.ByteOrder.LITTLE);
             }
         }
         out.finishVariableShortPacketHeader();
@@ -957,9 +1028,9 @@ public final class PacketEncoder {
      * Sends an interface to your inventory.
      * 
      * @param interfaceId
-     *        the interface to send.
+     *            the interface to send.
      * @param inventoryId
-     *        the inventory to send on.
+     *            the inventory to send on.
      * @return this packet encoder.
      */
     public PacketEncoder sendInventoryInterface(int interfaceId, int inventoryId) {
@@ -975,7 +1046,7 @@ public final class PacketEncoder {
      * Opens an interface for this player.
      * 
      * @param interfaceId
-     *        the interface to open for this player.
+     *            the interface to open for this player.
      * @return this packet encoder.
      */
     public PacketEncoder sendInterface(int interfaceId) {
@@ -990,11 +1061,12 @@ public final class PacketEncoder {
      * Sends the player a message to the chatbox.
      * 
      * @param message
-     *        the message to send.
+     *            the message to send.
      * @return this packet encoder.
      */
     public PacketEncoder sendMessage(String message) {
-        PacketBuffer.WriteBuffer out = PacketBuffer.newWriteBuffer(message.length() + 3);
+        PacketBuffer.WriteBuffer out = PacketBuffer.newWriteBuffer(message
+                .length() + 3);
         out.writeVariablePacketHeader(253);
         out.writeString(message);
         out.finishVariablePacketHeader();
@@ -1006,9 +1078,9 @@ public final class PacketEncoder {
      * Sends a sidebar interface.
      * 
      * @param menuId
-     *        the sidebar to send the interface on.
+     *            the sidebar to send the interface on.
      * @param form
-     *        the interface to send on the sidebar.
+     *            the interface to send on the sidebar.
      * @return this packet encoder.
      */
     public PacketEncoder sendSidebarInterface(int menuId, int form) {
@@ -1030,7 +1102,8 @@ public final class PacketEncoder {
         player.setNeedsPlacement(true);
         PacketBuffer.WriteBuffer out = PacketBuffer.newWriteBuffer(5);
         out.writeHeader(73);
-        out.writeShort(player.getPosition().getRegionX() + 6, PacketBuffer.ValueType.A);
+        out.writeShort(player.getPosition().getRegionX() + 6,
+                PacketBuffer.ValueType.A);
         out.writeShort(player.getPosition().getRegionY() + 6);
         player.getSession().encode(out);
         return this;
@@ -1067,7 +1140,7 @@ public final class PacketEncoder {
      * Sends an interface to your chatbox.
      * 
      * @param frame
-     *        the interface to send to the chatbox.
+     *            the interface to send to the chatbox.
      * @return this packet encoder.
      */
     public PacketEncoder sendChatInterface(int frame) {

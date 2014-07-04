@@ -37,18 +37,20 @@ public enum CombatSpecial {
         public CombatHitContainer calculateHit(Player player, Entity target) {
             player.animation(new Animation(1062));
             player.gfx(new Gfx(252, 6553600));
-            CombatSpecial.drainAndDeplete(player, CombatSpecial.DRAGON_DAGGER.getSpecialAmount());
+            CombatSpecial.drainAndDeplete(player,
+                    CombatSpecial.DRAGON_DAGGER.getSpecialAmount());
 
             return new CombatHitContainer(new Hit[] {
-                CombatFactory.getMeleeHit(player),
-                CombatFactory.getMeleeHit(player) }, this.combatType(), true) {
+                    CombatFactory.getMeleeHit(player),
+                    CombatFactory.getMeleeHit(player) }, this.combatType(),
+                    true) {
                 @Override
-                public void onHit(Entity attacker, Entity victim, int damage, boolean accurate) {
+                public void onHit(Entity attacker, Entity victim, int damage,
+                        boolean accurate) {
                 }
             };
         }
-    }),
-    GRANITE_MAUL(50, 1.5, 1, new CombatSpecialStrategy() {
+    }), GRANITE_MAUL(50, 1.5, 1, new CombatSpecialStrategy() {
         @Override
         public CombatType combatType() {
             return CombatType.MELEE;
@@ -62,18 +64,20 @@ public enum CombatSpecial {
         public CombatHitContainer calculateHit(Player player, Entity target) {
             player.animation(new Animation(1667));
             player.gfx(new Gfx(337, 6553600));
-            CombatSpecial.drainAndDeplete(player, CombatSpecial.GRANITE_MAUL.getSpecialAmount());
+            CombatSpecial.drainAndDeplete(player,
+                    CombatSpecial.GRANITE_MAUL.getSpecialAmount());
 
             return new CombatHitContainer(new Hit[] {
-                CombatFactory.getMeleeHit(player),
-                CombatFactory.getMeleeHit(player) }, this.combatType(), true) {
+                    CombatFactory.getMeleeHit(player),
+                    CombatFactory.getMeleeHit(player) }, this.combatType(),
+                    true) {
                 @Override
-                public void onHit(Entity attacker, Entity victim, int damage, boolean accurate) {
+                public void onHit(Entity attacker, Entity victim, int damage,
+                        boolean accurate) {
                 }
             };
         }
-    }),
-    ABYSSAL_WHIP(50, 1, 1, new CombatSpecialStrategy() {
+    }), ABYSSAL_WHIP(50, 1, 1, new CombatSpecialStrategy() {
         @Override
         public CombatType combatType() {
             return CombatType.MELEE;
@@ -87,17 +91,20 @@ public enum CombatSpecial {
         public CombatHitContainer calculateHit(Player player, Entity target) {
             player.animation(new Animation(1658));
             target.gfx(new Gfx(341, 6553600));
-            CombatSpecial.drainAndDeplete(player, CombatSpecial.ABYSSAL_WHIP.getSpecialAmount());
+            CombatSpecial.drainAndDeplete(player,
+                    CombatSpecial.ABYSSAL_WHIP.getSpecialAmount());
 
-            return new CombatHitContainer(new Hit[] { CombatFactory.getMeleeHit(player) }, this.combatType(), false) {
+            return new CombatHitContainer(
+                    new Hit[] { CombatFactory.getMeleeHit(player) },
+                    this.combatType(), false) {
                 @Override
-                public void onHit(Entity attacker, Entity victim, int damage, boolean accurate) {
+                public void onHit(Entity attacker, Entity victim, int damage,
+                        boolean accurate) {
                 }
             };
         }
 
-    }),
-    DRAGON_LONGSWORD(25, 1.25, 1.25, new CombatSpecialStrategy() {
+    }), DRAGON_LONGSWORD(25, 1.25, 1.25, new CombatSpecialStrategy() {
         @Override
         public CombatType combatType() {
             return CombatType.MELEE;
@@ -111,17 +118,20 @@ public enum CombatSpecial {
         public CombatHitContainer calculateHit(Player player, Entity target) {
             player.animation(new Animation(1058));
             player.gfx(new Gfx(248, 6553600));
-            CombatSpecial.drainAndDeplete(player, CombatSpecial.DRAGON_LONGSWORD.getSpecialAmount());
+            CombatSpecial.drainAndDeplete(player,
+                    CombatSpecial.DRAGON_LONGSWORD.getSpecialAmount());
 
-            return new CombatHitContainer(new Hit[] { CombatFactory.getMeleeHit(player) }, this.combatType(), true) {
+            return new CombatHitContainer(
+                    new Hit[] { CombatFactory.getMeleeHit(player) },
+                    this.combatType(), true) {
                 @Override
-                public void onHit(Entity attacker, Entity victim, int damage, boolean accurate) {
+                public void onHit(Entity attacker, Entity victim, int damage,
+                        boolean accurate) {
                 }
             };
         }
 
-    }),
-    MAGIC_SHORTBOW(50, 1, 1.1, new CombatSpecialStrategy() {
+    }), MAGIC_SHORTBOW(50, 1, 1.1, new CombatSpecialStrategy() {
         @Override
         public CombatType combatType() {
             return CombatType.RANGE;
@@ -134,20 +144,26 @@ public enum CombatSpecial {
         @Override
         public CombatHitContainer calculateHit(Player player, Entity target) {
             player.gfx(new Gfx(250, 6553600));
-            CombatSpecial.drainAndDeplete(player, CombatSpecial.MAGIC_SHORTBOW.getSpecialAmount());
-            new Projectile(player, target, 249, 44, 3, 43, 31, 0).sendProjectile();
+            CombatSpecial.drainAndDeplete(player,
+                    CombatSpecial.MAGIC_SHORTBOW.getSpecialAmount());
+            new Projectile(player, target, 249, 44, 3, 43, 31, 0)
+                    .sendProjectile();
 
-            return new CombatHitContainer(new Hit[] {
-                CombatFactory.getRangeHit(player, player.getRangedAmmo()),
-                CombatFactory.getRangeHit(player, player.getRangedAmmo()) }, this.combatType(), true) {
+            return new CombatHitContainer(
+                    new Hit[] {
+                            CombatFactory.getRangeHit(player,
+                                    player.getRangedAmmo()),
+                            CombatFactory.getRangeHit(player,
+                                    player.getRangedAmmo()) },
+                    this.combatType(), true) {
                 @Override
-                public void onHit(Entity attacker, Entity victim, int damage, boolean accurate) {
+                public void onHit(Entity attacker, Entity victim, int damage,
+                        boolean accurate) {
                 }
             };
         }
 
-    }),
-    MAGIC_LONGBOW(35, 1, 5, new CombatSpecialStrategy() {
+    }), MAGIC_LONGBOW(35, 1, 5, new CombatSpecialStrategy() {
         @Override
         public CombatType combatType() {
             return CombatType.RANGE;
@@ -161,17 +177,21 @@ public enum CombatSpecial {
         public CombatHitContainer calculateHit(Player player, Entity target) {
             player.animation(new Animation(426));
             player.gfx(new Gfx(250, 6553600));
-            new Projectile(player, target, 249, 44, 3, 43, 31, 0).sendProjectile();
-            CombatSpecial.drainAndDeplete(player, CombatSpecial.MAGIC_LONGBOW.getSpecialAmount());
+            new Projectile(player, target, 249, 44, 3, 43, 31, 0)
+                    .sendProjectile();
+            CombatSpecial.drainAndDeplete(player,
+                    CombatSpecial.MAGIC_LONGBOW.getSpecialAmount());
 
-            return new CombatHitContainer(new Hit[] { CombatFactory.getMeleeHit(player) }, this.combatType(), true) {
+            return new CombatHitContainer(
+                    new Hit[] { CombatFactory.getMeleeHit(player) },
+                    this.combatType(), true) {
                 @Override
-                public void onHit(Entity attacker, Entity victim, int damage, boolean accurate) {
+                public void onHit(Entity attacker, Entity victim, int damage,
+                        boolean accurate) {
                 }
             };
         }
-    }),
-    DRAGON_BATTLEAXE(100, 1, 1, new CombatSpecialStrategy() {
+    }), DRAGON_BATTLEAXE(100, 1, 1, new CombatSpecialStrategy() {
         @Override
         public CombatType combatType() {
             return null;
@@ -182,17 +202,23 @@ public enum CombatSpecial {
             player.gfx(new Gfx(246));
             player.animation(new Animation(1056));
             player.forceChat("Raarrrrrgggggghhhhhhh!");
-            player.getSkills()[Misc.STRENGTH].increaseLevel((int) (player.getSkills()[Misc.STRENGTH].getLevel() * 0.2));
-            player.getSkills()[Misc.ATTACK].decreaseLevel((int) (player.getSkills()[Misc.ATTACK].getLevel() * 0.1));
-            player.getSkills()[Misc.DEFENCE].decreaseLevel((int) (player.getSkills()[Misc.DEFENCE].getLevel() * 0.1));
-            player.getSkills()[Misc.RANGED].decreaseLevel((int) (player.getSkills()[Misc.RANGED].getLevel() * 0.1));
-            player.getSkills()[Misc.MAGIC].decreaseLevel((int) (player.getSkills()[Misc.MAGIC].getLevel() * 0.1));
+            player.getSkills()[Misc.STRENGTH].increaseLevel((int) (player
+                    .getSkills()[Misc.STRENGTH].getLevel() * 0.2));
+            player.getSkills()[Misc.ATTACK].decreaseLevel((int) (player
+                    .getSkills()[Misc.ATTACK].getLevel() * 0.1));
+            player.getSkills()[Misc.DEFENCE].decreaseLevel((int) (player
+                    .getSkills()[Misc.DEFENCE].getLevel() * 0.1));
+            player.getSkills()[Misc.RANGED].decreaseLevel((int) (player
+                    .getSkills()[Misc.RANGED].getLevel() * 0.1));
+            player.getSkills()[Misc.MAGIC].decreaseLevel((int) (player
+                    .getSkills()[Misc.MAGIC].getLevel() * 0.1));
             SkillManager.refresh(player, Misc.STRENGTH);
             SkillManager.refresh(player, Misc.ATTACK);
             SkillManager.refresh(player, Misc.DEFENCE);
             SkillManager.refresh(player, Misc.RANGED);
             SkillManager.refresh(player, Misc.MAGIC);
-            CombatSpecial.drainAndDeplete(player, CombatSpecial.DRAGON_BATTLEAXE.getSpecialAmount());
+            CombatSpecial.drainAndDeplete(player,
+                    CombatSpecial.DRAGON_BATTLEAXE.getSpecialAmount());
         }
 
         @Override
@@ -200,8 +226,7 @@ public enum CombatSpecial {
             return null;
         }
 
-    }),
-    DRAGON_SPEAR(25, 1, 1, new CombatSpecialStrategy() {
+    }), DRAGON_SPEAR(25, 1, 1, new CombatSpecialStrategy() {
         @Override
         public CombatType combatType() {
             return CombatType.MELEE;
@@ -212,28 +237,35 @@ public enum CombatSpecial {
         }
 
         @Override
-        public CombatHitContainer calculateHit(Player player, final Entity target) {
+        public CombatHitContainer calculateHit(Player player,
+                final Entity target) {
             player.animation(new Animation(1064));
             player.gfx(new Gfx(253));
-            CombatSpecial.drainAndDeplete(player, CombatSpecial.DRAGON_SPEAR.getSpecialAmount());
-            target.getMovementQueue().walk(Misc.DIRECTION_DELTA_X[player.getLastDirection()], Misc.DIRECTION_DELTA_Y[player.getLastDirection()]);
+            CombatSpecial.drainAndDeplete(player,
+                    CombatSpecial.DRAGON_SPEAR.getSpecialAmount());
+            target.getMovementQueue().walk(
+                    Misc.DIRECTION_DELTA_X[player.getLastDirection()],
+                    Misc.DIRECTION_DELTA_Y[player.getLastDirection()]);
             target.gfx(new Gfx(80));
 
             target.getMovementQueueListener().submit(new Runnable() {
                 @Override
                 public void run() {
-                    target.getMovementQueue().lockMovementFor(10, WorkRate.DEFAULT);
+                    target.getMovementQueue().lockMovementFor(10,
+                            WorkRate.DEFAULT);
                 }
             });
 
-            return new CombatHitContainer(new Hit[] { CombatFactory.getMeleeHit(player) }, this.combatType(), true) {
+            return new CombatHitContainer(
+                    new Hit[] { CombatFactory.getMeleeHit(player) },
+                    this.combatType(), true) {
                 @Override
-                public void onHit(Entity attacker, Entity victim, int damage, boolean accurate) {
+                public void onHit(Entity attacker, Entity victim, int damage,
+                        boolean accurate) {
                 }
             };
         }
-    }),
-    DRAGON_MACE(25, 1.45, 0.9, new CombatSpecialStrategy() {
+    }), DRAGON_MACE(25, 1.45, 0.9, new CombatSpecialStrategy() {
         @Override
         public CombatType combatType() {
             return CombatType.MELEE;
@@ -248,15 +280,18 @@ public enum CombatSpecial {
         public CombatHitContainer calculateHit(Player player, Entity target) {
             player.animation(new Animation(1060));
             player.gfx(new Gfx(251, 6553600));
-            CombatSpecial.drainAndDeplete(player, CombatSpecial.DRAGON_MACE.getSpecialAmount());
-            return new CombatHitContainer(new Hit[] { CombatFactory.getMeleeHit(player) }, this.combatType(), true) {
+            CombatSpecial.drainAndDeplete(player,
+                    CombatSpecial.DRAGON_MACE.getSpecialAmount());
+            return new CombatHitContainer(
+                    new Hit[] { CombatFactory.getMeleeHit(player) },
+                    this.combatType(), true) {
                 @Override
-                public void onHit(Entity attacker, Entity victim, int damage, boolean accurate) {
+                public void onHit(Entity attacker, Entity victim, int damage,
+                        boolean accurate) {
                 }
             };
         }
-    }),
-    DRAGON_SCIMITAR(55, 1, 1, new CombatSpecialStrategy() {
+    }), DRAGON_SCIMITAR(55, 1, 1, new CombatSpecialStrategy() {
         @Override
         public CombatType combatType() {
             return CombatType.MELEE;
@@ -270,15 +305,18 @@ public enum CombatSpecial {
         public CombatHitContainer calculateHit(Player player, Entity target) {
             player.animation(new Animation(1872));
             player.gfx(new Gfx(347));
-            CombatSpecial.drainAndDeplete(player, CombatSpecial.DRAGON_SCIMITAR.getSpecialAmount());
-            return new CombatHitContainer(new Hit[] { CombatFactory.getMeleeHit(player) }, this.combatType(), true) {
+            CombatSpecial.drainAndDeplete(player,
+                    CombatSpecial.DRAGON_SCIMITAR.getSpecialAmount());
+            return new CombatHitContainer(
+                    new Hit[] { CombatFactory.getMeleeHit(player) },
+                    this.combatType(), true) {
                 @Override
-                public void onHit(Entity attacker, Entity victim, int damage, boolean accurate) {
+                public void onHit(Entity attacker, Entity victim, int damage,
+                        boolean accurate) {
                 }
             };
         }
-    }),
-    DRAGON_2H_SWORD(60, 1, 1, new CombatSpecialStrategy() {
+    }), DRAGON_2H_SWORD(60, 1, 1, new CombatSpecialStrategy() {
         @Override
         public CombatType combatType() {
             return CombatType.MELEE;
@@ -293,7 +331,8 @@ public enum CombatSpecial {
         public CombatHitContainer calculateHit(Player player, Entity target) {
             player.animation(new Animation(3157));
             player.gfx(new Gfx(559));
-            CombatSpecial.drainAndDeplete(player, CombatSpecial.DRAGON_2H_SWORD.getSpecialAmount());
+            CombatSpecial.drainAndDeplete(player,
+                    CombatSpecial.DRAGON_2H_SWORD.getSpecialAmount());
 
             if (Location.inMultiCombat(player)) {
                 if (target.type() == EntityType.PLAYER) {
@@ -302,12 +341,15 @@ public enum CombatSpecial {
                             continue;
                         }
 
-                        if (players.getPosition().withinDistance(target.getPosition(), 1)
+                        if (players.getPosition().withinDistance(
+                                target.getPosition(), 1)
                                 && players.getSlot() != target.getSlot()
                                 && players.getSlot() != player.getSlot()) {
-                            int damage = CombatFactory.getMeleeHit(player).getDamage();
+                            int damage = CombatFactory.getMeleeHit(player)
+                                    .getDamage();
                             players.dealDamage(new Hit(damage));
-                            players.getCombatBuilder().addDamage(player, damage);
+                            players.getCombatBuilder()
+                                    .addDamage(player, damage);
                         }
                     }
                 } else if (target.type() == EntityType.NPC) {
@@ -316,24 +358,28 @@ public enum CombatSpecial {
                             continue;
                         }
 
-                        if (npc.getPosition().withinDistance(target.getPosition(), 1)
+                        if (npc.getPosition().withinDistance(
+                                target.getPosition(), 1)
                                 && npc.getSlot() != target.getSlot()
                                 && npc.getDefinition().isAttackable()) {
-                            int damage = CombatFactory.getMeleeHit(player).getDamage();
+                            int damage = CombatFactory.getMeleeHit(player)
+                                    .getDamage();
                             npc.dealDamage(new Hit(damage));
                             npc.getCombatBuilder().addDamage(player, damage);
                         }
                     }
                 }
             }
-            return new CombatHitContainer(new Hit[] { CombatFactory.getMeleeHit(player) }, this.combatType(), false) {
+            return new CombatHitContainer(
+                    new Hit[] { CombatFactory.getMeleeHit(player) },
+                    this.combatType(), false) {
                 @Override
-                public void onHit(Entity attacker, Entity victim, int damage, boolean accurate) {
+                public void onHit(Entity attacker, Entity victim, int damage,
+                        boolean accurate) {
                 }
             };
         }
-    }),
-    DRAGON_HALBERD(30, 1.1, 1, new CombatSpecialStrategy() {
+    }), DRAGON_HALBERD(30, 1.1, 1, new CombatSpecialStrategy() {
         @Override
         public CombatType combatType() {
             return CombatType.MELEE;
@@ -348,12 +394,15 @@ public enum CombatSpecial {
         public CombatHitContainer calculateHit(Player player, Entity target) {
             player.animation(new Animation(1203));
             player.gfx(new Gfx(282));
-            CombatSpecial.drainAndDeplete(player, CombatSpecial.DRAGON_HALBERD.getSpecialAmount());
+            CombatSpecial.drainAndDeplete(player,
+                    CombatSpecial.DRAGON_HALBERD.getSpecialAmount());
             return new CombatHitContainer(new Hit[] {
-                CombatFactory.getMeleeHit(player),
-                CombatFactory.getMeleeHit(player) }, this.combatType(), true) {
+                    CombatFactory.getMeleeHit(player),
+                    CombatFactory.getMeleeHit(player) }, this.combatType(),
+                    true) {
                 @Override
-                public void onHit(Entity attacker, Entity victim, int damage, boolean accurate) {
+                public void onHit(Entity attacker, Entity victim, int damage,
+                        boolean accurate) {
                 }
             };
         }
@@ -375,15 +424,16 @@ public enum CombatSpecial {
      * Create a new {@link CombatSpecial}.
      * 
      * @param specialAmount
-     *        the amount of special energy this attack requires.
+     *            the amount of special energy this attack requires.
      * @param strengthBonus
-     *        the strength bonus when performing this special attack.
+     *            the strength bonus when performing this special attack.
      * @param accuracyBonus
-     *        the accuracy bonus when performing this special attack.
+     *            the accuracy bonus when performing this special attack.
      * @param specialStrategy
-     *        the strategy used when performing this special attack.
+     *            the strategy used when performing this special attack.
      */
-    private CombatSpecial(int specialAmount, double strengthBonus, double accuracyBonus, CombatSpecialStrategy specialStrategy) {
+    private CombatSpecial(int specialAmount, double strengthBonus,
+            double accuracyBonus, CombatSpecialStrategy specialStrategy) {
         this.specialAmount = specialAmount;
         this.strengthBonus = strengthBonus;
         this.specialStrategy = specialStrategy;
@@ -393,9 +443,9 @@ public enum CombatSpecial {
      * Drains the player's special bar.
      * 
      * @param player
-     *        the player who's special bar will be drained.
+     *            the player who's special bar will be drained.
      * @param drainAmount
-     *        the amount of energy to drain.
+     *            the amount of energy to drain.
      */
     public static void drainAndDeplete(Player player, int drainAmount) {
         player.decrementSpecialPercentage(drainAmount);
@@ -408,9 +458,9 @@ public enum CombatSpecial {
      * Boosts the player's special bar.
      * 
      * @param player
-     *        the player who's special bar will be boosted.
+     *            the player who's special bar will be boosted.
      * @param boostAmount
-     *        the amount of energy to boost.
+     *            the amount of energy to boost.
      */
     public static void boostAndRestore(Player player, int boostAmount) {
         player.incrementSpecialPercentage(boostAmount);
@@ -421,7 +471,7 @@ public enum CombatSpecial {
      * Updates the special bar with the amount of special you have left.
      * 
      * @param player
-     *        the player who's special bar will be updated.
+     *            the player who's special bar will be updated.
      */
     public static void updateSpecialAmount(Player player) {
         if (player.getWeapon().getSpecialBar() == -1
@@ -433,7 +483,8 @@ public enum CombatSpecial {
         int specialBar = player.getWeapon().getSpecialMeter();
         byte specialAmount = (byte) (player.getSpecialPercentage() / 10);
         for (int i = 0; i < 10; i++) {
-            player.getPacketBuilder().updateSpecialBar(specialAmount >= specialCheck ? 500 : 0, --specialBar);
+            player.getPacketBuilder().updateSpecialBar(
+                    specialAmount >= specialCheck ? 500 : 0, --specialBar);
             specialCheck--;
         }
     }

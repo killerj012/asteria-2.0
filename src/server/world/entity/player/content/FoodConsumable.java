@@ -144,21 +144,23 @@ public enum FoodConsumable implements GenericAction<Player> {
 
             if (Misc.random(100F) >= 61.24F) {
                 /* 10% of total hit points */
-                int healAmount = Math.round((10 * 100F)
-                        / realLevel);
+                int healAmount = Math.round((10 * 100F) / realLevel);
                 skill.increaseLevel(healAmount, realLevel);
-                player.getPacketBuilder().sendMessage("It restores some life points.");
+                player.getPacketBuilder().sendMessage(
+                        "It restores some life points.");
                 return;
             }
 
             if (Misc.random(100F) >= 21.12F) {
                 skill.increaseLevel(Misc.inclusiveRandom(10, 20), realLevel);
-                player.getPacketBuilder().sendMessage("That was a good kebab. You feel a lot better.");
+                player.getPacketBuilder().sendMessage(
+                        "That was a good kebab. You feel a lot better.");
                 return;
             }
 
             if (Misc.random(100F) >= 8.71F) {
-                player.getPacketBuilder().sendMessage("The kebab didn't seem to do a lot.");
+                player.getPacketBuilder().sendMessage(
+                        "The kebab didn't seem to do a lot.");
                 return;
             }
 
@@ -167,7 +169,9 @@ public enum FoodConsumable implements GenericAction<Player> {
                 player.getSkills()[Misc.ATTACK].increaseLevel(Misc.random(3));
                 player.getSkills()[Misc.STRENGTH].increaseLevel(Misc.random(3));
                 player.getSkills()[Misc.DEFENCE].increaseLevel(Misc.random(3));
-                player.getPacketBuilder().sendMessage("Wow, that was an amazing kebab! You feel really invigorated.");
+                player.getPacketBuilder()
+                        .sendMessage(
+                                "Wow, that was an amazing kebab! You feel really invigorated.");
                 return;
             }
 
@@ -175,19 +179,23 @@ public enum FoodConsumable implements GenericAction<Player> {
                 player.getSkills()[Misc.ATTACK].decreaseLevel(Misc.random(3));
                 player.getSkills()[Misc.STRENGTH].decreaseLevel(Misc.random(3));
                 player.getSkills()[Misc.DEFENCE].decreaseLevel(Misc.random(3));
-                player.getPacketBuilder().sendMessage("That tasted a bit dodgy. You feel a bit ill.");
+                player.getPacketBuilder().sendMessage(
+                        "That tasted a bit dodgy. You feel a bit ill.");
                 return;
             }
 
             if (Misc.random(100F) >= 2.00F) {
                 /* Any random skill that is not hit points */
-                int id = Misc.inclusiveRandomExcludes(0, player.getSkills().length, Misc.HITPOINTS);
+                int id = Misc.inclusiveRandomExcludes(0,
+                        player.getSkills().length, Misc.HITPOINTS);
                 Skill randomSkill = player.getSkills()[id];
 
                 randomSkill.decreaseLevel(Misc.random(3));
-                player.getPacketBuilder().sendMessage("Eating the kebab has damaged your "
-                        + SkillConstant.getSkill(id).name().toLowerCase().replaceAll("_", " ")
-                        + " stat.");
+                player.getPacketBuilder().sendMessage(
+                        "Eating the kebab has damaged your "
+                                + SkillConstant.getSkill(id).name()
+                                        .toLowerCase().replaceAll("_", " ")
+                                + " stat.");
                 return;
             }
         }
@@ -206,16 +214,17 @@ public enum FoodConsumable implements GenericAction<Player> {
     /**
      * A set of consumable foods.
      */
-    private static final Set<FoodConsumable> ALL_FOOD = EnumSet.allOf(FoodConsumable.class);
+    private static final Set<FoodConsumable> ALL_FOOD = EnumSet
+            .allOf(FoodConsumable.class);
 
     /**
      * Constructs a new {@link FoodConsumable} with the specified heal amount
      * and ids.
      * 
      * @param healAmount
-     *        The amount of hit points this food heals.
+     *            The amount of hit points this food heals.
      * @param ids
-     *        The ids of this food type.
+     *            The ids of this food type.
      */
     private FoodConsumable(int healAmount, int... ids) {
         this.ids = ids;
@@ -285,23 +294,21 @@ public enum FoodConsumable implements GenericAction<Player> {
      */
     public String getMessage() {
         return (ids.length > 1 ? "You eat a slice of the " : "You eat the ")
-                + toString()
-                + ".";
+                + toString() + ".";
     }
 
     /**
      * Returns a new Item object if the consumed item is to be replaced.
      * 
      * @param item
-     *        The item.
+     *            The item.
      * @return The new item.
      */
     private static Item getReplacementItem(Item item) {
         FoodConsumable food = forId(item.getId());
         int length = food.getIds().length;
         for (int index = 0; index < length; index++) {
-            if (food.getIds()[index] == item.getId()
-                    && index + 1 < length) {
+            if (food.getIds()[index] == item.getId() && index + 1 < length) {
                 return new Item(food.getIds()[index + 1]);
             }
         }
@@ -312,7 +319,7 @@ public enum FoodConsumable implements GenericAction<Player> {
      * Returns the food consumable for the specified id.
      * 
      * @param id
-     *        The id.
+     *            The id.
      * @return The food consumable, or null if it does not exist.
      */
     private static FoodConsumable forId(int id) {
@@ -331,11 +338,11 @@ public enum FoodConsumable implements GenericAction<Player> {
      * specified player.
      * 
      * @param player
-     *        The player.
+     *            The player.
      * @param item
-     *        The item.
+     *            The item.
      * @param slot
-     *        The slot.
+     *            The slot.
      * @return {@code true} if the item was successfully consumed, otherwise
      *         {@code false}.
      */

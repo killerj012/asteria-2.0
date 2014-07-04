@@ -37,9 +37,9 @@ public abstract class Worker {
      * ticks.
      * 
      * @param delay
-     *        the delay of this worker (in ticks).
+     *            the delay of this worker (in ticks).
      * @param initialRun
-     *        if this worker should be ran initially before being scheduled.
+     *            if this worker should be ran initially before being scheduled.
      */
     public Worker(int delay, boolean initialRun) {
         this.delay = delay;
@@ -52,14 +52,14 @@ public abstract class Worker {
      * Create a new {@link Worker} with the specified work rate.
      * 
      * @param delay
-     *        the delay of this worker (in ticks).
+     *            the delay of this worker (in ticks).
      * @param initialRun
-     *        if this worker should be ran initially before being scheduled.
+     *            if this worker should be ran initially before being scheduled.
      * @param workRate
-     *        the rate this worker is firing logic at.
+     *            the rate this worker is firing logic at.
      */
     public Worker(int delay, boolean initialRun, WorkRate workRate) {
-		this.delay = delay <= 0 ? 1 : (delay * workRate.getTickRate());
+        this.delay = delay <= 0 ? 1 : (delay * workRate.getTickRate());
         this.initialRun = initialRun;
         this.workRate = workRate;
         this.running = true;
@@ -82,7 +82,7 @@ public abstract class Worker {
      * or workers will fire a lot faster than they are supposed to!
      * 
      * @param it
-     *        the iterator being used to process this worker.
+     *            the iterator being used to process this worker.
      */
     protected void process(Iterator<Worker> it) {
 
@@ -137,11 +137,12 @@ public abstract class Worker {
      * Please note that the <code>workRate</code> still applies!
      * 
      * @param pauseDelay
-     *        the delay to pause this worker for.
+     *            the delay to pause this worker for.
      */
     public void pause(int pauseDelay) {
         if (pauseDelay > 0) {
-            throw new IllegalStateException("This worker has already been paused!");
+            throw new IllegalStateException(
+                    "This worker has already been paused!");
         }
 
         this.pauseDelay = pauseDelay * workRate.getTickRate();
@@ -164,7 +165,7 @@ public abstract class Worker {
      * be chained with this method for easily attaching keys on registration.
      * 
      * @param key
-     *        the key to attach.
+     *            the key to attach.
      * @return this worker for chaining.
      */
     public Worker attach(Object key) {
@@ -208,7 +209,7 @@ public abstract class Worker {
      * Please note that the <code>workRate</code> still applies!
      * 
      * @param delay
-     *        the new delay to set for this task.
+     *            the new delay to set for this task.
      */
     public void setDelay(int delay) {
         this.delay = delay * workRate.getTickRate();

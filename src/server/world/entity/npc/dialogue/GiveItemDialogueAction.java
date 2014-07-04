@@ -19,9 +19,9 @@ public class GiveItemDialogueAction implements DialogueAction {
      * Create a new {@link GiveItemDialogueAction}.
      * 
      * @param item
-     *        the item to give the player.
+     *            the item to give the player.
      * @param text
-     *        the text to show when the item is given.
+     *            the text to show when the item is given.
      */
     public GiveItemDialogueAction(Item item, String text) {
         this.item = item;
@@ -31,7 +31,8 @@ public class GiveItemDialogueAction implements DialogueAction {
     @Override
     public void fire(Dialogue dialogue) {
         dialogue.getPlayer().getPacketBuilder().sendString(text, 308);
-        dialogue.getPlayer().getPacketBuilder().sendItemOnInterface(307, 200, item.getId());
+        dialogue.getPlayer().getPacketBuilder()
+                .sendItemOnInterface(307, 200, item.getId());
         dialogue.getPlayer().getPacketBuilder().sendChatInterface(306);
         dialogue.getPlayer().getInventory().addItem(item);
     }

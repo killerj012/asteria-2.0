@@ -12,7 +12,8 @@ import server.world.entity.Spell;
 public abstract class CombatFightSpell extends CombatSpell {
 
     @Override
-    public void endCast(Entity cast, Entity castOn, boolean spellAccurate, int damageInflicted) {
+    public void endCast(Entity cast, Entity castOn, boolean spellAccurate,
+            int damageInflicted) {
 
         /** Normal combat spells have no effects. */
     }

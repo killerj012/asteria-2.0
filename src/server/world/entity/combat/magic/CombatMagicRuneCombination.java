@@ -8,12 +8,8 @@ package server.world.entity.combat.magic;
  */
 public enum CombatMagicRuneCombination {
 
-    STEAM(4694, 555, 554),
-    MIST(4695, 555, 556),
-    DUST(4696, 556, 557),
-    SMOKE(4697, 556, 554),
-    MUD(4698, 555, 557),
-    LAVA(4699, 557, 554);
+    STEAM(4694, 555, 554), MIST(4695, 555, 556), DUST(4696, 556, 557), SMOKE(
+            4697, 556, 554), MUD(4698, 555, 557), LAVA(4699, 557, 554);
 
     /** The combination rune. */
     private int combinationRune;
@@ -28,13 +24,14 @@ public enum CombatMagicRuneCombination {
      * Create a new {@link CombatMagicRuneCombination}.
      * 
      * @param combinationRune
-     *        the combination rune.
+     *            the combination rune.
      * @param firstRune
-     *        the first substitute rune.
+     *            the first substitute rune.
      * @param secondRune
-     *        the second substitute rune
+     *            the second substitute rune
      */
-    private CombatMagicRuneCombination(int combinationRune, int firstRune, int secondRune) {
+    private CombatMagicRuneCombination(int combinationRune, int firstRune,
+            int secondRune) {
         this.combinationRune = combinationRune;
         this.firstRune = firstRune;
         this.secondRune = secondRune;

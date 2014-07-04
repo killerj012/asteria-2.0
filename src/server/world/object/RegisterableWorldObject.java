@@ -26,7 +26,7 @@ public class RegisterableWorldObject {
      * Registers a new object to the database.
      * 
      * @param registerable
-     *        the new object to register to the database.
+     *            the new object to register to the database.
      */
     public void register(WorldObject registerable) {
 
@@ -51,7 +51,8 @@ public class RegisterableWorldObject {
                 continue;
             }
 
-            if (player.getPosition().withinDistance(registerable.getPosition(), 60)) {
+            if (player.getPosition().withinDistance(registerable.getPosition(),
+                    60)) {
                 player.getPacketBuilder().sendObject(registerable);
             }
         }
@@ -61,7 +62,7 @@ public class RegisterableWorldObject {
      * Removes an existing object from the database.
      * 
      * @param registerable
-     *        the existing object from the database.
+     *            the existing object from the database.
      */
     public void unregister(WorldObject registerable) {
 
@@ -93,7 +94,7 @@ public class RegisterableWorldObject {
      * Gets the object on the speicified position.
      * 
      * @param position
-     *        the position to get the object on.
+     *            the position to get the object on.
      * @return the object on the position.
      */
     public WorldObject getObjectOnPosition(Position position) {
@@ -109,7 +110,7 @@ public class RegisterableWorldObject {
      * Fired when the player loads a new region.
      * 
      * @param player
-     *        the player loading a new region.
+     *            the player loading a new region.
      */
     public void loadNewRegion(Player player) {
 

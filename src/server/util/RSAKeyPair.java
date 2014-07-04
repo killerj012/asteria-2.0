@@ -24,7 +24,7 @@ public final class RSAKeyPair {
      * Generates the 1024 bit RSA pair.
      * 
      * @param args
-     *        an array of the runtime arguments.
+     *            an array of the runtime arguments.
      */
     public static void main(String[] args) {
         try {
@@ -35,11 +35,15 @@ public final class RSAKeyPair {
             PrivateKey privateKey = keypair.getPrivate();
             PublicKey publicKey = keypair.getPublic();
 
-            RSAPrivateKeySpec privSpec = factory.getKeySpec(privateKey, RSAPrivateKeySpec.class);
-            writeKey("./data/rsapriv.txt", privSpec.getModulus(), privSpec.getPrivateExponent());
+            RSAPrivateKeySpec privSpec = factory.getKeySpec(privateKey,
+                    RSAPrivateKeySpec.class);
+            writeKey("./data/rsapriv.txt", privSpec.getModulus(),
+                    privSpec.getPrivateExponent());
 
-            RSAPublicKeySpec pubSpec = factory.getKeySpec(publicKey, RSAPublicKeySpec.class);
-            writeKey("./data/rsapub.txt", pubSpec.getModulus(), pubSpec.getPublicExponent());
+            RSAPublicKeySpec pubSpec = factory.getKeySpec(publicKey,
+                    RSAPublicKeySpec.class);
+            writeKey("./data/rsapub.txt", pubSpec.getModulus(),
+                    pubSpec.getPublicExponent());
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -49,19 +53,22 @@ public final class RSAKeyPair {
      * Writes the actual key to a file.
      * 
      * @param file
-     *        the file to write the key to.
+     *            the file to write the key to.
      * @param modulus
-     *        the modulus value.
+     *            the modulus value.
      * @param exponent
-     *        the exponent value.
+     *            the exponent value.
      */
-    public static void writeKey(String file, BigInteger modulus, BigInteger exponent) {
+    public static void writeKey(String file, BigInteger modulus,
+            BigInteger exponent) {
         try {
             BufferedWriter writer = new BufferedWriter(new FileWriter(file));
-            writer.write("private static final BigInteger RSA_MODULUS = new BigInteger(\"" + modulus.toString() + "\");");
+            writer.write("private static final BigInteger RSA_MODULUS = new BigInteger(\""
+                    + modulus.toString() + "\");");
             writer.newLine();
             writer.newLine();
-            writer.write("private static final BigInteger RSA_EXPONENT = new BigInteger(\"" + exponent.toString() + "\");");
+            writer.write("private static final BigInteger RSA_EXPONENT = new BigInteger(\""
+                    + exponent.toString() + "\");");
             writer.newLine();
             writer.flush();
             writer.close();

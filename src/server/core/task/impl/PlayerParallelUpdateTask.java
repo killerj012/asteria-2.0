@@ -27,10 +27,10 @@ public class PlayerParallelUpdateTask extends ConcurrentTask {
      * Create a new {@link PlayerParallelUpdateTask}.
      * 
      * @param player
-     *        the player to perform updating on.
+     *            the player to perform updating on.
      * @param phaser
-     *        the phaser being used to keep the main game thread in sync with
-     *        updating.
+     *            the phaser being used to keep the main game thread in sync
+     *            with updating.
      */
     public PlayerParallelUpdateTask(Player player, Phaser phaser) {
         this.player = player;

@@ -29,9 +29,9 @@ public enum Spellbook {
      * Create a new {@link SpellBook}.
      * 
      * @param sidebarInterface
-     *        the sidebar interface for this spellbook.
+     *            the sidebar interface for this spellbook.
      * @param teleport
-     *        the teleport type this spellbook uses.
+     *            the teleport type this spellbook uses.
      */
     Spellbook(int sidebarInterface, Teleport teleport) {
         this.sidebarInterface = sidebarInterface;
@@ -42,14 +42,18 @@ public enum Spellbook {
      * Converts the player to a different magic type.
      * 
      * @param player
-     *        the player converting.
+     *            the player converting.
      * @param book
-     *        the book to convert to.
+     *            the book to convert to.
      */
     public static void convert(Player player, Spellbook book) {
-        player.getPacketBuilder().sendSidebarInterface(6, book.getSidebarInterface());
+        player.getPacketBuilder().sendSidebarInterface(6,
+                book.getSidebarInterface());
         player.setSpellbook(book);
-        player.getPacketBuilder().sendMessage("You convert to " + book.name().toLowerCase().replaceAll("_", " ") + " magicks!");
+        player.getPacketBuilder().sendMessage(
+                "You convert to "
+                        + book.name().toLowerCase().replaceAll("_", " ")
+                        + " magicks!");
     }
 
     /**

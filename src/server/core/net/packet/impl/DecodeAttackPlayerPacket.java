@@ -35,9 +35,9 @@ public class DecodeAttackPlayerPacket extends PacketDecoder {
             /** Wilderness location check. */
             if (!Location.inWilderness(player)
                     || !Location.inWilderness(attacked)) {
-                player.getPacketBuilder().sendMessage("Both you and "
-                        + attacked.getUsername()
-                        + " need to be in the wilderness to fight!");
+                player.getPacketBuilder().sendMessage(
+                        "Both you and " + attacked.getUsername()
+                                + " need to be in the wilderness to fight!");
                 return;
             }
 
@@ -45,16 +45,20 @@ public class DecodeAttackPlayerPacket extends PacketDecoder {
             if (!Location.inMultiCombat(player)
                     && player.getCombatBuilder().isBeingAttacked()
                     && player.getCombatBuilder().getLastAttacker() != attacked) {
-                player.getPacketBuilder().sendMessage("You are already under attack!");
+                player.getPacketBuilder().sendMessage(
+                        "You are already under attack!");
                 return;
             }
 
             /** The combat level difference check. */
-            int combatDifference = CombatFactory.calculateCombatDifference(player.getCombatLevel(), attacked.getCombatLevel());
+            int combatDifference = CombatFactory.calculateCombatDifference(
+                    player.getCombatLevel(), attacked.getCombatLevel());
 
             if (combatDifference > player.getWildernessLevel()
                     || combatDifference > attacked.getWildernessLevel()) {
-                player.getPacketBuilder().sendMessage("Your combat level difference is too great to attack that player here.");
+                player.getPacketBuilder()
+                        .sendMessage(
+                                "Your combat level difference is too great to attack that player here.");
                 player.getMovementQueue().reset();
                 return;
             }

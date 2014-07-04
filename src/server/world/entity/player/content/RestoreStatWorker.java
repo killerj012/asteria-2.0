@@ -22,7 +22,7 @@ public class RestoreStatWorker extends Worker {
      * Create a new {@link RestoreStatWorker}.
      * 
      * @param player
-     *        the player that will be attached to this worker.
+     *            the player that will be attached to this worker.
      */
     public RestoreStatWorker() {
         super(15, false, WorkRate.APPROXIMATE_SECOND);
@@ -47,7 +47,8 @@ public class RestoreStatWorker extends Worker {
                             && player.isAcceptAid()) {
                         player.getSkills()[i].increaseLevel(1);
 
-                        if (CombatPrayer.isPrayerActivated(player, CombatPrayer.RAPID_HEAL)) {
+                        if (CombatPrayer.isPrayerActivated(player,
+                                CombatPrayer.RAPID_HEAL)) {
                             if (player.getSkills()[i].getLevel() < realLevel) {
                                 player.getSkills()[i].increaseLevel(1);
                             }
@@ -62,7 +63,8 @@ public class RestoreStatWorker extends Worker {
                         && i != Misc.PRAYER) {
                     player.getSkills()[i].increaseLevel(1);
 
-                    if (CombatPrayer.isPrayerActivated(player, CombatPrayer.RAPID_RESTORE)) {
+                    if (CombatPrayer.isPrayerActivated(player,
+                            CombatPrayer.RAPID_RESTORE)) {
                         if (player.getSkills()[i].getLevel() < realLevel) {
                             player.getSkills()[i].increaseLevel(1);
                         }

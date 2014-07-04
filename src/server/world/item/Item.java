@@ -20,9 +20,9 @@ public class Item {
      * Create a new {@link Item} with the specified amount.
      * 
      * @param id
-     *        the id of the item.
+     *            the id of the item.
      * @param amount
-     *        the amount of the item.
+     *            the amount of the item.
      */
     public Item(int id, int amount) {
         this.setId(id);
@@ -33,7 +33,7 @@ public class Item {
      * Create a new {@link Item} with the specified amount as 1.
      * 
      * @param id
-     *        the id of the item.
+     *            the id of the item.
      */
     public Item(int id) {
         this.setId(id);
@@ -45,8 +45,7 @@ public class Item {
         if (obj instanceof Item) {
             Item item = (Item) obj;
 
-            if (id == item.id
-                    && amount == item.amount) {
+            if (id == item.id && amount == item.amount) {
                 return true;
             }
         }
@@ -55,13 +54,9 @@ public class Item {
 
     @Override
     public String toString() {
-        String name = getDefinition() == null ? "null" : getDefinition().getItemName();
-        return "ITEM[item= "
-                + id
-                + ", amount= "
-                + amount
-                + ", name= "
-                + name
+        String name = getDefinition() == null ? "null" : getDefinition()
+                .getItemName();
+        return "ITEM[item= " + id + ", amount= " + amount + ", name= " + name
                 + "]";
     }
 
@@ -78,7 +73,7 @@ public class Item {
      * Sets the id of the item.
      * 
      * @param id
-     *        the id to set
+     *            the id to set
      */
     public void setId(int id) {
         this.id = id;
@@ -97,7 +92,7 @@ public class Item {
      * Sets the amount of the item.
      * 
      * @param amount
-     *        the amount to set
+     *            the amount to set
      */
     public void setAmount(int amount) {
         this.amount = amount;
@@ -149,7 +144,7 @@ public class Item {
      * Gets this item definition.
      * 
      * @param id
-     *        the item definition to get.
+     *            the item definition to get.
      * @return the definition.
      */
     public ItemDefinition getDefinition() {
@@ -165,14 +160,15 @@ public class Item {
 
         @Override
         public int compare(Item o1, Item o2) {
-            if (o1 == null
-                    || o2 == null) {
+            if (o1 == null || o2 == null) {
                 return -1;
             }
 
-            if (o1.getDefinition().getGeneralStorePrice() > o2.getDefinition().getGeneralStorePrice()) {
+            if (o1.getDefinition().getGeneralStorePrice() > o2.getDefinition()
+                    .getGeneralStorePrice()) {
                 return 1;
-            } else if (o1.getDefinition().getGeneralStorePrice() < o2.getDefinition().getGeneralStorePrice()) {
+            } else if (o1.getDefinition().getGeneralStorePrice() < o2
+                    .getDefinition().getGeneralStorePrice()) {
                 return -1;
             }
             return 0;
@@ -188,14 +184,15 @@ public class Item {
 
         @Override
         public int compare(Item o1, Item o2) {
-            if (o1 == null
-                    || o2 == null) {
+            if (o1 == null || o2 == null) {
                 return -1;
             }
 
-            if (o1.getDefinition().getSpecialStorePrice() > o2.getDefinition().getSpecialStorePrice()) {
+            if (o1.getDefinition().getSpecialStorePrice() > o2.getDefinition()
+                    .getSpecialStorePrice()) {
                 return 1;
-            } else if (o1.getDefinition().getSpecialStorePrice() < o2.getDefinition().getSpecialStorePrice()) {
+            } else if (o1.getDefinition().getSpecialStorePrice() < o2
+                    .getDefinition().getSpecialStorePrice()) {
                 return -1;
             }
             return 0;

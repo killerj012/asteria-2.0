@@ -18,7 +18,8 @@ public enum BotTask {
         @Override
         public void fireTask(final Bot bot) {
             bot.getPlayer().forceChat("I'm going to walk around a bit.");
-            final Position startPosition = bot.getPlayer().getPosition().clone();
+            final Position startPosition = bot.getPlayer().getPosition()
+                    .clone();
 
             bot.setBotWorker(new Worker(3, false, WorkRate.APPROXIMATE_SECOND) {
 
@@ -37,15 +38,15 @@ public enum BotTask {
 
                         /** Determine the direction. */
                         switch (Misc.random(2)) {
-                            case 0:
-                                x = Misc.random(3);
-                                y = Misc.random(3);
+                        case 0:
+                            x = Misc.random(3);
+                            y = Misc.random(3);
 
-                                break;
-                            case 1:
-                                x = -Misc.random(3);
-                                y = -Misc.random(3);
-                                break;
+                            break;
+                        case 1:
+                            x = -Misc.random(3);
+                            y = -Misc.random(3);
+                            break;
                         }
 
                         /** Walk in that direction. */
@@ -70,7 +71,7 @@ public enum BotTask {
      * Fired when the task is assigned.
      * 
      * @param bot
-     *        the bot that this task is being fired for.
+     *            the bot that this task is being fired for.
      */
     public abstract void fireTask(Bot bot);
 
@@ -78,7 +79,7 @@ public enum BotTask {
      * Fired when the task is stopped.
      * 
      * @param bot
-     *        the bot that this task is being stopped for.
+     *            the bot that this task is being stopped for.
      */
     public abstract void stopTask(Bot bot);
 }

@@ -7,12 +7,12 @@ package server.world.entity.combat.magic;
  */
 public enum CombatMagicStaff {
 
-    AIR(new int[] { 1381, 1397, 1405 }, new int[] { 556 }),
-    WATER(new int[] { 1383, 1395, 1403 }, new int[] { 555 }),
-    EARTH(new int[] { 1385, 1399, 1407 }, new int[] { 557 }),
-    FIRE(new int[] { 1387, 1393, 1401 }, new int[] { 554 }),
-    MUD(new int[] { 6562, 6563 }, new int[] { 555, 557 }),
-    LAVA(new int[] { 3053, 3054 }, new int[] { 554, 557 });
+    AIR(new int[] { 1381, 1397, 1405 }, new int[] { 556 }), WATER(new int[] {
+            1383, 1395, 1403 }, new int[] { 555 }), EARTH(new int[] { 1385,
+            1399, 1407 }, new int[] { 557 }), FIRE(
+            new int[] { 1387, 1393, 1401 }, new int[] { 554 }), MUD(new int[] {
+            6562, 6563 }, new int[] { 555, 557 }), LAVA(
+            new int[] { 3053, 3054 }, new int[] { 554, 557 });
 
     /** The item ids of the staves that can be used in place of runes. */
     private int[] itemIds;
@@ -24,9 +24,9 @@ public enum CombatMagicStaff {
      * Create a new {@link CombatMagicStaff}.
      * 
      * @param itemIds
-     *        the item ids of the staves that can be used in place of runes.
+     *            the item ids of the staves that can be used in place of runes.
      * @param runeIds
-     *        the item ids of the runes that the staves can be used for.
+     *            the item ids of the runes that the staves can be used for.
      */
     private CombatMagicStaff(int[] itemIds, int[] runeIds) {
         this.itemIds = itemIds;

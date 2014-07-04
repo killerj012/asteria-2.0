@@ -24,7 +24,7 @@ public class NpcUpdate {
      * Updates all NPCs for the argued Player.
      * 
      * @param player
-     *        the argued player.
+     *            the argued player.
      */
     public static void update(Player player) throws Exception {
         // XXX: The buffer sizes may need to be tuned.
@@ -56,11 +56,8 @@ public class NpcUpdate {
         /** Update the local NPC list itself. */
         int added = 0;
         for (Npc npc : World.getNpcs()) {
-            if (npc == null
-                    || added == 15
-                    || player.getNpcs().size() >= 255
-                    || player.getNpcs().contains(npc)
-                    || !npc.isVisible()) {
+            if (npc == null || added == 15 || player.getNpcs().size() >= 255
+                    || player.getNpcs().contains(npc) || !npc.isVisible()) {
                 continue;
             }
 
@@ -94,13 +91,14 @@ public class NpcUpdate {
      * Adds the NPC to the client side local list.
      * 
      * @param out
-     *        The buffer to write to.
+     *            The buffer to write to.
      * @param player
-     *        The player.
+     *            The player.
      * @param npc
-     *        The NPC being added.
+     *            The NPC being added.
      */
-    private static void addNpc(PacketBuffer.WriteBuffer out, Player player, Npc npc) {
+    private static void addNpc(PacketBuffer.WriteBuffer out, Player player,
+            Npc npc) {
         out.writeBits(14, npc.getSlot());
         Position delta = Misc.delta(player.getPosition(), npc.getPosition());
         out.writeBits(5, delta.getY());
@@ -114,9 +112,9 @@ public class NpcUpdate {
      * Updates the movement of a NPC for this cycle.
      * 
      * @param out
-     *        The buffer to write to.
+     *            The buffer to write to.
      * @param npc
-     *        The NPC to update.
+     *            The NPC to update.
      */
     private static void updateNpcMovement(PacketBuffer.WriteBuffer out, Npc npc) {
         if (npc.getPrimaryDirection() == -1) {
@@ -143,11 +141,12 @@ public class NpcUpdate {
      * Updates the state of the NPC to the given update block.
      * 
      * @param block
-     *        The update block to append to.
+     *            The update block to append to.
      * @param npc
-     *        The NPC to update.
+     *            The NPC to update.
      */
-    private static void updateState(PacketBuffer.WriteBuffer block, Npc npc) throws Exception {
+    private static void updateState(PacketBuffer.WriteBuffer block, Npc npc)
+            throws Exception {
         int mask = 0x0;
 
         /** NPC update masks. */
@@ -209,9 +208,9 @@ public class NpcUpdate {
      * Update the GFX block.
      * 
      * @param out
-     *        the packet to write to.
+     *            the packet to write to.
      * @param npc
-     *        the npc to append this update for.
+     *            the npc to append this update for.
      */
     private static void appendGfxUpdate(PacketBuffer.WriteBuffer out, Npc npc) {
         out.writeShort(npc.getGfx().getId());
@@ -222,11 +221,12 @@ public class NpcUpdate {
      * Update the secondary hit block.
      * 
      * @param out
-     *        the packet to write to.
+     *            the packet to write to.
      * @param npc
-     *        the npc to append this update for.
+     *            the npc to append this update for.
      */
-    private static void appendSecondaryHit(PacketBuffer.WriteBuffer out, Npc npc) throws Exception {
+    private static void appendSecondaryHit(PacketBuffer.WriteBuffer out, Npc npc)
+            throws Exception {
         if (!npc.isHasDied()) {
             if (npc.getCurrentHP() <= 0) {
                 npc.setCurrentHealth(0);
@@ -245,9 +245,9 @@ public class NpcUpdate {
      * Update the face entity block.
      * 
      * @param out
-     *        the packet to write to.
+     *            the packet to write to.
      * @param npc
-     *        the npc to append this update for.
+     *            the npc to append this update for.
      */
     private static void appendFaceEntity(PacketBuffer.WriteBuffer out, Npc npc) {
         out.writeShort(npc.getFaceIndex());
@@ -257,9 +257,9 @@ public class NpcUpdate {
      * Update the forced chat block.
      * 
      * @param out
-     *        the packet to write to.
+     *            the packet to write to.
      * @param npc
-     *        the npc to append this update for.
+     *            the npc to append this update for.
      */
     private static void appendForcedChat(PacketBuffer.WriteBuffer out, Npc npc) {
         out.writeString(npc.getForcedText());
@@ -269,11 +269,12 @@ public class NpcUpdate {
      * Update the primary hit block.
      * 
      * @param out
-     *        the packet to write to.
+     *            the packet to write to.
      * @param npc
-     *        the npc to append this update for.
+     *            the npc to append this update for.
      */
-    private static void appendPrimaryHit(PacketBuffer.WriteBuffer out, Npc npc) throws Exception {
+    private static void appendPrimaryHit(PacketBuffer.WriteBuffer out, Npc npc)
+            throws Exception {
         if (!npc.isHasDied()) {
             if (npc.getCurrentHP() <= 0) {
                 npc.setCurrentHealth(0);
@@ -292,11 +293,12 @@ public class NpcUpdate {
      * Update the face coordinate block.
      * 
      * @param out
-     *        the packet to write to.
+     *            the packet to write to.
      * @param npc
-     *        the npc to append this update for.
+     *            the npc to append this update for.
      */
-    private static void appendFaceCoordinate(PacketBuffer.WriteBuffer out, Npc npc) {
+    private static void appendFaceCoordinate(PacketBuffer.WriteBuffer out,
+            Npc npc) {
         out.writeShort(npc.getFaceCoordinates().getX(), ByteOrder.LITTLE);
         out.writeShort(npc.getFaceCoordinates().getY(), ByteOrder.LITTLE);
     }
@@ -305,9 +307,9 @@ public class NpcUpdate {
      * Update the animation block.
      * 
      * @param out
-     *        the packet to write to.
+     *            the packet to write to.
      * @param npc
-     *        the npc to append this update for.
+     *            the npc to append this update for.
      */
     private static void appendAnimation(PacketBuffer.WriteBuffer out, Npc npc) {
         out.writeShort(npc.getAnimation().getId(), ByteOrder.LITTLE);

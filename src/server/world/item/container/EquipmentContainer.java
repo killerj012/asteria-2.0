@@ -25,10 +25,11 @@ public class EquipmentContainer {
      * container.
      */
     private Player player;
-    
+
     /** The container that will hold this player's equipped items. */
-    private ItemContainer container = new ItemContainer(ContainerPolicy.NORMAL_POLICY, 14);
-    
+    private ItemContainer container = new ItemContainer(
+            ContainerPolicy.NORMAL_POLICY, 14);
+
     /**
      * The default interface id of this container.
      */
@@ -38,8 +39,8 @@ public class EquipmentContainer {
      * Create a new {@link EquipmentContainer}.
      * 
      * @param player
-     *        the player that will have all of their equipped items managed by
-     *        this container.
+     *            the player that will have all of their equipped items managed
+     *            by this container.
      */
     public EquipmentContainer(Player player) {
         this.player = player;
@@ -50,7 +51,8 @@ public class EquipmentContainer {
      */
     public void refresh() {
         Item[] items = container.toArray();
-        player.getPacketBuilder().sendUpdateItems(DEFAULT_EQUIPMENT_CONTAINER_ID, items);
+        player.getPacketBuilder().sendUpdateItems(
+                DEFAULT_EQUIPMENT_CONTAINER_ID, items);
     }
 
     /**
@@ -58,7 +60,7 @@ public class EquipmentContainer {
      * inventory.
      * 
      * @param slot
-     *        the item on this slot to add into the container.
+     *            the item on this slot to add into the container.
      */
     public void equipItem(int slot) {
 
@@ -73,7 +75,8 @@ public class EquipmentContainer {
         /** Check if we can equip the item based on the minigame we're in. */
         for (Minigame minigame : MinigameFactory.getMinigames().values()) {
             if (minigame.inMinigame(player)) {
-                if (!minigame.canEquip(player, item, item.getDefinition().getEquipmentSlot())) {
+                if (!minigame.canEquip(player, item, item.getDefinition()
+                        .getEquipmentSlot())) {
                     return;
                 }
             }
@@ -100,7 +103,10 @@ public class EquipmentContainer {
                 if (item.getId() == equipItem.getId()) {
 
                     /** Just add on to the amount. */
-                    container.set(designatedSlot, new Item(item.getId(), item.getAmount() + equipItem.getAmount()));
+                    container.set(
+                            designatedSlot,
+                            new Item(item.getId(), item.getAmount()
+                                    + equipItem.getAmount()));
                 } else {
 
                     /** Otherwise replace the item. */
@@ -127,7 +133,8 @@ public class EquipmentContainer {
              * need to remove any other armor currently in the shield and weapon
              * spot.
              */
-            if (designatedSlot == Misc.EQUIPMENT_SLOT_WEAPON && item.getDefinition().isTwoHanded()) {
+            if (designatedSlot == Misc.EQUIPMENT_SLOT_WEAPON
+                    && item.getDefinition().isTwoHanded()) {
                 removeItem(Misc.EQUIPMENT_SLOT_SHIELD);
 
                 if (container.isSlotUsed(Misc.EQUIPMENT_SLOT_SHIELD)) {
@@ -139,8 +146,10 @@ public class EquipmentContainer {
              * If the item is going into the shield slot and we currently have a
              * two-handed item equipped we need to remove it.
              */
-            if (designatedSlot == Misc.EQUIPMENT_SLOT_SHIELD && container.isSlotUsed(Misc.EQUIPMENT_SLOT_WEAPON)) {
-                if (container.getItem(Misc.EQUIPMENT_SLOT_WEAPON).getDefinition().isTwoHanded()) {
+            if (designatedSlot == Misc.EQUIPMENT_SLOT_SHIELD
+                    && container.isSlotUsed(Misc.EQUIPMENT_SLOT_WEAPON)) {
+                if (container.getItem(Misc.EQUIPMENT_SLOT_WEAPON)
+                        .getDefinition().isTwoHanded()) {
                     removeItem(Misc.EQUIPMENT_SLOT_WEAPON);
 
                     if (container.isSlotUsed(Misc.EQUIPMENT_SLOT_WEAPON)) {
@@ -167,7 +176,8 @@ public class EquipmentContainer {
             }
 
             /** And set the newly equipped item. */
-            container.set(designatedSlot, new Item(item.getId(), item.getAmount()));
+            container.set(designatedSlot,
+                    new Item(item.getId(), item.getAmount()));
         }
 
         if (item.getDefinition().getEquipmentSlot() == Misc.EQUIPMENT_SLOT_WEAPON) {
@@ -196,7 +206,7 @@ public class EquipmentContainer {
      * Removes an item from a specified slot in the container.
      * 
      * @param slot
-     *        the slot to remove the item from.
+     *            the slot to remove the item from.
      */
     public void removeItem(int slot) {
 
@@ -219,7 +229,8 @@ public class EquipmentContainer {
 
         /** Check if we have enough space to remove it. */
         if (!player.getInventory().getContainer().hasRoomFor(item)) {
-            player.getPacketBuilder().sendMessage("You do not have enough space in your inventory!");
+            player.getPacketBuilder().sendMessage(
+                    "You do not have enough space in your inventory!");
             return;
         }
 

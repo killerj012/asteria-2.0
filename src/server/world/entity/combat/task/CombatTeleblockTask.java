@@ -18,7 +18,7 @@ public class CombatTeleblockTask extends Worker {
      * Create a new {@link CombatTeleblockTask}.
      * 
      * @param player
-     *        the player attached to this worker.
+     *            the player attached to this worker.
      */
     public CombatTeleblockTask(Player player) {
         super(1, false);
@@ -31,7 +31,8 @@ public class CombatTeleblockTask extends Worker {
 
         /** When the timer reaches 0 unteleblock the player. */
         if (player.getTeleblockTimer() == 0) {
-            player.getPacketBuilder().sendMessage("You feel the effects of the strange spell go away.");
+            player.getPacketBuilder().sendMessage(
+                    "You feel the effects of the strange spell go away.");
             this.cancel();
             return;
         }
