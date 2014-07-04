@@ -7,7 +7,6 @@ import server.core.worker.WorkRate;
 import server.core.worker.Worker;
 import server.util.Misc;
 import server.world.entity.Entity;
-import server.world.entity.EntityType;
 import server.world.entity.Hit;
 import server.world.entity.Hit.HitType;
 import server.world.item.Item;
@@ -29,7 +28,7 @@ public class CombatPoisonTask extends Worker {
 	 *            the entity being inflicted with poison.
 	 */
 	public CombatPoisonTask(Entity entity) {
-		super(15, false, WorkRate.APPROXIMATE_SECOND);
+		super(10, false, WorkRate.APPROXIMATE_SECOND);
 		this.entity = entity;
 	}
 
@@ -65,27 +64,16 @@ public class CombatPoisonTask extends Worker {
 			return;
 		}
 
-		if (entity.getPoisonHits() == 0) {
+		if (entity.getPoisonHits() == 0 || entity.getPoisonStrength() == null) {
 			entity.setPoisonHits(0);
 			entity.setPoisonStrength(PoisonType.MILD);
 			this.cancel();
 			return;
 		}
 
-		/** Calculate the poison hit for this turn. */
-		int calculateHit = entity.getPoisonStrength().getDamage();
-
-		/** Players cannot be killed by poison. */
-		if (entity.type() == EntityType.PLAYER
-				&& calculateHit >= entity.getCurrentHealth()) {
-			entity.setPoisonHits(0);
-			entity.setPoisonStrength(PoisonType.MILD);
-			this.cancel();
-			return;
-		}
-
-		/** Otherwise deal damage as normal. */
-		entity.dealDamage(new Hit(calculateHit, HitType.POISON));
+		/** Calculate the poison hit for this turn and deal damage. */
+		entity.dealDamage(new Hit(entity.getPoisonStrength().getDamage(),
+				HitType.POISON));
 		entity.decrementPoisonHits();
 	}
 
