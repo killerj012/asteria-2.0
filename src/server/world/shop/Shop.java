@@ -33,7 +33,8 @@ public class Shop {
     private ItemContainer container = new ItemContainer(ContainerPolicy.STACKABLE_POLICY, 48);
 
     /** A map of the original shop items and their amounts. */
-    private Map<Integer, Integer> shopMap = new HashMap<Integer, Integer>();
+	private Map<Integer, Integer> shopMap = new HashMap<Integer, Integer>(
+			container.capacity());
 
     /** If the shop will replenish its stock once it runs out. */
     private boolean restockItems;
