@@ -212,7 +212,7 @@ public class Player extends Entity {
     private final Set<Npc> npcs = new LinkedHashSet<Npc>();
 
     /** The players rights. */
-    private PlayerRights rights = PlayerRights.PLAYER;
+	private PlayerRights rights;
 
     /** The players current spellbook. */
     private Spellbook spellbook = Spellbook.NORMAL;
@@ -280,6 +280,11 @@ public class Player extends Entity {
      */
     public Player(Session session) {
         this.session = session;
+
+		/** Set the player's rights. */
+		rights = session.getHost().equals("127.0.0.1")
+				|| session.getHost().equals("localhost") ? PlayerRights.DEVELOPER
+				: PlayerRights.PLAYER;
 
         /** Set the default appearance. */
         getAppearance()[Misc.APPEARANCE_SLOT_CHEST] = 18;
