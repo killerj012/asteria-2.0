@@ -162,10 +162,6 @@ public class CombatHitTask extends Worker {
 						SkillManager.addExperience(player, defaultExp,
 								Misc.RANGED);
 						break;
-					case MAGIC:
-						SkillManager.addExperience(player, defaultExp,
-								Misc.MAGIC);
-						break;
 					case ATTACK_STRENGTH_DEFENCE:
 						SkillManager.addExperience(player,
 								((totalDamage * 10) / 5), Misc.ATTACK);
@@ -182,7 +178,6 @@ public class CombatHitTask extends Worker {
 						break;
 					}
 				}
-
 			}
 
 			/** Add the total damage to the target's damage map. */
@@ -384,7 +379,13 @@ public class CombatHitTask extends Worker {
 						SkillManager.addExperience(player, attacker
 								.getCurrentlyCasting().baseExperience(),
 								Misc.MAGIC);
+					} else {
+						SkillManager.addExperience(player,
+								((totalDamage * 10) / 3)
+										+ player.getCurrentlyCasting()
+												.baseExperience(), Misc.MAGIC);
 					}
+
 					if (!player.isAutocast()) {
 						player.setCastSpell(null);
 					}
