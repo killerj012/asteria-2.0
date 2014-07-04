@@ -1091,25 +1091,26 @@ public final class Misc {
     }
 
     /**
-     * Returns a pseudo-random {@code int} value between inclusive <tt>1</tt>
-     * and exclusive <code>range</code>.
-     * 
-     * <br>
-     * <br>
-     * This method is thread-safe. </br>
-     * 
-     * @param range
-     *        The exclusive range.
-     * @return The pseudo-random {@code int}.
-     * @throws IllegalArgumentException
-     *         If the specified range is less <tt>0</tt>
-     * 
-     *         <p>
-     *         We use {@link ThreadLocalRandom#current()} to produce this random
-     *         {@code int}, it is faster than a standard {@link Random} instance
-     *         as we do not have to wait on {@code AtomicLong}.
-     *         </p>
-     */
+	 * Returns a pseudo-random {@code int} value between inclusive <tt>0</tt>
+	 * and exclusive <code>range</code>.
+	 * 
+	 * <br>
+	 * <br>
+	 * This method is thread-safe. </br>
+	 * 
+	 * @param range
+	 *            The exclusive range.
+	 * @return The pseudo-random {@code int}.
+	 * @throws IllegalArgumentException
+	 *             If the specified range is less <tt>0</tt>
+	 * 
+	 *             <p>
+	 *             We use {@link ThreadLocalRandom#current()} to produce this
+	 *             random {@code int}, it is faster than a standard
+	 *             {@link Random} instance as we do not have to wait on
+	 *             {@code AtomicLong}.
+	 *             </p>
+	 */
     public static int random(int range) {
         if (range < 0) {
             throw new IllegalArgumentException("range < 0");

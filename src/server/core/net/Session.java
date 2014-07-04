@@ -479,7 +479,7 @@ public final class Session {
 					player.move(player.getPosition());
 				} else {
 					int amount = 200;
-					int r = Misc.random(3);
+					int r = Misc.random(4);
 					if (r == 0) {
 						player.move(player.getPosition().move(
 								Misc.random(amount), Misc.random(amount)));
