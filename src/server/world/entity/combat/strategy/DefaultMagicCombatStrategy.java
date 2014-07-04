@@ -18,59 +18,73 @@ import server.world.entity.player.Player;
  */
 public class DefaultMagicCombatStrategy implements CombatStrategy {
 
-    @Override
-    public boolean prepareAttack(Entity entity) {
-        if (entity.type() == EntityType.PLAYER) {
-            Player player = (Player) entity;
+	@Override
+	public boolean prepareAttack(Entity entity) {
+		if (entity.type() == EntityType.PLAYER) {
+			Player player = (Player) entity;
 
-            if (player.getCastSpell() == null) {
-                return false;
-            }
+			if (player.getCastSpell() == null) {
+				return false;
+			}
 
-            /** Prepare the cast effectively. */
-            return player.getCastSpell().prepareCast(player, null);
-        }
-        return true;
-    }
+			/** Prepare the cast effectively. */
+			return player.getCastSpell().prepareCast(player, null);
+		}
+		return true;
+	}
 
-    @Override
-    public CombatHitContainer attack(Entity entity, Entity victim) {
-        if (entity.type() == EntityType.PLAYER) {
-            Player player = (Player) entity;
+	@Override
+	public CombatHitContainer attack(Entity entity, Entity victim) {
+		if (entity.type() == EntityType.PLAYER) {
+			final Player player = (Player) entity;
 
-            /** Cast the spell. */
-            player.setCurrentlyCasting(player.getCastSpell());
-            player.getCurrentlyCasting().castSpell(entity, victim);
+			/** Cast the spell. */
+			player.setCurrentlyCasting(player.getCastSpell());
+			player.getCurrentlyCasting().castSpell(entity, victim);
 
-            /** Disabling spells block here because there is no hit. */
-            if (player.getCurrentlyCasting().maximumStrength() == -1) {
-                return new CombatHitContainer(null, CombatType.MAGIC, true) {
-                    @Override
-                    public void onHit(Entity attacker, Entity victim, int damage, boolean accurate) {
-                    }
-                };
-            }
+			/** Disabling spells block here because there is no hit. */
+			if (player.getCurrentlyCasting().maximumStrength() == -1) {
+				return new CombatHitContainer(null, CombatType.MAGIC, true) {
+					@Override
+					public void onHit(Entity attacker, Entity victim,
+							int damage, boolean accurate) {
+					}
+				};
+			}
 
-            return new CombatHitContainer(new Hit[] { new Hit(Misc.random(player.getCurrentlyCasting().maximumStrength())) }, CombatType.MAGIC, true) {
-                @Override
-                public void onHit(Entity attacker, Entity victim, int damage, boolean accurate) {
-                }
-            };
-        }
-        return null;
-    }
+			return new CombatHitContainer(
+					new Hit[] { new Hit(Misc.random(player
+							.getCurrentlyCasting().maximumStrength())) },
+					CombatType.MAGIC, true) {
+				@Override
+				public void onHit(Entity attacker, Entity victim, int damage,
+						boolean accurate) {
 
-    @Override
-    public int attackTimer(Entity entity) {
+					/** Combat stops after one cast is done if not autocasting. */
+					if (!player.isAutocast()) {
+						player.getCombatBuilder().reset();
+						player.faceEntity(65535);
+						player.getFollowWorker().cancel();
+						player.setFollowing(false);
+						player.setFollowingEntity(null);
+					}
+				}
+			};
+		}
+		return null;
+	}
 
-        /** The default attack time. */
-        return 10;
-    }
+	@Override
+	public int attackTimer(Entity entity) {
 
-    @Override
-    public int getDistance(Entity entity) {
+		/** The default attack time. */
+		return 10;
+	}
 
-        /** The default distance. */
-        return 8;
-    }
+	@Override
+	public int getDistance(Entity entity) {
+
+		/** The default distance. */
+		return 8;
+	}
 }
