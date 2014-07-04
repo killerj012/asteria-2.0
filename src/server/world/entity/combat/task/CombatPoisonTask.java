@@ -7,6 +7,7 @@ import server.core.worker.WorkRate;
 import server.core.worker.Worker;
 import server.util.Misc;
 import server.world.entity.Entity;
+import server.world.entity.EntityType;
 import server.world.entity.Hit;
 import server.world.entity.Hit.HitType;
 import server.world.item.Item;
@@ -74,11 +75,12 @@ public class CombatPoisonTask extends Worker {
 		/** Calculate the poison hit for this turn. */
 		int calculateHit = entity.getPoisonStrength().getDamage();
 
-		/**
-		 * If the damage is above your current health then don't deal any
-		 * damage.
-		 */
-		if (calculateHit >= entity.getCurrentHealth()) {
+		/** Players cannot be killed by poison. */
+		if (entity.type() == EntityType.PLAYER
+				&& calculateHit >= entity.getCurrentHealth()) {
+			entity.setPoisonHits(0);
+			entity.setPoisonStrength(PoisonType.MILD);
+			this.cancel();
 			return;
 		}
 
