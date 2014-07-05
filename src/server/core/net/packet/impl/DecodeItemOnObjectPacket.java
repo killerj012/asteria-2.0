@@ -7,6 +7,8 @@ import server.core.net.packet.PacketDecoder;
 import server.core.net.packet.PacketOpcodeHeader;
 import server.util.Misc;
 import server.world.entity.player.Player;
+import server.world.item.Item;
+import server.world.item.container.InventoryContainer;
 import server.world.map.Position;
 
 /**
@@ -22,17 +24,20 @@ public class DecodeItemOnObjectPacket extends PacketDecoder {
 
     @Override
     public void decode(final Player player, ReadBuffer in) {
-        in.readShort(false);
+        final int container = in.readShort(false);
         final int objectId = in.readShort(true, ByteOrder.LITTLE);
         final int objectY = in.readShort(true, ValueType.A, ByteOrder.LITTLE);
-        in.readShort(false);
+        final int slot = in.readShort(true, ByteOrder.LITTLE);;
         final int objectX = in.readShort(true, ValueType.A, ByteOrder.LITTLE);
         final int itemId = in.readShort(false);
         final int size = 1;
+        
+        final Item item = player.getInventory().getContainer().getItem(slot);
 
-        if (!player.getInventory().getContainer().contains(itemId)) {
+        if (item == null || container != InventoryContainer.DEFAULT_INVENTORY_CONTAINER_ID) {
             return;
         }
+
 
         player.facePosition(new Position(objectX, objectY));
         player.getMovementQueueListener().submit(new Runnable() {
