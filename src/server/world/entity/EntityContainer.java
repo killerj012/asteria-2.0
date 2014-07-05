@@ -243,7 +243,6 @@ public class EntityContainer<T extends Entity> implements Iterable<T> {
                 removeSlot(lastElementIndex);
                 currentIndex = lastElementIndex;
                 lastElementIndex = -1;
-                size--;
             }
         };
     }
