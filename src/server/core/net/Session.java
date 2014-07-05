@@ -400,7 +400,7 @@ public final class Session {
             }
 
             /** Lowercase the username for accurate compare results. */
-            username = username.toLowerCase().trim();
+            username = username.toLowerCase().replaceAll("_", " ").trim();
             password = password.toLowerCase();
 
             /** Make sure the account credentials are valid. */
