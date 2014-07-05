@@ -65,7 +65,7 @@ public class EntityContainer<T extends Entity> implements Iterable<T> {
      *            the entity to add to the slot.
      * @return this container for chaining.
      */
-    public void addSlot(int slot, T entity) {
+    private void addSlot(int slot, T entity) {
 
         /** Throw an exception if this is a malformed entity. */
         if (entity == null) {
@@ -96,7 +96,7 @@ public class EntityContainer<T extends Entity> implements Iterable<T> {
         /** Throw an exception if this is a malformed entity. */
         if (entity == null) {
             throw new IllegalArgumentException(
-                    "Cannot add a malformed entity to this container!");
+                    "Cannot remove a malformed entity from this container!");
         }
 
         /** Otherwise remove the entity. */
@@ -110,7 +110,7 @@ public class EntityContainer<T extends Entity> implements Iterable<T> {
      *            the slot to remove the entity on.
      * @return this container for chaining.
      */
-    public void removeSlot(int slot) {
+    private void removeSlot(int slot) {
 
         /** Throw an exception if the slot is out of the range. */
         if (slot > backingArray.length || slot < 1) {
