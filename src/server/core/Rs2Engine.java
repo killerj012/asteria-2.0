@@ -1,14 +1,11 @@
 package server.core;
 
 import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
-import java.util.concurrent.FutureTask;
 import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
 import server.core.net.EventSelector;
-import server.core.task.Task;
-import server.core.task.TaskFuture;
 import server.core.worker.TaskFactory;
 import server.world.World;
 import server.world.entity.player.content.RestoreEnergyWorker;
@@ -16,7 +13,7 @@ import server.world.entity.player.content.RestoreStatWorker;
 
 /**
  * The 'heart' of the the server that fires game logic at 600ms intervals and
- * gives access to the important core components of this server.
+ * gives access to the thread pools that carry out miscellaneous work.
  * 
  * @author lare96
  */
@@ -25,29 +22,31 @@ public final class Rs2Engine implements Runnable {
     /**
      * The amount of time in minutes for this server to become 'idle'. When the
      * server becomes idle threads are terminated accordingly in order to
-     * preserve resources. The server can only become idle after the
-     * </code>updatePool</code> or the <code>taskEngine</code> stop receiving
-     * tasks and have waited for the specified timeout value (default 3
-     * minutes).
+     * preserve resources. The server can only become idle after thread pools
+     * stop receiving tasks and have waited for the specified timeout value.
      */
-    public static final int THREAD_IDLE_TIMEOUT = 3;
+    public static final int THREAD_IDLE_TIMEOUT = 1;
 
     /**
      * Determines if the server should start up in an idle state rather than
-     * prestarting all pools by default. This value should be true if you aren't
-     * expecting many tasks as soon as you start your server up. Otherwise this
-     * value should be false for more popular servers that receive players the
-     * moment they start their servers.
+     * pre-starting all thread pools by default. This value should be
+     * <code>false</code> if you aren't expecting much activity as soon as you
+     * start your server up, otherwise this value should be <code>true</code>
+     * for more popular servers that receive players the moment they start their
+     * servers.
      */
-    public static final boolean INITIALLY_IDLE = true;
+    public static final boolean START_THREADS = false;
 
-    /**
-     * An extremely high priority {@link ScheduledExecutorService} that ticks
-     * game logic at 600 millisecond intervals.
-     */
+    /** An executor that is dedicated to ticking game logic. */
     private static ScheduledExecutorService gameExecutor;
 
-    /** So this class cannot be instantiated. */
+    /** A thread pool that handles short lived concurrent game related tasks. */
+    private static ThreadPoolExecutor concurrent;
+
+    /** A thread pool that handles short lived sequential game related tasks. */
+    private static ThreadPoolExecutor sequential;
+
+    /** This class cannot be instantiated. */
     private Rs2Engine() {
     }
 
@@ -65,51 +64,37 @@ public final class Rs2Engine implements Runnable {
                     "The engine has already been started!");
         }
 
-        /** Create the game executor. */
+        /** Create the executors and thread pools. */
         gameExecutor = Executors
                 .newSingleThreadScheduledExecutor(new ThreadProvider(
-                        Rs2Engine.class.getName(), Thread.MAX_PRIORITY, false,
+                        Rs2Engine.class.getName(), Thread.NORM_PRIORITY, false,
                         false));
+        concurrent = ThreadPoolFactory
+                .createThreadPool("ConcurrentThread", Runtime
+                .getRuntime().availableProcessors(), Thread.MAX_PRIORITY);
+        sequential = ThreadPoolFactory.createThreadPool("SequentialThread", 1,
+                Thread.MIN_PRIORITY);
 
         /** Start ticking the game executor */
         gameExecutor.scheduleAtFixedRate(new Rs2Engine(), 0, 600,
                 TimeUnit.MILLISECONDS);
 
         /** Start miscellaneous tasks. */
+        // TODO: Run these tasks only when needed!
         TaskFactory.getFactory().submit(new RestoreStatWorker());
         TaskFactory.getFactory().submit(new RestoreEnergyWorker());
     }
 
-    /**
-     * Pushes a generic short-lived task to be carried out be the engine. The
-     * task may be executed sequentially, concurrently, or on the calling thread
-     * based on the {@link Task}s <code>context()</code> implementation.
-     * 
-     * @param t
-     *            the task to be pushed to the engine.
-     */
-    public static void pushTask(Task t) {
-        t.context();
-    }
 
-    /**
-     * Pushes a generic short-lived <b>blocking result</b> task to be carried
-     * out be the engine. The task may be executed sequentially, concurrently,
-     * or on the calling thread based on the {@link FutureTask}s
-     * <code>context()</code> implementation.
-     * 
-     * @param t
-     *            the task to be pushed to the engine.
-     */
-    public static <T> Future<T> pushTask(TaskFuture<T> t) {
-        return t.context();
-    }
+
 
     @Override
     public void run() {
         try {
-            // XXX: Please do not add multiple task systems... Asteria already
-            // comes with one! trying to keep as little overhead as possible.
+            // XXX: DO NOT ADD 'TASK SCHEDULER', 'EVENT MANAGER' OR ANY OTHER
+            // TASK OR CYCLE SYSTEM. YOU WILL MESS UP THE SERVER AND MAKE IT RUN
+            // SLOWER. IF YOU'RE LOOKING FOR A TASK SYSTEM, USE THE 'WORKER'
+            // CLASS LOCATED IN 'server.core.worker'. THANK YOU.
 
             TaskFactory.getFactory().tick();
             EventSelector.tick();
@@ -119,5 +104,23 @@ public final class Rs2Engine implements Runnable {
             /** Nothing we can do, print error and continue processing. */
             e.printStackTrace();
         }
+    }
+
+    /**
+     * Gets the thread pool that handles concurrent tasks.
+     * 
+     * @return the thread pool that handles concurrent tasks.
+     */
+    public static final ThreadPoolExecutor getConcurrentPool() {
+        return concurrent;
+    }
+
+    /**
+     * Gets the thread pool that handles sequential tasks.
+     * 
+     * @return the thread pool that handles sequential tasks.
+     */
+    public static final ThreadPoolExecutor getSequentialPool() {
+        return sequential;
     }
 }

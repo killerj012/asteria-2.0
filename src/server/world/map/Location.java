@@ -83,8 +83,9 @@ public class Location {
 
     @Override
     public String toString() {
-        return "Location[sw(" + southWest.getX() + ", " + southWest.getY()
-                + "):ne(" + northEast.getX() + ", " + northEast.getY() + ")]";
+        return "Location[south west= (" + southWest.getX() + ", "
+                + southWest.getY() + "), north east= (" + northEast.getX()
+                + ", " + northEast.getY() + ")]";
     }
 
     @Override

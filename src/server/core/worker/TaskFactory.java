@@ -28,6 +28,10 @@ public final class TaskFactory {
     // should process a lot faster as a result.
     private static LinkedList<Worker> workers = new LinkedList<Worker>();
 
+    /** So this class cannot be instantiated. */
+    private TaskFactory() {
+    }
+
     /**
      * Adds new pending workers, fires registered workers awaiting execution,
      * and removes workers that have been canceled. This also ticks workers that

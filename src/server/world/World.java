@@ -5,13 +5,13 @@ import java.util.logging.Logger;
 
 import server.core.Rs2Engine;
 import server.core.net.Session.Stage;
-import server.core.task.SequentialTask;
-import server.core.task.impl.PlayerParallelUpdateTask;
 import server.util.Misc;
 import server.world.entity.EntityContainer;
 import server.world.entity.combat.task.CombatPoisonTask.CombatPoisonData;
 import server.world.entity.npc.Npc;
+import server.world.entity.npc.NpcUpdate;
 import server.world.entity.player.Player;
+import server.world.entity.player.PlayerUpdate;
 import server.world.entity.player.content.AssignSkillRequirement;
 import server.world.entity.player.content.AssignWeaponAnimation;
 import server.world.entity.player.content.AssignWeaponInterface;
@@ -77,6 +77,10 @@ public final class World {
      * logic in parallel.
      */
     public static void tick() {
+        // XXX: ONLY PROCESSING SHOULD BE IN HERE... NOTHING ELSE! PUTTING STUFF
+        // IN HERE INCORRECTLY CAN FUCK UP THE SERVER AS WELL AS MAKE IT RUN
+        // SLOWER. DON'T DO IT.
+
         try {
 
             /** Perform any general logic processing for entities. */
@@ -111,13 +115,42 @@ public final class World {
 
             phaser.bulkRegister(players.getSize());
 
-            for (Player player : players) {
+            for (final Player player : players) {
                 if (player == null) {
                     continue;
                 }
 
-                Rs2Engine
-                        .pushTask(new PlayerParallelUpdateTask(player, phaser));
+                Rs2Engine.getConcurrentPool().execute(new Runnable() {
+                    @Override
+                    public void run() {
+
+                        /**
+                         * Put a concurrent lock on the player we are currently
+                         * updating, so only one thread in the pool can access
+                         * this player at a time.
+                         */
+                        synchronized (player) {
+
+                            /** Now we actually update the player. */
+                            try {
+                                PlayerUpdate.update(player);
+                                NpcUpdate.update(player);
+
+                                /** Handle any errors with the player. */
+                            } catch (Exception ex) {
+                                ex.printStackTrace();
+                                player.getSession().disconnect();
+
+                                /**
+                                 * Arrive at the phaser regardless if there was
+                                 * an error.
+                                 */
+                            } finally {
+                                phaser.arrive();
+                            }
+                        }
+                    }
+                });
             }
 
             phaser.arriveAndAwaitAdvance();
@@ -155,8 +188,8 @@ public final class World {
     }
 
     /**
-     * Returns an instance of a {@link Player} object for the specified
-     * username. hash.
+     * Returns an instance of a {@link Player} object for the specified username
+     * hash.
      * 
      * @param username
      *            The username hash.
@@ -219,7 +252,7 @@ public final class World {
         }
 
         /** Add the pending logout until the saving is done. */
-        Rs2Engine.pushTask(new SequentialTask() {
+        Rs2Engine.getSequentialPool().execute(new Runnable() {
             @Override
             public void run() {
                 synchronized (player) {

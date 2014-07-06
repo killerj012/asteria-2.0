@@ -31,13 +31,12 @@ public class DecodeItemOnObjectPacket extends PacketDecoder {
         final int objectX = in.readShort(true, ValueType.A, ByteOrder.LITTLE);
         final int itemId = in.readShort(false);
         final int size = 1;
-        
+
         final Item item = player.getInventory().getContainer().getItem(slot);
 
         if (item == null || container != InventoryContainer.DEFAULT_INVENTORY_CONTAINER_ID) {
             return;
         }
-
 
         player.facePosition(new Position(objectX, objectY));
         player.getMovementQueueListener().submit(new Runnable() {

@@ -5,7 +5,9 @@ import java.net.InetSocketAddress;
 import java.nio.channels.SelectionKey;
 import java.nio.channels.Selector;
 import java.nio.channels.ServerSocketChannel;
+import java.nio.channels.SocketChannel;
 import java.util.Iterator;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.logging.Logger;
 
 import server.Main;
@@ -13,7 +15,6 @@ import server.core.Rs2Engine;
 import server.core.net.Session.Stage;
 import server.core.net.packet.PacketBuffer;
 import server.core.net.packet.PacketDecoder;
-import server.core.task.impl.BuildSessionTask;
 import server.util.Misc;
 
 /**
@@ -70,7 +71,7 @@ public final class EventSelector {
      * Determines which clients are ready for networking events and handles
      * those events straight away for them. Accept events are pushed to the
      * engine and read/write events are handled right on the game thread as soon
-     * as they are recieved.
+     * as they are received.
      */
     public static void tick() {
 
@@ -78,6 +79,7 @@ public final class EventSelector {
         try {
             selector.selectNow();
         } catch (IOException io) {
+            logger.warning("Fatal error with selector! Attempting to restart...");
             io.printStackTrace();
 
             /**
@@ -101,7 +103,8 @@ public final class EventSelector {
             }
         }
 
-        for (Iterator<SelectionKey> iterator = getSelector().selectedKeys()
+        for (final 
+                Iterator<SelectionKey> iterator = getSelector().selectedKeys()
                 .iterator(); iterator.hasNext();) {
             SelectionKey key = iterator.next();
 
@@ -112,10 +115,51 @@ public final class EventSelector {
                 /** Accept the key concurrently if needed. */
             } else if (key.isAcceptable()) {
                 try {
-                    Rs2Engine.pushTask(new BuildSessionTask());
+                    Rs2Engine.getSequentialPool().execute(new Runnable() {
+
+                        /** Used to keep track of how many connections we've accepted. */
+                        private final AtomicInteger eventCount = new AtomicInteger();
+
+                        @Override
+                        public void run() {
+                            SocketChannel socket;
+
+                            try {
+
+                                /** Accept the connection. */
+                                while ((socket = EventSelector.getServer().accept()) != null
+                                        || eventCount.get() <= 5) {
+
+                                    /** Check if the connection is valid. */
+                                    if (socket == null) {
+                                        eventCount.incrementAndGet();
+                                        continue;
+                                    }
+
+                                    /** Block if we fail the security check. */
+                                    if (!HostGateway.enter(socket.socket().getInetAddress()
+                                            .getHostAddress())) {
+                                        socket.close();
+                                        eventCount.incrementAndGet();
+                                        continue;
+                                    }
+
+                                    /** Otherwise create a new session. */
+                                    socket.configureBlocking(false);
+                                    SelectionKey newKey = socket.register(
+                                            EventSelector.getSelector(), SelectionKey.OP_READ);
+                                    newKey.attach(new Session(newKey));
+                                    eventCount.incrementAndGet();
+                                }
+                            } catch (IOException e) {
+                                e.printStackTrace();
+                            }
+                        }
+                    });
                 } finally {
                     iterator.remove();
                 }
+                
                 /** Decode packets for the key if needed. */
             } else if (key.isReadable()) {
                 Session session = (Session) key.attachment();
@@ -196,9 +240,9 @@ public final class EventSelector {
                                             .getPacketOpcode()].decode(
                                             session.getPlayer(), in);
                                 } else {
-                                    logger.info(session.getPlayer()
-                                            + " unhandled packet "
-                                            + session.getPacketOpcode());
+                                  //  logger.info(session.getPlayer()
+                                     //       + " unhandled packet "
+                                       //     + session.getPacketOpcode());
                                 }
 
                                 /**

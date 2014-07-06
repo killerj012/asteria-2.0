@@ -35,6 +35,10 @@ public final class Main {
      *            the array of runtime arguments.
      */
     public static void main(String[] args) {
+        // XXX: ALL UTILITIES SHOULD BE LOADED IN "WORLD.INIT". DO NOT START ANY
+        // ASYNCHRONOUS EVENT SYSTEMS LIKE 'EVENT MANAGER' AT ALL. THAT IS NOT
+        // THREAD SAFE AND YOU WILL MESS UP THE SERVER. ASTERIA ALREADY COMES
+        // WITH A TASK SYSTEM (server -> core -> worker -> Worker.class).
 
         /** Initialize the core parts of the server. */
         try {
@@ -50,7 +54,7 @@ public final class Main {
             logger.info("The engine is now running...");
             logger.info(NAME
                     + " is now ".concat(
-                            Rs2Engine.INITIALLY_IDLE ? "IDLE " : "ACTIVE ")
+                            Rs2Engine.START_THREADS ? "ACTIVE " : "IDLE ")
                             .concat("[took " + timer.elapsed() + " ms]"));
         } catch (Exception e) {
 

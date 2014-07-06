@@ -11,10 +11,7 @@ import java.util.concurrent.atomic.AtomicInteger;
  */
 public class ThreadProvider implements ThreadFactory {
 
-    /**
-     * A thread safe integer that will be used to track the amount of threads
-     * created by this provider.
-     */
+    /** Used to track the amount of threads created by this provider. */
     private final AtomicInteger threadCount;
 
     /** The name of the prepared thread. */
@@ -59,5 +56,11 @@ public class ThreadProvider implements ThreadFactory {
         thread.setPriority(threadPriority);
         thread.setDaemon(daemonThread);
         return thread;
+    }
+
+    @Override
+    public String toString() {
+        return "THREAD FACTORY[name= " + threadName + ", priority= "
+                + threadPriority + ", daemon= " + daemonThread + "]";
     }
 }

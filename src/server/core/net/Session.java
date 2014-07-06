@@ -399,7 +399,7 @@ public final class Session {
                 password = in.readString();
             }
 
-            /** Lowercase the username for accurate compare results. */
+            /** Edit the username and password for security purposes. */
             username = username.toLowerCase().replaceAll("_", " ").trim();
             password = password.toLowerCase();
 

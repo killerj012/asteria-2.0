@@ -80,6 +80,6 @@ public class DecodeMovementPacket extends PacketDecoder {
         }
         player.getMovementQueue().finish();
         player.getPacketBuilder().sendMessage(
-                player.getPosition().getRegionId() + " - walking");
+                "DEBUG[walking= " + player.getPosition().getRegionId() + "]");
     }
 }
