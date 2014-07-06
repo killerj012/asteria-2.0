@@ -78,7 +78,7 @@ public class CombatPrayerWorker extends Worker {
      * @return the amount of ticks needed to drain 1 level of prayer.
      */
     private int calculateDrainRate(CombatPrayer prayer) {
-        return (player.getPlayerBonus()[Misc.BONUS_PRAYER] / 3)
+        return (player.getPlayerBonus()[Misc.BONUS_PRAYER] / 2)
                 + prayer.getDrainRate();
     }
 }

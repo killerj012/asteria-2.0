@@ -15,6 +15,7 @@ import server.core.worker.TaskFactory;
 import server.core.worker.Worker;
 import server.util.Misc.GenericAction;
 import server.world.entity.Animation;
+import server.world.entity.combat.task.CombatPoisonTask.PoisonType;
 import server.world.entity.player.Player;
 import server.world.entity.player.skill.Skill;
 import server.world.entity.player.skill.SkillManager;
@@ -126,7 +127,23 @@ public enum PotionConsumable implements GenericAction<Player> {
     ANTI_FIRE_POTIONS(2452, 2454, 2456, 2458) {
         @Override
         public void fireAction(Player player) {
-            antiFire(player);
+            doAntiFire(player);
+
+        }
+    },
+
+    ANTIPOISON_POTIONS(2446, 175, 177, 179) {
+        @Override
+        public void fireAction(Player player) {
+            doAntiPoison(player, false);
+
+        }
+    },
+
+    SUPER_ANTIPOISON_POTIONS(2448, 181, 183, 185) {
+        @Override
+        public void fireAction(Player player) {
+            doAntiPoison(player, true);
 
         }
     };
@@ -238,6 +255,57 @@ public enum PotionConsumable implements GenericAction<Player> {
     }
 
     /**
+     * Does the anti-poison potion action.
+     * 
+     * @param player
+     *            the player to do this action for.
+     * @param boolean superPotion if the boolean is a super potion.
+     */
+    private static void doAntiPoison(final Player player, boolean superPotion) {
+        if (player.getPoisonHits() > 0) {
+            player.setPoisonHits(0);
+            player.setPoisonStrength(PoisonType.MILD);
+            player.getPacketBuilder().sendMessage(
+                    "You have been cured of your poison!");
+        }
+
+        if (superPotion) {
+
+            if (player.getPoisonImmunity() <= 0) {
+                player.getPacketBuilder().sendMessage(
+                        "You have been granted immunity against poison.");
+                player.incrementPoisonImmunity(500);
+
+                TaskFactory.getFactory().submit(new Worker(50, false) {
+                    @Override
+                    public void fire() {
+                        player.decrementPoisonImmunity(50);
+                        if (player.getPoisonImmunity() == 50) {
+                            player.getPacketBuilder()
+                                    .sendMessage(
+                                            "Your resistance to poison is about to wear off!");
+                        } else if (player.getPoisonImmunity() <= 0) {
+                            cancel();
+                        }
+                    }
+
+                    @Override
+                    public void fireOnCancel() {
+                        player.getPacketBuilder().sendMessage(
+                                "Your resistance to poison has worn off!");
+                        player.setPoisonImmunity(0);
+                    }
+
+                }.attach(player));
+            } else if (player.getPoisonImmunity() > 0) {
+                player.getPacketBuilder().sendMessage(
+                        "Your immunity against poison has been increased.");
+                player.incrementPoisonImmunity(250);
+            }
+        }
+    }
+
+    /**
      * Does the restore potion action.
      * 
      * @param player
@@ -262,33 +330,46 @@ public enum PotionConsumable implements GenericAction<Player> {
      * @param player
      *            the player to do this action for..
      */
-    private static void antiFire(final Player player) {
-        player.incrementDragonFireImmunity(360);
+    private static void doAntiFire(final Player player) {
+        // TODO: When king black dragon is done, check if immunity is
+        // above 0. If not then deal fire damage.
+        //
+        // if(player.getDragonFireImmunity() > 0) {
+        // player.getPacketBuilder().sendMessage("You are immune to dragonfire!");
+        // return;
+        // }
 
-        player.getPacketBuilder().sendMessage(
-                "Your immunity against dragon fire has been increased.");
+        if (player.getPoisonImmunity() <= 0) {
+            player.getPacketBuilder().sendMessage(
+                    "You have been granted immunity against dragon fire.");
+            player.incrementDragonFireImmunity(360);
 
-        TaskFactory.getFactory().submit(new Worker(30, false) {
-            @Override
-            public void fire() {
-                player.decrementDragonFireImmunity(30);
-                if (player.getDragonFireImmunity() == 30) {
-                    player.getPacketBuilder()
-                            .sendMessage(
-                                    "Your resistance to dragon fire is about to wear off!");
-                } else if (player.getDragonFireImmunity() <= 0) {
-                    cancel();
+            TaskFactory.getFactory().submit(new Worker(30, false) {
+                @Override
+                public void fire() {
+                    player.decrementDragonFireImmunity(30);
+                    if (player.getDragonFireImmunity() == 30) {
+                        player.getPacketBuilder()
+                                .sendMessage(
+                                        "Your resistance to dragon fire is about to wear off!");
+                    } else if (player.getDragonFireImmunity() <= 0) {
+                        cancel();
+                    }
                 }
-            }
 
-            @Override
-            public void fireOnCancel() {
-                player.getPacketBuilder().sendMessage(
-                        "Your resistance to dragon fire has worn off!");
-                player.setDragonFireImmunity(0);
-            }
+                @Override
+                public void fireOnCancel() {
+                    player.getPacketBuilder().sendMessage(
+                            "Your resistance to dragon fire has worn off!");
+                    player.setDragonFireImmunity(0);
+                }
 
-        }.attach(player));
+            }.attach(player));
+        } else if (player.getPoisonImmunity() > 0) {
+            player.getPacketBuilder().sendMessage(
+                    "Your immunity against dragon fire has been increased.");
+            player.incrementDragonFireImmunity(180);
+        }
     }
 
     /**
@@ -337,17 +418,14 @@ public enum PotionConsumable implements GenericAction<Player> {
         if (player.isHasDied()) {
             return false;
         }
-        if (player.getPotionTimer().elapsed() < 1500) { // TODO: Specialized
-            // delays?
+        if (player.getPotionTimer().elapsed() < 1500) {
             return false;
         }
-        // TODO: Check duel rule for no potions
+        // TODO: Check duel rule for no potions.
 
         player.animation(new Animation(829));
         player.getPotionTimer().reset();
         player.getEatingTimer().reset();
-        player.getCombatBuilder().reset();
-        player.getCombatBuilder().resetAttackTimer();
         player.getInventory().deleteItemSlot(item, slot);
         player.getInventory().addItem(getReplacementItem(item));
         potion.fireAction(player);

@@ -32,7 +32,7 @@ public class CombatTeleblockTask extends Worker {
         /** When the timer reaches 0 unteleblock the player. */
         if (player.getTeleblockTimer() == 0) {
             player.getPacketBuilder().sendMessage(
-                    "You feel the effects of the strange spell go away.");
+                    "You feel the effects of the teleblock spell go away.");
             this.cancel();
             return;
         }

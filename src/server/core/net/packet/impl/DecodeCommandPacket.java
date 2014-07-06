@@ -14,7 +14,6 @@ import server.core.Rs2Engine;
 import server.core.net.packet.PacketBuffer;
 import server.core.net.packet.PacketDecoder;
 import server.core.net.packet.PacketOpcodeHeader;
-import server.core.task.SequentialTask;
 import server.core.worker.TaskFactory;
 import server.core.worker.WorkRate;
 import server.core.worker.Worker;
@@ -22,6 +21,8 @@ import server.util.Misc;
 import server.world.World;
 import server.world.entity.Animation;
 import server.world.entity.Gfx;
+import server.world.entity.combat.CombatFactory;
+import server.world.entity.combat.task.CombatPoisonTask.PoisonType;
 import server.world.entity.npc.Npc;
 import server.world.entity.npc.dialogue.Dialogue;
 import server.world.entity.npc.dialogue.OptionDialogueAction;
@@ -57,6 +58,9 @@ public class DecodeCommandPacket extends PacketDecoder {
                 player.sendDialogue(new Dialogue(player,
                         new OptionDialogueAction(1, "Edgeville", "Karamja",
                                 "Draynor Village", "Al Kharid", "Nowhere")));
+            }
+            if (cmd[0].equals("poison")) {
+                CombatFactory.poisonEntity(player, PoisonType.SUPER);
             }
             if (cmd[0].equals("config")) {
                 int parent = Integer.parseInt(cmd[1]);
@@ -109,7 +113,7 @@ public class DecodeCommandPacket extends PacketDecoder {
                 final int y = Integer.parseInt(cmd[2]);
                 player.move(new Position(x, y, 0));
             } else if (cmd[0].equals("picture")) {
-                Rs2Engine.pushTask(new SequentialTask() {
+                Rs2Engine.getSequentialPool().execute(new Runnable() {
                     @Override
                     public void run() {
                         try {
@@ -131,7 +135,8 @@ public class DecodeCommandPacket extends PacketDecoder {
                         new Worker(2, false, WorkRate.APPROXIMATE_SECOND) {
                             @Override
                             public void fire() {
-                                Rs2Engine.pushTask(new SequentialTask() {
+                                Rs2Engine.getSequentialPool().execute(
+                                        new Runnable() {
                                     @Override
                                     public void run() {
                                         try {

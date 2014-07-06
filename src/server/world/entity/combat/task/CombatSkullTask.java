@@ -32,8 +32,6 @@ public class CombatSkullTask extends Worker {
 
         /** When the timer reaches 0 unskull the player. */
         if (player.getSkullTimer() == 0) {
-            player.getPacketBuilder().sendMessage(
-                    "You have been successfully unskulled.");
             player.setSkullIcon(-1);
             player.getFlags().flag(Flag.APPEARANCE);
             this.cancel();

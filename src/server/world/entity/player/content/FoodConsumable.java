@@ -360,8 +360,6 @@ public enum FoodConsumable implements GenericAction<Player> {
         }
 
         player.animation(new Animation(829));
-        player.getCombatBuilder().reset();
-        player.getCombatBuilder().resetAttackTimer();
         player.getEatingTimer().reset();
         player.getPotionTimer().reset();
 

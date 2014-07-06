@@ -173,6 +173,8 @@ public class CombatHookTask extends Worker {
                 npc.setFollowing(false);
                 npc.setFollowingEntity(null);
                 npc.getMovementQueue().walk(npc.getOriginalPosition());
+                npc.getMovementCoordinator().setCoordinate(
+                        npc.isOriginalRandomWalk());
                 this.cancel();
                 return;
             }

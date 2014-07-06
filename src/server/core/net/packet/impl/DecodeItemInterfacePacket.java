@@ -180,6 +180,7 @@ public class DecodeItemInterfacePacket extends PacketDecoder {
             slot = in.readShort(false, PacketBuffer.ValueType.A);
             interfaceId = in.readShort(false, PacketBuffer.ValueType.A);
 
+            player.getCombatBuilder().resetAttackTimer();
             player.getEquipment().equipItem(slot);
             SkillEvent.fireSkillEvents(player);
             break;

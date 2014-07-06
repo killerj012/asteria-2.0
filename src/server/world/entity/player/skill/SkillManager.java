@@ -358,4 +358,30 @@ public final class SkillManager {
             }
         }
     }
+
+    /**
+     * Restores a certain skill back to its original level.
+     * 
+     * @param player
+     *            the player to restore the skill for.
+     * @param skill
+     *            the skill to restore.
+     */
+    public static void restore(Player player, int skill) {
+        player.getSkills()[skill].setLevel(player.getSkills()[skill]
+                .getLevelForExperience());
+        refresh(player, skill);
+    }
+
+    /**
+     * Restores all skills back to their original levels.
+     * 
+     * @param player
+     *            the player to restore the skill for.
+     */
+    public static void restoreAll(Player player) {
+        for (SkillConstant s : SkillConstant.values()) {
+            restore(player, s.ordinal());
+        }
+    }
 }

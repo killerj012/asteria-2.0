@@ -7,8 +7,10 @@ import server.core.worker.WorkRate;
 import server.core.worker.Worker;
 import server.util.Misc;
 import server.world.entity.Entity;
+import server.world.entity.EntityType;
 import server.world.entity.Hit;
 import server.world.entity.Hit.HitType;
+import server.world.entity.player.Player;
 import server.world.item.Item;
 
 /**
@@ -65,7 +67,6 @@ public class CombatPoisonTask extends Worker {
         }
 
         if (entity.getPoisonHits() == 0 || entity.getPoisonStrength() == null) {
-            entity.setPoisonHits(0);
             entity.setPoisonStrength(PoisonType.MILD);
             this.cancel();
             return;
@@ -75,6 +76,15 @@ public class CombatPoisonTask extends Worker {
         entity.dealDamage(new Hit(entity.getPoisonStrength().getDamage(),
                 HitType.POISON));
         entity.decrementPoisonHits();
+
+        if (entity.getPoisonHits() == 0 && entity.type() == EntityType.PLAYER) {
+            Player player = (Player) entity;
+            player.setPoisonStrength(PoisonType.MILD);
+            player.getPacketBuilder().sendMessage(
+                    "The effects of the poison have worn off.");
+            this.cancel();
+            return;
+        }
     }
 
     /**

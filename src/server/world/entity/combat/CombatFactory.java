@@ -24,39 +24,12 @@ import server.world.entity.player.content.AssignWeaponInterface.WeaponInterface;
  * 
  * @author lare96
  */
-public class CombatFactory {
+public final class CombatFactory {
 
     // XXX: Just a heads up, some of the formulas could use some work.
 
     /** So this class cannot be instantiated. */
     private CombatFactory() {
-    }
-
-    /**
-     * Constructs the default melee combat strategy.
-     * 
-     * @return the default melee combat strategy.
-     */
-    public static CombatStrategy newDefaultMeleeStrategy() {
-        return new DefaultMeleeCombatStrategy();
-    }
-
-    /**
-     * Constructs the default magic combat strategy.
-     * 
-     * @return the default magic combat strategy.
-     */
-    public static CombatStrategy newDefaultMagicStrategy() {
-        return new DefaultMagicCombatStrategy();
-    }
-
-    /**
-     * Constructs the default ranged combat strategy.
-     * 
-     * @return the default ranged combat strategy.
-     */
-    public static CombatStrategy newDefaultRangedStrategy() {
-        return new DefaultRangedCombatStrategy();
     }
 
     /**
@@ -73,11 +46,16 @@ public class CombatFactory {
         }
 
         if (entity.type() == EntityType.PLAYER) {
-            ((Player) entity).getPacketBuilder().sendMessage(
+            Player player = (Player) entity;
+
+            if (player.getPoisonImmunity() > 0) {
+                return;
+            }
+            player.getPacketBuilder().sendMessage(
                     "You have been poisoned!");
         }
 
-        entity.setPoisonHits(50);
+        entity.setPoisonHits(75);
         entity.setPoisonStrength(poisonType);
         TaskFactory.getFactory().submit(new CombatPoisonTask(entity));
     }
@@ -751,5 +729,32 @@ public class CombatFactory {
      */
     private static boolean isAccurateHit(double chance) {
         return Math.random() <= chance;
+    }
+
+    /**
+     * Constructs the default melee combat strategy.
+     * 
+     * @return the default melee combat strategy.
+     */
+    public static CombatStrategy newDefaultMeleeStrategy() {
+        return new DefaultMeleeCombatStrategy();
+    }
+
+    /**
+     * Constructs the default magic combat strategy.
+     * 
+     * @return the default magic combat strategy.
+     */
+    public static CombatStrategy newDefaultMagicStrategy() {
+        return new DefaultMagicCombatStrategy();
+    }
+
+    /**
+     * Constructs the default ranged combat strategy.
+     * 
+     * @return the default ranged combat strategy.
+     */
+    public static CombatStrategy newDefaultRangedStrategy() {
+        return new DefaultRangedCombatStrategy();
     }
 }
