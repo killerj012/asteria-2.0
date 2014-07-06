@@ -49,7 +49,7 @@ public final class ThreadPoolFactory {
                 TimeUnit.MINUTES);
         threadPool.allowCoreThreadTimeOut(true);
 
-        if (!Rs2Engine.START_THREADS) {
+        if (Rs2Engine.START_THREADS) {
             threadPool.prestartAllCoreThreads();
         }
         return threadPool;
