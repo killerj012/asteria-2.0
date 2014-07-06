@@ -20,7 +20,7 @@ public class NpcAggression {
     private static final int NPC_TARGET_DISTANCE = 5;
 
     /** Time the player has to spend before npcs stop acting aggressive. */
-    private static final int NPC_TOLERANCE_SECONDS = 60;
+    private static final int NPC_TOLERANCE_SECONDS = 600;
 
     /**
      * A map that holds all of the aggressive npcs and their original positions.
