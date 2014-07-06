@@ -20,6 +20,8 @@ public class DecodeUpdateRegionPacket extends PacketDecoder {
         World.getGroundItems().loadNewRegion(player);
         player.displayInterfaces();
         player.getPacketBuilder().sendMessage(
-                player.getPosition().getRegionId() + " - region");
+                "DEBUG[region= " + player.getPosition().getRegionId()
+ + "]");
+        player.getTolerance().reset();
     }
 }

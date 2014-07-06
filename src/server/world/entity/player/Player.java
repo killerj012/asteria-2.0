@@ -31,6 +31,7 @@ import server.world.entity.combat.range.CombatRangedAmmo;
 import server.world.entity.combat.special.CombatSpecial;
 import server.world.entity.combat.task.CombatPoisonTask.PoisonType;
 import server.world.entity.npc.Npc;
+import server.world.entity.npc.NpcAggression;
 import server.world.entity.npc.dialogue.Dialogue;
 import server.world.entity.player.content.AssignWeaponAnimation.WeaponAnimationIndex;
 import server.world.entity.player.content.AssignWeaponInterface;
@@ -69,8 +70,16 @@ public class Player extends Entity {
     public static final String WELCOME_MESSAGE = "Welcome to " + Main.NAME
             + "!";
 
-    /** A message sent to a player that has killed another player. */
-    public static final String[] DEATH_MESSAGES = { "You have killed -player-!" };
+    /**
+     * A message sent to a player that has killed another player. "-victim-" is
+     * replaced with the player's name that was killed. "-killer-" is replaced
+     * with the killer's name.
+     */
+    public static final String[] DEATH_MESSAGES = {
+            "You have killed -victim-!",
+            "Wow -killer-, you've slaughtered -victim-!",
+            "I bet -victim- will think twice before messing with YOU again.",
+            "You're on a highway to hell! -killer- you just can't be stopped!" };
 
     /** The items recieved when the player logs in for the first time. */
     public static final Item[] STARTER_PACKAGE = { new Item(995, 10000) };
@@ -175,12 +184,15 @@ public class Player extends Entity {
     /** Handles a trading session with another player. */
     private TradeSession tradeSession = new TradeSession(this);
 
-    /** A collection of anti-massing timers. */
-    private final Stopwatch eatingTimer = new Stopwatch().reset();
-    private final Stopwatch potionTimer = new Stopwatch().reset();
+    /** A collection of timers. */
+    private final Stopwatch eatingTimer = new Stopwatch().reset(),
+            potionTimer = new Stopwatch().reset(), tolerance = new Stopwatch();
 
     /** The amount of ticks this player is immune to dragon fire */
     private int dragonFireImmunity;
+
+    /** The amount of ticks this player is immune to poison. */
+    private int poisonImmunity;
 
     /** The username. */
     private String username;
@@ -238,9 +250,6 @@ public class Player extends Entity {
 
     /** Flag that determines if this player has entered an incorrect password. */
     private boolean incorrectPassword;
-
-    /** An instance of this player. */
-    private Player player = this;
 
     /** For player npcs (pnpc). */
     private int npcAppearanceId = -1;
@@ -302,15 +311,18 @@ public class Player extends Entity {
 
     @Override
     public void pulse() throws Exception {
-        // XXX: Equal to the "process()" method, the only thing that should be
-        // in here is movement... nothing else! Use workers for delayed actions!
+        // XXX: Equal to the "process()" method, only certain things should be
+        // in here... nothing else! Use workers for delayed actions! PUTTING
+        // STUFF IN HERE WILL MAKE THE SERVER RUN SLOWER. DON'T DO IT.
 
         getMovementQueue().execute();
+        NpcAggression.targetPlayer(this);
     }
 
     @Override
     public Worker death() throws Exception {
         return new Worker(1, true) {
+            private Player player = Player.this;
 
             @Override
             public void fire() {
@@ -372,13 +384,8 @@ public class Player extends Entity {
                     getCombatBuilder().resetDamage();
                     getPacketBuilder().sendMessage("Oh dear, you're dead!");
                     getPacketBuilder().walkableInterface(65535);
-                    player.getSkills()[Misc.PRAYER]
-                            .setLevel(player.getSkills()[Misc.PRAYER]
-                                    .getLevelForExperience());
                     CombatPrayer.deactivateAllPrayer(player);
-                    SkillManager.refresh(player, Misc.PRAYER);
-                    heal(player.getSkills()[Misc.HITPOINTS]
-                            .getLevelForExperience());
+                    SkillManager.restoreAll(player);
                     setHasDied(false);
                     setDeathTicks(0);
                     getFlags().flag(Flag.APPEARANCE);
@@ -404,9 +411,11 @@ public class Player extends Entity {
      *            the position to teleport to.
      */
     public void teleport(final TeleportSpell spell) {
+
         if (teleportStage > 0) {
             return;
         }
+        Player player = Player.this;
 
         if (wildernessLevel >= 20) {
             player.getPacketBuilder().sendMessage(
@@ -538,6 +547,7 @@ public class Player extends Entity {
 
             @Override
             public Teleport type() {
+                Player player = Player.this;
                 return player.getSpellbook().getTeleport();
             }
 
@@ -611,7 +621,7 @@ public class Player extends Entity {
      * Logs the player out.
      */
     public void logout() {
-        player.getPacketBuilder().sendLogout();
+        Player.this.getPacketBuilder().sendLogout();
         session.disconnect();
     }
 
@@ -627,8 +637,9 @@ public class Player extends Entity {
             return;
         }
         killer.getPacketBuilder().sendMessage(
-                Misc.randomElement(DEATH_MESSAGES).replaceAll("-player-",
-                        username));
+                Misc.randomElement(DEATH_MESSAGES)
+                        .replaceAll("-victim-", username)
+                        .replaceAll("-killer-", killer.username));
         dropDeathItems(killer);
     }
 
@@ -638,6 +649,7 @@ public class Player extends Entity {
     public void dropDeathItems(Player killer) {
 
         /** All of the player's inventory and equipment. */
+        Player player = Player.this;
         Item[] equipment = player.getEquipment().getContainer().toArray();
         Item[] inventory = player.getInventory().getContainer().toArray();
         LinkedList<Item> dropItems = new LinkedList<Item>();
@@ -720,6 +732,7 @@ public class Player extends Entity {
      *            the y offset.
      */
     public void move(int addX, int addY) {
+        Player player = Player.this;
         move(new Position(player.getPosition().getX() + addX, player
                 .getPosition().getY() + addY));
     }
@@ -784,6 +797,7 @@ public class Player extends Entity {
      * Advances the current dialogue by one stage.
      */
     public void advanceDialogue() {
+        Player player = Player.this;
         if (dialogue == null) {
             player.getPacketBuilder().closeWindows();
             stopDialogue();
@@ -1357,6 +1371,22 @@ public class Player extends Entity {
         dragonFireImmunity -= amount;
     }
 
+    public int getPoisonImmunity() {
+        return poisonImmunity;
+    }
+
+    public void setPoisonImmunity(int poisonImmunity) {
+        this.poisonImmunity = poisonImmunity;
+    }
+
+    public void incrementPoisonImmunity(int amount) {
+        poisonImmunity += amount;
+    }
+
+    public void decrementPoisonImmunity(int amount) {
+        poisonImmunity -= amount;
+    }
+
     /**
      * @return the isBanned
      */
@@ -1704,5 +1734,12 @@ public class Player extends Entity {
      */
     public void setExamplePoints(int examplePoints) {
         this.examplePoints = examplePoints;
+    }
+
+    /**
+     * @return the tolerance
+     */
+    public Stopwatch getTolerance() {
+        return tolerance;
     }
 }

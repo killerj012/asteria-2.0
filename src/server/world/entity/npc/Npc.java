@@ -73,12 +73,17 @@ public class Npc extends Entity {
         this.setCurrentHealth(getDefinition().getHitpoints());
         this.setAutoRetaliate(true);
         this.getFlags().flag(Flag.APPEARANCE);
+
+        if (this.getDefinition().isAggressive()) {
+            NpcAggression.getAggressive().put(this, originalPosition);
+        }
     }
 
     @Override
     public void pulse() throws Exception {
-        // XXX: Equal to the "process()" method, the only thing that should be
-        // in here is movement... nothing else! Use workers for delayed actions!
+        // XXX: Equal to the "process()" method, only certain things should be
+        // in here... nothing else! Use workers for delayed actions! PUTTING
+        // STUFF IN HERE WILL MAKE THE SERVER RUN SLOWER. DON'T DO IT.
 
         movementCoordinator.coordinate();
         getMovementQueue().execute();
