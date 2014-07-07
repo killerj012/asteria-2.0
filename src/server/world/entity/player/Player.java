@@ -840,15 +840,15 @@ public class Player extends Entity {
 
         combatLevel = 0;
 
-        if (ran > attstr) {
+        if (ran > attstr && ran > mag) { //player is ranged class
             combatLevel = ((defLvl) * 0.25) + ((hitLvl) * 0.25)
-                    + ((prayLvl) * 0.125) + ((ranLvl) * 0.4875);
-        } else if (mag > attstr) {
+                    + ((prayLvl/2) * 0.25) + ((ranLvl) * 0.4875);
+        } else if (mag > attstr) { //player is mage class
             combatLevel = (((defLvl) * 0.25) + ((hitLvl) * 0.25)
-                    + ((ranLvl) * 0.125) + ((magLvl) * 0.4875));
+                    + ((prayLvl/2) * 0.25) + ((magLvl) * 0.4875));
         } else {
             combatLevel = (((defLvl) * 0.25) + ((hitLvl) * 0.25)
-                    + ((prayLvl) * 0.125) + ((attLvl) * 0.325) + ((strLvl) * 0.325));
+                    + ((prayLvl/2) * 0.25) + ((attLvl) * 0.325) + ((strLvl) * 0.325));
         }
 
         return (int) combatLevel;
