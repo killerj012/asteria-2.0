@@ -50,6 +50,6 @@
        ],
        "restock": true,
        "can-sell-items": true,
-       "currency": "POINTS"
+       "currency": "COINS"
     }
 ]

@@ -1,0 +1,16 @@
+[example-benchmark] Sat Jul 19 22:56:04 EDT 2014
+[example-benchmark] Benchmarks:
+[95ms, 71ms, 95ms, 48ms, 50ms, 76ms, 88ms, 62ms, 60ms, 28ms, 85ms, 8ms, 31ms, 78ms, 47ms, ]
+[example-benchmark] Average: 61ms
+[example-benchmark] Memory usage: 211.466mb
+[example-benchmark] Processors: 2
+
+
+[example-benchmark] Sat Jul 19 23:00:08 EDT 2014
+[example-benchmark] Benchmarks:
+[41ms, 80ms, 66ms, 40ms, 62ms, 83ms, 94ms, 94ms, 54ms, 65ms, 57ms, 99ms, 57ms, 52ms, 32ms, ]
+[example-benchmark] Average: 65ms
+[example-benchmark] Memory usage: 210.909mb
+[example-benchmark] Processors: 2
+
+
