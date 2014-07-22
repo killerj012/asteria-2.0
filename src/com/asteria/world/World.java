@@ -2,7 +2,8 @@ package com.asteria.world;
 
 import java.util.concurrent.Phaser;
 
-import com.asteria.engine.Engine;
+import com.asteria.engine.GameEngine;
+import com.asteria.engine.ThreadPoolFactory.BlockingThreadPool;
 import com.asteria.engine.net.Session.Stage;
 import com.asteria.world.entity.EntityContainer;
 import com.asteria.world.entity.npc.Npc;
@@ -67,7 +68,7 @@ public final class World {
                     continue;
                 }
 
-                Engine.getConcurrentPool().execute(new Runnable() {
+                GameEngine.getConcurrentPool().execute(new Runnable() {
                     @Override
                     public void run() {
 
@@ -193,9 +194,7 @@ public final class World {
         }
     }
 
-    /**
-     * Saves the game for all players that are currently online.
-     */
+    /** Saves the game for all players that are currently online. */
     public static void savePlayers() {
         for (Player player : players) {
             if (player == null) {
@@ -203,6 +202,35 @@ public final class World {
             }
 
             savePlayer(player);
+        }
+    }
+
+    /** Performs a series of operations that shut the entire server down. */
+    public static void shutdown() {
+        try {
+
+            // First save all players, we block the calling thread until all
+            // players are saved.
+            BlockingThreadPool pool = new BlockingThreadPool();
+
+            for (Player player : players) {
+                if (player == null) {
+                    continue;
+                }
+
+                pool.append(new WritePlayerFileTask(player));
+            }
+            pool.fireAndAwait();
+
+            // Terminate any thread pools.
+            GameEngine.getConcurrentPool().shutdown();
+            GameEngine.getSequentialPool().shutdown();
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+
+            // Exit regardless if there was an error or not during shutdown.
+            System.exit(1);
         }
     }
 
@@ -220,7 +248,7 @@ public final class World {
         }
 
         // Push the save task to the sequential pool.
-        Engine.getSequentialPool().execute(new WritePlayerFileTask(player));
+        GameEngine.getSequentialPool().execute(new WritePlayerFileTask(player));
     }
 
     /**

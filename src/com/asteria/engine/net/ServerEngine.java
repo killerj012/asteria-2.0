@@ -8,36 +8,39 @@ import java.nio.channels.ServerSocketChannel;
 import java.nio.channels.SocketChannel;
 import java.util.Iterator;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import com.asteria.engine.Engine;
+import com.asteria.engine.GameEngine;
 import com.asteria.engine.net.Session.Stage;
 import com.asteria.engine.net.packet.PacketDecoder;
 import com.asteria.util.Utility;
+import com.asteria.world.World;
 
 /**
- * A reactor that runs on the main game thread. The reactor's job is to handle
- * network events selected for various clients.
+ * A reactor that runs on the main game thread. The reactor's job is to select
+ * and handle various network events for all clients.
  * 
  * @author lare96
  * @author blakeman8192
  */
-public final class EventSelector {
+public final class ServerEngine {
 
     /** A logger for printing information. */
-    private static Logger logger;
+    private static final Logger logger = Logger.getLogger(ServerEngine.class
+            .getSimpleName());
 
-    /** A selector that selects keys ready to receive network events. */
+    /** The selector that selects keys ready to receive network events. */
     private static Selector selector;
 
-    /** A server socket channel that will accept incoming connections. */
+    /** The server socket channel that will accept incoming connections. */
     private static ServerSocketChannel server;
 
     /** This class cannot be instantiated. */
-    private EventSelector() {}
+    private ServerEngine() {}
 
     /**
-     * Starts the components of the reactor.
+     * Starts the core components of the reactor.
      * 
      * @throws Exception
      *             if any errors occur during the initialization.
@@ -49,9 +52,6 @@ public final class EventSelector {
             throw new IllegalStateException(
                     "The reactor has already been started!");
         }
-
-        // Create the logger.
-        logger = Logger.getLogger(EventSelector.class.getSimpleName());
 
         // Create the networking objects.
         selector = Selector.open();
@@ -75,25 +75,25 @@ public final class EventSelector {
         try {
             selector.selectNow();
         } catch (IOException io) {
-            logger.warning("Fatal error with selector! Attempting to restart...");
-            io.printStackTrace();
+            logger.log(Level.WARNING,
+                    "Error during event selection, restarting the reactor!", io);
 
-            // Selector is closed or something happened while selecting, attempt
-            // to restart!
+            // Something happened while selecting, attempt to restart!
             try {
                 selector.close();
                 server.close();
                 selector = null;
                 server = null;
-                logger = null;
                 init();
                 selector.selectNow();
-            } catch (Exception ex) {
+            } catch (Exception e) {
 
-                // Unable to restart! So throw an exception.
-                ex.printStackTrace();
-                throw new IllegalStateException(
-                        "Unable to restart reactor after shutdown!");
+                // Unable to restart, so print the exception and shutdown the
+                // server.
+                logger.log(Level.SEVERE,
+                        "Unable to restart the reactor, shutting down!", e);
+                World.shutdown();
+                return;
             }
         }
 
@@ -111,7 +111,7 @@ public final class EventSelector {
 
                 // Accept the key asynchronously if needed.
                 try {
-                    Engine.getSequentialPool().execute(new Runnable() {
+                    GameEngine.getSequentialPool().execute(new Runnable() {
 
                         /** A thread safe integer for holding the times looped. */
                         private final AtomicInteger loopsMade = new AtomicInteger();
@@ -123,10 +123,9 @@ public final class EventSelector {
                             try {
 
                                 // Accept the connection.
-                                while ((socket = EventSelector.getServer()
-                                        .accept()) != null
-                                        || loopsMade.get() <= 5) {
-                                    
+                                while ((socket = ServerEngine.getServer()
+                                        .accept()) != null || loopsMade.get() <= 5) {
+
                                     // Increment the loop count.
                                     loopsMade.incrementAndGet();
 
@@ -145,7 +144,7 @@ public final class EventSelector {
                                     // Otherwise create a new session.
                                     socket.configureBlocking(false);
                                     SelectionKey newKey = socket.register(
-                                            EventSelector.getSelector(),
+                                            ServerEngine.getSelector(),
                                             SelectionKey.OP_READ);
                                     newKey.attach(new Session(newKey));
                                 }
@@ -186,8 +185,8 @@ public final class EventSelector {
                         // Decode the packet opcode and packet length.
                         if (session.getPacketOpcode() == -1) {
                             session.setPacketOpcode(session.getInData().get() & 0xff);
-                            session.setPacketOpcode(session.getPacketOpcode()
-                                    - session.getDecryptor().getKey() & 0xff);
+                            session.setPacketOpcode(session.getPacketOpcode() - session
+                                    .getDecryptor().getKey() & 0xff);
                         }
 
                         if (session.getPacketLength() == -1) {
@@ -228,8 +227,7 @@ public final class EventSelector {
                             } catch (Exception ex) {
                                 ex.printStackTrace();
                             } finally {
-                                int read = session.getInData().position()
-                                        - positionBefore;
+                                int read = session.getInData().position() - positionBefore;
 
                                 for (int i = read; i < session
                                         .getPacketLength(); i++) {
@@ -284,7 +282,7 @@ public final class EventSelector {
      * @return the selector.
      */
     public static Selector getSelector() {
-        return EventSelector.selector;
+        return ServerEngine.selector;
     }
 
     /**
@@ -293,6 +291,6 @@ public final class EventSelector {
      * @return the server socket channel.
      */
     public static ServerSocketChannel getServer() {
-        return EventSelector.server;
+        return ServerEngine.server;
     }
 }

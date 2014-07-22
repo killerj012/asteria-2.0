@@ -6,8 +6,10 @@ import java.io.FileWriter;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.concurrent.Callable;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import com.asteria.engine.GameEngine;
 import com.asteria.util.Utility;
 import com.asteria.world.entity.player.content.AssignWeaponInterface.FightType;
 import com.asteria.world.entity.player.content.Spellbook;
@@ -39,8 +41,8 @@ public final class PlayerFileTask {
     private PlayerFileTask() {}
 
     /**
-     * A task executed by the {@link Engine}'s sequential thread pool that will
-     * save the player's character file.
+     * A task executed by the {@link GameEngine}'s sequential thread pool that
+     * will save the player's character file.
      * 
      * @author lare96
      */
@@ -66,11 +68,11 @@ public final class PlayerFileTask {
             // still being modified.
             synchronized (player) {
 
-                try {
+                // Create the path and file objects.
+                Path path = Paths.get(DIR, player.getUsername() + ".json");
+                File file = path.toFile();
 
-                    // Create the path and file objects.
-                    Path path = Paths.get(DIR, player.getUsername() + ".json");
-                    File file = path.toFile();
+                try (FileWriter writer = new FileWriter(file)) {
 
                     // Check if the file exists before saving it.
                     if (!file.exists()) {
@@ -139,21 +141,17 @@ public final class PlayerFileTask {
                             new Integer(player.getSpecialPercentage()));
 
                     // And write the data to the character file!
-                    FileWriter fileWriter = new FileWriter(file);
-                    fileWriter.write(builder.toJson(object));
-                    fileWriter.close();
+                    writer.write(builder.toJson(object));
+
+                    // And print an indication that we've saved it.
+                    logger.info(player + " game successfully saved!");
                 } catch (Exception e) {
 
-                    // An error happened while saving, don't
-                    e.printStackTrace();
-                    throw new IllegalStateException(
-                            "Error while saving character file!");
+                    // An error happened while saving.
+                    logger.log(Level.WARNING,
+                            "Error while saving character file!", e);
                 }
-
-                // And print an indication that we've saved it.
-                logger.info(player + " game successfully saved!");
             }
-
         }
     }
 
@@ -164,8 +162,6 @@ public final class PlayerFileTask {
      * @author lare96
      */
     public static class ReadPlayerFileTask implements Callable<Integer> {
-
-        // TODO: A bit cringey to look at, re-write it in a less bulky way.
 
         /** The player who's file will be written to. */
         private Player player;

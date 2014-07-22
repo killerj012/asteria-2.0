@@ -8,7 +8,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
 
-import com.asteria.engine.Engine;
+import com.asteria.engine.GameEngine;
 
 /**
  * A thread-safe utility used for timing how long an operation takes. This class
@@ -90,14 +90,13 @@ public final class Benchmark {
         }
 
         // No use doing this on the game thread, send it to the sequential pool.
-        Engine.getSequentialPool().execute(new Runnable() {
+        GameEngine.getSequentialPool().execute(new Runnable() {
             @Override
             public void run() {
-                try {
+                try (FileWriter writer = new FileWriter(new File(
+                        "./benchmarks/" + name + ".txt"), true)) {
 
                     // Write all of the data to the beginning of the file.
-                    File file = new File("./benchmarks/" + name + ".txt");
-                    FileWriter writer = new FileWriter(file, true);
                     writer.write("[" + name + "] " + date + "\n");
                     writer.write("[" + name + "] Benchmarks:\n[");
                     long collections = 0, total = 0;
@@ -116,7 +115,6 @@ public final class Benchmark {
                                     .pow(10, -6) * 1000.0) / 1000.0) + "mb\n");
                     writer.write("[" + name + "] Processors: " + Runtime
                             .getRuntime().availableProcessors() + "\n\n\n");
-                    writer.close();
                 } catch (Exception e) {
                     e.printStackTrace();
                 }

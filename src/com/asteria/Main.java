@@ -1,10 +1,11 @@
 package com.asteria;
 
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import com.asteria.engine.Engine;
-import com.asteria.engine.net.EventSelector;
+import com.asteria.engine.GameEngine;
 import com.asteria.engine.net.HostGateway;
+import com.asteria.engine.net.ServerEngine;
 import com.asteria.engine.net.packet.PacketDecoder;
 import com.asteria.util.Stopwatch;
 import com.asteria.world.entity.combat.effect.CombatPoisonEffect.CombatPoisonData;
@@ -30,7 +31,8 @@ import com.asteria.world.shop.Shop;
 public final class Main {
 
     /** The logger for printing information. */
-    private static Logger logger = Logger.getLogger(Main.class.getSimpleName());
+    private static final Logger logger = Logger.getLogger(Main.class
+            .getSimpleName());
 
     /** The name of this server. */
     public static final String NAME = "Asteria 2.0";
@@ -44,7 +46,6 @@ public final class Main {
     // XXX: Loading in parallel?
     public static void main(String[] args) {
         try {
-
             // The stopwatch for timing how long all this takes.
             Stopwatch timer = new Stopwatch().reset();
 
@@ -80,26 +81,30 @@ public final class Main {
 
             // Load all of the poison data.
             CombatPoisonData.loadPoisonData();
+
+            // Load all of the cache stuff.
+            // Cache.load();
+            // ObjectDef.loadConfig();
+            // Region.load();
+            // Rangable.load();
             logger.info("Sucessfully loaded all utilities!");
 
             // Initialize and start the reactor.
-            EventSelector.init();
+            ServerEngine.init();
             logger.info("The reactor is now running!");
 
             // Initialize and start the engine.
-            Engine.init();
+            GameEngine.init();
             logger.info("The engine is now running!");
 
             // Asteria is now online!
-            logger.info(NAME + " is now ".concat(
-                    Engine.START_THREADS ? "ACTIVE! " : "IDLE! ").concat(
-                    "[took " + timer.elapsed() + " ms]"));
+            logger.info(NAME + " is now online! ".concat("[took " + timer
+                    .elapsed() + " ms]"));
         } catch (Exception e) {
 
-            // An error occurred, print it and abort startup.
-            e.printStackTrace();
-            throw new IllegalStateException(
-                    "An error occured while starting " + Main.NAME + "!");
+            // An error occurred, print it.
+            logger.log(Level.SEVERE,
+                    "An error occured while starting " + Main.NAME + "!", e);
         }
     }
 

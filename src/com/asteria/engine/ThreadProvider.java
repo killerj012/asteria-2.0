@@ -1,66 +1,54 @@
 package com.asteria.engine;
 
+import java.util.Objects;
+import java.util.concurrent.Executor;
 import java.util.concurrent.ThreadFactory;
-import java.util.concurrent.atomic.AtomicInteger;
 
 /**
- * A dynamic {@link ThreadFactory} used for the creation of all threads used
- * throughout the server.
+ * A {@link ThreadFactory} used for the creation of all threads throughout the
+ * entire server. This factory can be used in conjunction with {@link Executor}s
+ * or even for just raw {@link Thread}s.
  * 
  * @author lare96
  */
 public class ThreadProvider implements ThreadFactory {
 
-    /** Used to track the amount of threads created by this provider. */
-    private final AtomicInteger threadCount;
+    /** The name of threads prepared by this factory. */
+    private final String name;
 
-    /** The name of the prepared thread. */
-    private final String threadName;
+    /** The priority of threads prepared by this factory. */
+    private final int priority;
 
-    /** The priority of the prepared thread. */
-    private final int threadPriority;
-
-    /** If this thread is a daemon thread. */
-    private final boolean daemonThread;
-
-    /** If this provider should keep track of the amount of threads it created. */
-    private final boolean keepThreadCount;
+    /** If threads prepared by this factory are daemon. */
+    private final boolean daemon;
 
     /**
      * Create a new {@link ThreadProvider}.
      * 
-     * @param threadName
-     *            the name of the prepared thread.
-     * @param threadPriority
-     *            the priority of the prepared thread.
-     * @param daemonThread
-     *            if this thread is a daemon thread.
-     * @param keepThreadCount
-     *            if this provider should keep track of the amount of threads it
-     *            created.
+     * @param name
+     *            the name of threads prepared by this factory.
+     * @param priority
+     *            the priority of threads prepared by this factory.
+     * @param daemon
+     *            if threads prepared by this factory are daemon.
      */
-    public ThreadProvider(String threadName, int threadPriority,
-            boolean daemonThread, boolean keepThreadCount) {
-        this.threadCount = keepThreadCount ? new AtomicInteger() : null;
-        this.threadName = threadName;
-        this.threadPriority = threadPriority;
-        this.daemonThread = daemonThread;
-        this.keepThreadCount = keepThreadCount;
+    public ThreadProvider(String name, int priority, boolean daemon) {
+        this.name = Objects.requireNonNull(name);
+        this.priority = priority;
+        this.daemon = daemon;
     }
 
     @Override
     public Thread newThread(Runnable r) {
         Thread thread = new Thread(r);
-        thread.setName(keepThreadCount ? threadName + "-"
-                + threadCount.incrementAndGet() : threadName);
-        thread.setPriority(threadPriority);
-        thread.setDaemon(daemonThread);
+        thread.setName(name);
+        thread.setPriority(priority);
+        thread.setDaemon(daemon);
         return thread;
     }
 
     @Override
     public String toString() {
-        return "THREAD FACTORY[name= " + threadName + ", priority= "
-                + threadPriority + ", daemon= " + daemonThread + "]";
+        return "THREAD FACTORY[name= " + name + ", priority= " + priority + ", daemon= " + daemon + "]";
     }
 }

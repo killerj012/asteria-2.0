@@ -9,7 +9,7 @@ import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Logger;
 
-import com.asteria.engine.Engine;
+import com.asteria.engine.GameEngine;
 
 /**
  * A static gateway type class that is used to limit the maximum amount of
@@ -50,8 +50,7 @@ public class HostGateway {
         // If the host is coming from the hosting computer we don't need to
         // check it.
         if (host.equals("127.0.0.1") || host.equals("localhost")) {
-            logger.info("Session request from " + host
-                    + "<unlimited> accepted.");
+            logger.info("Session request from " + host + "<unlimited> accepted.");
             return true;
         }
 
@@ -72,15 +71,13 @@ public class HostGateway {
         // If they've reached or surpassed the connection limit, reject the
         // host.
         if (amount >= MAX_CONNECTIONS_PER_HOST) {
-            logger.warning("Session request from " + host + "<" + amount
-                    + "> over connection limit, rejected.");
+            logger.warning("Session request from " + host + "<" + amount + "> over connection limit, rejected.");
             return false;
         }
 
         // Otherwise, replace the key with the next value if it was present.
         hostMap.putIfAbsent(host, amount + 1);
-        logger.info("Session request from " + host + "<" + hostMap.get(host)
-                + "> accepted.");
+        logger.info("Session request from " + host + "<" + hostMap.get(host) + "> accepted.");
         return true;
     }
 
@@ -120,19 +117,17 @@ public class HostGateway {
      *            the host to add to the text file.
      */
     public static void addBannedHost(final String host) {
-        Engine.getSequentialPool().execute(new Runnable() {
+        GameEngine.getSequentialPool().execute(new Runnable() {
             @Override
             public void run() {
-                try {
+                try (FileWriter writer = new FileWriter(new File(
+                        "./data/ip_ban_list.txt"), true)) {
 
                     // First add the host to the active list.
                     bannedHosts.add(host);
 
                     // Then add it to the file.
-                    FileWriter writer = new FileWriter(new File(
-                            "./data/ip_ban_list.txt"), true);
                     writer.write(host);
-                    writer.close();
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
@@ -148,14 +143,11 @@ public class HostGateway {
      *             if any errors occur during the scanning of hosts.
      */
     public static void loadBannedHosts() throws Exception {
-        Scanner scanner = new Scanner(new File("./data/ip_ban_list.txt"));
 
-        try {
+        try (Scanner scanner = new Scanner(new File("./data/ip_ban_list.txt"))) {
             while (scanner.hasNextLine()) {
                 bannedHosts.add(scanner.nextLine());
             }
-        } finally {
-            scanner.close();
         }
     }
 

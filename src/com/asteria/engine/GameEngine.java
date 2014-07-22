@@ -5,7 +5,7 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
-import com.asteria.engine.net.EventSelector;
+import com.asteria.engine.net.ServerEngine;
 import com.asteria.engine.task.TaskFactory;
 import com.asteria.world.World;
 import com.asteria.world.entity.player.content.RestoreStatTask;
@@ -17,23 +17,9 @@ import com.asteria.world.item.ground.GroundItemManager;
  * 
  * @author lare96
  */
-public final class Engine implements Runnable {
+public final class GameEngine implements Runnable {
 
-    /**
-     * The amount of time it takes for this server to become idle. When the
-     * server becomes idle threads are terminated accordingly in order to
-     * preserve resources. The server can only become idle after not receiving
-     * any work for <code>THREAD_IDLE_TIMEOUT</code> minutes.
-     */
-    public static final int THREAD_IDLE_TIMEOUT = 1;
-
-    /**
-     * Determines if the server should start up in an idle state rather than
-     * pre-starting all thread pools by default.
-     */
-    public static final boolean START_THREADS = false;
-
-    /** An executor that is dedicated to ticking game logic. */
+    /** An executor that is dedicated to running game logic. */
     private static ScheduledExecutorService gameExecutor;
 
     /** A thread pool that handles short lived concurrent game related tasks. */
@@ -43,7 +29,7 @@ public final class Engine implements Runnable {
     private static ThreadPoolExecutor sequential;
 
     /**
-     * Initialize the core components of the engine.
+     * Start the core components of the engine.
      * 
      * @throws Exception
      *             if any errors occur during the initialization.
@@ -59,16 +45,15 @@ public final class Engine implements Runnable {
         // Create all of the executors.
         gameExecutor = Executors
                 .newSingleThreadScheduledExecutor(new ThreadProvider(
-                        Engine.class.getName(), Thread.NORM_PRIORITY, false,
-                        false));
-        concurrent = ThreadPoolFactory
-                .createThreadPool("ConcurrentThread", Runtime.getRuntime()
-                        .availableProcessors(), Thread.MAX_PRIORITY);
-        sequential = ThreadPoolFactory.createThreadPool("SequentialThread", 1,
-                Thread.MIN_PRIORITY);
+                        "Engine-Thread", Thread.NORM_PRIORITY, false));
+        concurrent = ThreadPoolFactory.createThreadPool("Concurrent-Thread",
+                Runtime.getRuntime().availableProcessors(),
+                Thread.MAX_PRIORITY, 5);
+        sequential = ThreadPoolFactory.createThreadPool("Sequential-Thread", 1,
+                Thread.MIN_PRIORITY, 5);
 
         // Start ticking the game at 600ms intervals.
-        gameExecutor.scheduleAtFixedRate(new Engine(), 0, 600,
+        gameExecutor.scheduleAtFixedRate(new GameEngine(), 0, 600,
                 TimeUnit.MILLISECONDS);
 
         // Start miscellaneous tasks.
@@ -84,7 +69,7 @@ public final class Engine implements Runnable {
             TaskFactory.tick();
 
             // Handle all networking events.
-            EventSelector.tick();
+            ServerEngine.tick();
 
             // Handle processing for entities.
             World.tick();
@@ -115,5 +100,5 @@ public final class Engine implements Runnable {
         return sequential;
     }
 
-    private Engine() {}
+    private GameEngine() {}
 }

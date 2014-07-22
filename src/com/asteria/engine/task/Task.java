@@ -87,7 +87,7 @@ public abstract class Task {
             try {
 
                 // Run the logic within the task.
-                this.fire();
+                fire();
             } catch (Exception e) {
 
                 // Print any errors we may come across.

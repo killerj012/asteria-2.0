@@ -18,10 +18,9 @@ import java.util.concurrent.TimeUnit;
 public final class ThreadPoolFactory {
 
     /**
-     * Creates a new {@link ThreadPoolExecutor} ready to carry out work. Whether
-     * or not the threads in this pool are pre-started or not depends on the
-     * value of the <code>START_THREADS</code> boolean in the {@link Engine}
-     * class.
+     * Creates a new {@link ThreadPoolExecutor} ready to carry out work. All
+     * pools are pre-started by default and will terminate after not receiving
+     * work for the argued timeout value.
      * 
      * @param poolName
      *            the name of this thread pool.
@@ -29,30 +28,22 @@ public final class ThreadPoolFactory {
      *            the size of this thread pool.
      * @param poolPriority
      *            the priority of this thread pool.
+     * @param timeout
+     *            how long in minutes it takes for threads in this pool to
+     *            timeout.
      * @return the newly constructed thread pool.
      */
-    @SuppressWarnings("unused")
     public static ThreadPoolExecutor createThreadPool(String poolName,
-            int poolSize, int poolPriority) {
-
-        if (Engine.THREAD_IDLE_TIMEOUT < 1) {
-            throw new IllegalStateException(
-                    "Idle thread timeout value must be greater than 0!");
-        }
-
+            int poolSize, int poolPriority, long timeout) {
         ThreadPoolExecutor threadPool = (ThreadPoolExecutor) Executors
                 .newFixedThreadPool(poolSize);
         threadPool.setThreadFactory(new ThreadProvider(poolName, poolPriority,
-                true, false));
+                true));
         threadPool
                 .setRejectedExecutionHandler(new ThreadPoolRejectedExecutionHook());
-        threadPool.setKeepAliveTime(Engine.THREAD_IDLE_TIMEOUT,
-                TimeUnit.MINUTES);
+        threadPool.setKeepAliveTime(timeout, TimeUnit.MINUTES);
         threadPool.allowCoreThreadTimeOut(true);
-
-        if (Engine.START_THREADS) {
-            threadPool.prestartAllCoreThreads();
-        }
+        threadPool.prestartAllCoreThreads();
         return threadPool;
     }
 
