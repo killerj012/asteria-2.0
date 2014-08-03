@@ -81,12 +81,6 @@ public final class Main {
 
             // Load all of the poison data.
             CombatPoisonData.loadPoisonData();
-
-            // Load all of the cache stuff.
-            // Cache.load();
-            // ObjectDef.loadConfig();
-            // Region.load();
-            // Rangable.load();
             logger.info("Sucessfully loaded all utilities!");
 
             // Initialize and start the reactor.
