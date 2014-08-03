@@ -72,12 +72,17 @@ public abstract class EventListener extends Task {
         }
 
         // We're unflagged, fire the logic.
-        this.run();
+        try {
+            this.run();
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
 
-        // Shutdown if needed, otherwise keep the checking and
-        // firing.
-        if (shutdown) {
-            this.cancel();
+            // Shutdown if needed, otherwise keep the checking and
+            // firing.
+            if (shutdown) {
+                this.cancel();
+            }
         }
     }
 }
