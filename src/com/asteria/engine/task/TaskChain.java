@@ -1,4 +1,4 @@
-package com.asteria.engine.task.chain;
+package com.asteria.engine.task;
 
 /**
  * A basic task contained within a chain for a {@link TaskChainExecutor}.

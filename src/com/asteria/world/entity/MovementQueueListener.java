@@ -2,7 +2,7 @@ package com.asteria.world.entity;
 
 import java.util.Objects;
 
-import com.asteria.engine.task.TaskFactory;
+import com.asteria.engine.task.TaskManager;
 import com.asteria.engine.task.listener.EventListener;
 
 /**
@@ -55,7 +55,7 @@ public class MovementQueueListener {
                 Objects.requireNonNull(task));
 
         // Then submit it to the task factory!
-        TaskFactory.submit(listener);
+        TaskManager.submit(listener);
     }
 
     /**

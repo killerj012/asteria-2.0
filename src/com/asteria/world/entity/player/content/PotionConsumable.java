@@ -12,7 +12,7 @@ import java.util.EnumSet;
 import java.util.Set;
 
 import com.asteria.engine.task.Task;
-import com.asteria.engine.task.TaskFactory;
+import com.asteria.engine.task.TaskManager;
 import com.asteria.world.entity.Animation;
 import com.asteria.world.entity.player.Player;
 import com.asteria.world.entity.player.skill.Skill;
@@ -276,7 +276,7 @@ public enum PotionConsumable {
                         "You have been granted immunity against poison.");
                 player.incrementPoisonImmunity(500);
 
-                TaskFactory.submit(new Task(50, false) {
+                TaskManager.submit(new Task(50, false) {
                     @Override
                     public void fire() {
                         player.decrementPoisonImmunity(50);
@@ -344,7 +344,7 @@ public enum PotionConsumable {
                     "You have been granted immunity against dragon fire.");
             player.incrementDragonFireImmunity(360);
 
-            TaskFactory.submit(new Task(30, false) {
+            TaskManager.submit(new Task(30, false) {
                 @Override
                 public void fire() {
                     player.decrementDragonFireImmunity(30);

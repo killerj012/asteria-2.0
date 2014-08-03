@@ -6,7 +6,7 @@ import com.asteria.engine.net.ProtocolBuffer;
 import com.asteria.engine.net.packet.PacketDecoder;
 import com.asteria.engine.net.packet.PacketOpcodeHeader;
 import com.asteria.engine.task.Task;
-import com.asteria.engine.task.TaskFactory;
+import com.asteria.engine.task.TaskManager;
 import com.asteria.util.Utility;
 import com.asteria.world.entity.combat.magic.CombatSpells;
 import com.asteria.world.entity.combat.prayer.CombatPrayer;
@@ -845,7 +845,7 @@ public class DecodeClickButtonPacket extends PacketDecoder {
                 player.getPacketBuilder().sendConfig(301, 1);
                 player.setSpecialActivated(true);
 
-                TaskFactory.submit(new Task(1, false) {
+                TaskManager.submit(new Task(1, false) {
                     @Override
                     public void fire() {
                         if (!player.isSpecialActivated()) {

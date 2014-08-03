@@ -1,12 +1,10 @@
-package com.asteria.engine.task.chain;
+package com.asteria.engine.task;
 
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.LinkedList;
 import java.util.Queue;
 
-import com.asteria.engine.task.Task;
-import com.asteria.engine.task.TaskFactory;
 
 /**
  * A {@link TaskChainExecutor} holds a queue of {@link TaskChain}s that are ran
@@ -20,7 +18,7 @@ import com.asteria.engine.task.TaskFactory;
  * require a lengthy amount of precisely executed tasks in a specific order.
  * This is because it only uses <b>one</b> task to run however many tasks it
  * needs to run, which means significantly less stress on the
- * {@link TaskFactory}. <br>
+ * {@link TaskManager}. <br>
  * <br>
  * 
  * An example of usage is provided below: <br>
@@ -117,7 +115,7 @@ public class TaskChainExecutor {
         operationTasks.addAll(internalTasks);
 
         // The main task that will fire all of the tasks in the chain.
-        TaskFactory.submit(new Task(1, false) {
+        TaskManager.submit(new Task(1, false) {
             @Override
             public void fire() {
 

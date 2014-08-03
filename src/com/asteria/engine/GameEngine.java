@@ -6,7 +6,7 @@ import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
 import com.asteria.engine.net.ServerEngine;
-import com.asteria.engine.task.TaskFactory;
+import com.asteria.engine.task.TaskManager;
 import com.asteria.world.World;
 import com.asteria.world.entity.player.content.RestoreStatTask;
 import com.asteria.world.item.ground.GroundItemManager;
@@ -57,8 +57,8 @@ public final class GameEngine implements Runnable {
                 TimeUnit.MILLISECONDS);
 
         // Start miscellaneous tasks.
-        TaskFactory.submit(new RestoreStatTask());
-        TaskFactory.submit(new GroundItemManager());
+        TaskManager.submit(new RestoreStatTask());
+        TaskManager.submit(new GroundItemManager());
     }
 
     @Override
@@ -66,7 +66,7 @@ public final class GameEngine implements Runnable {
         try {
 
             // Handle all cycle-based tasks.
-            TaskFactory.tick();
+            TaskManager.tick();
 
             // Handle all networking events.
             ServerEngine.tick();

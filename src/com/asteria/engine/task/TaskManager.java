@@ -12,7 +12,7 @@ import java.util.Queue;
  * 
  * @author lare96
  */
-public final class TaskFactory {
+public final class TaskManager {
 
     /** A queue of pending {@link Task}s waiting to be registered. */
     private static Queue<Task> pendingTasks = new LinkedList<>();
@@ -166,5 +166,5 @@ public final class TaskFactory {
         return Collections.unmodifiableCollection(pendingTasks);
     }
 
-    private TaskFactory() {}
+    private TaskManager() {}
 }

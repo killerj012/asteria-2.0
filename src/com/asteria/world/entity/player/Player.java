@@ -23,7 +23,7 @@ import com.asteria.world.entity.combat.prayer.CombatPrayerTask;
 import com.asteria.world.entity.combat.range.CombatRangedAmmo;
 import com.asteria.world.entity.combat.special.CombatSpecial;
 import com.asteria.world.entity.npc.Npc;
-import com.asteria.world.entity.npc.NpcAggression;
+import com.asteria.world.entity.npc.aggression.NpcAggression;
 import com.asteria.world.entity.npc.dialogue.Dialogue;
 import com.asteria.world.entity.player.content.AssignWeaponAnimation.WeaponAnimationIndex;
 import com.asteria.world.entity.player.content.AssignWeaponInterface.FightType;

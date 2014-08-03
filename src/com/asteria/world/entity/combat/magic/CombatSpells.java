@@ -1,6 +1,6 @@
 package com.asteria.world.entity.combat.magic;
 
-import com.asteria.engine.task.TaskFactory;
+import com.asteria.engine.task.TaskManager;
 import com.asteria.world.entity.Animation;
 import com.asteria.world.entity.Entity;
 import com.asteria.world.entity.Entity.EntityType;
@@ -1861,7 +1861,7 @@ public enum CombatSpells {
                 }
 
                 player.setTeleblockTimer(3000);
-                TaskFactory.submit(new CombatTeleblockEffect(player));
+                TaskManager.submit(new CombatTeleblockEffect(player));
                 player.getPacketBuilder().sendMessage(
                         "You have just been teleblocked!");
             } else if (castOn.type() == EntityType.NPC) {

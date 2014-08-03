@@ -1,7 +1,7 @@
 package com.asteria.world.entity.player.content;
 
 import com.asteria.engine.task.Task;
-import com.asteria.engine.task.TaskFactory;
+import com.asteria.engine.task.TaskManager;
 import com.asteria.world.entity.Animation;
 import com.asteria.world.entity.Entity;
 import com.asteria.world.entity.Graphic;
@@ -29,7 +29,7 @@ public abstract class TeleportSpell extends Spell {
             public void fire(final Player player, final TeleportSpell spell) {
                 player.animation(new Animation(714));
 
-                TaskFactory.submit(new Task(1, false) {
+                TaskManager.submit(new Task(1, false) {
                     @Override
                     public void fire() {
                         if (player.getTeleportStage() == 1) {
@@ -52,7 +52,7 @@ public abstract class TeleportSpell extends Spell {
             public void fire(final Player player, final TeleportSpell spell) {
                 player.animation(new Animation(1979));
 
-                TaskFactory.submit(new Task(1, false) {
+                TaskManager.submit(new Task(1, false) {
                     @Override
                     public void fire() {
                         if (player.getTeleportStage() == 1) {

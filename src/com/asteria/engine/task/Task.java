@@ -70,7 +70,7 @@ public abstract class Task {
     /**
      * Called every single tick for all active task, and is used to fire tasks
      * and remove cancelled tasks. This method should never be called anywhere
-     * else other than the <code>tick()</code> method in the {@link TaskFactory}
+     * else other than the <code>tick()</code> method in the {@link TaskManager}
      * class or tasks will become out of sync!
      * 
      * @param it

@@ -1,7 +1,7 @@
 package com.asteria.world.entity.combat.magic;
 
 import com.asteria.engine.task.Task;
-import com.asteria.engine.task.TaskFactory;
+import com.asteria.engine.task.TaskManager;
 import com.asteria.world.entity.Animation;
 import com.asteria.world.entity.Entity;
 import com.asteria.world.entity.Entity.EntityType;
@@ -38,7 +38,7 @@ public abstract class CombatSpell extends Spell {
 
         // Finally send the projectile after two ticks.
         if (castProjectile(cast, castOn) != null) {
-            TaskFactory.submit(new Task(2, false) {
+            TaskManager.submit(new Task(2, false) {
                 @Override
                 public void fire() {
                     castProjectile(cast, castOn).sendProjectile();

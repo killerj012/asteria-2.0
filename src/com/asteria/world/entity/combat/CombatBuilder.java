@@ -5,7 +5,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import com.asteria.engine.net.Session.Stage;
-import com.asteria.engine.task.TaskFactory;
+import com.asteria.engine.task.TaskManager;
 import com.asteria.engine.task.listener.EventListener;
 import com.asteria.util.Stopwatch;
 import com.asteria.world.entity.Entity;
@@ -81,7 +81,7 @@ public class CombatBuilder {
 
         // Start the event listener implementation that will allow the
         // controller to attack the victim once we're close enough.
-        TaskFactory.submit(new CombatDistanceListener(this, target));
+        TaskManager.submit(new CombatDistanceListener(this, target));
     }
 
     /**
@@ -448,7 +448,7 @@ public class CombatBuilder {
             if (builder.getCombatTask() == null || !builder.getCombatTask()
                     .isRunning()) {
                 builder.setCombatTask(new CombatHookTask(builder));
-                TaskFactory.submit(builder.getCombatTask());
+                TaskManager.submit(builder.getCombatTask());
             }
         }
     }

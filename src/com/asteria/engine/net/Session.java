@@ -8,7 +8,7 @@ import java.security.SecureRandom;
 import java.util.logging.Logger;
 
 import com.asteria.engine.net.packet.PacketEncoder;
-import com.asteria.engine.task.TaskFactory;
+import com.asteria.engine.task.TaskManager;
 import com.asteria.util.Stopwatch;
 import com.asteria.util.Utility;
 import com.asteria.world.World;
@@ -413,14 +413,14 @@ public final class Session {
 
             // Schedule various tasks.
             if (player.isPoisoned()) {
-                TaskFactory.submit(new CombatPoisonEffect(player));
+                TaskManager.submit(new CombatPoisonEffect(player));
             }
             if (player.getTeleblockTimer() > 0) {
-                TaskFactory.submit(new CombatTeleblockEffect(player));
+                TaskManager.submit(new CombatTeleblockEffect(player));
             }
             if (player.getSkullTimer() > 0) {
                 player.setSkullIcon(0);
-                TaskFactory.submit(new CombatSkullEffect(player));
+                TaskManager.submit(new CombatSkullEffect(player));
             }
 
             // Send the welcome message.
@@ -477,7 +477,7 @@ public final class Session {
                 }
 
                 World.savePlayer(player);
-                TaskFactory.cancelTasks(player);
+                TaskManager.cancelTasks(player);
                 player.getTradeSession().reset(false);
                 player.getPrivateMessage().updateOtherList(false);
                 SkillEvent.fireSkillEvents(player);

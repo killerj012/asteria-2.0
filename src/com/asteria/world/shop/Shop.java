@@ -4,7 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import com.asteria.engine.task.Task;
-import com.asteria.engine.task.TaskFactory;
+import com.asteria.engine.task.TaskManager;
 import com.asteria.util.JsonLoader;
 import com.asteria.world.World;
 import com.asteria.world.entity.player.Player;
@@ -437,7 +437,7 @@ public class Shop {
         }
 
         // And submit it to the task factory.
-        TaskFactory.submit(processor);
+        TaskManager.submit(processor);
     }
 
     /**

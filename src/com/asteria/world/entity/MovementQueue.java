@@ -4,7 +4,7 @@ import java.util.Deque;
 import java.util.LinkedList;
 
 import com.asteria.engine.task.Task;
-import com.asteria.engine.task.TaskFactory;
+import com.asteria.engine.task.TaskManager;
 import com.asteria.util.Utility;
 import com.asteria.world.entity.Entity.EntityType;
 import com.asteria.world.entity.player.Player;
@@ -382,7 +382,7 @@ public class MovementQueue {
             };
 
             // Then submit the actual task.
-            TaskFactory.submit(followTask);
+            TaskManager.submit(followTask);
         }
     }
 

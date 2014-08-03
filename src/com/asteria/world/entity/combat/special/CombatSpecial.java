@@ -3,7 +3,7 @@ package com.asteria.world.entity.combat.special;
 import java.util.Set;
 
 import com.asteria.engine.task.Task;
-import com.asteria.engine.task.TaskFactory;
+import com.asteria.engine.task.TaskManager;
 import com.asteria.util.Utility;
 import com.asteria.world.entity.Animation;
 import com.asteria.world.entity.Entity;
@@ -90,7 +90,7 @@ public enum CombatSpecial {
             new Projectile(player, target, 249, 44, 3, 43, 31, 0)
                     .sendProjectile();
 
-            TaskFactory.submit(new Task(1, false) {
+            TaskManager.submit(new Task(1, false) {
                 @Override
                 public void fire() {
                     player.animation(new Animation(426));

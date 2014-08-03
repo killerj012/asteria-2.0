@@ -1,6 +1,6 @@
 package com.asteria.world.entity.combat;
 
-import com.asteria.engine.task.TaskFactory;
+import com.asteria.engine.task.TaskManager;
 import com.asteria.util.GenericAction;
 import com.asteria.util.Utility;
 import com.asteria.world.entity.Entity;
@@ -254,7 +254,7 @@ public final class CombatFactory {
 
         // Poison the entity as normal.
         entity.setPoisonDamage(poisonType.getDamage());
-        TaskFactory.submit(new CombatPoisonEffect(entity));
+        TaskManager.submit(new CombatPoisonEffect(entity));
     }
 
     /**
@@ -276,7 +276,7 @@ public final class CombatFactory {
         player.setSkullTimer(3000);
         player.setSkullIcon(0);
         player.getFlags().flag(Flag.APPEARANCE);
-        TaskFactory.submit(new CombatSkullEffect(player));
+        TaskManager.submit(new CombatSkullEffect(player));
     }
 
     /**

@@ -6,7 +6,7 @@ import com.asteria.engine.net.ProtocolBuffer;
 import com.asteria.engine.net.ProtocolBuffer.ByteOrder;
 import com.asteria.engine.net.ProtocolBuffer.ValueType;
 import com.asteria.engine.net.Session;
-import com.asteria.engine.task.TaskFactory;
+import com.asteria.engine.task.TaskManager;
 import com.asteria.util.Utility;
 import com.asteria.world.World;
 import com.asteria.world.entity.UpdateFlags.Flag;
@@ -550,7 +550,7 @@ public final class PlayerUpdating {
             if (player.getSkills()[Skills.HITPOINTS].getLevel() <= 0) {
                 player.getSkills()[Skills.HITPOINTS].setLevel(0, true);
                 player.setDead(true);
-                TaskFactory.submit(new PlayerDeath(player));
+                TaskManager.submit(new PlayerDeath(player));
             }
         }
 
@@ -577,7 +577,7 @@ public final class PlayerUpdating {
             if (player.getSkills()[Skills.HITPOINTS].getLevel() <= 0) {
                 player.getSkills()[Skills.HITPOINTS].setLevel(0, true);
                 player.setDead(true);
-                TaskFactory.submit(new PlayerDeath(player));
+                TaskManager.submit(new PlayerDeath(player));
             }
         }
 

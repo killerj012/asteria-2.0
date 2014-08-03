@@ -1,7 +1,7 @@
 package com.asteria.world.entity.combat;
 
 import com.asteria.engine.task.Task;
-import com.asteria.engine.task.TaskFactory;
+import com.asteria.engine.task.TaskManager;
 import com.asteria.world.entity.Entity.EntityType;
 import com.asteria.world.entity.combat.CombatFactory.CombatType;
 import com.asteria.world.entity.combat.special.CombatSpecial;
@@ -103,13 +103,13 @@ public class CombatHookTask extends Task {
                 // right away, ranged hits are done after 2 ticks, and magic
                 // after 3.
                 if (container.getCombatType() == CombatType.MELEE) {
-                    TaskFactory.submit(new CombatHitTask(builder, container, 1,
+                    TaskManager.submit(new CombatHitTask(builder, container, 1,
                             true));
                 } else if (container.getCombatType() == CombatType.RANGED) {
-                    TaskFactory.submit(new CombatHitTask(builder, container, 2,
+                    TaskManager.submit(new CombatHitTask(builder, container, 2,
                             false));
                 } else if (container.getCombatType() == CombatType.MAGIC) {
-                    TaskFactory.submit(new CombatHitTask(builder, container, 3,
+                    TaskManager.submit(new CombatHitTask(builder, container, 3,
                             false));
                 }
             }

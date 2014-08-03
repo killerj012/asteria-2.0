@@ -1,6 +1,6 @@
 package com.asteria.world.entity.combat.prayer;
 
-import com.asteria.engine.task.TaskFactory;
+import com.asteria.engine.task.TaskManager;
 import com.asteria.util.Utility;
 import com.asteria.world.entity.UpdateFlags.Flag;
 import com.asteria.world.entity.combat.CombatFactory.CombatType;
@@ -479,7 +479,7 @@ public enum CombatPrayer {
         if (player.getPrayerDrain() == null
                 || !player.getPrayerDrain().isRunning()) {
             player.setPrayerDrain(new CombatPrayerTask(player));
-            TaskFactory.submit(player.getPrayerDrain());
+            TaskManager.submit(player.getPrayerDrain());
         }
 
         // Activate the effects of this prayer.

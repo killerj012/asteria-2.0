@@ -5,7 +5,7 @@ import java.util.Iterator;
 import com.asteria.engine.net.ProtocolBuffer;
 import com.asteria.engine.net.ProtocolBuffer.ByteOrder;
 import com.asteria.engine.net.ProtocolBuffer.ValueType;
-import com.asteria.engine.task.TaskFactory;
+import com.asteria.engine.task.TaskManager;
 import com.asteria.util.Utility;
 import com.asteria.world.World;
 import com.asteria.world.entity.UpdateFlags.Flag;
@@ -228,7 +228,7 @@ public class NpcUpdating {
         if (!npc.isDead()) {
             if (npc.getCurrentHP() <= 0) {
                 npc.setCurrentHealth(0);
-                TaskFactory.submit(new NpcDeath(npc));
+                TaskManager.submit(new NpcDeath(npc));
             }
         }
 
@@ -274,7 +274,7 @@ public class NpcUpdating {
         if (!npc.isDead()) {
             if (npc.getCurrentHP() <= 0) {
                 npc.setCurrentHealth(0);
-                TaskFactory.submit(new NpcDeath(npc));
+                TaskManager.submit(new NpcDeath(npc));
             }
         }
 

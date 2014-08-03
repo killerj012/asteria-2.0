@@ -1,7 +1,7 @@
 package com.asteria.world.entity.npc;
 
 import com.asteria.engine.task.Task;
-import com.asteria.engine.task.TaskFactory;
+import com.asteria.engine.task.TaskManager;
 import com.asteria.world.World;
 import com.asteria.world.entity.Animation;
 import com.asteria.world.entity.EntityDeath;
@@ -85,7 +85,7 @@ public class NpcDeath extends EntityDeath<Npc> {
 
         // And spawn it back if needed!
         if (entity.isRespawn()) {
-            TaskFactory.submit(new Task(entity.getRespawnTime(), false) {
+            TaskManager.submit(new Task(entity.getRespawnTime(), false) {
                 @Override
                 public void fire() {
                     Npc npc = new Npc(entity.getNpcId(), entity

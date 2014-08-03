@@ -1,7 +1,7 @@
 package com.asteria.world.entity;
 
 import com.asteria.engine.task.Task;
-import com.asteria.engine.task.TaskFactory;
+import com.asteria.engine.task.TaskManager;
 import com.asteria.util.Stopwatch;
 import com.asteria.world.World;
 import com.asteria.world.entity.UpdateFlags.Flag;
@@ -359,7 +359,7 @@ public abstract class Entity {
     public void dealTripleDamage(Hit hit, Hit secondHit, final Hit thirdHit) {
         dealDoubleDamage(hit, secondHit);
 
-        TaskFactory.submit(new Task(1, false) {
+        TaskManager.submit(new Task(1, false) {
             @Override
             public void fire() {
                 if (unregistered) {
@@ -388,7 +388,7 @@ public abstract class Entity {
             final Hit fourthHit) {
         dealDoubleDamage(hit, secondHit);
 
-        TaskFactory.submit(new Task(1, false) {
+        TaskManager.submit(new Task(1, false) {
             @Override
             public void fire() {
                 if (unregistered) {
