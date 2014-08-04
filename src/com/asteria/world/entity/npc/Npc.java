@@ -9,7 +9,6 @@ import com.asteria.world.entity.combat.CombatFactory.CombatType;
 import com.asteria.world.entity.combat.CombatStrategy;
 import com.asteria.world.entity.combat.effect.CombatPoisonEffect.PoisonType;
 import com.asteria.world.entity.npc.NpcMovementCoordinator.Coordinator;
-import com.asteria.world.entity.npc.aggression.NpcAggression;
 import com.asteria.world.map.Position;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
@@ -81,6 +80,7 @@ public class Npc extends Entity {
 
     @Override
     public void pulse() throws Exception {
+        NpcAggression.target(this);
         movementCoordinator.coordinate();
         getMovementQueue().execute();
     }

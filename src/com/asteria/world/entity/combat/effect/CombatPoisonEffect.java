@@ -4,7 +4,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 import com.asteria.engine.task.Task;
-import com.asteria.engine.task.TaskConversion;
 import com.asteria.util.Utility;
 import com.asteria.world.entity.Entity;
 import com.asteria.world.entity.Hit;
@@ -28,7 +27,7 @@ public class CombatPoisonEffect extends Task {
      *            the entity being inflicted with poison.
      */
     public CombatPoisonEffect(Entity entity) {
-        super(TaskConversion.SECONDS.getTicks(15), false);
+        super(30, false);
         this.entity = entity;
     }
 

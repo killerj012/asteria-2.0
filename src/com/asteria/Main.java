@@ -7,14 +7,17 @@ import com.asteria.engine.GameEngine;
 import com.asteria.engine.net.HostGateway;
 import com.asteria.engine.net.ServerEngine;
 import com.asteria.engine.net.packet.PacketDecoder;
+import com.asteria.engine.task.TaskManager;
 import com.asteria.util.Stopwatch;
 import com.asteria.world.entity.combat.effect.CombatPoisonEffect.CombatPoisonData;
 import com.asteria.world.entity.npc.Npc;
+import com.asteria.world.entity.npc.NpcAggression;
 import com.asteria.world.entity.npc.NpcDefinition;
 import com.asteria.world.entity.npc.NpcDropTable;
 import com.asteria.world.entity.player.content.AssignSkillRequirement;
 import com.asteria.world.entity.player.content.AssignWeaponAnimation;
 import com.asteria.world.entity.player.content.AssignWeaponInterface;
+import com.asteria.world.entity.player.content.RestoreStatTask;
 import com.asteria.world.entity.player.minigame.MinigameFactory;
 import com.asteria.world.entity.player.skill.SkillEvent;
 import com.asteria.world.item.ItemDefinition;
@@ -81,6 +84,9 @@ public final class Main {
 
             // Load all of the poison data.
             CombatPoisonData.loadPoisonData();
+
+            // Load npc aggressive policies.
+            NpcAggression.loadPolicies();
             logger.info("Sucessfully loaded all utilities!");
 
             // Initialize and start the reactor.
@@ -94,6 +100,10 @@ public final class Main {
             // Asteria is now online!
             logger.info(NAME + " is now online! ".concat("[took " + timer
                     .elapsed() + " ms]"));
+
+            // Start miscellaneous tasks.
+            TaskManager.submit(new RestoreStatTask());
+            TaskManager.submit(new GroundItemManager());
         } catch (Exception e) {
 
             // An error occurred, print it.

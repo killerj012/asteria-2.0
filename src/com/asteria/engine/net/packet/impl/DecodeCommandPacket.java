@@ -13,6 +13,7 @@ import com.asteria.world.entity.player.PlayerRights;
 import com.asteria.world.entity.player.skill.Skills;
 import com.asteria.world.item.Item;
 import com.asteria.world.item.ItemDefinition;
+import com.asteria.world.map.Location;
 import com.asteria.world.map.Position;
 import com.asteria.world.object.WorldObject;
 import com.asteria.world.object.WorldObject.Rotation;
@@ -36,6 +37,20 @@ public class DecodeCommandPacket extends PacketDecoder {
         // class.
         if (player.getRights().greaterThan(PlayerRights.ADMINISTRATOR)) {
             switch (cmd[0]) {
+            case "war":
+                Location l = new Location(player.getPosition(), 30);
+                int goblins = Integer.parseInt(cmd[1]);
+
+                for (int i = 0; i < goblins; i++) {
+                    World.getNpcs().add(new Npc(299, l.getRandomPosition()));
+                }
+                for (int i = 0; i < goblins; i++) {
+                    World.getNpcs().add(new Npc(298, l.getRandomPosition()));
+                }
+                player.getPacketBuilder()
+                        .sendMessage(
+                                "You have started a goblin war with " + (goblins * 2) + " goblins!");
+                break;
             case "teleto":
                 Player teleTo = World.getPlayerByName(cmd[1].replaceAll("_",
                         " "));

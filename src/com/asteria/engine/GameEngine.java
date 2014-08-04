@@ -8,8 +8,6 @@ import java.util.concurrent.TimeUnit;
 import com.asteria.engine.net.ServerEngine;
 import com.asteria.engine.task.TaskManager;
 import com.asteria.world.World;
-import com.asteria.world.entity.player.content.RestoreStatTask;
-import com.asteria.world.item.ground.GroundItemManager;
 
 /**
  * A {@link Thread} that fires all game logic and gives access to multiple
@@ -55,10 +53,6 @@ public final class GameEngine implements Runnable {
         // Start ticking the game at 600ms intervals.
         gameExecutor.scheduleAtFixedRate(new GameEngine(), 0, 600,
                 TimeUnit.MILLISECONDS);
-
-        // Start miscellaneous tasks.
-        TaskManager.submit(new RestoreStatTask());
-        TaskManager.submit(new GroundItemManager());
     }
 
     @Override
