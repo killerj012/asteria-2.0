@@ -16,6 +16,7 @@ import com.asteria.engine.net.Session.Stage;
 import com.asteria.engine.net.packet.PacketDecoder;
 import com.asteria.util.Utility;
 import com.asteria.world.World;
+import com.asteria.world.entity.player.Player;
 
 /**
  * A reactor that runs on the main game thread. The reactor's job is to select
@@ -64,6 +65,40 @@ public final class ServerEngine {
     }
 
     /**
+     * Restarts the reactor by discarding the networking objects and then
+     * reinitializing them again.
+     */
+    private static void restart() {
+        try {
+
+            // Log everyone off first.
+            for (Player player : World.getPlayers()) {
+                if (player == null) {
+                    continue;
+                }
+                player.logout();
+            }
+
+            // Discard the networking objects.
+            selector.close();
+            server.close();
+            selector = null;
+            server = null;
+
+            // And reinitialize them.
+            init();
+
+        } catch (Exception e) {
+
+            // Unable to restart, so print the exception and shutdown the
+            // server.
+            logger.log(Level.SEVERE,
+                    "Unable to restart the reactor, shutting down!", e);
+            World.shutdown();
+        }
+    }
+
+    /**
      * Determines which clients are ready for networking events and handles
      * those events straight away for them. Accept events are pushed to the
      * engine and read/write events are handled right on the game thread as soon
@@ -79,22 +114,8 @@ public final class ServerEngine {
                     "Error during event selection, restarting the reactor!", io);
 
             // Something happened while selecting, attempt to restart!
-            try {
-                selector.close();
-                server.close();
-                selector = null;
-                server = null;
-                init();
-                selector.selectNow();
-            } catch (Exception e) {
-
-                // Unable to restart, so print the exception and shutdown the
-                // server.
-                logger.log(Level.SEVERE,
-                        "Unable to restart the reactor, shutting down!", e);
-                World.shutdown();
-                return;
-            }
+            restart();
+            return;
         }
 
         // Handle all of the selected events.

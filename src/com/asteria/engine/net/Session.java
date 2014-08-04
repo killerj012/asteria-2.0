@@ -36,7 +36,7 @@ import com.asteria.world.entity.player.skill.Skills;
 public final class Session {
 
     /** If RSA should be decoded in the login block. */
-    public static final boolean DECODE_RSA = false;
+    public static final boolean DECODE_RSA = true;
 
     /**
      * Players that aren't developers are moved within 200 squares of the home
