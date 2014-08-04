@@ -7,6 +7,7 @@ import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
+import java.util.concurrent.TimeUnit;
 
 import com.asteria.engine.GameEngine;
 
@@ -81,8 +82,11 @@ public final class Benchmark {
      * Writes all of the collected data to the designated text file. If the file
      * already exists from a previous benchmark the data will be written to the
      * end of the file.
+     * 
+     * @param unit
+     *            the time unit to print the results off in.
      */
-    public synchronized void print() {
+    public synchronized void print(final TimeUnit unit) {
 
         // Check if we have anything to write.
         if (benchmarks.size() == 0) {
@@ -98,17 +102,17 @@ public final class Benchmark {
 
                     // Write all of the data to the beginning of the file.
                     writer.write("[" + name + "] " + date + "\n");
-                    writer.write("[" + name + "] Benchmarks:\n[");
+                    writer.write("[" + name + "] Benchmarks in " + unit.name() + ":\n[");
                     long collections = 0, total = 0;
 
                     for (long l : benchmarks) {
                         total += l;
                         collections++;
-                        writer.write(Long.toString(l) + "ms");
+                        writer.write(Long.toString(l));
                         writer.write(", ");
                     }
                     writer.write("]\n");
-                    writer.write("[" + name + "] Average: " + (total / collections) + "ms\n");
+                    writer.write("[" + name + "] Average in " + unit.name() + ": " + (total / collections) + "\n");
                     writer.write("[" + name + "] Memory usage: " + (Math
                             .round((Runtime.getRuntime().maxMemory() - Runtime
                                     .getRuntime().freeMemory()) / 1.0 * Math
