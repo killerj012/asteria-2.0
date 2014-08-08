@@ -140,11 +140,16 @@ public class GroundItem {
     public boolean equals(Object obj) {
         if (obj instanceof GroundItem) {
             GroundItem w = (GroundItem) obj;
-            if (w.getItem().equals(item) && w.getPosition().equals(position)) {
+            if (w.item.equals(item) && w.position.equals(position) && w.state == state && w.ticks == ticks) {
                 return true;
             }
         }
         return false;
+    }
+
+    @Override
+    public String toString() {
+        return "GROUND ITEM[item= " + item + ", position= " + position + ", player= " + player + ", state= " + state + ", ticks= " + ticks + "]";
     }
 
     /**
@@ -221,8 +226,7 @@ public class GroundItem {
          * @param policy
          *            the policy of this item.
          */
-        public StaticGroundItem(Item item, Position position,
-                ItemPolicy policy) {
+        public StaticGroundItem(Item item, Position position, ItemPolicy policy) {
             super(item, position, null);
             super.state = ItemState.SEEN_BY_EVERYONE;
             this.policy = policy;

@@ -2,7 +2,6 @@ package com.asteria.world.item.ground;
 
 import java.util.Iterator;
 import java.util.LinkedList;
-import java.util.List;
 
 import com.asteria.engine.task.Task;
 import com.asteria.util.JsonLoader;
@@ -28,7 +27,7 @@ public final class GroundItemManager extends Task implements
     public static final int FIRE_PROCESSING_EVENTS = 100;
 
     /** A database that holds every single registered {@link GroundItem}. */
-    private static final List<GroundItem> itemList = new LinkedList<GroundItem>();
+    private static final LinkedList<GroundItem> itemList = new LinkedList<GroundItem>();
 
     /** Create a new {@link GroundItemManager}. */
     public GroundItemManager() {
@@ -126,11 +125,10 @@ public final class GroundItemManager extends Task implements
      */
     public static void unregister(GroundItem item) {
 
-        // Fire the item's unregistration event.
-        item.fireOnUnregister();
-
-        // Remove the item from the database.
-        itemList.remove(item);
+        // Fire the item's unregistration event if this list has the item.
+        if (itemList.remove(item)) {
+            item.fireOnUnregister();
+        }
     }
 
     /**
@@ -182,7 +180,7 @@ public final class GroundItemManager extends Task implements
      */
     public static GroundItem getItem(int id, Position position) {
         for (GroundItem item : itemList) {
-            if (item == null) {
+            if (item == null || item.getState() == ItemState.HIDDEN) {
                 continue;
 
             }
