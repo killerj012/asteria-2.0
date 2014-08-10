@@ -1,6 +1,7 @@
 package com.asteria.world.entity.npc.policy;
 
 import com.asteria.world.entity.Entity;
+import com.asteria.world.entity.Entity.EntityType;
 import com.asteria.world.entity.npc.Npc;
 import com.asteria.world.entity.npc.NpcAggressionPolicy;
 
@@ -15,8 +16,8 @@ public class DefaultAggressionPolicy implements NpcAggressionPolicy {
     @Override
     public boolean attackIf(Npc attacker, Entity victim) {
 
-        // No checks to be made, attack the victim.
-        return true;
+        // If the victim isn't an NPC, we can attack.
+        return victim.type() != EntityType.NPC;
     }
 
     @Override
