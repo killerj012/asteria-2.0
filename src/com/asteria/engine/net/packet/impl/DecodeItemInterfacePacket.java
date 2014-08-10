@@ -39,7 +39,7 @@ public class DecodeItemInterfacePacket extends PacketDecoder {
             case 1688:
                 player.getCombatBuilder().resetAttackTimer();
                 SkillEvent.fireSkillEvents(player);
-                player.getEquipment().removeItem(slot);
+                player.getEquipment().removeItem(slot, true);
                 break;
             case 5064:
                 player.getBank().addItem(slot, new Item(itemId, 1));

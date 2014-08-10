@@ -40,6 +40,12 @@ public class PlayerDeath extends EntityDeath<Player> {
             "Wow -killer-, I bet -victim- will think twice before messing with you again!" };
 
     /**
+     * The items that will be kept on death regardless of if the player is
+     * skulled or not.
+     */
+    public static final int[] KEEP_ON_DEATH = { 6570 };
+
+    /**
      * Create a new {@link PlayerDeath}.
      * 
      * @param player
@@ -70,7 +76,7 @@ public class PlayerDeath extends EntityDeath<Player> {
             killer.getPacketBuilder().sendMessage(
                     Utility.randomElement(DEATH_MESSAGES)
                             .replaceAll("-victim-",
-                                   entity.getCapitalizedUsername())
+                                    entity.getCapitalizedUsername())
                             .replaceAll("-killer-",
                                     killer.getCapitalizedUsername()));
         }
@@ -115,7 +121,10 @@ public class PlayerDeath extends EntityDeath<Player> {
         AssignWeaponInterface.assignInterface(entity, entity.getEquipment()
                 .getContainer().getItem(Utility.EQUIPMENT_SLOT_WEAPON));
         AssignWeaponInterface.changeFightType(entity);
-        entity.getPacketBuilder().sendMessage("Oh dear, you're dead!");
+        entity.getPacketBuilder()
+                .sendMessage(
+                        entity.getRights().lessThan(PlayerRights.ADMINISTRATOR) ? "Oh dear, you're dead!"
+                                : "You are part of administration and therefore unaffected by death.");
         entity.getPacketBuilder().sendWalkable(65535);
         CombatPrayer.deactivateAll(entity);
         Skills.restoreAll(entity);
@@ -131,6 +140,16 @@ public class PlayerDeath extends EntityDeath<Player> {
      *            the player who killed the victim.
      */
     public void dropDeathItems(Player entity, Player killer) {
+
+        // Add the player's kept items to a cached list.
+        List<Item> keep = new LinkedList<>();
+
+        for (int id : KEEP_ON_DEATH) {
+            if (entity.getEquipment().removeItem(new Item(id)) || entity
+                    .getInventory().deleteItem(new Item(id))) {
+                keep.add(new Item(id));
+            }
+        }
 
         // Add the player's inventory and equipment to a cached list.
         List<Item> items = new LinkedList<>();
@@ -158,69 +177,82 @@ public class PlayerDeath extends EntityDeath<Player> {
                                 entity.getPosition()) : new GroundItem(item,
                                 entity.getPosition(), killer));
             }
-            return;
-        }
+        } else {
 
-        // The player is not skulled so create an array cache of items to keep.
-        Item[] keepItems = new Item[3];
+            // The player is not skulled so create an array cache of items to
+            // keep.
+            Item[] keepItems = new Item[3];
 
-        // Expand the array cache if we have the protect item prayer activated.
-        if (CombatPrayer.isActivated(entity, CombatPrayer.PROTECT_ITEM)) {
-            keepItems = new Item[4];
-        }
+            // Expand the array cache if we have the protect item prayer
+            // activated.
+            if (CombatPrayer.isActivated(entity, CombatPrayer.PROTECT_ITEM)) {
+                keepItems = new Item[4];
+            }
 
-        // Sort the items in the list from greatest to least valuable.
-        Collections.sort(items, new Comparator<Item>() {
-            @Override
-            public int compare(Item o1, Item o2) {
-                if (o1 == null || o2 == null) {
-                    return 1;
+            // Sort the items in the list from greatest to least valuable.
+            Collections.sort(items, new Comparator<Item>() {
+                @Override
+                public int compare(Item o1, Item o2) {
+                    if (o1 == null || o2 == null) {
+                        return 1;
+                    }
+
+                    if (o1.getDefinition().getGeneralStorePrice() > o2
+                            .getDefinition().getGeneralStorePrice()) {
+                        return -1;
+                    } else if (o1.getDefinition().getGeneralStorePrice() < o2
+                            .getDefinition().getGeneralStorePrice()) {
+                        return 1;
+                    }
+                    return 0;
+                }
+            });
+
+            // Fill the array cache with the most valuable items.
+            int slot = 0;
+
+            for (Iterator<Item> it = items.iterator(); it.hasNext();) {
+                Item next = it.next();
+
+                if (next == null) {
+                    continue;
+                } else if (slot == keepItems.length) {
+
+                    // We've filled the array, stop searching.
+                    break;
                 }
 
-                if (o1.getDefinition().getGeneralStorePrice() > o2
-                        .getDefinition().getGeneralStorePrice()) {
-                    return -1;
-                } else if (o1.getDefinition().getGeneralStorePrice() < o2
-                        .getDefinition().getGeneralStorePrice()) {
-                    return 1;
+                // Add the item from the list to the array cache, then remove
+                // the item so it isn't dropped later. We only add ONE of the
+                // item to the cache so players don't keep all of their
+                // stackable items.
+                keepItems[slot++] = new Item(next.getId());
+
+                if (next.getDefinition().isStackable() && next.getAmount() > 1) {
+                    next.decrementAmountBy(1);
+                } else {
+                    it.remove();
                 }
-                return 0;
-            }
-        });
-
-        // Fill the array cache with the most valuable items.
-        int slot = 0;
-
-        for (Iterator<Item> it = items.iterator(); it.hasNext();) {
-            Item next = it.next();
-
-            if (next == null) {
-                continue;
-            } else if (slot == keepItems.length) {
-
-                // We've filled the array, stop searching.
-                break;
             }
 
-            // Add the item from the list to the array cache, then remove the
-            // item so it isn't dropped later. We only add ONE of the item to
-            // the cache so players don't keep all of their stackable items.
-            keepItems[slot++] = new Item(next.getId());
-            it.remove();
+            // Keep whatever items were added to the cache, along with the items
+            // kept on death.
+            entity.getInventory().addItemSet(keepItems);
+
+            // And drop the ones that weren't.
+            for (Item item : items) {
+                if (item == null) {
+                    continue;
+                }
+
+                GroundItemManager
+                        .register(killer == null ? new StaticGroundItem(item,
+                                entity.getPosition()) : new GroundItem(item,
+                                entity.getPosition(), killer));
+            }
         }
 
-        // Keep whatever items were added to the cache.
-        entity.getInventory().addItemSet(keepItems);
-
-        // And drop the ones that weren't.
-        for (Item item : items) {
-            if (item == null) {
-                continue;
-            }
-
-            GroundItemManager.register(killer == null ? new StaticGroundItem(
-                    item, entity.getPosition()) : new GroundItem(item, entity
-                    .getPosition(), killer));
-        }
+        // Add back whatever items were previously kept.
+        entity.getInventory().addItemCollection(keep);
     }
 }

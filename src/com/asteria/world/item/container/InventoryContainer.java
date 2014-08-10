@@ -141,22 +141,18 @@ public class InventoryContainer {
      * @param item
      *            the item to delete from this container.
      */
-    public void deleteItem(Item item) {
+    public boolean deleteItem(Item item) {
         if (item == null || item.getId() == -1 || item.getAmount() < 1) {
-            return;
+            return false;
         }
 
         if (!container.contains(item.getId())) {
-            return;
+            return false;
         }
 
-        if (item.getDefinition().isStackable()) {
-            container.remove(item);
-        } else {
-            container.remove(item);
-        }
-
+        container.remove(item);
         refresh();
+        return true;
     }
 
     /**

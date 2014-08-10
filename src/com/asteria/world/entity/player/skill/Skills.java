@@ -25,7 +25,7 @@ public final class Skills {
      * The experience multiplier. All experience will be multiplied by this
      * number before being added to the player's skill.
      */
-    public static final int EXP_RATE_MULTIPLIER = 5;
+    public static final int EXP_RATE_MULTIPLIER = 1;
 
     /**
      * Holds constant data for {@link Skill}s.
@@ -165,6 +165,7 @@ public final class Skills {
 
         // Multiply the argued experience and add it.
         amount *= Skills.EXP_RATE_MULTIPLIER;
+
         player.getSkills()[skill].setExperience(experience + amount);
 
         // Check if we are able to level up and do so if needed.

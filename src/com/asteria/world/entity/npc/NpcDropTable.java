@@ -31,7 +31,7 @@ public class NpcDropTable {
      * <code>bet</code> that will determine if the item can be dropped or not.
      */
     // Generate a fresh seed using the ThreadLocalRandom.
-    private static Random roll = new Random(Utility.RANDOM.nextLong());
+    private static final Random roll = new Random(Utility.RANDOM.nextLong());
 
     /** The npc(s) who use this drop table. */
     private int[] npcs;
@@ -239,7 +239,7 @@ public class NpcDropTable {
                     // Item dropped, do ring of wealth stuff.
                     if (roll.nextBoolean()) {
                         player.getEquipment().removeItem(
-                                Utility.EQUIPMENT_SLOT_RING);
+                                Utility.EQUIPMENT_SLOT_RING, false);
                         player.getPacketBuilder()
                                 .sendMessage(
                                         "Your ring of wealth takes effect and crumbles into dust!");
@@ -294,7 +294,7 @@ public class NpcDropTable {
         };
 
         /** The fixed bet modification. */
-        private double mod;
+        private final double mod;
 
         /**
          * Create a new {@link BetModification}.

@@ -796,10 +796,7 @@ public final class CombatFactory {
         }
 
         // Check if we're within the required distance.
-        if (!attacker.withinDistance(victim, distance)) {
-            return false;
-        }
-        return true;
+        return attacker.withinDistance(victim, distance);
     }
 
     /**

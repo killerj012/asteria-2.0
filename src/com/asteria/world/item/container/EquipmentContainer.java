@@ -101,7 +101,7 @@ public class EquipmentContainer {
 
             if (designatedSlot == Utility.EQUIPMENT_SLOT_WEAPON && item
                     .getDefinition().isTwoHanded()) {
-                removeItem(Utility.EQUIPMENT_SLOT_SHIELD);
+                removeItem(Utility.EQUIPMENT_SLOT_SHIELD, true);
 
                 if (container.isSlotUsed(Utility.EQUIPMENT_SLOT_SHIELD)) {
                     return;
@@ -112,7 +112,7 @@ public class EquipmentContainer {
                     .isSlotUsed(Utility.EQUIPMENT_SLOT_WEAPON)) {
                 if (container.getItem(Utility.EQUIPMENT_SLOT_WEAPON)
                         .getDefinition().isTwoHanded()) {
-                    removeItem(Utility.EQUIPMENT_SLOT_WEAPON);
+                    removeItem(Utility.EQUIPMENT_SLOT_WEAPON, true);
 
                     if (container.isSlotUsed(Utility.EQUIPMENT_SLOT_WEAPON)) {
                         return;
@@ -155,10 +155,16 @@ public class EquipmentContainer {
      * 
      * @param slot
      *            the slot to remove the item from.
+     * @param addItem
+     *            if the item should be added back to the inventory.
      */
-    public void removeItem(int slot) {
+    public boolean removeItem(int slot, boolean addItem) {
+        if (slot < 0 || slot > container.toArray().length) {
+            return false;
+        }
+
         if (container.isSlotFree(slot)) {
-            return;
+            return false;
         }
 
         Item item = container.getItem(slot);
@@ -166,7 +172,7 @@ public class EquipmentContainer {
         for (Minigame minigame : MinigameFactory.getMinigames().values()) {
             if (minigame.inMinigame(player)) {
                 if (!minigame.canUnequip(player, item, slot)) {
-                    return;
+                    return false;
                 }
             }
         }
@@ -174,11 +180,14 @@ public class EquipmentContainer {
         if (!player.getInventory().getContainer().hasRoomFor(item)) {
             player.getPacketBuilder().sendMessage(
                     "You do not have enough space in your inventory!");
-            return;
+            return false;
         }
 
         container.remove(item, slot);
-        player.getInventory().addItem(new Item(item.getId(), item.getAmount()));
+
+        if (addItem)
+            player.getInventory().addItem(
+                    new Item(item.getId(), item.getAmount()));
 
         if (slot == Utility.EQUIPMENT_SLOT_WEAPON) {
             AssignWeaponInterface.assignInterface(player, null);
@@ -194,6 +203,17 @@ public class EquipmentContainer {
         refresh();
         player.getInventory().refresh();
         player.getFlags().flag(Flag.APPEARANCE);
+        return true;
+    }
+
+    /**
+     * Removes an item from the container.
+     * 
+     * @param item
+     *            the item to remove.
+     */
+    public boolean removeItem(Item item) {
+        return removeItem(container.getSlotById(item.getId()), false);
     }
 
     /**

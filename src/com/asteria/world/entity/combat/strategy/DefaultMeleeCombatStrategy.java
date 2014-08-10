@@ -80,7 +80,11 @@ public class DefaultMeleeCombatStrategy implements CombatStrategy {
                     .getItem(Utility.EQUIPMENT_SLOT_WEAPON);
 
             if (!player.isSpecialActivated() && item != null) {
-                if (item.getDefinition().getItemName().startsWith("Dharoks")) {
+                if (item.getDefinition().getItemName()
+                        .startsWith("Dragon dagger")) {
+                    player.animation(new Animation(402));
+                } else if (item.getDefinition().getItemName()
+                        .startsWith("Dharoks")) {
                     if (player.getFightType() == FightType.BATTLEAXE_SMASH) {
                         player.animation(new Animation(2067));
                     } else {
