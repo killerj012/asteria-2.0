@@ -52,7 +52,7 @@ public class PlayerDeath extends EntityDeath<Player> {
     @Override
     public void preDeath(Player entity) {
 
-        // Start death animation, fire skill events, and reset trade.
+        // Start death animation, fire events, and reset stuff.
         entity.animation(new Animation(0x900));
         SkillEvent.fireSkillEvents(entity);
         entity.getTradeSession().reset(false);
@@ -104,6 +104,10 @@ public class PlayerDeath extends EntityDeath<Player> {
 
         // Completely reset the player, then flag for the appearance block.
         entity.getCombatBuilder().reset();
+        entity.getTolerance().reset();
+        entity.setSpecialPercentage(100);
+        entity.getPacketBuilder().sendConfig(301, 0);
+        entity.setSpecialActivated(false);
         entity.setSkullTimer(0);
         entity.setSkullIcon(-1);
         entity.setTeleblockTimer(0);
