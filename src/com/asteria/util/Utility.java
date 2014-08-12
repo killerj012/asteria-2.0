@@ -1,9 +1,22 @@
 package com.asteria.util;
 
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
+import java.math.BigInteger;
+import java.security.KeyFactory;
+import java.security.KeyPair;
+import java.security.KeyPairGenerator;
+import java.security.PrivateKey;
+import java.security.PublicKey;
+import java.security.spec.RSAPrivateKeySpec;
+import java.security.spec.RSAPublicKeySpec;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
 import java.util.concurrent.ThreadLocalRandom;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import com.asteria.world.map.Position;
 
@@ -279,8 +292,7 @@ public final class Utility {
      */
     public static String determineIndefiniteArticle(String thing) {
         char first = thing.toLowerCase().charAt(0);
-        boolean vowel = first == 'a' || first == 'e' || first == 'i'
-                || first == 'o' || first == 'u';
+        boolean vowel = first == 'a' || first == 'e' || first == 'i' || first == 'o' || first == 'u';
         return vowel ? "an" : "a";
     }
 
@@ -468,6 +480,101 @@ public final class Utility {
                 return 1;
             } else {
                 return -1;
+            }
+        }
+    }
+
+    /**
+     * Deletes character files out of the specified directory.
+     * 
+     * @author lare96
+     */
+    @SuppressWarnings("unused")
+    private static final class DeleteCharacterFiles {
+
+        /** The directory to delete files from. */
+        public static final String DIRECTORY = "./data/players/";
+
+        /** The files with names starting with this string will be deleted. */
+        public static final String STARTING_WITH = "stressbot";
+
+        /** The main method which starts the deletion process. */
+        public static void main(String[] args) {
+            int count = 0;
+            Logger l = Logger.getLogger(DeleteCharacterFiles.class
+                    .getSimpleName());
+            l.info("Starting with data " + DIRECTORY + ":" + STARTING_WITH);
+
+            try {
+                // List the files in the given directory.
+                File[] files = new File(DIRECTORY).listFiles();
+
+                // Loop through all of the files and delete them.
+                for (File child : files) {
+                    if (child == null || !child.isFile() || child.isHidden() || !child
+                            .getName().toLowerCase()
+                            .startsWith(STARTING_WITH.toLowerCase())) {
+                        continue;
+                    }
+                    child.delete();
+                    count++;
+                }
+            } catch (Exception e) {
+                l.log(Level.SEVERE, "Error deleting files!", e);
+            } finally {
+                l.info("Deleted " + count + " files!");
+            }
+        }
+    }
+
+    /**
+     * A class to generate RSA keys for the login block.
+     * 
+     * @author Nikki
+     */
+    @SuppressWarnings("unused")
+    private static class RSAKeyGen {
+
+        /** Generates the 1024 bit RSA pair. */
+        public static void main(String[] args) {
+            try {
+                KeyFactory factory = KeyFactory.getInstance("RSA");
+                KeyPairGenerator keyGen = KeyPairGenerator.getInstance("RSA");
+                keyGen.initialize(1024);
+                KeyPair keypair = keyGen.genKeyPair();
+                PrivateKey privateKey = keypair.getPrivate();
+                PublicKey publicKey = keypair.getPublic();
+
+                RSAPrivateKeySpec privSpec = factory.getKeySpec(privateKey,
+                        RSAPrivateKeySpec.class);
+                writeKey("./data/rsa/rsapriv.txt",
+                        privSpec.getModulus(), privSpec.getPrivateExponent());
+
+                RSAPublicKeySpec pubSpec = factory.getKeySpec(publicKey,
+                        RSAPublicKeySpec.class);
+                writeKey("./data/rsa/rsapub.txt",
+                        pubSpec.getModulus(), pubSpec.getPublicExponent());
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+
+        /** Writes the actual key to a file. */
+        private static void writeKey(String file, BigInteger modulus,
+                BigInteger exponent) {
+            try {
+                BufferedWriter writer = new BufferedWriter(new FileWriter(file));
+                writer.write("private static final BigInteger RSA_MODULUS = new BigInteger(\"" + modulus
+                        .toString() + "\");");
+                writer.newLine();
+                writer.newLine();
+                writer.write("private static final BigInteger RSA_EXPONENT = new BigInteger(\"" + exponent
+                        .toString() + "\");");
+                writer.newLine();
+                writer.flush();
+                writer.close();
+            } catch (Exception e) {
+                e.printStackTrace();
             }
         }
     }
