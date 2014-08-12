@@ -197,6 +197,9 @@ public final class ServerEngine {
 
                     while (session.getInData().hasRemaining()) {
 
+                        // There's data to be read, reset the timeout.
+                        session.getTimeout().reset();
+
                         // Handle login here if needed.
                         if (session.getStage() != Stage.LOGGED_IN) {
                             session.handleLogin();
@@ -239,7 +242,6 @@ public final class ServerEngine {
                                             .getPacketOpcode()].decode(session
                                             .getPlayer(), new ProtocolBuffer(
                                             session.getInData()));
-                                    session.getTimeout().reset();
                                 } else {
                                     // logger.info(session.getPlayer()
                                     // + " unhandled packet "
