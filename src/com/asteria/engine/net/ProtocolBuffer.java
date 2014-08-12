@@ -19,7 +19,7 @@ public final class ProtocolBuffer {
             0x1fffffff, 0x3fffffff, 0x7fffffff, -1 };
 
     /** The default capacity of this buffer. */
-    public static final int DEFAULT_CAP = 32;
+    public static final int DEFAULT_CAP = 128;
 
     /** The backing byte buffer. */
     private ByteBuffer buf;
