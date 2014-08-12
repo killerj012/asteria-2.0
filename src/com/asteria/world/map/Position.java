@@ -100,6 +100,34 @@ public class Position {
         return move(amountX, amountY, 0);
     }
 
+    /**
+     * Moves this position <code>N</code>, <code>NW</code>, <code>NE</code>,
+     * <code>S</code>, <code>SW</code>, <code>SE</code>, <code>W</code>, or
+     * <code>E</code> between 0 and the argued amount inclusive <b>at
+     * random</b>.
+     * 
+     * @param amount
+     *            the amount to move this position by at random.
+     * @return this position with the new coordinates.
+     */
+    public Position move(int amount) {
+        int x = Utility.inclusiveRandom(amount);
+        int y = Utility.inclusiveRandom(amount);
+
+        switch (Utility.inclusiveRandom(3)) {
+        case 0:
+            return move(x, y);
+        case 1:
+            return move(-x, -y);
+        case 2:
+            return move(-x, y);
+        case 3:
+            return move(x, -y);
+        default:
+            throw new IllegalStateException();
+        }
+    }
+
     @Override
     public String toString() {
         return "POSITION[x= " + x + ", y= " + y + ", z= " + z + "]";
