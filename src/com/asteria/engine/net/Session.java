@@ -19,7 +19,6 @@ import com.asteria.world.entity.combat.effect.CombatTeleblockEffect;
 import com.asteria.world.entity.combat.prayer.CombatPrayer;
 import com.asteria.world.entity.player.Player;
 import com.asteria.world.entity.player.PlayerFileTask.ReadPlayerFileTask;
-import com.asteria.world.entity.player.PlayerRights;
 import com.asteria.world.entity.player.content.AssignWeaponAnimation;
 import com.asteria.world.entity.player.content.AssignWeaponInterface;
 import com.asteria.world.entity.player.minigame.Minigame;
@@ -39,10 +38,17 @@ public final class Session {
     public static final boolean DECODE_RSA = true;
 
     /**
-     * Players that aren't developers are moved within 200 squares of the home
-     * area on login.
+     * Players that don't have a username equal to
+     * <code>SOCKET_FLOOD_USERNAME</code> are moved within 200 squares of the
+     * home area on login.
      */
     public static final boolean SOCKET_FLOOD = false;
+
+    /**
+     * Players that don't have this username are moved within 200 squares of the
+     * home area on login, if the <code>SOCKET_FLOOD</code> boolean is flagged.
+     */
+    public static final String SOCKET_FLOOD_USERNAME = "lare96";
 
     /** The private RSA modulus and exponent key pairs. */
     public static final BigInteger RSA_MODULUS = new BigInteger(
@@ -361,28 +367,10 @@ public final class Session {
 
             // Teleport the player to the saved position.
             if (SOCKET_FLOOD) {
-                if (player.getRights().greaterThan(PlayerRights.PLAYER)) {
+                if (player.getUsername().equals(SOCKET_FLOOD_USERNAME)) {
                     player.move(player.getPosition());
                 } else {
-                    int amount = 200;
-                    int r = Utility.exclusiveRandom(4);
-                    if (r == 0) {
-                        player.move(player.getPosition().move(
-                                Utility.exclusiveRandom(amount),
-                                Utility.exclusiveRandom(amount)));
-                    } else if (r == 1) {
-                        player.move(player.getPosition().move(
-                                -Utility.exclusiveRandom(amount),
-                                -Utility.exclusiveRandom(amount)));
-                    } else if (r == 2) {
-                        player.move(player.getPosition().move(
-                                -Utility.exclusiveRandom(amount),
-                                Utility.exclusiveRandom(amount)));
-                    } else if (r == 3) {
-                        player.move(player.getPosition().move(
-                                Utility.exclusiveRandom(amount),
-                                -Utility.exclusiveRandom(amount)));
-                    }
+                    player.move(player.getPosition().move(200));
                 }
             } else if (!SOCKET_FLOOD) {
                 player.move(player.getPosition());
