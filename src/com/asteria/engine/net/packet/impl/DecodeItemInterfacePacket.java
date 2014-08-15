@@ -39,21 +39,21 @@ public class DecodeItemInterfacePacket extends PacketDecoder {
             case 1688:
                 player.getCombatBuilder().resetAttackTimer();
                 SkillEvent.fireSkillEvents(player);
-                player.getEquipment().removeItem(slot, true);
+                player.getEquipment().unequipItem(slot, true);
                 break;
             case 5064:
-                player.getBank().addItem(slot, new Item(itemId, 1));
+                player.getBank().depositFromInventory(slot, 1);
                 break;
             case 5382:
-                player.getBank().deleteItem(slot, new Item(itemId, 1));
+                player.getBank().withdraw(slot, 1, true);
                 break;
             case 3900:
-                Shop.getShop(player.getOpenShopId()).getPurchasePrice(
-                        player, new Item(itemId));
+                Shop.getShop(player.getOpenShopId()).getPurchasePrice(player,
+                    new Item(itemId));
                 break;
             case 3823:
                 Shop.getShop(player.getOpenShopId()).getSellingPrice(player,
-                        new Item(itemId));
+                    new Item(itemId));
                 break;
             case 3322:
                 player.getTradeSession().offer(new Item(itemId, 1), slot);
@@ -66,9 +66,9 @@ public class DecodeItemInterfacePacket extends PacketDecoder {
 
         case 117:
             interfaceId = buf.readShort(true, ProtocolBuffer.ValueType.A,
-                    ProtocolBuffer.ByteOrder.LITTLE);
+                ProtocolBuffer.ByteOrder.LITTLE);
             itemId = buf.readShort(true, ProtocolBuffer.ValueType.A,
-                    ProtocolBuffer.ByteOrder.LITTLE);
+                ProtocolBuffer.ByteOrder.LITTLE);
             slot = buf.readShort(true, ProtocolBuffer.ByteOrder.LITTLE);
             if (interfaceId < 0 || slot < 0 || itemId < 0) {
                 return;
@@ -76,18 +76,18 @@ public class DecodeItemInterfacePacket extends PacketDecoder {
             switch (interfaceId) {
 
             case 5064:
-                player.getBank().addItem(slot, new Item(itemId, 5));
+                player.getBank().depositFromInventory(slot, 5);
                 break;
             case 5382:
-                player.getBank().deleteItem(slot, new Item(itemId, 5));
+                player.getBank().withdraw(slot, 5, true);
                 break;
             case 3900:
                 Shop.getShop(player.getOpenShopId()).purchase(player,
-                        new Item(itemId, 1));
+                    new Item(itemId, 1));
                 break;
             case 3823:
                 Shop.getShop(player.getOpenShopId()).sell(player,
-                        new Item(itemId, 1), slot);
+                    new Item(itemId, 1), slot);
                 break;
             case 3322:
                 player.getTradeSession().offer(new Item(itemId, 5), slot);
@@ -108,19 +108,19 @@ public class DecodeItemInterfacePacket extends PacketDecoder {
             switch (interfaceId) {
 
             case 5064:
-                player.getBank().addItem(slot, new Item(itemId, 10));
+                player.getBank().depositFromInventory(slot, 10);
                 break;
 
             case 5382:
-                player.getBank().deleteItem(slot, new Item(itemId, 10));
+                player.getBank().withdraw(slot, 10, true);
                 break;
             case 3900:
                 Shop.getShop(player.getOpenShopId()).purchase(player,
-                        new Item(itemId, 5));
+                    new Item(itemId, 5));
                 break;
             case 3823:
                 Shop.getShop(player.getOpenShopId()).sell(player,
-                        new Item(itemId, 5), slot);
+                    new Item(itemId, 5), slot);
                 break;
             case 3322:
                 player.getTradeSession().offer(new Item(itemId, 10), slot);
@@ -142,45 +142,44 @@ public class DecodeItemInterfacePacket extends PacketDecoder {
             switch (interfaceId) {
 
             case 5064:
-                player.getBank().addItem(
-                        slot,
-                        new Item(itemId, player.getInventory().getContainer()
-                                .getCount(itemId)));
+                player.getBank().depositFromInventory(
+                    slot,
+                    player.getInventory().totalAmount(
+                        player.getInventory().getItemId(slot)));
                 break;
 
             case 5382:
-                int withdrawAmount = 0;
+                int amount = 0;
                 if (player.isWithdrawAsNote()) {
-                    withdrawAmount = player.getBank().getContainer()
-                            .getCount(itemId);
+                    amount = player.getBank().totalAmount(itemId);
                 } else {
                     Item itemWithdrew = new Item(itemId, 1);
-                    withdrawAmount = ItemDefinition.getDefinitions()[itemWithdrew
-                            .getId()].isStackable() ? player.getBank()
-                            .getContainer().getCount(itemId) : 28;
+                    amount = ItemDefinition.getDefinitions()[itemWithdrew
+                        .getId()].isStackable() ? player.getBank().totalAmount(
+                        itemId) : 28;
                 }
 
-                player.getBank().deleteItem(slot,
-                        new Item(itemId, withdrawAmount));
+                player.getBank().withdraw(slot, amount, true);
                 break;
             case 3900:
                 Shop.getShop(player.getOpenShopId()).purchase(player,
-                        new Item(itemId, 10));
+                    new Item(itemId, 10));
                 break;
 
             case 3823:
                 Shop.getShop(player.getOpenShopId()).sell(player,
-                        new Item(itemId, 10), slot);
+                    new Item(itemId, 10), slot);
                 break;
             case 3322:
-                player.getTradeSession().offer(
-                        new Item(itemId, player.getInventory().getContainer()
-                                .getCount(itemId)), slot);
+                player.getTradeSession()
+                    .offer(
+                        new Item(itemId, player.getInventory().totalAmount(
+                            itemId)), slot);
                 break;
             case 3415:
                 player.getTradeSession().unoffer(
-                        new Item(itemId, player.getTradeSession().getOffering()
-                                .getCount(itemId)));
+                    new Item(itemId, player.getTradeSession().getOffering()
+                        .totalAmount(itemId)));
                 break;
             }
 
@@ -204,27 +203,26 @@ public class DecodeItemInterfacePacket extends PacketDecoder {
 
         case 214:
             interfaceId = buf.readShort(ProtocolBuffer.ValueType.A,
-                    ProtocolBuffer.ByteOrder.LITTLE);
+                ProtocolBuffer.ByteOrder.LITTLE);
             buf.readByte(ProtocolBuffer.ValueType.C);
             int fromSlot = buf.readShort(ProtocolBuffer.ValueType.A,
-                    ProtocolBuffer.ByteOrder.LITTLE);
+                ProtocolBuffer.ByteOrder.LITTLE);
             int toSlot = buf.readShort(ProtocolBuffer.ByteOrder.LITTLE);
             if (interfaceId < 0 || fromSlot < 0 || toSlot < 0) {
                 return;
             }
             switch (interfaceId) {
             case 3214:
-                player.getInventory().exchangeItemSlot(fromSlot, toSlot);
+                player.getInventory().swap(fromSlot, toSlot);
                 player.getInventory().refresh();
                 break;
             case 5382:
                 if (player.isInsertItem()) {
-                    player.getBank().getContainer().swap(fromSlot, toSlot);
+                    player.getBank().swap(fromSlot, toSlot);
                 } else {
-                    player.getBank().getContainer().insert(fromSlot, toSlot);
+                    player.getBank().transfer(fromSlot, toSlot);
                 }
-                Item[] bankItems = player.getBank().getContainer().toArray();
-                player.getPacketBuilder().sendUpdateItems(5382, bankItems);
+                player.getBank().refresh();
                 break;
             }
             break;

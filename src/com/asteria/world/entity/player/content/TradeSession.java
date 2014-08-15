@@ -4,7 +4,7 @@ import com.asteria.world.entity.player.Player;
 import com.asteria.world.entity.player.PlayerRights;
 import com.asteria.world.item.Item;
 import com.asteria.world.item.ItemContainer;
-import com.asteria.world.item.ItemContainer.ContainerPolicy;
+import com.asteria.world.item.ItemContainer.Policy;
 
 /**
  * Manages a full trade session with another player.
@@ -20,8 +20,7 @@ public class TradeSession {
     private Player player;
 
     /** The items being offered to trade. */
-    private ItemContainer offering = new ItemContainer(
-            ContainerPolicy.NORMAL_POLICY, 28);
+    private ItemContainer offering = new ItemContainer(Policy.NORMAL, 28);
 
     /** The other player in this trade session. */
     private Player partner;
@@ -90,13 +89,13 @@ public class TradeSession {
 
         // Open the initial trade interface and set up the features.
         player.getPacketBuilder().sendUpdateItems(3322,
-                player.getInventory().getContainer().toArray());
+                player.getInventory().toArray());
 
         player.getPacketBuilder()
                 .sendString(
                         "Trading with: " + getDisplayName(partner) + " who has @gre@" + partner
-                                .getInventory().getContainer()
-                                .getRemainingSlots() + " free slots", 3417);
+                                .getInventory().getRemainingSlots() + " free slots",
+                        3417);
         player.getPacketBuilder().sendString("", 3431);
         player.getPacketBuilder().sendString(
                 "Are you sure you want to make this trade?", 3535);
@@ -111,7 +110,7 @@ public class TradeSession {
 
         // Open the confirm trade interface and set up the features.
         player.getPacketBuilder().sendUpdateItems(3214,
-                player.getInventory().getContainer().toArray());
+                player.getInventory().toArray());
         player.getPacketBuilder().sendString(confirmText(offering.toArray()),
                 3557);
         player.getPacketBuilder()
@@ -133,8 +132,7 @@ public class TradeSession {
     public void offer(Item item, int slot) {
 
         // Validate the item being sent.
-        if (item == null || !player.getInventory().getContainer()
-                .contains(item.getId())) {
+        if (item == null || !player.getInventory().contains(item.getId())) {
             return;
         }
 
@@ -148,28 +146,25 @@ public class TradeSession {
         }
 
         // Set this amount to the proper amount if needed.
-        if (item.getAmount() > player.getInventory().getContainer()
-                .getCount(item.getId()) && !item.getDefinition().isStackable()) {
-            item.setAmount(player.getInventory().getContainer()
-                    .getCount(item.getId()));
-        } else if (item.getAmount() > player.getInventory().getContainer()
-                .getItem(slot).getAmount() && item.getDefinition()
-                .isStackable()) {
-            item.setAmount(player.getInventory().getContainer().getItem(slot)
-                    .getAmount());
+        if (item.getAmount() > player.getInventory().totalAmount(item.getId()) && !item
+                .getDefinition().isStackable()) {
+            item.setAmount(player.getInventory().totalAmount(item.getId()));
+        } else if (item.getAmount() > player.getInventory().get(slot)
+                .getAmount() && item.getDefinition().isStackable()) {
+            item.setAmount(player.getInventory().get(slot).getAmount());
         }
 
         // Delete the item and update the trade screen.
-        player.getInventory().deleteItemSlot(item, slot);
+        player.getInventory().remove(item, slot);
         offering.add(item);
 
         partner.getPacketBuilder()
                 .sendString(
                         "Trading with: " + getDisplayName(player) + " who has @gre@" + player
-                                .getInventory().getContainer()
-                                .getRemainingSlots() + " free slots", 3417);
+                                .getInventory().getRemainingSlots() + " free slots",
+                        3417);
         player.getPacketBuilder().sendUpdateItems(3322,
-                player.getInventory().getContainer().toArray());
+                player.getInventory().toArray());
         int length = offering.size();
         player.getPacketBuilder().sendUpdateItems(3415, offering.toArray(),
                 length);
@@ -196,21 +191,21 @@ public class TradeSession {
         }
 
         // Set this amount to the proper amount if needed.
-        if (item.getAmount() > offering.getCount(item.getId())) {
-            item.setAmount(offering.getCount(item.getId()));
+        if (item.getAmount() > offering.totalAmount(item.getId())) {
+            item.setAmount(offering.totalAmount(item.getId()));
         }
 
         // Delete the item and update the trade screen.
         offering.remove(item);
-        player.getInventory().addItem(item);
+        player.getInventory().add(item);
 
         partner.getPacketBuilder()
                 .sendString(
                         "Trading with: " + getDisplayName(player) + " who has @gre@" + player
-                                .getInventory().getContainer()
-                                .getRemainingSlots() + " free slots", 3417);
+                                .getInventory().getRemainingSlots() + " free slots",
+                        3417);
         player.getPacketBuilder().sendUpdateItems(3322,
-                player.getInventory().getContainer().toArray());
+                player.getInventory().toArray());
         int length = offering.size();
         player.getPacketBuilder().sendUpdateItems(3415, offering.toArray(),
                 length);
@@ -226,9 +221,8 @@ public class TradeSession {
     public void distributeItems() {
 
         // Give the items to each of the players
-        partner.getInventory().addItemSet(offering.toArray());
-        player.getInventory().addItemSet(
-                partner.getTradeSession().offering.toArray());
+        partner.getInventory().add(offering.toArray());
+        player.getInventory().add(partner.getTradeSession().offering.toArray());
 
         // Reset the trade.
         reset();
@@ -250,9 +244,9 @@ public class TradeSession {
         }
 
         // Give the items to each of the players
-        player.getInventory().addItemSet(offering.toArray());
-        partner.getInventory().addItemSet(
-                partner.getTradeSession().offering.toArray());
+        player.getInventory().add(offering.toArray());
+        partner.getInventory()
+                .add(partner.getTradeSession().offering.toArray());
 
         // Send the partner a message if applicable.
         if (declined) {

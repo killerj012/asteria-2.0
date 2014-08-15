@@ -547,13 +547,13 @@ public final class Utility {
 
                 RSAPrivateKeySpec privSpec = factory.getKeySpec(privateKey,
                         RSAPrivateKeySpec.class);
-                writeKey("./data/rsa/rsapriv.txt",
-                        privSpec.getModulus(), privSpec.getPrivateExponent());
+                writeKey("./data/rsa/rsapriv.txt", privSpec.getModulus(),
+                        privSpec.getPrivateExponent());
 
                 RSAPublicKeySpec pubSpec = factory.getKeySpec(publicKey,
                         RSAPublicKeySpec.class);
-                writeKey("./data/rsa/rsapub.txt",
-                        pubSpec.getModulus(), pubSpec.getPublicExponent());
+                writeKey("./data/rsa/rsapub.txt", pubSpec.getModulus(),
+                        pubSpec.getPublicExponent());
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -562,8 +562,8 @@ public final class Utility {
         /** Writes the actual key to a file. */
         private static void writeKey(String file, BigInteger modulus,
                 BigInteger exponent) {
-            try {
-                BufferedWriter writer = new BufferedWriter(new FileWriter(file));
+            try (BufferedWriter writer = new BufferedWriter(
+                    new FileWriter(file))) {
                 writer.write("private static final BigInteger RSA_MODULUS = new BigInteger(\"" + modulus
                         .toString() + "\");");
                 writer.newLine();
@@ -571,8 +571,6 @@ public final class Utility {
                 writer.write("private static final BigInteger RSA_EXPONENT = new BigInteger(\"" + exponent
                         .toString() + "\");");
                 writer.newLine();
-                writer.flush();
-                writer.close();
             } catch (Exception e) {
                 e.printStackTrace();
             }

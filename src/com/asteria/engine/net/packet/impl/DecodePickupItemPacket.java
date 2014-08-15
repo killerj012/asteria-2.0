@@ -47,8 +47,8 @@ public class DecodePickupItemPacket extends PacketDecoder {
 
                     if (!player
                             .getInventory()
-                            .getContainer()
-                            .hasRoomFor(
+
+                            .spaceFor(
                                     new Item(itemId, worldItem.getItem()
                                             .getAmount()))) {
                         player.getPacketBuilder()

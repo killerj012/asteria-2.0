@@ -48,7 +48,7 @@ public class NpcDialogueAction implements DialogueAction {
     }
 
     @Override
-    public void fire(Dialogue dialogue) {
+    public void run(Dialogue dialogue) {
         Dialogue.sendNpcDialogue(dialogue.getPlayer(), expression, npcId, lines);
     }
 }

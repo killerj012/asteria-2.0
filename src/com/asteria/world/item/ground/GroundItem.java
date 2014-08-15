@@ -83,6 +83,8 @@ public class GroundItem {
             World.getPlayerByHash(player.getUsernameHash()).getPacketBuilder()
                     .sendRemoveGroundItem(this);
             break;
+        default:
+            throw new IllegalStateException();
         }
     }
 
@@ -122,6 +124,8 @@ public class GroundItem {
             fireOnUnregister();
             it.remove();
             break;
+        default:
+            throw new IllegalStateException();
         }
     }
 
@@ -133,7 +137,7 @@ public class GroundItem {
      */
     public void fireOnPickup(Player player) {
         GroundItemManager.unregister(this);
-        player.getInventory().addItem(item);
+        player.getInventory().add(item);
     }
 
     @Override
@@ -295,7 +299,7 @@ public class GroundItem {
             }
 
             // Add the item to the player's inventory regardless.
-            player.getInventory().addItem(super.item);
+            player.getInventory().add(super.item);
         }
     }
 }

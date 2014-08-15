@@ -146,7 +146,7 @@ public class TaskChainExecutor {
             }
 
             @Override
-            public void fireOnCancel() {
+            public void onCancel() {
                 shutdown();
             }
         });

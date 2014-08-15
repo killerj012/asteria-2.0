@@ -1,5 +1,7 @@
 package com.asteria.world.item.container;
 
+import java.util.Collection;
+
 import com.asteria.util.Utility;
 import com.asteria.world.entity.UpdateFlags.Flag;
 import com.asteria.world.entity.player.Player;
@@ -10,22 +12,17 @@ import com.asteria.world.entity.player.minigame.Minigame;
 import com.asteria.world.entity.player.minigame.MinigameFactory;
 import com.asteria.world.item.Item;
 import com.asteria.world.item.ItemContainer;
-import com.asteria.world.item.ItemContainer.ContainerPolicy;
 
 /**
- * Uses an {@link ItemContainer} to manage a player's equipped items.
+ * An {@link ItemContainer} implementation that will manage a player's equipped
+ * items.
  * 
  * @author lare96
- * @author Vix
  */
-public class EquipmentContainer {
+public class EquipmentContainer extends ItemContainer {
 
     /** The player's equipment being managed. */
     private Player player;
-
-    /** The container that will hold this player's equipped items. */
-    private ItemContainer container = new ItemContainer(
-            ContainerPolicy.NORMAL_POLICY, 14);
 
     /**
      * Create a new {@link EquipmentContainer}.
@@ -34,103 +31,100 @@ public class EquipmentContainer {
      *            the player's equipment being managed.
      */
     public EquipmentContainer(Player player) {
+        super(Policy.NORMAL, 14);
         this.player = player;
     }
 
-    /**
-     * Refreshes all of the items displayed on the equipment interface.
-     */
+    /** Refreshes the items displayed on the equipment interface. */
     public void refresh() {
-        Item[] items = container.toArray();
-        player.getPacketBuilder().sendUpdateItems(1688, items);
+        refresh(1688, player);
     }
 
     /**
-     * Adds an item into the container from the specified slot in the player's
-     * inventory.
+     * Equips the item in the argued slot from the player's inventory.
      * 
-     * @param slot
+     * @param inventorySlot
      *            the item on this slot to add into the container.
+     * @return <code>true</code> if the container was modified as a result of
+     *         the call, <code>false</code> otherwise.
      */
-    public void equipItem(int slot) {
-
-        Item item = player.getInventory().getContainer().getItem(slot);
+    public boolean equipItem(int inventorySlot) {
+        Item item = player.getInventory().get(inventorySlot);
 
         if (item == null) {
-            return;
+            return false;
         }
 
         for (Minigame minigame : MinigameFactory.getMinigames().values()) {
             if (minigame.inMinigame(player)) {
                 if (!minigame.canEquip(player, item, item.getDefinition()
                         .getEquipmentSlot())) {
-                    return;
+                    return false;
                 }
             }
         }
 
         if (!AssignSkillRequirement.checkRequirement(player, item)) {
-            return;
+            return false;
         }
 
         if (item.getDefinition().isStackable()) {
             int designatedSlot = item.getDefinition().getEquipmentSlot();
-            Item equipItem = container.getItem(designatedSlot);
+            Item equipItem = get(designatedSlot);
 
-            if (container.isSlotUsed(designatedSlot)) {
+            if (isSlotUsed(designatedSlot)) {
 
                 if (item.getId() == equipItem.getId()) {
 
-                    container.set(
-                            designatedSlot,
-                            new Item(item.getId(), item.getAmount() + equipItem
-                                    .getAmount()));
+                    set(designatedSlot, new Item(item.getId(),
+                            item.getAmount() + equipItem.getAmount()));
                 } else {
 
-                    player.getInventory().overrideItemSlot(equipItem, slot);
-                    container.set(designatedSlot, item);
+                    player.getInventory().set(inventorySlot, equipItem);
+                    player.getInventory().refresh();
+                    set(designatedSlot, item);
                 }
             } else {
 
-                container.set(designatedSlot, item);
+                set(designatedSlot, item);
             }
 
-            player.getInventory().deleteItemSlot(item, slot);
+            player.getInventory().remove(item, inventorySlot);
         } else {
             int designatedSlot = item.getDefinition().getEquipmentSlot();
 
             if (designatedSlot == Utility.EQUIPMENT_SLOT_WEAPON && item
                     .getDefinition().isTwoHanded()) {
-                removeItem(Utility.EQUIPMENT_SLOT_SHIELD, true);
+                unequipItem(Utility.EQUIPMENT_SLOT_SHIELD, true);
 
-                if (container.isSlotUsed(Utility.EQUIPMENT_SLOT_SHIELD)) {
-                    return;
+                if (isSlotUsed(Utility.EQUIPMENT_SLOT_SHIELD)) {
+                    return false;
                 }
             }
 
-            if (designatedSlot == Utility.EQUIPMENT_SLOT_SHIELD && container
-                    .isSlotUsed(Utility.EQUIPMENT_SLOT_WEAPON)) {
-                if (container.getItem(Utility.EQUIPMENT_SLOT_WEAPON)
-                        .getDefinition().isTwoHanded()) {
-                    removeItem(Utility.EQUIPMENT_SLOT_WEAPON, true);
+            if (designatedSlot == Utility.EQUIPMENT_SLOT_SHIELD && isSlotUsed(Utility.EQUIPMENT_SLOT_WEAPON)) {
+                if (get(Utility.EQUIPMENT_SLOT_WEAPON).getDefinition()
+                        .isTwoHanded()) {
+                    unequipItem(Utility.EQUIPMENT_SLOT_WEAPON, true);
 
-                    if (container.isSlotUsed(Utility.EQUIPMENT_SLOT_WEAPON)) {
-                        return;
+                    if (isSlotUsed(Utility.EQUIPMENT_SLOT_WEAPON)) {
+                        return false;
                     }
                 }
             }
 
-            if (container.isSlotUsed(designatedSlot)) {
-                Item equipItem = container.getItem(designatedSlot);
+            if (isSlotUsed(designatedSlot)) {
+                Item equipItem = get(designatedSlot);
 
-                player.getInventory().overrideItemSlot(equipItem, slot);
+                player.getInventory().set(inventorySlot, equipItem);
+                player.getInventory().refresh();
 
             } else {
-                player.getInventory().deleteItemSlot(item, slot);
+                player.getInventory().set(inventorySlot, item);
+                player.getInventory().refresh();
             }
 
-            container.set(designatedSlot,
-                    new Item(item.getId(), item.getAmount()));
+            set(designatedSlot, new Item(item.getId(), item.getAmount()));
         }
 
         if (item.getDefinition().getEquipmentSlot() == Utility.EQUIPMENT_SLOT_WEAPON) {
@@ -147,49 +141,48 @@ public class EquipmentContainer {
         player.writeBonus();
         refresh();
         player.getFlags().flag(Flag.APPEARANCE);
-
+        return true;
     }
 
     /**
-     * Removes an item from a specified slot in the container.
+     * Unequips the item in the argued slot from this container.
      * 
-     * @param slot
-     *            the slot to remove the item from.
+     * @param equipmentSlot
+     *            the slot to unequip the item on.
      * @param addItem
-     *            if the item should be added back to the inventory.
+     *            if the item should be added back to the inventory after being
+     *            unequipped.
+     * @return <code>true</code> if the container was modified as a result of
+     *         the call, <code>false</code> otherwise.
      */
-    public boolean removeItem(int slot, boolean addItem) {
-        if (slot < 0 || slot > container.toArray().length) {
+    public boolean unequipItem(int equipmentSlot, boolean addItem) {
+
+        if (isSlotFree(equipmentSlot)) {
             return false;
         }
 
-        if (container.isSlotFree(slot)) {
-            return false;
-        }
-
-        Item item = container.getItem(slot);
+        Item item = get(equipmentSlot);
 
         for (Minigame minigame : MinigameFactory.getMinigames().values()) {
             if (minigame.inMinigame(player)) {
-                if (!minigame.canUnequip(player, item, slot)) {
+                if (!minigame.canUnequip(player, item, equipmentSlot)) {
                     return false;
                 }
             }
         }
 
-        if (!player.getInventory().getContainer().hasRoomFor(item)) {
+        if (!player.getInventory().spaceFor(item)) {
             player.getPacketBuilder().sendMessage(
                     "You do not have enough space in your inventory!");
             return false;
         }
 
-        container.remove(item, slot);
+        remove(item, equipmentSlot);
 
         if (addItem)
-            player.getInventory().addItem(
-                    new Item(item.getId(), item.getAmount()));
+            player.getInventory().add(new Item(item.getId(), item.getAmount()));
 
-        if (slot == Utility.EQUIPMENT_SLOT_WEAPON) {
+        if (equipmentSlot == Utility.EQUIPMENT_SLOT_WEAPON) {
             AssignWeaponInterface.assignInterface(player, null);
             AssignWeaponInterface.changeFightType(player);
             player.setCastSpell(null);
@@ -207,21 +200,71 @@ public class EquipmentContainer {
     }
 
     /**
-     * Removes an item from the container.
+     * Unequips the argued item from this container.
      * 
      * @param item
-     *            the item to remove.
+     *            the item to remove from this container.
+     * @param addItem
+     *            if the item should be added back to the inventory after being
+     *            unequipped.
+     * @return <code>true</code> if the container was modified as a result of
+     *         the call, <code>false</code> otherwise.
      */
-    public boolean removeItem(Item item) {
-        return removeItem(container.getSlotById(item.getId()), false);
+    public boolean unequipItem(Item item, boolean addItem) {
+        return unequipItem(getSlot(item.getId()), addItem);
     }
 
     /**
-     * Gets the container that will hold this player's equipped items.
-     * 
-     * @return the container that holds the items.
+     * This method is not supported by this container implementation. It will
+     * always throw an {@link UnsupportedOperationException}.
      */
-    public ItemContainer getContainer() {
-        return container;
+    @Override
+    public final boolean add(Item item, int slot) {
+        throw new UnsupportedOperationException();
+    }
+
+    /**
+     * This method is not supported by this container implementation. It will
+     * always throw an {@link UnsupportedOperationException}.
+     */
+    @Override
+    public final boolean add(Item item) {
+        throw new UnsupportedOperationException();
+    }
+    
+    /**
+     * This method is not supported by this container implementation. It will
+     * always throw an {@link UnsupportedOperationException}.
+     */
+    @Override
+    public final boolean addAll(Collection<? extends Item> c) {
+        throw new UnsupportedOperationException();
+    }
+
+    /**
+     * This method is not supported by this container implementation. It will
+     * always throw an {@link UnsupportedOperationException}.
+     */
+    @Override
+    public final boolean remove(Item item, int slot) {
+        throw new UnsupportedOperationException();
+    }
+
+    /**
+     * This method is not supported by this container implementation. It will
+     * always throw an {@link UnsupportedOperationException}.
+     */
+    @Override
+    public final boolean remove(Item item) {
+        throw new UnsupportedOperationException();
+    }
+
+    /**
+     * This method is not supported by this container implementation. It will
+     * always throw an {@link UnsupportedOperationException}.
+     */
+    @Override
+    public final boolean removeAll(Collection<?> c) {
+        throw new UnsupportedOperationException();
     }
 }

@@ -136,60 +136,52 @@ public final class PlayerUpdating {
 
         if (player.getNpcAppearanceId() == -1) {
 
-            if (player.getEquipment().getContainer()
-                    .getItemId(Utility.EQUIPMENT_SLOT_HEAD) > 1) {
-                block.writeShort(0x200 + player.getEquipment().getContainer()
-                        .getItemId(Utility.EQUIPMENT_SLOT_HEAD));
+            if (player.getEquipment().getItemId(Utility.EQUIPMENT_SLOT_HEAD) > 1) {
+                block.writeShort(0x200 + player.getEquipment().getItemId(
+                        Utility.EQUIPMENT_SLOT_HEAD));
             } else {
                 block.writeByte(0);
             }
 
-            if (player.getEquipment().getContainer()
-                    .getItemId(Utility.EQUIPMENT_SLOT_CAPE) > 1) {
-                block.writeShort(0x200 + player.getEquipment().getContainer()
-                        .getItemId(Utility.EQUIPMENT_SLOT_CAPE));
+            if (player.getEquipment().getItemId(Utility.EQUIPMENT_SLOT_CAPE) > 1) {
+                block.writeShort(0x200 + player.getEquipment().getItemId(
+                        Utility.EQUIPMENT_SLOT_CAPE));
             } else {
                 block.writeByte(0);
             }
 
-            if (player.getEquipment().getContainer()
-                    .getItemId(Utility.EQUIPMENT_SLOT_AMULET) > 1) {
-                block.writeShort(0x200 + player.getEquipment().getContainer()
-                        .getItemId(Utility.EQUIPMENT_SLOT_AMULET));
+            if (player.getEquipment().getItemId(Utility.EQUIPMENT_SLOT_AMULET) > 1) {
+                block.writeShort(0x200 + player.getEquipment().getItemId(
+                        Utility.EQUIPMENT_SLOT_AMULET));
             } else {
                 block.writeByte(0);
             }
 
-            if (player.getEquipment().getContainer()
-                    .getItemId(Utility.EQUIPMENT_SLOT_WEAPON) > 1) {
-                block.writeShort(0x200 + player.getEquipment().getContainer()
-                        .getItemId(Utility.EQUIPMENT_SLOT_WEAPON));
+            if (player.getEquipment().getItemId(Utility.EQUIPMENT_SLOT_WEAPON) > 1) {
+                block.writeShort(0x200 + player.getEquipment().getItemId(
+                        Utility.EQUIPMENT_SLOT_WEAPON));
             } else {
                 block.writeByte(0);
             }
 
-            if (player.getEquipment().getContainer()
-                    .getItemId(Utility.EQUIPMENT_SLOT_CHEST) > 1) {
-                block.writeShort(0x200 + player.getEquipment().getContainer()
-                        .getItemId(Utility.EQUIPMENT_SLOT_CHEST));
+            if (player.getEquipment().getItemId(Utility.EQUIPMENT_SLOT_CHEST) > 1) {
+                block.writeShort(0x200 + player.getEquipment().getItemId(
+                        Utility.EQUIPMENT_SLOT_CHEST));
             } else {
                 block.writeShort(0x100 + player.getAppearance()[Utility.APPEARANCE_SLOT_CHEST]);
             }
 
-            if (player.getEquipment().getContainer()
-                    .getItemId(Utility.EQUIPMENT_SLOT_SHIELD) > 1) {
-                block.writeShort(0x200 + player.getEquipment().getContainer()
-                        .getItemId(Utility.EQUIPMENT_SLOT_SHIELD));
+            if (player.getEquipment().getItemId(Utility.EQUIPMENT_SLOT_SHIELD) > 1) {
+                block.writeShort(0x200 + player.getEquipment().getItemId(
+                        Utility.EQUIPMENT_SLOT_SHIELD));
             } else {
                 block.writeByte(0);
             }
 
-            if (player.getEquipment().getContainer()
-                    .getItemId(Utility.EQUIPMENT_SLOT_CHEST) > 1) {
+            if (player.getEquipment().getItemId(Utility.EQUIPMENT_SLOT_CHEST) > 1) {
 
-                if (!player.getEquipment().getContainer()
-                        .getItem(Utility.EQUIPMENT_SLOT_CHEST).getDefinition()
-                        .isPlatebody()) {
+                if (!player.getEquipment().get(Utility.EQUIPMENT_SLOT_CHEST)
+                        .getDefinition().isPlatebody()) {
                     block.writeShort(0x100 + player.getAppearance()[Utility.APPEARANCE_SLOT_ARMS]);
                 } else {
                     block.writeByte(0);
@@ -198,46 +190,40 @@ public final class PlayerUpdating {
                 block.writeShort(0x100 + player.getAppearance()[Utility.APPEARANCE_SLOT_ARMS]);
             }
 
-            if (player.getEquipment().getContainer()
-                    .getItemId(Utility.EQUIPMENT_SLOT_LEGS) > 1) {
-                block.writeShort(0x200 + player.getEquipment().getContainer()
-                        .getItemId(Utility.EQUIPMENT_SLOT_LEGS));
+            if (player.getEquipment().getItemId(Utility.EQUIPMENT_SLOT_LEGS) > 1) {
+                block.writeShort(0x200 + player.getEquipment().getItemId(
+                        Utility.EQUIPMENT_SLOT_LEGS));
             } else {
                 block.writeShort(0x100 + player.getAppearance()[Utility.APPEARANCE_SLOT_LEGS]);
             }
 
-            if (player.getEquipment().getContainer()
-                    .getItemId(Utility.EQUIPMENT_SLOT_HEAD) > 1 && player
-                    .getEquipment().getContainer()
-                    .getItem(Utility.EQUIPMENT_SLOT_HEAD).getDefinition()
-                    .isFullHelm()) {
+            if (player.getEquipment().getItemId(Utility.EQUIPMENT_SLOT_HEAD) > 1 && player
+                    .getEquipment().get(Utility.EQUIPMENT_SLOT_HEAD)
+                    .getDefinition().isFullHelm()) {
                 block.writeByte(0);
             } else {
                 block.writeShort(0x100 + player.getAppearance()[Utility.APPEARANCE_SLOT_HEAD]);
             }
 
-            if (player.getEquipment().getContainer()
-                    .getItemId(Utility.EQUIPMENT_SLOT_HANDS) > 1) {
-                block.writeShort(0x200 + player.getEquipment().getContainer()
-                        .getItemId(Utility.EQUIPMENT_SLOT_HANDS));
+            if (player.getEquipment().getItemId(Utility.EQUIPMENT_SLOT_HANDS) > 1) {
+                block.writeShort(0x200 + player.getEquipment().getItemId(
+                        Utility.EQUIPMENT_SLOT_HANDS));
             } else {
                 block.writeShort(0x100 + player.getAppearance()[Utility.APPEARANCE_SLOT_HANDS]);
             }
 
-            if (player.getEquipment().getContainer()
-                    .getItemId(Utility.EQUIPMENT_SLOT_FEET) > 1) {
-                block.writeShort(0x200 + player.getEquipment().getContainer()
-                        .getItemId(Utility.EQUIPMENT_SLOT_FEET));
+            if (player.getEquipment().getItemId(Utility.EQUIPMENT_SLOT_FEET) > 1) {
+                block.writeShort(0x200 + player.getEquipment().getItemId(
+                        Utility.EQUIPMENT_SLOT_FEET));
             } else {
                 block.writeShort(0x100 + player.getAppearance()[Utility.APPEARANCE_SLOT_FEET]);
             }
 
             if (player.getGender() == Utility.GENDER_MALE) {
-                if (player.getEquipment().getContainer()
+                if (player.getEquipment()
                         .getItemId(Utility.EQUIPMENT_SLOT_HEAD) > 1 && !player
-                        .getEquipment().getContainer()
-                        .getItem(Utility.EQUIPMENT_SLOT_HEAD).getDefinition()
-                        .isFullHelm() || player.getEquipment().getContainer()
+                        .getEquipment().get(Utility.EQUIPMENT_SLOT_HEAD)
+                        .getDefinition().isFullHelm() || player.getEquipment()
                         .isSlotFree(Utility.EQUIPMENT_SLOT_HEAD)) {
                     block.writeShort(0x100 + player.getAppearance()[Utility.APPEARANCE_SLOT_BEARD]);
                 } else {

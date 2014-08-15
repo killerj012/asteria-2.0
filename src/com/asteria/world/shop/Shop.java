@@ -1,5 +1,6 @@
 package com.asteria.world.shop;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -10,7 +11,7 @@ import com.asteria.world.World;
 import com.asteria.world.entity.player.Player;
 import com.asteria.world.item.Item;
 import com.asteria.world.item.ItemContainer;
-import com.asteria.world.item.ItemContainer.ContainerPolicy;
+import com.asteria.world.item.ItemContainer.Policy;
 import com.asteria.world.item.ItemDefinition;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
@@ -33,19 +34,17 @@ public class Shop {
     // Increase this array size if you need more than 25 shops.
     private static Shop[] shops = new Shop[25];
 
+    /** An {@link ItemContainer} that holds the items within this shop. */
+    private ItemContainer container = new ItemContainer(Policy.STACK_ALWAYS, 48);
+
     /** The index of this shop. */
     private int index;
 
     /** The name of this shop. */
     private String name;
 
-    /** An {@link ItemContainer} that holds the items within this shop. */
-    private ItemContainer container = new ItemContainer(
-            ContainerPolicy.STACKABLE_POLICY, 48);
-
     /** A map of the original shop items and their amounts. */
-    private Map<Integer, Integer> shopMap = new HashMap<Integer, Integer>(
-            container.capacity());
+    private Map<Integer, Integer> shopMap;
 
     /** If the shop will replenish its stock once it runs out. */
     private boolean restockItems;
@@ -79,18 +78,13 @@ public class Shop {
             boolean sellItems, Currency currency) {
         this.index = index;
         this.name = name;
-        this.container.setItems(items);
         this.restockItems = restockItems;
         this.sellItems = sellItems;
         this.currency = currency;
-
-        for (Item item : items) {
-            if (item == null) {
-                continue;
-            }
-
-            shopMap.put(item.getId(), item.getAmount());
-        }
+        this.container.setItems(items);
+        this.shopMap = new HashMap<>(container.capacity());
+        Arrays.stream(items).filter(item -> item != null)
+                .forEach(item -> shopMap.put(item.getId(), item.getAmount()));
     }
 
     /**
@@ -101,7 +95,7 @@ public class Shop {
      */
     public void openShop(Player player) {
         player.getPacketBuilder().sendUpdateItems(3823,
-                player.getInventory().getContainer().toArray());
+                player.getInventory().toArray());
         player.getPacketBuilder().sendUpdateItems(3900, container.toArray(),
                 container.size());
         player.setOpenShopId(index);
@@ -153,15 +147,14 @@ public class Shop {
 
         // If you are buying more than the shop has in stock, set the amount you
         // are buying to how much is in stock.
-        if (item.getAmount() > container.getCount(item.getId())) {
-            item.setAmount(container.getCount(item.getId()));
+        if (item.getAmount() > container.totalAmount(item.getId())) {
+            item.setAmount(container.totalAmount(item.getId()));
         }
 
         // Set the amount you are buying to your current amount of free slots if
         // you do not have enough room for the item you are trying to buy.
-        if (!player.getInventory().getContainer().hasRoomFor(item)) {
-            item.setAmount(player.getInventory().getContainer()
-                    .getRemainingSlots());
+        if (!player.getInventory().spaceFor(item)) {
+            item.setAmount(player.getInventory().getRemainingSlots());
 
             if (item.getAmount() == 0) {
                 player.getPacketBuilder()
@@ -172,15 +165,14 @@ public class Shop {
         }
 
         // Here we actually buy the item.
-        if (player.getInventory().getContainer().getRemainingSlots() >= item
-                .getAmount() && !item.getDefinition().isStackable() || player
-                .getInventory().getContainer().getRemainingSlots() >= 1 && item
+        if (player.getInventory().getRemainingSlots() >= item.getAmount() && !item
                 .getDefinition().isStackable() || player.getInventory()
-                .getContainer().contains(item.getId()) && item.getDefinition()
+                .getRemainingSlots() >= 1 && item.getDefinition().isStackable() || player
+                .getInventory().contains(item.getId()) && item.getDefinition()
                 .isStackable()) {
 
             if (shopMap.containsKey(item.getId())) {
-                container.getById(item.getId()).decrementAmountBy(
+                container.getItem(item.getId()).decrementAmountBy(
                         item.getAmount());
             } else if (!shopMap.containsKey(item.getId())) {
                 container.remove(item);
@@ -198,7 +190,7 @@ public class Shop {
                                 .getSpecialStorePrice());
             }
 
-            player.getInventory().addItem(item);
+            player.getInventory().add(item);
         } else {
             player.getPacketBuilder().sendMessage(
                     "You don't have enough space in your inventory.");
@@ -207,7 +199,7 @@ public class Shop {
 
         // Update the players inventory.
         player.getPacketBuilder().sendUpdateItems(3823,
-                player.getInventory().getContainer().toArray());
+                player.getInventory().toArray());
 
         // Update the shop for anyone who has it open.
         int size = container.size();
@@ -262,7 +254,7 @@ public class Shop {
         }
 
         // Checks if you have the item you want to sell in your inventory.
-        if (!player.getInventory().getContainer().contains(item.getId())) {
+        if (!player.getInventory().contains(item.getId())) {
             return;
         }
 
@@ -278,7 +270,7 @@ public class Shop {
         }
 
         // Checks if this shop has room for the item you are trying to sell.
-        if (!container.hasRoomFor(item)) {
+        if (!container.spaceFor(item)) {
             player.getPacketBuilder()
                     .sendMessage(
                             "There is no room for the item you are trying to sell in this store!");
@@ -287,7 +279,7 @@ public class Shop {
 
         // Checks if you have enough space in your inventory to receive the
         // currency.
-        if (player.getInventory().getContainer().getRemainingSlots() == 0 && !currency
+        if (player.getInventory().getRemainingSlots() == 0 && !currency
                 .getCurrency().inventoryFull(player)) {
             player.getPacketBuilder()
                     .sendMessage(
@@ -296,33 +288,30 @@ public class Shop {
         }
 
         // Sets the amount to what you have if you try and buy more.
-        if (item.getAmount() > player.getInventory().getContainer()
-                .getCount(item.getId()) && !item.getDefinition().isStackable()) {
-            item.setAmount(player.getInventory().getContainer()
-                    .getCount(item.getId()));
-        } else if (item.getAmount() > player.getInventory().getContainer()
-                .getItem(fromSlot).getAmount() && item.getDefinition()
-                .isStackable()) {
-            item.setAmount(player.getInventory().getContainer()
-                    .getItem(fromSlot).getAmount());
+        if (item.getAmount() > player.getInventory().totalAmount(item.getId()) && !item
+                .getDefinition().isStackable()) {
+            item.setAmount(player.getInventory().totalAmount(item.getId()));
+        } else if (item.getAmount() > player.getInventory().get(fromSlot)
+                .getAmount() && item.getDefinition().isStackable()) {
+            item.setAmount(player.getInventory().get(fromSlot).getAmount());
         }
 
         // Actually sell the item.
-        player.getInventory().deleteItemSlot(item, fromSlot);
+        player.getInventory().remove(item, fromSlot);
         currency.getCurrency().recieve(player,
                 item.getAmount() * calculateSellingPrice(item));
 
         // Add on to the item if its in the shop already or add it to a whole
         // new slot if its not.
         if (container.contains(item.getId())) {
-            container.getById(item.getId()).incrementAmountBy(item.getAmount());
+            container.getItem(item.getId()).incrementAmountBy(item.getAmount());
         } else if (!container.contains(item.getId())) {
             container.add(item);
         }
 
         // Update your inventory.
         player.getPacketBuilder().sendUpdateItems(3823,
-                player.getInventory().getContainer().toArray());
+                player.getInventory().toArray());
 
         // Update the shop for anyone who has it open.
         int size = container.size();
@@ -447,7 +436,7 @@ public class Shop {
      *         otherwise.
      */
     private boolean needRestockFire() {
-        for (Item item : container.toArray()) {
+        for (Item item : container) {
             if (item == null) {
                 continue;
             }
@@ -468,7 +457,7 @@ public class Shop {
      *         <code>false</code> otherwise.
      */
     private boolean isFullyRestocked() {
-        for (Item item : container.toArray()) {
+        for (Item item : container) {
             if (item == null) {
                 continue;
             }
@@ -609,7 +598,7 @@ public class Shop {
          *            the shop we are re-stocking.
          */
         public ShopWorker(Shop shop) {
-            super(9, false);
+            super(20, false);
             this.shop = shop;
         }
 
@@ -624,7 +613,7 @@ public class Shop {
             }
 
             // Iterate through the shops items.
-            for (Item item : shop.getShopContainer().toArray()) {
+            for (Item item : shop.getShopContainer()) {
                 if (item == null) {
                     continue;
                 }

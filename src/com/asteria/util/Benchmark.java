@@ -17,7 +17,8 @@ import com.asteria.engine.GameEngine;
  * it contains functionality for benchmarking several different operations
  * separately. It also has functionality for printing off the results of the
  * benchmark to a text file. <b>Use the stopwatch for throttling general
- * gameplay, like food delays. This class is only used for testing purposes!</b><br>
+ * gameplay, like food delays. This class is only used for benchmarking
+ * purposes!</b><br>
  * <br>
  * An example of usage below:
  * 
@@ -41,8 +42,6 @@ import com.asteria.engine.GameEngine;
  * @author lare96
  */
 public final class Benchmark {
-
-    // TODO: Sub-benchmarks for the 'collect()' method.
 
     /** The name of this benchmark. */
     private final String name;

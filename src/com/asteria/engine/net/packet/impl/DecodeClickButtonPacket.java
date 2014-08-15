@@ -266,7 +266,7 @@ public class DecodeClickButtonPacket extends PacketDecoder {
             if (player.getTradeSession().inTrade()) {
                 Player partner = player.getTradeSession().getPartner();
 
-                if (partner.getInventory().getContainer().getRemainingSlots() < player
+                if (partner.getInventory().getRemainingSlots() < player
                         .getTradeSession().getOffering().size()) {
                     player.getPacketBuilder()
                             .sendMessage(
@@ -568,8 +568,8 @@ public class DecodeClickButtonPacket extends PacketDecoder {
                 player.setAutocast(false);
                 player.getPacketBuilder().sendConfig(108, 0);
             } else if (!player.isAutocast()) {
-                if (player.getEquipment().getContainer()
-                        .getIdBySlot(Utility.EQUIPMENT_SLOT_WEAPON) == 4675) {
+                if (player.getEquipment().getItemId(
+                        Utility.EQUIPMENT_SLOT_WEAPON) == 4675) {
                     if (player.getSpellbook() != Spellbook.ANCIENT) {
                         player.getPacketBuilder()
                                 .sendMessage(

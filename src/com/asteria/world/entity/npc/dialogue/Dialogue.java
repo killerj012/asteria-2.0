@@ -1,5 +1,7 @@
 package com.asteria.world.entity.npc.dialogue;
 
+import java.util.Arrays;
+
 import com.asteria.world.entity.npc.NpcDefinition;
 import com.asteria.world.entity.player.Player;
 
@@ -10,6 +12,10 @@ import com.asteria.world.entity.player.Player;
  * @author lare96
  */
 public class Dialogue {
+
+    /** An integer representing the maximum dialogue length for a single line. */
+    public static final int MAXIMUM_DIALOGUE_LENGTH = "The fox jumped over the fence and ran into the lake."
+        .length();
 
     /** The player this dialogue is being displayed for. */
     private Player player;
@@ -61,22 +67,24 @@ public class Dialogue {
      *            the text that will be displayed.
      */
     public static void sendNpcDialogue(Player player, Expression expression,
-            int mob, String... text) {
+        int mob, String... text) {
+        validateLength(text);
+
         switch (text.length) {
         case 1:
             player.getPacketBuilder().interfaceAnimation(4883,
-                    expression.getExpressionId());
+                expression.getExpressionId());
             player.getPacketBuilder().sendString(
-                    NpcDefinition.getDefinitions()[mob].getName(), 4884);
+                NpcDefinition.getDefinitions()[mob].getName(), 4884);
             player.getPacketBuilder().sendString(text[0], 4885);
             player.getPacketBuilder().sendMobHeadModel(mob, 4883);
             player.getPacketBuilder().sendChatInterface(4882);
             break;
         case 2:
             player.getPacketBuilder().interfaceAnimation(4888,
-                    expression.getExpressionId());
+                expression.getExpressionId());
             player.getPacketBuilder().sendString(
-                    NpcDefinition.getDefinitions()[mob].getName(), 4889);
+                NpcDefinition.getDefinitions()[mob].getName(), 4889);
             player.getPacketBuilder().sendString(text[0], 4890);
             player.getPacketBuilder().sendString(text[1], 4891);
             player.getPacketBuilder().sendMobHeadModel(mob, 4888);
@@ -84,9 +92,9 @@ public class Dialogue {
             break;
         case 3:
             player.getPacketBuilder().interfaceAnimation(4894,
-                    expression.getExpressionId());
+                expression.getExpressionId());
             player.getPacketBuilder().sendString(
-                    NpcDefinition.getDefinitions()[mob].getName(), 4895);
+                NpcDefinition.getDefinitions()[mob].getName(), 4895);
             player.getPacketBuilder().sendString(text[0], 4896);
             player.getPacketBuilder().sendString(text[1], 4897);
             player.getPacketBuilder().sendString(text[2], 4898);
@@ -95,9 +103,9 @@ public class Dialogue {
             break;
         case 4:
             player.getPacketBuilder().interfaceAnimation(4901,
-                    expression.getExpressionId());
+                expression.getExpressionId());
             player.getPacketBuilder().sendString(
-                    NpcDefinition.getDefinitions()[mob].getName(), 4902);
+                NpcDefinition.getDefinitions()[mob].getName(), 4902);
             player.getPacketBuilder().sendString(text[0], 4903);
             player.getPacketBuilder().sendString(text[1], 4904);
             player.getPacketBuilder().sendString(text[2], 4905);
@@ -106,8 +114,8 @@ public class Dialogue {
             player.getPacketBuilder().sendChatInterface(4900);
             break;
         default:
-            throw new IllegalArgumentException("Illegal npc dialogue length: "
-                    + text.length);
+            throw new IllegalArgumentException(
+                "Illegal npc dialogue length: " + text.length);
         }
     }
 
@@ -122,11 +130,13 @@ public class Dialogue {
      *            the text that will be displayed.
      */
     public static void sendPlayerDialogue(Player player, Expression expression,
-            String... text) {
+        String... text) {
+        validateLength(text);
+
         switch (text.length) {
         case 1:
             player.getPacketBuilder().interfaceAnimation(969,
-                    expression.getExpressionId());
+                expression.getExpressionId());
             player.getPacketBuilder().sendString(player.getUsername(), 970);
             player.getPacketBuilder().sendString(text[0], 971);
             player.getPacketBuilder().sendPlayerHeadModel(969);
@@ -134,7 +144,7 @@ public class Dialogue {
             break;
         case 2:
             player.getPacketBuilder().interfaceAnimation(974,
-                    expression.getExpressionId());
+                expression.getExpressionId());
             player.getPacketBuilder().sendString(player.getUsername(), 975);
             player.getPacketBuilder().sendString(text[0], 976);
             player.getPacketBuilder().sendString(text[1], 977);
@@ -143,7 +153,7 @@ public class Dialogue {
             break;
         case 3:
             player.getPacketBuilder().interfaceAnimation(980,
-                    expression.getExpressionId());
+                expression.getExpressionId());
             player.getPacketBuilder().sendString(player.getUsername(), 981);
             player.getPacketBuilder().sendString(text[0], 982);
             player.getPacketBuilder().sendString(text[1], 983);
@@ -153,7 +163,7 @@ public class Dialogue {
             break;
         case 4:
             player.getPacketBuilder().interfaceAnimation(987,
-                    expression.getExpressionId());
+                expression.getExpressionId());
             player.getPacketBuilder().sendString(player.getUsername(), 988);
             player.getPacketBuilder().sendString(text[0], 989);
             player.getPacketBuilder().sendString(text[1], 990);
@@ -164,7 +174,7 @@ public class Dialogue {
             break;
         default:
             throw new IllegalArgumentException(
-                    "Illegal player dialogue length: " + text.length);
+                "Illegal player dialogue length: " + text.length);
         }
     }
 
@@ -177,6 +187,8 @@ public class Dialogue {
      *            the options that will be displayed.
      */
     public static void sendOptionDialogue(Player player, String... text) {
+        validateLength(text);
+
         switch (text.length) {
         case 2:
             player.getPacketBuilder().sendString(text[0], 14445);
@@ -206,7 +218,22 @@ public class Dialogue {
             break;
         default:
             throw new IllegalArgumentException(
-                    "Illegal dialogue option length: " + text.length);
+                "Illegal dialogue option length: " + text.length);
+        }
+    }
+
+    /**
+     * Validates the lengths of all of the argued string Objects. An
+     * {@link IllegalArgumentException} will be thrown if the text does not pass
+     * the validation.
+     * 
+     * @param text
+     *            the dialogue text to validate.
+     */
+    private static void validateLength(String... text) {
+        if (Arrays.stream(text).filter(s -> s != null).anyMatch(
+            s -> s.length() < 0 || s.length() > MAXIMUM_DIALOGUE_LENGTH)) {
+            throw new IllegalStateException();
         }
     }
 

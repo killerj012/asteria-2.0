@@ -29,11 +29,11 @@ public class GiveItemDialogueAction implements DialogueAction {
     }
 
     @Override
-    public void fire(Dialogue dialogue) {
+    public void run(Dialogue dialogue) {
         dialogue.getPlayer().getPacketBuilder().sendString(text, 308);
         dialogue.getPlayer().getPacketBuilder()
                 .sendItemOnInterface(307, 200, item.getId());
         dialogue.getPlayer().getPacketBuilder().sendChatInterface(306);
-        dialogue.getPlayer().getInventory().addItem(item);
+        dialogue.getPlayer().getInventory().add(item);
     }
 }

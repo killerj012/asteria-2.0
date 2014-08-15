@@ -28,7 +28,7 @@ public class OptionDialogueAction implements DialogueAction {
     }
 
     @Override
-    public void fire(Dialogue dialogue) {
+    public void run(Dialogue dialogue) {
         Dialogue.sendOptionDialogue(dialogue.getPlayer(), options);
         dialogue.getPlayer().setOption(optionId);
     }

@@ -22,7 +22,7 @@ public class MovementQueue {
     private final Entity entity;
 
     /** Queue of waypoints for the entity. */
-    private Deque<Point> waypoints = new LinkedList<Point>();
+    private Deque<Point> waypoints = new LinkedList<>();
 
     /** The task for following other entities. */
     private Task followTask;

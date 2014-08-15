@@ -105,15 +105,15 @@ public final class PlayerFileTask {
                     object.add(
                             "inventory",
                             builder.toJsonTree(player.getInventory()
-                                    .getContainer().toArray()));
+.toArray()));
                     object.add(
                             "bank",
-                            builder.toJsonTree(player.getBank().getContainer()
+                            builder.toJsonTree(player.getBank()
                                     .toArray()));
                     object.add(
                             "equipment",
                             builder.toJsonTree(player.getEquipment()
-                                    .getContainer().toArray()));
+.toArray()));
                     object.add("skills", builder.toJsonTree(player.getSkills()));
                     object.add("friends",
                             builder.toJsonTree(player.getFriends().toArray()));
@@ -240,7 +240,7 @@ public final class PlayerFileTask {
                 }
                 if (reader.has("inventory")) {
                     player.getInventory()
-                            .getContainer()
+
                             .setItems(
                                     builder.fromJson(reader.get("inventory")
                                             .getAsJsonArray(), Item[].class));
@@ -248,14 +248,14 @@ public final class PlayerFileTask {
                 }
                 if (reader.has("bank")) {
                     player.getBank()
-                            .getContainer()
+
                             .setItems(
                                     builder.fromJson(reader.get("bank")
                                             .getAsJsonArray(), Item[].class));
                 }
                 if (reader.has("equipment")) {
                     player.getEquipment()
-                            .getContainer()
+
                             .setItems(
                                     builder.fromJson(reader.get("equipment")
                                             .getAsJsonArray(), Item[].class));

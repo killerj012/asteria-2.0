@@ -20,7 +20,7 @@ import com.google.gson.JsonObject;
 public class WorldObjectManager implements Iterable<WorldObject> {
 
     /** A set to keep track of all of the objects in the game. */
-    private static final Set<WorldObject> objectSet = new HashSet<WorldObject>();
+    private static final Set<WorldObject> objectSet = new HashSet<>();
 
     /**
      * Registers a new {@link WorldObject} to the database.

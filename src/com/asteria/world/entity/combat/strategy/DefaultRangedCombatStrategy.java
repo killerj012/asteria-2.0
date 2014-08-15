@@ -134,6 +134,8 @@ public class DefaultRangedCombatStrategy implements CombatStrategy {
         case SHORTBOW:
             distance = 7;
             break;
+        default:
+            throw new IllegalStateException();
         }
 
         return distance + (player.getFightType().getStyle() == FightStyle.DEFENSIVE ? 2
@@ -148,8 +150,8 @@ public class DefaultRangedCombatStrategy implements CombatStrategy {
      *            the player to start the animation for.
      */
     private void startAnimation(Player player) {
-        if (player.getEquipment().getContainer()
-                .getItem(Utility.EQUIPMENT_SLOT_WEAPON).getDefinition()
+        if (player.getEquipment()
+                .get(Utility.EQUIPMENT_SLOT_WEAPON).getDefinition()
                 .getItemName().startsWith("Karils")) {
             player.animation(new Animation(2075));
         } else {
@@ -169,8 +171,8 @@ public class DefaultRangedCombatStrategy implements CombatStrategy {
     private boolean checkAmmo(Player player) {
 
         // Get the item in the arrows slot.
-        Item item = player.getEquipment().getContainer()
-                .getItem(Utility.EQUIPMENT_SLOT_ARROWS);
+        Item item = player.getEquipment()
+                .get(Utility.EQUIPMENT_SLOT_ARROWS);
 
         // Check if we have an item in the arrows slot.
         if (item == null) {
@@ -190,16 +192,16 @@ public class DefaultRangedCombatStrategy implements CombatStrategy {
                 return false;
             }
         } else if (player.getWeapon() == WeaponInterface.CROSSBOW) {
-            if (player.getEquipment().getContainer()
-                    .getItem(Utility.EQUIPMENT_SLOT_WEAPON).getDefinition()
+            if (player.getEquipment()
+                    .get(Utility.EQUIPMENT_SLOT_WEAPON).getDefinition()
                     .getItemName().startsWith("Karils") && !item
                     .getDefinition().getItemName().endsWith("rack")) {
                 player.getPacketBuilder().sendMessage(
                         "You need to use bolt racks with this crossbow.");
                 player.getCombatBuilder().reset();
                 return false;
-            } else if (!player.getEquipment().getContainer()
-                    .getItem(Utility.EQUIPMENT_SLOT_WEAPON).getDefinition()
+            } else if (!player.getEquipment()
+                    .get(Utility.EQUIPMENT_SLOT_WEAPON).getDefinition()
                     .getItemName().startsWith("Karils") && !CombatFactory
                     .boltsEquipped(player)) {
                 player.getPacketBuilder().sendMessage(
@@ -225,21 +227,21 @@ public class DefaultRangedCombatStrategy implements CombatStrategy {
                 : Utility.EQUIPMENT_SLOT_WEAPON;
 
         // Set the ammo we are currently using.
-        player.setFireAmmo(player.getEquipment().getContainer().getItem(slot)
+        player.setFireAmmo(player.getEquipment().get(slot)
                 .getId());
 
         // Decrement the ammo in the selected slot.
-        player.getEquipment().getContainer().getItem(slot).decrementAmount();
+        player.getEquipment().get(slot).decrementAmount();
 
         if (slot == Utility.EQUIPMENT_SLOT_WEAPON) {
             player.getFlags().flag(Flag.APPEARANCE);
         }
 
         // If we are at 0 ammo remove the item from the equipment completely.
-        if (player.getEquipment().getContainer().getItem(slot).getAmount() == 0) {
+        if (player.getEquipment().get(slot).getAmount() == 0) {
             player.getPacketBuilder().sendMessage(
                     "That was your last piece of ammo!");
-            player.getEquipment().getContainer().set(slot, null);
+            player.getEquipment().set(slot, null);
 
             if (slot == Utility.EQUIPMENT_SLOT_WEAPON) {
                 AssignWeaponInterface.assignInterface(player, null);

@@ -22,7 +22,7 @@ public abstract class SkillEvent {
             THIEVING = 11, SLAYER = 12, FARMING = 13, RUNECRAFTING = 14;
 
     /** A set of every unique {@link SkillEvent} that has fireable events. */
-    private static Set<SkillEvent> skillEvents = new HashSet<SkillEvent>();
+    private static Set<SkillEvent> skillEvents = new HashSet<>();
 
     /**
      * The event that will be fired when this skill needs to be stopped.

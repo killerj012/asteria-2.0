@@ -45,7 +45,7 @@ public abstract class Spell {
                     itemsRequired(player));
 
             // Now check if we have all of the runes.
-            if (!player.getInventory().getContainer().containsAll(items)) {
+            if (!player.getInventory().containsAll(items)) {
 
                 // We don't, so we can't cast.
                 player.getPacketBuilder()
@@ -58,12 +58,12 @@ public abstract class Spell {
 
             // We've made it through the checks, so we have the items and can
             // remove them now.
-            player.getInventory().deleteItemSet(items);
+            player.getInventory().remove(items);
         }
 
         // Finally, we check the equipment required.
         if (equipmentRequired(player) != null) {
-            if (!player.getEquipment().getContainer()
+            if (!player.getEquipment()
                     .containsAll(equipmentRequired(player))) {
                 player.getPacketBuilder()
                         .sendMessage(

@@ -290,7 +290,7 @@ public enum PotionConsumable {
                     }
 
                     @Override
-                    public void fireOnCancel() {
+                    public void onCancel() {
                         player.getPacketBuilder().sendMessage(
                                 "Your resistance to poison has worn off!");
                         player.setPoisonImmunity(0);
@@ -358,7 +358,7 @@ public enum PotionConsumable {
                 }
 
                 @Override
-                public void fireOnCancel() {
+                public void onCancel() {
                     player.getPacketBuilder().sendMessage(
                             "Your resistance to dragon fire has worn off!");
                     player.setDragonFireImmunity(0);
@@ -426,8 +426,8 @@ public enum PotionConsumable {
         player.animation(new Animation(829));
         player.getPotionTimer().reset();
         player.getEatingTimer().reset();
-        player.getInventory().deleteItemSlot(item, slot);
-        player.getInventory().addItem(getReplacementItem(item));
+        player.getInventory().remove(item, slot);
+        player.getInventory().add(getReplacementItem(item));
         potion.potionEffect(player);
         return true;
     }

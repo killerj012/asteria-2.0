@@ -2,6 +2,9 @@ package com.asteria.world.entity;
 
 import java.util.Iterator;
 import java.util.Objects;
+import java.util.Spliterators;
+import java.util.stream.Stream;
+import java.util.stream.StreamSupport;
 
 import com.asteria.world.WorldFullException;
 
@@ -211,6 +214,17 @@ public class EntityContainer<T extends Entity> implements Iterable<T> {
         return backingArray.length - size;
     }
 
+    /**
+     * Creates a sequential {@link Stream} from this container's
+     * <code>iterator()</code> and <code>size</code> functions.
+     * 
+     * @return the sequential stream.
+     */
+    public Stream<T> stream() {
+        return StreamSupport.stream(Spliterators.spliterator(iterator(), size,
+            0), false);
+    }
+
     @Override
     public Iterator<T> iterator() {
         return new Iterator<T>() {
@@ -230,7 +244,7 @@ public class EntityContainer<T extends Entity> implements Iterable<T> {
             public T next() {
                 if (currentIndex >= backingArray.length) {
                     throw new ArrayIndexOutOfBoundsException(
-                            "Can only call 'next()' in amount to 'backingArray.length'.");
+                        "Can only call 'next()' in amount to 'backingArray.length'.");
                 }
 
                 int i = currentIndex;
@@ -242,7 +256,7 @@ public class EntityContainer<T extends Entity> implements Iterable<T> {
             public void remove() {
                 if (lastElementIndex < 0) {
                     throw new IllegalStateException(
-                            "Can only call 'remove()' once in call to 'next()'.");
+                        "Can only call 'remove()' once in call to 'next()'.");
                 }
 
                 removeSlot(lastElementIndex);

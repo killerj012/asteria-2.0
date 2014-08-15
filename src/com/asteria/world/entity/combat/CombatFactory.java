@@ -1,7 +1,6 @@
 package com.asteria.world.entity.combat;
 
 import com.asteria.engine.task.TaskManager;
-import com.asteria.util.GenericAction;
 import com.asteria.util.Utility;
 import com.asteria.world.entity.Entity;
 import com.asteria.world.entity.Entity.EntityType;
@@ -9,7 +8,6 @@ import com.asteria.world.entity.Graphic;
 import com.asteria.world.entity.Hit;
 import com.asteria.world.entity.MovementQueue;
 import com.asteria.world.entity.UpdateFlags.Flag;
-import com.asteria.world.entity.combat.CombatContainer.CombatHit;
 import com.asteria.world.entity.combat.effect.CombatPoisonEffect;
 import com.asteria.world.entity.combat.effect.CombatPoisonEffect.PoisonType;
 import com.asteria.world.entity.combat.effect.CombatSkullEffect;
@@ -93,7 +91,7 @@ public final class CombatFactory {
     public static boolean fullVeracs(Entity entity) {
         return entity.type() == EntityType.NPC ? ((Npc) entity).getDefinition()
                 .getName().equals("Verac the Defiled") : ((Player) entity)
-                .getEquipment().getContainer()
+            .getEquipment()
                 .containsAll(4753, 4757, 4759, 4755);
     }
 
@@ -107,7 +105,7 @@ public final class CombatFactory {
     public static boolean fullDharoks(Entity entity) {
         return entity.type() == EntityType.NPC ? ((Npc) entity).getDefinition()
                 .getName().equals("Dharok the Wretched") : ((Player) entity)
-                .getEquipment().getContainer()
+            .getEquipment()
                 .containsAll(4716, 4720, 4722, 4718);
     }
 
@@ -121,7 +119,7 @@ public final class CombatFactory {
     public static boolean fullKarils(Entity entity) {
         return entity.type() == EntityType.NPC ? ((Npc) entity).getDefinition()
                 .getName().equals("Karil the Tainted") : ((Player) entity)
-                .getEquipment().getContainer()
+            .getEquipment()
                 .containsAll(4732, 4736, 4738, 4734);
     }
 
@@ -135,7 +133,7 @@ public final class CombatFactory {
     public static boolean fullAhrims(Entity entity) {
         return entity.type() == EntityType.NPC ? ((Npc) entity).getDefinition()
                 .getName().equals("Ahrim the Blighted") : ((Player) entity)
-                .getEquipment().getContainer()
+            .getEquipment()
                 .containsAll(4708, 4712, 4714, 4710);
     }
 
@@ -149,7 +147,7 @@ public final class CombatFactory {
     public static boolean fullTorags(Entity entity) {
         return entity.type() == EntityType.NPC ? ((Npc) entity).getDefinition()
                 .getName().equals("Torag the Corrupted") : ((Player) entity)
-                .getEquipment().getContainer()
+            .getEquipment()
                 .containsAll(4745, 4749, 4751, 4747);
     }
 
@@ -163,7 +161,7 @@ public final class CombatFactory {
     public static boolean fullGuthans(Entity entity) {
         return entity.type() == EntityType.NPC ? ((Npc) entity).getDefinition()
                 .getName().equals("Guthan the Infested") : ((Player) entity)
-                .getEquipment().getContainer()
+            .getEquipment()
                 .containsAll(4724, 4728, 4730, 4726);
     }
 
@@ -176,8 +174,8 @@ public final class CombatFactory {
      */
     public static boolean crystalBow(Player player) {
         Item item;
-        if ((item = player.getEquipment().getContainer()
-                .getItem(Utility.EQUIPMENT_SLOT_WEAPON)) == null) {
+        if ((item = player.getEquipment()
+                .get(Utility.EQUIPMENT_SLOT_WEAPON)) == null) {
             return false;
         }
 
@@ -194,8 +192,8 @@ public final class CombatFactory {
      */
     public static boolean arrowsEquipped(Player player) {
         Item item;
-        if ((item = player.getEquipment().getContainer()
-                .getItem(Utility.EQUIPMENT_SLOT_ARROWS)) == null) {
+        if ((item = player.getEquipment()
+                .get(Utility.EQUIPMENT_SLOT_ARROWS)) == null) {
             return false;
         }
 
@@ -214,8 +212,8 @@ public final class CombatFactory {
      */
     public static boolean boltsEquipped(Player player) {
         Item item;
-        if ((item = player.getEquipment().getContainer()
-                .getItem(Utility.EQUIPMENT_SLOT_ARROWS)) == null) {
+        if ((item = player.getEquipment()
+                .get(Utility.EQUIPMENT_SLOT_ARROWS)) == null) {
             return false;
         }
 
@@ -475,6 +473,7 @@ public final class CombatFactory {
      *            the victim being attacked.
      * @return the maximum melee hit that this entity can deal.
      */
+    @SuppressWarnings("incomplete-switch")
     protected static int calculateMaxMeleeHit(Entity entity, Entity victim) {
         int maxHit = 0;
 
@@ -579,6 +578,7 @@ public final class CombatFactory {
      *            the victim being attacked.
      * @return the maximum ranged hit that this entity can deal.
      */
+    @SuppressWarnings("incomplete-switch")
     protected static int calculateMaxRangedHit(Entity entity, Entity victim) {
         int maxHit = 0;
         if (entity.type() == EntityType.NPC) {
@@ -832,13 +832,7 @@ public final class CombatFactory {
             if (CombatPrayer
                     .isActivated(victim, CombatPrayer
                             .getProtectingPrayer(container.getCombatType()))) {
-
-                container.allHits(new GenericAction<CombatHit>() {
-                    @Override
-                    public void run(CombatHit context) {
-                        context.setAccurate(false);
-                    }
-                });
+                container.allHits(context -> context.setAccurate(false));
             }
             return;
         }
@@ -865,32 +859,30 @@ public final class CombatFactory {
                     .isActivated(victim, CombatPrayer
                             .getProtectingPrayer(container.getCombatType()))) {
 
-                container.allHits(new GenericAction<CombatHit>() {
-                    @Override
-                    public void run(CombatHit context) {
+                container
+                        .allHits(context -> {
 
-                        // First reduce the damage.
-                        int hit = context.getHit().getDamage();
-                        double mod = Math
-                                .abs(1 - CombatFactory.PRAYER_DAMAGE_REDUCTION);
-                        context.getHit().setDamage((int) (hit * mod));
-                        if (CombatFactory.DEBUG_COMBAT)
-                            attacker.getPacketBuilder()
-                                    .sendMessage(
-                                            "[DEBUG]: Damage reduced by opponents prayer [" + (hit - context
-                                                    .getHit().getDamage()) + "]");
+                            // First reduce the damage.
+                            int hit = context.getHit().getDamage();
+                            double mod = Math
+                                    .abs(1 - CombatFactory.PRAYER_DAMAGE_REDUCTION);
+                            context.getHit().setDamage((int) (hit * mod));
+                            if (CombatFactory.DEBUG_COMBAT)
+                                attacker.getPacketBuilder()
+                                        .sendMessage(
+                                                "[DEBUG]: Damage reduced by opponents prayer [" + (hit - context
+                                                        .getHit().getDamage()) + "]");
 
-                        // Then reduce the accuracy.
-                        mod = Math.round(Utility.RANDOM.nextDouble() * 100.0) / 100.0;
-                        if (CombatFactory.DEBUG_COMBAT)
-                            attacker.getPacketBuilder()
-                                    .sendMessage(
-                                            "[DEBUG]: Chance of opponents prayer cancelling hit [" + mod + "/" + CombatFactory.PRAYER_ACCURACY_REDUCTION + "]");
-                        if (mod <= CombatFactory.PRAYER_ACCURACY_REDUCTION) {
-                            context.setAccurate(false);
-                        }
-                    }
-                });
+                            // Then reduce the accuracy.
+                            mod = Math.round(Utility.RANDOM.nextDouble() * 100.0) / 100.0;
+                            if (CombatFactory.DEBUG_COMBAT)
+                                attacker.getPacketBuilder()
+                                        .sendMessage(
+                                                "[DEBUG]: Chance of opponents prayer cancelling hit [" + mod + "/" + CombatFactory.PRAYER_ACCURACY_REDUCTION + "]");
+                            if (mod <= CombatFactory.PRAYER_ACCURACY_REDUCTION) {
+                                context.setAccurate(false);
+                            }
+                        });
             }
             return;
         }

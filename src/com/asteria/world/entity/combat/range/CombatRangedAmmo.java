@@ -129,7 +129,7 @@ public enum CombatRangedAmmo {
                 : Utility.EQUIPMENT_SLOT_WEAPON;
 
         for (CombatRangedAmmo ammo : CombatRangedAmmo.values()) {
-            if (player.getEquipment().getContainer().getItem(slot)
+            if (player.getEquipment().get(slot)
                     .getDefinition().getItemName().toLowerCase()
                     .contains(ammo.name.toLowerCase())) {
                 return ammo;

@@ -63,7 +63,7 @@ public abstract class Task {
      * Tasks can override this method to run more logic once it has been
      * canceled.
      */
-    public void fireOnCancel() {
+    public void onCancel() {
 
     }
 
@@ -111,7 +111,7 @@ public abstract class Task {
     public final void cancel() {
         if (running) {
             running = false;
-            fireOnCancel();
+            onCancel();
         }
     }
 

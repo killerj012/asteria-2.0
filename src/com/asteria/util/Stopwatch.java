@@ -1,5 +1,7 @@
 package com.asteria.util;
 
+import java.util.concurrent.TimeUnit;
+
 /**
  * A simple timing utility.
  * 
@@ -40,5 +42,19 @@ public class Stopwatch {
      */
     public long elapsed() {
         return System.currentTimeMillis() - time;
+    }
+
+    /**
+     * Returns the amount of time elapsed since this object was initialized, or
+     * since the last call to the <code>reset()</code> method, in the argued
+     * time unit.
+     * 
+     * @param unit
+     *            the time unit to convert the elapsed time into.
+     * 
+     * @return the elapsed time, in the argued time unit.
+     */
+    public long elapsed(TimeUnit unit) {
+        return unit.convert(elapsed(), TimeUnit.MILLISECONDS);
     }
 }

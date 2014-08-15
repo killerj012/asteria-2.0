@@ -153,8 +153,8 @@ public class NpcDropTable {
                 // Compare the roll against the bet.
                 if (rollRound <= rareDrop.getBet()) {
                     System.out
-                            .println("RARE ITEM DROPPED[item = " + rareDrop
-                                    .toItem().getDefinition().getItemName() + ", kills= " + (i + 1) + "]");
+                        .println("RARE ITEM DROPPED[item = " + rareDrop
+                            .toItem().getDefinition().getItemName() + ", kills= " + (i + 1) + "]");
                     System.exit(0);
                 }
             }
@@ -176,17 +176,15 @@ public class NpcDropTable {
             @Override
             public void load(JsonObject reader, Gson builder) {
                 final int[] identifiers = builder.fromJson(reader.get("id"),
-                        int[].class);
-                final NpcDrop[] dynamicTable = builder.fromJson(
-                        reader.get("dynamic"), NpcDrop[].class);
+                    int[].class);
+                final NpcDrop[] dynamicTable = builder.fromJson(reader
+                    .get("dynamic"), NpcDrop[].class);
                 final NpcDrop[] rareTable = builder.fromJson(
-                        reader.get("rare"), NpcDrop[].class);
+                    reader.get("rare"), NpcDrop[].class);
 
                 for (int id : identifiers) {
-                    NpcDropTable.getDrops().put(
-                            id,
-                            new NpcDropTable(identifiers, dynamicTable,
-                                    rareTable));
+                    NpcDropTable.getDrops().put(id,
+                        new NpcDropTable(identifiers, dynamicTable, rareTable));
                 }
             }
 
@@ -228,8 +226,7 @@ public class NpcDropTable {
         }
 
         // Check if we have a ring of wealth equipped.
-        if (player.getEquipment().getContainer()
-                .getItemId(Utility.EQUIPMENT_SLOT_RING) == 2572) {
+        if (player.getEquipment().getItemId(Utility.EQUIPMENT_SLOT_RING) == 2572) {
 
             // Chance to drop a rare item is increased by 0.025, which is 2.5%.
             return new BetModification(0.025) {
@@ -238,15 +235,17 @@ public class NpcDropTable {
 
                     // Item dropped, do ring of wealth stuff.
                     if (roll.nextBoolean()) {
-                        player.getEquipment().removeItem(
-                                Utility.EQUIPMENT_SLOT_RING, false);
-                        player.getPacketBuilder()
-                                .sendMessage(
-                                        "Your ring of wealth takes effect and crumbles into dust!");
+                        player.getEquipment().unequipItem(
+                            Utility.EQUIPMENT_SLOT_RING, false);
+                        player
+                            .getPacketBuilder()
+                            .sendMessage(
+                                "Your ring of wealth takes effect and crumbles into dust!");
                     } else {
-                        player.getPacketBuilder()
-                                .sendMessage(
-                                        "Your ring of wealth takes effect and keeps itself intact!");
+                        player
+                            .getPacketBuilder()
+                            .sendMessage(
+                                "Your ring of wealth takes effect and keeps itself intact!");
                     }
                 }
 
@@ -285,7 +284,7 @@ public class NpcDropTable {
         // The default bet modification. We use this so we do not have to check
         // for 'null' values.
         public static final BetModification DEFAULT_BET_MOD = new BetModification(
-                0.0) {
+            0.0) {
             @Override
             public void itemPassed(Player player, NpcDrop item) {}
 

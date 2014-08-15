@@ -11,7 +11,6 @@ import com.asteria.world.entity.player.content.PotionConsumable;
 import com.asteria.world.entity.player.skill.SkillEvent;
 import com.asteria.world.item.Item;
 import com.asteria.world.item.ItemDefinition;
-import com.asteria.world.item.container.InventoryContainer;
 
 /**
  * Sent when the player uses the first click item option.
@@ -23,11 +22,11 @@ public class DecodeClickItemPacket extends PacketDecoder {
 
     @Override
     public void decode(Player player, ProtocolBuffer buf) {
-        int interfaceId = buf.readShort(true, ValueType.A, ByteOrder.LITTLE);
+        int container = buf.readShort(true, ValueType.A, ByteOrder.LITTLE);
         int slot = buf.readShort(false, ValueType.A);
         int id = buf.readShort(false, ByteOrder.LITTLE);
 
-        if (slot < 0 || interfaceId < 0 || id < 0
+        if (slot < 0 || container < 0 || id < 0
                 || id > ItemDefinition.getDefinitions().length) {
             return;
         }
@@ -35,8 +34,8 @@ public class DecodeClickItemPacket extends PacketDecoder {
         SkillEvent.fireSkillEvents(player);
         player.getCombatBuilder().resetAttackTimer();
 
-        if (interfaceId == InventoryContainer.DEFAULT_INVENTORY_CONTAINER_ID) {
-            Item item = player.getInventory().getContainer().getItem(slot);
+        if (container == 3214) {
+            Item item = player.getInventory().get(slot);
 
             if (item == null || item.getId() != id) {
                 return;

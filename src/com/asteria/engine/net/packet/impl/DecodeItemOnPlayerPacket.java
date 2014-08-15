@@ -32,7 +32,7 @@ public class DecodeItemOnPlayerPacket extends PacketDecoder {
         final Player usedOn = World.getPlayers().get(playerId);
 
         if (usedOn == null
-                || !player.getInventory().getContainer().contains(itemUsed)) {
+ || !player.getInventory().contains(itemUsed)) {
             return;
         }
         player.getMovementQueueListener().append(new Runnable() {

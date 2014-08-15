@@ -1,39 +1,41 @@
 package com.asteria.world.item;
 
+import java.util.AbstractCollection;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Iterator;
+
+import com.asteria.world.entity.player.Player;
+
 /**
- * A container that provides functions for holding and managing a collection of
- * {@link Item}s.
+ * A collection of items that can be manipulated through the functions contained
+ * in this, or the {@link Collections} class. Other classes may also extend this
+ * class to inherit, and/or build on its functions.
  * 
  * @author lare96
- * @author Graham
  */
-public class ItemContainer {
+public class ItemContainer extends AbstractCollection<Item> {
 
     /** The maximum amount of items that can be put into this container. */
     private int capacity;
 
-    /** The backing array of items in this container. */
+    /** The array of items in this container. */
     private Item[] items;
 
     /** The policy of this container */
-    private ContainerPolicy policy;
+    private Policy policy;
 
     /**
-     * A selection of policies that can be applied to this container.
+     * A set of constants that define how items will be stacked in this
+     * collection.
      * 
      * @author lare96
-     * @author Graham
      */
-    public enum ContainerPolicy {
-
-        /** Stacks the items that are stackable. */
-        NORMAL_POLICY,
-
-        /** Stacks all of the items. */
-        STACKABLE_POLICY,
-
-        /** Doesn't stack any of the items. */
-        STANDALONE_POLICY
+    public enum Policy {
+        NORMAL,
+        STACK_ALWAYS,
+        STACK_NEVER
     }
 
     /**
@@ -44,376 +46,61 @@ public class ItemContainer {
      * @param capacity
      *            the initial capacity of this container.
      */
-    public ItemContainer(ContainerPolicy policy, int capacity) {
+    public ItemContainer(Policy policy, int capacity) {
         this.policy = policy;
         this.capacity = capacity;
         this.items = new Item[capacity];
     }
 
     /**
-     * Sets the index in the backing array to the specified item.
+     * Create a new {@link ItemContainer} with the argued collection.
      * 
-     * @param index
-     *            the index in the backing array being changed.
-     * @param item
-     *            the item being set to the index.
+     * @param policy
+     *            the policy of this container.
+     * @param collection
+     *            the collection to back this container with.
      */
-    public void set(int index, Item item) {
-        items[index] = item;
+    public ItemContainer(Policy policy, Collection<Item> collection) {
+        this(policy, collection.size());
+        super.addAll(collection);
     }
 
     /**
-     * Sets this containers items to another set of items.
-     * 
-     * @param items
-     *            the new set of items.
-     */
-    public void setItems(Item[] items) {
-        clear();
-        for (int i = 0; i < items.length; i++) {
-            this.items[i] = items[i];
-        }
-    }
-
-    /**
-     * Creates a new backing array with the previously specified capacity.
-     */
-    public void clear() {
-        items = new Item[capacity];
-    }
-
-    /**
-     * Adds an item to this container.
+     * Adds an item to the argued slot in this container.
      * 
      * @param item
-     *            the item to add.
-     * @return true if the item was added.
-     */
-    public boolean add(Item item) {
-        return add(item, -1);
-    }
-
-    /**
-     * Removes an item from this container and keeps it if the amount falls at
-     * or below 0.
-     * 
-     * @param item
-     *            the item to remove and keep at 0.
-     * @return the amount removed from this item.
-     */
-    public int removeOrZero(Item item) {
-        return remove(item, -1, true);
-    }
-
-    /**
-     * Gets the maximum amount of items that can be put into this container.
-     * 
-     * @return the capacity of this container.
-     */
-    public int capacity() {
-        return capacity;
-    }
-
-    /**
-     * Gets the id of an item by its slot.
-     * 
+     *            the item to add to this container.
      * @param slot
-     *            the slot to get.
-     * @return the item id in that slot.
-     */
-    public int getIdBySlot(int slot) {
-        return items[slot].getId();
-    }
-
-    /**
-     * Checks if a slot is free.
-     * 
-     * @param slot
-     *            the slot to check.
-     * @return true if the slot is free.
-     */
-    public boolean isSlotFree(int slot) {
-        return items[slot] == null;
-    }
-
-    /**
-     * Checks if a slot is used.
-     * 
-     * @param slot
-     *            the slot to check.
-     * @return true if the slot is used.
-     */
-    public boolean isSlotUsed(int slot) {
-        return items[slot] != null;
-    }
-
-    /**
-     * Removes an item from this container.
-     * 
-     * @param item
-     *            the item to remove.
-     * @return the amount removed.
-     */
-    public int remove(Item item) {
-        return remove(item, -1, false);
-    }
-
-    /**
-     * Removes an item from this container.
-     * 
-     * @param item
-     *            the item to remove.
-     * @param preferredSlot
-     *            the preferred slot to remove the item from.
-     * @return the amount removed.
-     */
-    public int remove(Item item, int preferredSlot) {
-        return remove(item, preferredSlot, false);
-    }
-
-    /**
-     * Checks if this container has a certain item.
-     * 
-     * @param id
-     *            the item to check in this container for.
-     * @return true if this container has the item.
-     */
-    public boolean contains(int id) {
-        return getSlotById(id) != -1;
-    }
-
-    /**
-     * Checks if this container has a certain item.
-     * 
-     * @param item
-     *            the item to check in this container for.
-     * @return true if this container has the item.
-     */
-    public boolean contains(Item item) {
-        for (Item i : items) {
-            if (i == null) {
-                continue;
-            }
-
-            if (item.getId() == i.getId() && i.getAmount() >= item.getAmount()) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    /**
-     * Checks if this container has a set of certain items.
-     * 
-     * @param items
-     *            the item to check in this container for.
-     * @return true if this container has the item.
-     */
-    public boolean containsAll(Item... items) {
-        for (Item nextItem : items) {
-            if (nextItem == null) {
-                continue;
-            }
-
-            if (!contains(nextItem)) {
-                return false;
-            }
-        }
-        return true;
-    }
-
-    /**
-     * Checks if this container has a set of certain item id's.
-     * 
-     * @param ids
-     *            the item id's to check in this container for.
-     * @return true if this container has the item id.
-     */
-    public boolean containsAll(int... ids) {
-        for (int nextItemId : ids) {
-            if (!contains(nextItemId)) {
-                return false;
-            }
-        }
-        return true;
-    }
-
-    /**
-     * Checks if this container has any of the items in the given set.
-     * 
-     * @param item
-     *            the item to check in this container for.
-     * @return true if this container has the item.
-     */
-    public boolean containsAny(Item... items) {
-        for (Item item : items) {
-            if (item == null) {
-                continue;
-            }
-
-            if (contains(item)) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    /**
-     * Checks if this container has any of the item id's in the given set.
-     * 
-     * @param ids
-     *            the id's to check in this container for.
-     * @return true if this container has the item.
-     */
-    public boolean containsAny(int... ids) {
-        for (int item : ids) {
-            if (contains(item)) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    /**
-     * Calculates a free slot.
-     * 
-     * @return the free slot, -1 if there are no free slots left.
-     */
-    public int getFreeSlot() {
-        for (int i = 0; i < items.length; i++) {
-            if (items[i] == null) {
-                return i;
-            }
-        }
-        return -1;
-    }
-
-    /**
-     * Gets the amount of free slots left.
-     * 
-     * @return the amount of slots left.
-     */
-    public int getRemainingSlots() {
-        return capacity - size();
-    }
-
-    /**
-     * Gets an item by its index.
-     * 
-     * @param index
-     *            the index.
-     * @return the item on this index.
-     */
-    public Item getItem(int index) {
-        if (index == -1 || index >= items.length)
-            return null;
-        return items[index];
-    }
-
-    /**
-     * Gets an item id by its index.
-     * 
-     * @param index
-     *            the index.
-     * @return the item id on this index.
-     */
-    public int getItemId(int index) {
-        if (index == -1 || items[index] == null)
-            return -1;
-        return items[index].getId();
-    }
-
-    /**
-     * Gets an item id by its index.
-     * 
-     * @param index
-     *            the index.
-     * @return the item id on this index.
-     */
-    public Item getById(int id) {
-        for (int i = 0; i < items.length; i++) {
-            if (items[i] == null) {
-                continue;
-            }
-            if (items[i].getId() == id) {
-                return items[i];
-            }
-        }
-        return null;
-    }
-
-    /**
-     * Gets the amount of times an item is in your inventory by its id.
-     * 
-     * @param id
-     *            the id.
-     * @return the amount of times this item is in your inventory.
-     */
-    public int getCount(int id) {
-        int total = 0;
-        for (int i = 0; i < items.length; i++) {
-            if (items[i] != null) {
-                if (items[i].getId() == id) {
-                    total += items[i].getAmount();
-                }
-            }
-        }
-        return total;
-    }
-
-    /**
-     * Gets the slot of an item by its id.
-     * 
-     * @param id
-     *            the id.
-     * @return the slot of the item.
-     */
-    public int getSlotById(int id) {
-        for (int i = 0; i < items.length; i++) {
-            if (items[i] == null) {
-                continue;
-            }
-            if (items[i].getId() == id) {
-                return i;
-            }
-        }
-        return -1;
-    }
-
-    /**
-     * Adds an item to this container.
-     * 
-     * @param item
-     *            the item to add.
-     * @param slot
-     *            the slot to add it to.
-     * @return true if the item was added.
+     *            the preferred slot to add this item in, -1 will add the item
+     *            in any free slot.
+     * @return <code>true</code> if the container was modified as a result of
+     *         the call, <code>false</code> otherwise.
      */
     public boolean add(Item item, int slot) {
         if (item == null) {
             return false;
         }
+
         int newSlot = (slot > -1) ? slot : getFreeSlot();
         if ((item.getDefinition().isStackable() || policy
-                .equals(ContainerPolicy.STACKABLE_POLICY)) && !policy
-                .equals(ContainerPolicy.STANDALONE_POLICY)) {
-            if (getCount(item.getId()) > 0) {
-                newSlot = getSlotById(item.getId());
+            .equals(Policy.STACK_ALWAYS)) && !policy.equals(Policy.STACK_NEVER)) {
+            if (totalAmount(item.getId()) > 0) {
+                newSlot = getSlot(item.getId());
             }
         }
         if (newSlot == -1) {
             return false;
         }
-        if (getItem(newSlot) != null) {
+        if (get(newSlot) != null) {
             newSlot = getFreeSlot();
         }
+
         if ((item.getDefinition().isStackable() || policy
-                .equals(ContainerPolicy.STACKABLE_POLICY)) && !policy
-                .equals(ContainerPolicy.STANDALONE_POLICY)) {
+            .equals(Policy.STACK_ALWAYS)) && !policy.equals(Policy.STACK_NEVER)) {
             for (int i = 0; i < items.length; i++) {
                 if (items[i] != null && items[i].getId() == item.getId()) {
                     set(i, new Item(items[i].getId(),
-                            items[i].getAmount() + item.getAmount()));
+                        items[i].getAmount() + item.getAmount()));
                     return true;
                 }
             }
@@ -424,29 +111,137 @@ public class ItemContainer {
             return true;
         }
 
-        int slots = getRemainingSlots();
-
-        if (slots >= item.getAmount()) {
-            for (int i = 0; i < item.getAmount(); i++) {
-                set(slot > -1 ? newSlot : getFreeSlot(), new Item(item.getId(),
-                        1));
-            }
-            return true;
+        int remainingSlots = getRemainingSlots();
+        if (item.getAmount() > remainingSlots && !item.getDefinition()
+            .isStackable()) {
+            item.setAmount(remainingSlots);
         }
-        return false;
+
+        for (int i = 0; i < item.getAmount(); i++) {
+            set(slot > -1 ? newSlot : getFreeSlot(), new Item(item.getId(), 1));
+        }
+        return true;
     }
 
     /**
-     * Checks if this container has room for this item.
+     * Removes the argued item from the argued slot in this container.
      * 
      * @param item
-     *            the item to check if this has room for.
-     * @return true if it has room for the item.
+     *            the item to remove from this container.
+     * @param slot
+     *            the preferred slot to remove this item from, -1 will remove
+     *            the item from the first slot the item is found in.
+     * @return <code>true</code> if the container was modified as a result of
+     *         the call, <code>false</code> otherwise.
      */
-    public boolean hasRoomFor(Item item) {
+    public boolean remove(Item item, int slot) {
+        if (item == null || item.getId() < 1 || item.getAmount() < 1) {
+            return false;
+        }
         if ((item.getDefinition().isStackable() || policy
-                .equals(ContainerPolicy.STACKABLE_POLICY)) && !policy
-                .equals(ContainerPolicy.STANDALONE_POLICY)) {
+            .equals(Policy.STACK_ALWAYS)) && !policy.equals(Policy.STACK_NEVER)) {
+            int slotHolder = getSlot(item.getId());
+            Item stack = get(slotHolder);
+            if (stack == null) {
+                return false;
+            }
+            if (stack.getAmount() > item.getAmount()) {
+                set(slotHolder, new Item(stack.getId(),
+                    stack.getAmount() - item.getAmount()));
+            } else {
+                set(slotHolder, null);
+            }
+        } else {
+            for (int i = 0; i < item.getAmount(); i++) {
+                int slotHolder = getSlot(item.getId());
+                if (i == 0 && slot != -1) {
+                    Item inSlot = get(slot);
+                    if (inSlot == null) {
+                        return false;
+                    }
+                    if (inSlot.getId() == item.getId()) {
+                        slotHolder = slot;
+                    }
+                }
+                if (slotHolder != -1) {
+                    set(slotHolder, null);
+                } else {
+                    break;
+                }
+            }
+        }
+        return true;
+    }
+
+    /**
+     * Removes the argued item from this container.
+     * 
+     * @param item
+     *            the item to remove from this container.
+     * @return <code>true</code> if the container was modified as a result of
+     *         the call, <code>false</code> otherwise.
+     */
+    public boolean remove(Item item) {
+        return remove(item, -1);
+    }
+
+    /**
+     * Transfers an existing item in the argued slot to the argued new slot. If
+     * an item is present in the argued new slot, all of the items in this
+     * container will be shifted to accommodate for the transfer.
+     * 
+     * @param slot
+     *            the slot the existing item is in.
+     * @param newSlot
+     *            the new slot to move the existing item to.
+     */
+    public void transfer(int slot, int newSlot) {
+        Item from = items[slot];
+        if (from == null) {
+            return;
+        }
+        items[slot] = null;
+        if (slot > newSlot) {
+            int shiftFrom = newSlot;
+            int shiftTo = slot;
+            for (int i = (newSlot + 1); i < slot; i++) {
+                if (items[i] == null) {
+                    shiftTo = i;
+                    break;
+                }
+            }
+            Item[] slice = new Item[shiftTo - shiftFrom];
+            System.arraycopy(items, shiftFrom, slice, 0, slice.length);
+            System.arraycopy(slice, 0, items, shiftFrom + 1, slice.length);
+        } else {
+            int sliceStart = slot + 1;
+            int sliceEnd = newSlot;
+            for (int i = (sliceEnd - 1); i >= sliceStart; i--) {
+                if (items[i] == null) {
+                    sliceStart = i;
+                    break;
+                }
+            }
+            Item[] slice = new Item[sliceEnd - sliceStart + 1];
+            System.arraycopy(items, sliceStart, slice, 0, slice.length);
+            System.arraycopy(slice, 0, items, sliceStart - 1, slice.length);
+        }
+        items[newSlot] = from;
+    }
+
+    /**
+     * Determines if there is enough space in this container to add the argued
+     * item.
+     * 
+     * @param item
+     *            the item to determine if there is enough space in this
+     *            container for.
+     * @return <code>true</code> if there is enough space to add the item,
+     *         <code>false</code> otherwise.
+     */
+    public boolean spaceFor(Item item) {
+        if ((item.getDefinition().isStackable() || policy
+            .equals(Policy.STACK_ALWAYS)) && !policy.equals(Policy.STACK_NEVER)) {
             for (int i = 0; i < items.length; i++) {
                 if (items[i] != null && items[i].getId() == item.getId()) {
                     int totalCount = item.getAmount() + items[i].getAmount();
@@ -465,108 +260,123 @@ public class ItemContainer {
     }
 
     /**
-     * Inserts an item into a new slot.
+     * Determines if this container has any items with the argued ID.
      * 
-     * @param fromSlot
-     *            the slot the item is coming from.
-     * @param toSlot
-     *            the new slot the item is going to.
+     * @param id
+     *            the ID to check this container for.
+     * @return <code>true</code> if this container has at least one item with
+     *         the argued ID, <code>false</code> otherwise.
      */
-    public void insert(int fromSlot, int toSlot) {
-        Item from = items[fromSlot];
-        if (from == null) {
-            return;
-        }
-        items[fromSlot] = null;
-        if (fromSlot > toSlot) {
-            int shiftFrom = toSlot;
-            int shiftTo = fromSlot;
-            for (int i = (toSlot + 1); i < fromSlot; i++) {
-                if (items[i] == null) {
-                    shiftTo = i;
-                    break;
-                }
-            }
-            Item[] slice = new Item[shiftTo - shiftFrom];
-            System.arraycopy(items, shiftFrom, slice, 0, slice.length);
-            System.arraycopy(slice, 0, items, shiftFrom + 1, slice.length);
-        } else {
-            int sliceStart = fromSlot + 1;
-            int sliceEnd = toSlot;
-            for (int i = (sliceEnd - 1); i >= sliceStart; i--) {
-                if (items[i] == null) {
-                    sliceStart = i;
-                    break;
-                }
-            }
-            Item[] slice = new Item[sliceEnd - sliceStart + 1];
-            System.arraycopy(items, sliceStart, slice, 0, slice.length);
-            System.arraycopy(slice, 0, items, sliceStart - 1, slice.length);
-        }
-        items[toSlot] = from;
+    public boolean contains(int id) {
+        return getSlot(id) != -1;
     }
 
     /**
-     * Removes an item from this container.
+     * Determines if this container has any items with all of the argued ID's.
      * 
+     * @param ids
+     *            the ID's to check this container for.
+     * @return <code>true</code> if this container has at least one item with
+     *         all of the argued ID's, <code>false</code> otherwise.
+     */
+    public boolean containsAll(int... ids) {
+        return Arrays.stream(ids).allMatch(id -> contains(id));
+    }
+
+    /**
+     * Determines if this container has any items with any of the argued ID's.
+     * 
+     * @param ids
+     *            the ID's to check this container for.
+     * @return <code>true</code> if this container has at least one item with
+     *         any of the argued ID's, <code>false</code> otherwise.
+     */
+    public boolean containsAny(int... ids) {
+        return Arrays.stream(ids).anyMatch(id -> contains(id));
+    }
+
+    /**
+     * Determines if this container has any items with all of the argued ID's.
+     * 
+     * @param ids
+     *            the ID's to check this container for.
+     * @return <code>true</code> if this container has at least one item with
+     *         all of the argued ID's, <code>false</code> otherwise.
+     */
+    public boolean containsAll(Item... items) {
+        return Arrays.stream(items).allMatch(item -> contains(item));
+    }
+
+    /**
+     * Determines if this container has any items with all of the argued ID's.
+     * 
+     * @param ids
+     *            the ID's to check this container for.
+     * @return <code>true</code> if this container has at least one item with
+     *         all of the argued ID's, <code>false</code> otherwise.
+     */
+    public boolean containsAny(Item... items) {
+        return Arrays.stream(items).anyMatch(item -> contains(item));
+    }
+
+    /***
+     * Determines if the argued slot does not have an item.
+     * 
+     * @param slot
+     *            the slot to determine is free or not.
+     * @return <code>true</code> if the argued slot has no item,
+     *         <code>false</code> otherwise.
+     */
+    public boolean isSlotFree(int slot) {
+        return items[slot] == null;
+    }
+
+    /***
+     * Determines if the argued slot has an item.
+     * 
+     * @param slot
+     *            the slot to determine is used or not.
+     * @return <code>true</code> if the argued slot has an item,
+     *         <code>false</code> otherwise.
+     */
+    public boolean isSlotUsed(int slot) {
+        return !isSlotFree(slot);
+    }
+
+    /**
+     * Places the argued item on the argued slot. This method does not take into
+     * account the existing item on the argued slot.
+     * 
+     * @param slot
+     *            the slot to place the item in.
      * @param item
-     *            the item to remove.
-     * @param preferredSlot
-     *            the slot to remove it from.
-     * @param allowZero
-     *            if the item amount can stay at 0 without being removed.
-     * @return the amount removed.
+     *            the item to place.
      */
-    public int remove(Item item, int preferredSlot, boolean allowZero) {
-        if (item == null) {
-            return -1;
-        }
-        int removed = 0;
-        if ((item.getDefinition().isStackable() || policy
-                .equals(ContainerPolicy.STACKABLE_POLICY)) && !policy
-                .equals(ContainerPolicy.STANDALONE_POLICY)) {
-            int slot = getSlotById(item.getId());
-            Item stack = getItem(slot);
-            if (stack == null) {
-                return -1;
-            }
-            if (stack.getAmount() > item.getAmount()) {
-                removed = item.getAmount();
-                set(slot,
-                        new Item(stack.getId(), stack.getAmount() - item
-                                .getAmount()));
-            } else {
-                removed = stack.getAmount();
-                set(slot, allowZero ? new Item(stack.getId(), 0) : null);
-            }
-        } else {
-            for (int i = 0; i < item.getAmount(); i++) {
-                int slot = getSlotById(item.getId());
-                if (i == 0 && preferredSlot != -1) {
-                    Item inSlot = getItem(preferredSlot);
-                    if (inSlot == null) {
-                        return -1;
-                    }
-                    if (inSlot.getId() == item.getId()) {
-                        slot = preferredSlot;
-                    }
-                }
-                if (slot != -1) {
-                    removed++;
-                    set(slot, null);
-                } else {
-                    break;
-                }
-            }
-        }
-        return removed;
+    public void set(int slot, Item item) {
+        items[slot] = item;
     }
 
     /**
-     * Clears all empty spaces in this container by shifting all of the items to
-     * remove <code>null</code> values.
+     * Sets the backing array of items to the argued array of items. <b>The
+     * backing array will not hold any references to the argued array when this
+     * method completes.</b>
+     * 
+     * @param items
+     *            the new array of items to use as the backing array, the length
+     *            of the array must be equal to the capacity of this container.
      */
-    public void compact() {
+    public void setItems(Item[] items) {
+        clear();
+        for (int i = 0; i < items.length; i++) {
+            this.items[i] = items[i] == null ? null : items[i].clone();
+        }
+    }
+
+    /**
+     * Shifts all items in the backing array to the left to fill any gaps with
+     * <code>null</code> elements.
+     */
+    public void shift() {
         Item[] previousItems = items;
         items = new Item[capacity];
         int newIndex = 0;
@@ -579,90 +389,200 @@ public class ItemContainer {
     }
 
     /**
-     * Resizes this container with a new capacity.
+     * Swaps the position of two different items.
      * 
-     * @param capacity
-     *            the new capacity to set this container to (must be greater
-     *            than the current size).
+     * @param slot
+     *            the slot that will be switched.
+     * @param switchSlot
+     *            the other slot that will be switched.
      */
-    public void resize(int capacity) {
-        if (capacity < size()) {
-            throw new IllegalArgumentException(
-                    "Capacity must not be lower than the current size!");
-        }
-
-        compact();
-        Item[] temporaryItems = items;
-        this.capacity = capacity;
-        clear();
-
-        for (int i = 0; i < temporaryItems.length; i++) {
-            items[i] = temporaryItems[i];
-        }
+    public void swap(int slot, int switchSlot) {
+        Item temp = get(slot);
+        set(slot, get(switchSlot));
+        set(switchSlot, temp);
     }
 
     /**
-     * Gets the size of this container.
+     * Refreshes the contents of this container to the argued widget.
      * 
-     * @return the amount of items in this container.
+     * @param widget
+     *            the widget to refresh the contents of this container on.
      */
-    public int size() {
-        int size = 0;
+    public void refresh(int widget, Player player) {
+        player.getPacketBuilder().sendUpdateItems(widget, toArray());
+    }
+
+    /**
+     * Gets the first item found in this container with the argued item ID.
+     * 
+     * @param itemId
+     *            the item ID to retrieve an item in this container with.
+     * @return the first item found in this container with the argued item ID,
+     *         or <code>null</code> if no item was found.
+     */
+    public Item getItem(int itemId) {
+        return Arrays.stream(items).filter(
+            item -> item != null && itemId == item.getId()).findFirst().orElse(
+            null);
+    }
+
+    /**
+     * Gets the item ID of the item on the argued slot.
+     * 
+     * @param slot
+     *            the slot to get the item ID from.
+     * @return the item ID of the item on this slot, or will throw a
+     *         {@link NullPointerException} if no items are on this slot.
+     */
+    public int getItemId(int slot) {
+        return items[slot].getId();
+    }
+
+    /**
+     * Gets the item on the argued slot.
+     * 
+     * @param slot
+     *            the slot to get the item from.
+     * @return the item on the argued slot, or <code>null</code> if no item
+     *         exists on this slot.
+     */
+    public Item get(int slot) {
+        if (slot == -1 || slot >= items.length)
+            return null;
+        return items[slot];
+    }
+
+    /**
+     * Gets the slot of the first item found with the argued item ID.
+     * 
+     * @param itemId
+     *            the item ID of the item to get the slot from.
+     * @return the slot of the first item found, or -1 if it was not found.
+     */
+    public int getSlot(int itemId) {
         for (int i = 0; i < items.length; i++) {
-            if (items[i] != null) {
-                size++;
+            if (items[i] == null || items[i].getId() != itemId)
+                continue;
+            return i;
+        }
+        return -1;
+    }
+
+    /**
+     * Gets the total amount of items with the argued item ID.
+     * 
+     * @param itemId
+     *            the item ID to get the total amount of.
+     * @return the total amount of items with the argued item ID.
+     */
+    public int totalAmount(int itemId) {
+        return Arrays.stream(items).filter(
+            item -> item != null && item.getId() == itemId).mapToInt(
+            item -> item.getAmount()).sum();
+    }
+
+    /**
+     * Gets an empty slot from this container.
+     * 
+     * @return the empty slot, or -1 if this container is full.
+     */
+    public int getFreeSlot() {
+        for (int i = 0; i < items.length; i++) {
+            if (items[i] == null) {
+                return i;
             }
         }
-        return size;
+        return -1;
     }
 
     /**
-     * Switches the item in one spot with the item in another spot.
+     * Gets the amount of free remaining slots in this container.
      * 
-     * @param fromSlot
-     *            the slot of the item being swapped.
-     * @param toSlot
-     *            the slot of the item being swapped with the other item.
+     * @return the amount of free remaining slots in this container
      */
-    public void swap(int fromSlot, int toSlot) {
-        Item temp = getItem(fromSlot);
-        set(fromSlot, getItem(toSlot));
-        set(toSlot, temp);
+    public int getRemainingSlots() {
+        return capacity - size();
     }
 
     /**
-     * Transfers items to another container.
+     * Gets the capacity of the backing array.
      * 
-     * @param from
-     *            from this container.
-     * @param to
-     *            to this container.
-     * @param fromSlot
-     *            from this slot.
-     * @param id
-     *            with this id.
-     * @return true if it was transferred.
+     * @return the capacity of the backing array.
      */
-    public static boolean transfer(ItemContainer from, ItemContainer to,
-            int fromSlot, int id) {
-        Item fromItem = from.getItem(fromSlot);
-        if (fromItem == null || fromItem.getId() != id) {
-            return false;
-        }
-        if (to.add(fromItem)) {
-            from.set(fromSlot, null);
-            return true;
-        }
-
-        return false;
+    public int capacity() {
+        return capacity;
     }
 
-    /**
-     * The backing array of items.
-     * 
-     * @return the array of items.
-     */
+    @Override
+    public boolean add(Item item) {
+        return add(item, -1);
+    }
+
+    @Override
+    public void clear() {
+        items = new Item[capacity];
+    }
+
+    @Override
+    public int size() {
+        return Arrays.stream(items).filter(item -> item != null).mapToInt(
+            item -> 1).sum();
+    }
+
+    @Override
     public Item[] toArray() {
-        return items;
+        return items.clone();
+    }
+
+    @Override
+    public <T> T[] toArray(T[] a) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public Iterator<Item> iterator() {
+        return new Iterator<Item>() {
+
+            /** The current index we are iterating over. */
+            private int currentIndex;
+
+            /** The last index we iterated over. */
+            private int lastElementIndex = -1;
+
+            @Override
+            public boolean hasNext() {
+                return !(currentIndex + 1 > capacity);
+            }
+
+            @Override
+            public Item next() {
+                if (currentIndex >= capacity) {
+                    throw new ArrayIndexOutOfBoundsException();
+                }
+
+                int i = currentIndex;
+                currentIndex++;
+                return items[lastElementIndex = i];
+            }
+
+            @Override
+            public void remove() {
+                if (lastElementIndex < 0) {
+                    throw new IllegalStateException();
+                }
+
+                ItemContainer.this.remove(items[lastElementIndex],
+                    lastElementIndex);
+                currentIndex = lastElementIndex;
+                lastElementIndex = -1;
+            }
+        };
+    }
+
+    @Override
+    public ItemContainer clone() {
+        ItemContainer c = new ItemContainer(policy, capacity);
+        c.items = items.clone();
+        return c;
     }
 }

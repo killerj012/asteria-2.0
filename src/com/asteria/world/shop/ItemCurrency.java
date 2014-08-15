@@ -13,22 +13,22 @@ public abstract class ItemCurrency implements GenericCurrency {
 
     @Override
     public void give(Player player, int amount) {
-        player.getInventory().deleteItem(new Item(item(), amount));
+        player.getInventory().remove(new Item(item(), amount));
     }
 
     @Override
     public void recieve(Player player, int amount) {
-        player.getInventory().addItem(new Item(item(), amount));
+        player.getInventory().add(new Item(item(), amount));
     }
 
     @Override
     public int getAmount(Player player) {
-        return player.getInventory().getContainer().getCount(item());
+        return player.getInventory().totalAmount(item());
     }
 
     @Override
     public boolean inventoryFull(Player player) {
-        return player.getInventory().getContainer().contains(item());
+        return player.getInventory().contains(item());
     }
 
     /**

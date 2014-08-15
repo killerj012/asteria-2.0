@@ -35,12 +35,12 @@ public class DecodeDropItemPacket extends PacketDecoder {
 
         SkillEvent.fireSkillEvents(player);
 
-        if (player.getInventory().getContainer().contains(item)) {
+        if (player.getInventory().contains(item)) {
             int amount = ItemDefinition.getDefinitions()[item].isStackable() ? amount = player
-                    .getInventory().getContainer().getCount(item)
+                .getInventory().totalAmount(item)
                     : 1;
 
-            player.getInventory().deleteItemSlot(new Item(item, amount), slot);
+            player.getInventory().remove(new Item(item, amount), slot);
             final Position itemLocation = new Position(player.getPosition()
                     .getX(), player.getPosition().getY(), player.getPosition()
                     .getZ());

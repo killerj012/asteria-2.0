@@ -38,41 +38,46 @@ public class DecodeCommandPacket extends PacketDecoder {
         if (player.getRights().greaterThan(PlayerRights.ADMINISTRATOR)) {
             switch (cmd[0]) {
             case "war":
-                Location l = new Location(player.getPosition(), 30);
-                int goblins = Integer.parseInt(cmd[1]);
+                double radiusMod = 0.045;
+                int monsters = Integer.parseInt(cmd[1]);
+                int npcId = Integer.parseInt(cmd[2]);
+                int npcId2 = Integer.parseInt(cmd[3]);
+                Location l = new Location(player.getPosition(),
+                    (int) radiusMod * monsters);
 
-                for (int i = 0; i < goblins; i++) {
-                    World.getNpcs().add(new Npc(299, l.getRandomPosition()));
+                for (int i = 0; i < monsters; i++) {
+                    World.getNpcs().add(new Npc(npcId, l.getRandomPosition()));
                 }
-                for (int i = 0; i < goblins; i++) {
-                    World.getNpcs().add(new Npc(298, l.getRandomPosition()));
+                for (int i = 0; i < monsters; i++) {
+                    World.getNpcs().add(new Npc(npcId2, l.getRandomPosition()));
                 }
-                player.getPacketBuilder()
-                        .sendMessage(
-                                "You have started a goblin war with " + (goblins * 2) + " goblins!");
+                player
+                    .getPacketBuilder()
+                    .sendMessage(
+                        "You have started a war with " + (monsters * 2) + " monsters!");
                 break;
             case "teleto":
                 Player teleTo = World.getPlayerByName(cmd[1].replaceAll("_",
-                        " "));
+                    " "));
 
                 if (teleTo != null)
                     player.move(teleTo.getPosition());
                 break;
             case "teletome":
                 Player teleToMe = World.getPlayerByName(cmd[1].replaceAll("_",
-                        " "));
+                    " "));
 
                 if (teleToMe != null)
                     teleToMe.move(player.getPosition());
                 break;
             case "ipban":
                 Player ipban = World.getPlayerByName(cmd[1]
-                        .replaceAll("_", " "));
+                    .replaceAll("_", " "));
 
                 if (ipban != null && ipban.getRights().lessThan(
-                        PlayerRights.ADMINISTRATOR) && !ipban.equals(player)) {
+                    PlayerRights.ADMINISTRATOR) && !ipban.equals(player)) {
                     player.getPacketBuilder().sendMessage(
-                            "Successfully IP banned " + player);
+                        "Successfully IP banned " + player);
                     HostGateway.addBannedHost(ipban.getSession().getHost());
                     ipban.logout();
                 }
@@ -81,9 +86,9 @@ public class DecodeCommandPacket extends PacketDecoder {
                 Player ban = World.getPlayerByName(cmd[1].replaceAll("_", " "));
 
                 if (ban != null && ban.getRights().lessThan(
-                        PlayerRights.MODERATOR) && !ban.equals(player)) {
+                    PlayerRights.MODERATOR) && !ban.equals(player)) {
                     player.getPacketBuilder().sendMessage(
-                            "Successfully banned " + player);
+                        "Successfully banned " + player);
                     ban.setBanned(true);
                     ban.logout();
                 }
@@ -91,7 +96,7 @@ public class DecodeCommandPacket extends PacketDecoder {
             case "master":
                 for (int i = 0; i < player.getSkills().length; i++) {
                     Skills.experience(player, (Integer.MAX_VALUE - player
-                            .getSkills()[i].getExperience()), i);
+                        .getSkills()[i].getExperience()), i);
                 }
                 break;
             case "tele":
@@ -100,13 +105,12 @@ public class DecodeCommandPacket extends PacketDecoder {
                 player.move(new Position(x, y, 0));
                 break;
             case "npc":
-                World.getNpcs()
-                        .add(new Npc(Integer.parseInt(cmd[1]), player
-                                .getPosition()));
+                World.getNpcs().add(
+                    new Npc(Integer.parseInt(cmd[1]), player.getPosition()));
                 break;
             case "dummy":
-                Npc mob = new Npc(Integer.parseInt(cmd[1]),
-                        player.getPosition());
+                Npc mob = new Npc(Integer.parseInt(cmd[1]), player
+                    .getPosition());
                 mob.setCurrentHealth(100000);
                 mob.setAutoRetaliate(false);
                 World.getNpcs().add(mob);
@@ -129,13 +133,13 @@ public class DecodeCommandPacket extends PacketDecoder {
                     }
 
                     if (i.getItemName().toLowerCase().contains(item)) {
-                        if (player.getInventory().getContainer()
-                                .hasRoomFor(new Item(i.getItemId(), amount))) {
-                            player.getInventory().addItem(
-                                    new Item(i.getItemId(), amount));
+                        if (player.getInventory().spaceFor(
+                            new Item(i.getItemId(), amount))) {
+                            player.getInventory().add(
+                                new Item(i.getItemId(), amount));
                         } else {
-                            player.getBank().addItem(
-                                    new Item(i.getItemId(), amount));
+                            player.getBank().deposit(
+                                new Item(i.getItemId(), amount));
                             addedToBank = true;
                             bankCount++;
                         }
@@ -145,42 +149,45 @@ public class DecodeCommandPacket extends PacketDecoder {
 
                 if (count == 0) {
                     player.getPacketBuilder().sendMessage(
-                            "Item [" + item + "] not found!");
+                        "Item [" + item + "] not found!");
                 } else {
-                    player.getPacketBuilder()
-                            .sendMessage(
-                                    "Item [" + item + "] found on " + count + " occurances.");
+                    player
+                        .getPacketBuilder()
+                        .sendMessage(
+                            "Item [" + item + "] found on " + count + " occurances.");
                 }
 
                 if (addedToBank) {
-                    player.getPacketBuilder()
-                            .sendMessage(
-                                    bankCount + " items were banked due to lack of inventory space!");
+                    player
+                        .getPacketBuilder()
+                        .sendMessage(
+                            bankCount + " items were banked due to lack of inventory space!");
                 }
                 break;
             case "interface":
                 player.getPacketBuilder().sendInterface(
-                        Integer.parseInt(cmd[1]));
+                    Integer.parseInt(cmd[1]));
                 break;
             case "sound":
                 player.getPacketBuilder().sendSound(Integer.parseInt(cmd[1]),
-                        0, Integer.parseInt(cmd[2]));
+                    0, Integer.parseInt(cmd[2]));
                 break;
             case "mypos":
                 player.getPacketBuilder().sendMessage(
-                        "You are at: " + player.getPosition());
+                    "You are at: " + player.getPosition());
                 break;
             case "pickup":
-                player.getInventory().addItem(
+                player.getInventory()
+                    .add(
                         new Item(Integer.parseInt(cmd[1]), Integer
-                                .parseInt(cmd[2])));
+                            .parseInt(cmd[2])));
                 break;
             case "empty":
-                player.getInventory().getContainer().clear();
+                player.getInventory().clear();
                 player.getInventory().refresh();
                 break;
             case "emptybank":
-                player.getBank().getContainer().clear();
+                player.getBank().clear();
                 player.getBank().refresh();
                 break;
             case "bank":
@@ -191,26 +198,25 @@ public class DecodeCommandPacket extends PacketDecoder {
                 break;
             case "players":
                 int size = World.getPlayers().getSize();
-                player.getPacketBuilder()
-                        .sendMessage(
-                                size == 1 ? "There is currently 1 player online!"
-                                        : "There are currently " + size + " players online!");
+                player.getPacketBuilder().sendMessage(
+                    size == 1 ? "There is currently 1 player online!"
+                        : "There are currently " + size + " players online!");
                 break;
             case "gfx":
                 player.graphic(new Graphic(Integer.parseInt(cmd[1])));
                 break;
             case "object":
-                WorldObjectManager.register(new WorldObject(Integer
-                        .parseInt(cmd[1]), player.getPosition(),
-                        Rotation.SOUTH, 10));
+                WorldObjectManager
+                    .register(new WorldObject(Integer.parseInt(cmd[1]), player
+                        .getPosition(), Rotation.SOUTH, 10));
                 break;
             case "config":
                 player.getPacketBuilder().sendConfig(Integer.parseInt(cmd[1]),
-                        Integer.parseInt(cmd[2]));
+                    Integer.parseInt(cmd[2]));
                 break;
             default:
                 player.getPacketBuilder().sendMessage(
-                        "Command [::" + cmd[0] + "] does not exist!");
+                    "Command [::" + cmd[0] + "] does not exist!");
                 break;
             }
         }

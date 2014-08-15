@@ -15,6 +15,9 @@ import com.asteria.world.entity.player.skill.Skills;
  */
 public enum CombatPrayer {
 
+    // TODO: Default implementation for deactivation, and optional
+    // implementation for deactivation.
+
     THICK_SKIN(20, -1, 1, 83) {
         @Override
         protected void onActivation(Player player) {

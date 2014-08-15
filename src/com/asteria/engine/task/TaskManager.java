@@ -21,8 +21,8 @@ public final class TaskManager {
      * A list of already active {@link Task}s being processed. We use a linked
      * list instead of an arraylist because we only need assertion and iterator
      * removal which linkedlist has O(1) time complexities for, unlike an
-     * arraylist which has to resize and has a time complexity of O(n) for
-     * iterator removal.
+     * arraylist which has to resize periodically and has a time complexity of
+     * O(n) for iterator removal.
      */
     private static List<Task> activeTasks = new LinkedList<>();
 
@@ -32,34 +32,27 @@ public final class TaskManager {
      */
     public static void tick() {
 
-        // Add pending tasks to the active list.
-        Task task;
+        // Add all of the pending tasks to the active list only if they are
+        // running.
+        Task t;
 
-        while ((task = pendingTasks.poll()) != null) {
-
-            // Add tasks only if they are still running!
-            if (task.isRunning()) {
-                activeTasks.add(task);
+        while ((t = pendingTasks.poll()) != null) {
+            if (t.isRunning()) {
+                activeTasks.add(t);
             }
         }
 
-        // Iterate and process all of the active tasks.
-        for (Iterator<Task> it = activeTasks.iterator(); it.hasNext();) {
-            task = it.next();
+        // Iterate through every single task and perform processing on it.
+        Iterator<Task> it = activeTasks.iterator();
 
-            // Skip all invalid tasks.
-            if (task == null) {
-                continue;
-            }
+        while (it.hasNext()) {
+            t = it.next();
 
-            // Remove all cancelled tasks.
-            if (!task.isRunning()) {
+            if (!t.isRunning()) {
                 it.remove();
                 continue;
             }
-
-            // Process each task individually.
-            task.process(it);
+            t.process(it);
         }
     }
 
@@ -75,7 +68,7 @@ public final class TaskManager {
         // Check if this task is running first.
         if (!task.isRunning()) {
             throw new IllegalStateException(
-                    "Cannot submit a task that is not running!");
+                "Cannot submit a task that is not running!");
         }
 
         // Fire the task before adding it, if needed.
@@ -91,13 +84,8 @@ public final class TaskManager {
      * Cancels all of the currently registered {@link Task}s.
      */
     public static void cancelAllTasks() {
-        for (Task c : activeTasks) {
-            if (c == null) {
-                continue;
-            }
-
-            c.cancel();
-        }
+        pendingTasks.stream().forEach(t -> t.cancel());
+        activeTasks.stream().forEach(t -> t.cancel());
     }
 
     /**
@@ -107,18 +95,8 @@ public final class TaskManager {
      *            the key to stop all tasks with.
      */
     public static void cancelTasks(Object key) {
-        for (Task c : activeTasks) {
-
-            // Keys should never have a value of null, but we check just in
-            // case.
-            if (c == null || c.getKey() == null) {
-                continue;
-            }
-
-            if (c.getKey().equals(key)) {
-                c.cancel();
-            }
-        }
+        activeTasks.stream().filter(t -> t.getKey().equals(key)).forEach(
+            t -> t.cancel());
     }
 
     /**
@@ -129,21 +107,9 @@ public final class TaskManager {
      * @return a list of tasks with this bound key.
      */
     public static LinkedList<Task> retrieveTasks(Object key) {
-        LinkedList<Task> tasks = new LinkedList<Task>();
-
-        for (Task c : activeTasks) {
-
-            // Keys should never have a value of null, but we check just in
-            // case.
-            if (c == null || c.getKey() == null) {
-                continue;
-            }
-
-            if (c.getKey().equals(key)) {
-                tasks.add(c);
-            }
-        }
-
+        LinkedList<Task> tasks = new LinkedList<>();
+        activeTasks.stream().filter(t -> t.getKey().equals(key)).forEach(
+            t -> tasks.add(t));
         return tasks;
     }
 

@@ -27,7 +27,7 @@ public final class GroundItemManager extends Task implements
     public static final int FIRE_PROCESSING_EVENTS = 100;
 
     /** A database that holds every single registered {@link GroundItem}. */
-    private static final LinkedList<GroundItem> itemList = new LinkedList<GroundItem>();
+    private static final LinkedList<GroundItem> itemList = new LinkedList<>();
 
     /** Create a new {@link GroundItemManager}. */
     public GroundItemManager() {

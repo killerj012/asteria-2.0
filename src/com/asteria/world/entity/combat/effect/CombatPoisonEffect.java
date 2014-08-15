@@ -95,7 +95,7 @@ public class CombatPoisonEffect extends Task {
 
         /** The map of all of the different weapons that poison. */
         // Increase the capacity of the map as more elements are added.
-        private static final Map<Integer, PoisonType> types = new HashMap<Integer, PoisonType>(
+        private static final Map<Integer, PoisonType> types = new HashMap<>(
                 150);
 
         /** Load all of the poison data. */

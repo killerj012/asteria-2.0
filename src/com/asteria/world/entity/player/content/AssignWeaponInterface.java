@@ -646,8 +646,7 @@ public final class AssignWeaponInterface {
         }
 
         for (SpecialWeapon weapon : player.getWeapon().getSpecialAttackItems()) {
-            if (player.getEquipment().getContainer()
-                    .getIdBySlot(Utility.EQUIPMENT_SLOT_WEAPON) == weapon
+            if (player.getEquipment().getItemId(Utility.EQUIPMENT_SLOT_WEAPON) == weapon
                     .getItemId()) {
                 player.getPacketBuilder().sendHideInterfaceLayer(
                         player.getWeapon().getSpecialBar(), false);

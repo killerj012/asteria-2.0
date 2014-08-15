@@ -367,11 +367,12 @@ public enum FoodConsumable {
         player.getEatingTimer().reset();
         player.getPotionTimer().reset();
 
-        player.getInventory().deleteItemSlot(item, slot);
+        player.getInventory().remove(item, slot);
 
         Item replacement = getReplacementItem(item);
         if (replacement != null) {
-            player.getInventory().overrideItemSlot(replacement, slot);
+            player.getInventory().set(slot, replacement);
+            player.getInventory().refresh();
         }
 
         player.getPacketBuilder().sendMessage(food.getMessage());

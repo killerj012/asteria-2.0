@@ -76,8 +76,8 @@ public class DefaultMeleeCombatStrategy implements CombatStrategy {
                     .getAttackAnimation()));
         } else if (entity.type() == EntityType.PLAYER) {
             Player player = (Player) entity;
-            Item item = player.getEquipment().getContainer()
-                    .getItem(Utility.EQUIPMENT_SLOT_WEAPON);
+            Item item = player.getEquipment()
+                    .get(Utility.EQUIPMENT_SLOT_WEAPON);
 
             if (!player.isSpecialActivated() && item != null) {
                 if (item.getDefinition().getItemName()

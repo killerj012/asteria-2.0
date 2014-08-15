@@ -192,7 +192,7 @@ public class CombatContainer {
      * victim is hit with a spell. <b>Do not reset combat builder in this
      * method!</b>
      * 
-     * @param totalDamage
+     * @param damage
      *            the damage inflicted with this attack, always 0 if the attack
      *            isn't accurate.
      * @param accurate

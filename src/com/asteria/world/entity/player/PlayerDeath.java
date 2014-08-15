@@ -1,5 +1,6 @@
 package com.asteria.world.entity.player;
 
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Iterator;
@@ -74,11 +75,9 @@ public class PlayerDeath extends EntityDeath<Player> {
         // Send the killer a message.
         if (killer != null) {
             killer.getPacketBuilder().sendMessage(
-                    Utility.randomElement(DEATH_MESSAGES)
-                            .replaceAll("-victim-",
-                                    entity.getCapitalizedUsername())
-                            .replaceAll("-killer-",
-                                    killer.getCapitalizedUsername()));
+                Utility.randomElement(DEATH_MESSAGES).replaceAll("-victim-",
+                    entity.getCapitalizedUsername()).replaceAll("-killer-",
+                    killer.getCapitalizedUsername()));
         }
 
         // We are in a minigame, so fire minigames events instead.
@@ -119,12 +118,13 @@ public class PlayerDeath extends EntityDeath<Player> {
         entity.setTeleblockTimer(0);
         entity.animation(new Animation(65535));
         AssignWeaponInterface.assignInterface(entity, entity.getEquipment()
-                .getContainer().getItem(Utility.EQUIPMENT_SLOT_WEAPON));
+            .get(Utility.EQUIPMENT_SLOT_WEAPON));
         AssignWeaponInterface.changeFightType(entity);
-        entity.getPacketBuilder()
-                .sendMessage(
-                        entity.getRights().lessThan(PlayerRights.ADMINISTRATOR) ? "Oh dear, you're dead!"
-                                : "You are part of administration and therefore unaffected by death.");
+        entity
+            .getPacketBuilder()
+            .sendMessage(
+                entity.getRights().lessThan(PlayerRights.ADMINISTRATOR) ? "Oh dear, you're dead!"
+                    : "You are part of administration and therefore unaffected by death.");
         entity.getPacketBuilder().sendWalkable(65535);
         CombatPrayer.deactivateAll(entity);
         Skills.restoreAll(entity);
@@ -142,41 +142,34 @@ public class PlayerDeath extends EntityDeath<Player> {
     public void dropDeathItems(Player entity, Player killer) {
 
         // Add the player's kept items to a cached list.
-        List<Item> keep = new LinkedList<>();
+        List<Integer> keep = new LinkedList<>();
 
-        for (int id : KEEP_ON_DEATH) {
-            if (entity.getEquipment().removeItem(new Item(id)) || entity
-                    .getInventory().deleteItem(new Item(id))) {
-                keep.add(new Item(id));
-            }
-        }
+        Arrays
+            .stream(KEEP_ON_DEATH)
+            .filter(
+                id -> entity.getEquipment().unequipItem(new Item(id), false) || entity
+                    .getInventory().remove(new Item(id))).forEach(
+                id -> keep.add(id));
 
         // Add the player's inventory and equipment to a cached list.
         List<Item> items = new LinkedList<>();
-        Collections.addAll(items, entity.getEquipment().getContainer()
-                .toArray());
-        Collections.addAll(items, entity.getInventory().getContainer()
-                .toArray());
+        Collections.addAll(items, entity.getEquipment().toArray());
+        Collections.addAll(items, entity.getInventory().toArray());
 
         // Remove all of the player's inventory and equipment.
-        entity.getEquipment().getContainer().clear();
-        entity.getInventory().getContainer().clear();
+        entity.getEquipment().clear();
+        entity.getInventory().clear();
         entity.getEquipment().refresh();
         entity.getInventory().refresh();
         entity.getFlags().flag(Flag.APPEARANCE);
 
         // The player is skulled so drop everything.
         if (entity.getSkullTimer() > 0) {
-            for (Item item : items) {
-                if (item == null) {
-                    continue;
-                }
-
-                GroundItemManager
-                        .register(killer == null ? new StaticGroundItem(item,
-                                entity.getPosition()) : new GroundItem(item,
-                                entity.getPosition(), killer));
-            }
+            items.stream().filter(item -> item != null).forEach(
+                item -> GroundItemManager
+                    .register(killer == null ? new StaticGroundItem(item,
+                        entity.getPosition()) : new GroundItem(item, entity
+                        .getPosition(), killer)));
         } else {
 
             // The player is not skulled so create an array cache of items to
@@ -198,10 +191,10 @@ public class PlayerDeath extends EntityDeath<Player> {
                     }
 
                     if (o1.getDefinition().getGeneralStorePrice() > o2
-                            .getDefinition().getGeneralStorePrice()) {
+                        .getDefinition().getGeneralStorePrice()) {
                         return -1;
                     } else if (o1.getDefinition().getGeneralStorePrice() < o2
-                            .getDefinition().getGeneralStorePrice()) {
+                        .getDefinition().getGeneralStorePrice()) {
                         return 1;
                     }
                     return 0;
@@ -237,7 +230,7 @@ public class PlayerDeath extends EntityDeath<Player> {
 
             // Keep whatever items were added to the cache, along with the items
             // kept on death.
-            entity.getInventory().addItemSet(keepItems);
+            entity.getInventory().add(keepItems);
 
             // And drop the ones that weren't.
             for (Item item : items) {
@@ -246,13 +239,13 @@ public class PlayerDeath extends EntityDeath<Player> {
                 }
 
                 GroundItemManager
-                        .register(killer == null ? new StaticGroundItem(item,
-                                entity.getPosition()) : new GroundItem(item,
-                                entity.getPosition(), killer));
+                    .register(killer == null ? new StaticGroundItem(item,
+                        entity.getPosition()) : new GroundItem(item, entity
+                        .getPosition(), killer));
             }
         }
 
         // Add back whatever items were previously kept.
-        entity.getInventory().addItemCollection(keep);
+        entity.getInventory().addAll(items);
     }
 }

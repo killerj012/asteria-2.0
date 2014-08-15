@@ -175,10 +175,10 @@ public class Player extends Entity {
     private boolean insertItem, withdrawAsNote;
 
     /** A list of local players. */
-    private final Set<Player> players = new LinkedHashSet<Player>();
+    private final Set<Player> players = new LinkedHashSet<>();
 
     /** A list of local npcs. */
-    private final Set<Npc> npcs = new LinkedHashSet<Npc>();
+    private final Set<Npc> npcs = new LinkedHashSet<>();
 
     /** The players rights. */
     private PlayerRights rights;
@@ -202,10 +202,10 @@ public class Player extends Entity {
     private int[] playerBonus = new int[12];
 
     /** The friends list. */
-    private List<Long> friends = new ArrayList<Long>(200);
+    private List<Long> friends = new ArrayList<>(200);
 
     /** The ignores list. */
-    private List<Long> ignores = new ArrayList<Long>(100);
+    private List<Long> ignores = new ArrayList<>(100);
 
     /** For player npcs (pnpc). */
     private int npcAppearanceId = -1;
@@ -336,11 +336,11 @@ public class Player extends Entity {
     public void poisonVictim(Entity victim, CombatType type) {
         if (type == CombatType.MELEE || weapon == WeaponInterface.DART || weapon == WeaponInterface.KNIFE || weapon == WeaponInterface.THROWNAXE || weapon == WeaponInterface.JAVELIN) {
             CombatFactory.poisonEntity(victim, CombatPoisonData
-                    .getPoisonType(equipment.getContainer().getItem(
+                .getPoisonType(equipment.get(
                             Utility.EQUIPMENT_SLOT_WEAPON)));
         } else if (type == CombatType.RANGED) {
             CombatFactory.poisonEntity(victim, CombatPoisonData
-                    .getPoisonType(equipment.getContainer().getItem(
+                .getPoisonType(equipment.get(
                             Utility.EQUIPMENT_SLOT_ARROWS)));
         }
     }
@@ -524,7 +524,7 @@ public class Player extends Entity {
         }
 
         this.dialogue = d;
-        this.dialogue.getDialogues()[dialogueStage++].fire(dialogue);
+        this.dialogue.getDialogues()[dialogueStage++].run(dialogue);
     }
 
     /**
@@ -550,7 +550,7 @@ public class Player extends Entity {
             player.getPacketBuilder().sendCloseWindows();
             stopDialogue();
         } else {
-            dialogue.getDialogues()[dialogueStage++].fire(dialogue);
+            dialogue.getDialogues()[dialogueStage++].run(dialogue);
         }
     }
 
@@ -640,7 +640,7 @@ public class Player extends Entity {
             playerBonus[i] = 0;
         }
 
-        for (Item item : this.getEquipment().getContainer().toArray()) {
+        for (Item item : equipment) {
             if (item == null || item.getId() < 1 || item.getAmount() < 1) {
                 continue;
             }

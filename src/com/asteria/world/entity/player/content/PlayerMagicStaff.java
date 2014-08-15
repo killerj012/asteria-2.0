@@ -51,7 +51,7 @@ public enum PlayerMagicStaff {
     public static Item[] suppressRunes(Player player, Item[] runesRequired) {
         if (player.getWeapon() == WeaponInterface.STAFF) {
             for (PlayerMagicStaff m : values()) {
-                if (player.getEquipment().getContainer().containsAny(m.staves)) {
+                if (player.getEquipment().containsAny(m.staves)) {
                     for (int id : m.runes) {
                         for (int i = 0; i < runesRequired.length; i++) {
                             if (runesRequired[i] != null && runesRequired[i]

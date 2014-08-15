@@ -27,10 +27,10 @@ public class DecodeItemOnItemPacket extends PacketDecoder {
             return;
         }
 
-        Item itemUsed = player.getInventory().getContainer()
-                .getItem(itemFirstClickSlot);
-        Item itemOn = player.getInventory().getContainer()
-                .getItem(itemSecondClickSlot);
+        Item itemUsed = player.getInventory()
+                .get(itemFirstClickSlot);
+        Item itemOn = player.getInventory()
+                .get(itemSecondClickSlot);
 
         if (itemUsed == null || itemOn == null) {
             return;

@@ -7,7 +7,6 @@ import com.asteria.engine.net.packet.PacketDecoder;
 import com.asteria.engine.net.packet.PacketOpcodeHeader;
 import com.asteria.world.entity.player.Player;
 import com.asteria.world.item.Item;
-import com.asteria.world.item.container.InventoryContainer;
 import com.asteria.world.map.Position;
 
 /**
@@ -36,10 +35,10 @@ public class DecodeItemOnObjectPacket extends PacketDecoder {
             return;
         }
 
-        final Item item = player.getInventory().getContainer().getItem(slot);
+        final Item item = player.getInventory().get(slot);
 
         if (item == null
-                || container != InventoryContainer.DEFAULT_INVENTORY_CONTAINER_ID) {
+ || container != 3214) {
             return;
         }
 

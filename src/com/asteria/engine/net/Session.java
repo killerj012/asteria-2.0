@@ -394,7 +394,7 @@ public final class Session {
             // Send the starter package and makeover mage interface if this
             // player is new.
             if (player.isNewPlayer()) {
-                player.getInventory().addItemSet(Player.STARTER_PACKAGE);
+                player.getInventory().add(Player.STARTER_PACKAGE);
                 packetBuilder.sendInterface(3559);
                 player.setNewPlayer(false);
             }
@@ -423,9 +423,9 @@ public final class Session {
 
             // Send the weapon interface and animation.
             AssignWeaponInterface.assignInterface(player, player.getEquipment()
-                    .getContainer().getItem(Utility.EQUIPMENT_SLOT_WEAPON));
+                    .get(Utility.EQUIPMENT_SLOT_WEAPON));
             AssignWeaponAnimation.assignAnimation(player, player.getEquipment()
-                    .getContainer().getItem(Utility.EQUIPMENT_SLOT_WEAPON));
+                    .get(Utility.EQUIPMENT_SLOT_WEAPON));
 
             // Last but not least, send client configurations.
             packetBuilder.sendConfig(173, player.getMovementQueue()
