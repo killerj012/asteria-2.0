@@ -1,6 +1,7 @@
 package com.asteria.world.entity.npc.dialogue;
 
 import java.util.Arrays;
+import java.util.Objects;
 
 import com.asteria.world.entity.npc.NpcDefinition;
 import com.asteria.world.entity.player.Player;
@@ -231,7 +232,7 @@ public class Dialogue {
      *            the dialogue text to validate.
      */
     private static void validateLength(String... text) {
-        if (Arrays.stream(text).filter(s -> s != null).anyMatch(
+        if (Arrays.stream(text).filter(Objects::nonNull).anyMatch(
             s -> s.length() < 0 || s.length() > MAXIMUM_DIALOGUE_LENGTH)) {
             throw new IllegalStateException();
         }

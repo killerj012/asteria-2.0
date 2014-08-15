@@ -6,6 +6,7 @@ import java.util.Comparator;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Objects;
 
 import com.asteria.util.Utility;
 import com.asteria.world.entity.Animation;
@@ -165,7 +166,7 @@ public class PlayerDeath extends EntityDeath<Player> {
 
         // The player is skulled so drop everything.
         if (entity.getSkullTimer() > 0) {
-            items.stream().filter(item -> item != null).forEach(
+            items.stream().filter(Objects::nonNull).forEach(
                 item -> GroundItemManager
                     .register(killer == null ? new StaticGroundItem(item,
                         entity.getPosition()) : new GroundItem(item, entity

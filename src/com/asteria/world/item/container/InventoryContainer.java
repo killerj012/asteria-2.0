@@ -35,7 +35,6 @@ public class InventoryContainer extends ItemContainer {
      *            the items to add to this inventory.
      */
     public void add(Item... items) {
-
         Arrays.stream(items).forEach(item -> add(item));
     }
 

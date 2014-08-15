@@ -3,6 +3,7 @@ package com.asteria.world.shop;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 import com.asteria.engine.task.Task;
 import com.asteria.engine.task.TaskManager;
@@ -83,7 +84,7 @@ public class Shop {
         this.currency = currency;
         this.container.setItems(items);
         this.shopMap = new HashMap<>(container.capacity());
-        Arrays.stream(items).filter(item -> item != null)
+        Arrays.stream(items).filter(Objects::nonNull)
                 .forEach(item -> shopMap.put(item.getId(), item.getAmount()));
     }
 

@@ -37,22 +37,21 @@ public final class GameEngine implements Runnable {
         // Check if we have already started the engine.
         if (gameExecutor != null) {
             throw new IllegalStateException(
-                    "The engine has already been started!");
+                "The engine has already been started!");
         }
 
         // Create all of the executors.
         gameExecutor = Executors
-                .newSingleThreadScheduledExecutor(new ThreadProvider(
-                        "Engine-Thread", Thread.NORM_PRIORITY, false));
+            .newSingleThreadScheduledExecutor(new ThreadProvider(
+                "Engine-Thread", Thread.NORM_PRIORITY, false));
         concurrent = ThreadPoolFactory.createThreadPool("Concurrent-Thread",
-                Runtime.getRuntime().availableProcessors(),
-                Thread.MAX_PRIORITY, 5);
+            Runtime.getRuntime().availableProcessors(), Thread.MAX_PRIORITY, 5);
         sequential = ThreadPoolFactory.createThreadPool("Sequential-Thread", 1,
-                Thread.MIN_PRIORITY, 5);
+            Thread.MIN_PRIORITY, 5);
 
         // Start ticking the game at 600ms intervals.
         gameExecutor.scheduleAtFixedRate(new GameEngine(), 0, 600,
-                TimeUnit.MILLISECONDS);
+            TimeUnit.MILLISECONDS);
     }
 
     @Override

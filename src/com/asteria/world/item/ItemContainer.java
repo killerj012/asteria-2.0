@@ -5,6 +5,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Iterator;
+import java.util.Objects;
 
 import com.asteria.world.entity.player.Player;
 
@@ -525,8 +526,8 @@ public class ItemContainer extends AbstractCollection<Item> {
 
     @Override
     public int size() {
-        return Arrays.stream(items).filter(item -> item != null).mapToInt(
-            item -> 1).sum();
+        return Arrays.stream(items).filter(Objects::nonNull)
+            .mapToInt(item -> 1).sum();
     }
 
     @Override
