@@ -59,7 +59,7 @@ public final class ThreadPoolFactory {
     private static class IndicationCallerRunsPolicy extends CallerRunsPolicy {
 
         /** The logger for printing information. */
-        private Logger logger = Logger
+        private static Logger logger = Logger
             .getLogger(IndicationCallerRunsPolicy.class.getSimpleName());
 
         @Override
