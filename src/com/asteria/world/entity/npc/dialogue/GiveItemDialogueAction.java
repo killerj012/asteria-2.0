@@ -29,7 +29,7 @@ public class GiveItemDialogueAction implements DialogueAction {
     }
 
     @Override
-    public void run(Dialogue dialogue) {
+    public void accept(Dialogue dialogue) {
         dialogue.getPlayer().getPacketBuilder().sendString(text, 308);
         dialogue.getPlayer().getPacketBuilder()
                 .sendItemOnInterface(307, 200, item.getId());

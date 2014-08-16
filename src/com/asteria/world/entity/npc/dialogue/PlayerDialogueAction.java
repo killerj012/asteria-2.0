@@ -40,7 +40,7 @@ public class PlayerDialogueAction implements DialogueAction {
     }
 
     @Override
-    public void run(Dialogue dialogue) {
+    public void accept(Dialogue dialogue) {
         Dialogue.sendPlayerDialogue(dialogue.getPlayer(), expression, lines);
     }
 }

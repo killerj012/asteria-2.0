@@ -524,7 +524,7 @@ public class Player extends Entity {
         }
 
         this.dialogue = d;
-        this.dialogue.getDialogues()[dialogueStage++].run(dialogue);
+        this.dialogue.getDialogues()[dialogueStage++].accept(dialogue);
     }
 
     /**
@@ -550,7 +550,7 @@ public class Player extends Entity {
             player.getPacketBuilder().sendCloseWindows();
             stopDialogue();
         } else {
-            dialogue.getDialogues()[dialogueStage++].run(dialogue);
+            dialogue.getDialogues()[dialogueStage++].accept(dialogue);
         }
     }
 
