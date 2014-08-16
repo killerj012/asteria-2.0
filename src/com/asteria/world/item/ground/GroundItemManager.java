@@ -38,7 +38,7 @@ public final class GroundItemManager extends Task implements
     }
 
     @Override
-    public void fire() {
+    public void execute() {
 
         // Iterate through all of the ground items.
         for (Iterator<GroundItem> it = itemList.listIterator(); it.hasNext();) {

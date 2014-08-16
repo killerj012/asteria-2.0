@@ -604,7 +604,7 @@ public class Shop {
         }
 
         @Override
-        public void fire() {
+        public void execute() {
 
             // If the stop is fully restocked or isn't a re-stockable shop then
             // we cancel this task.

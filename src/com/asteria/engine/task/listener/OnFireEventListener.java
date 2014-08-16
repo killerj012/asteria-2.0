@@ -38,7 +38,7 @@ public abstract class OnFireEventListener extends Task {
     public abstract void run();
 
     @Override
-    public void fire() {
+    public void execute() {
 
         // Check if the condition has been flagged.
         if (listenFor()) {

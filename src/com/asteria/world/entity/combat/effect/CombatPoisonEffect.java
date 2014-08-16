@@ -65,7 +65,7 @@ public class CombatPoisonEffect extends Task {
     }
 
     @Override
-    public void fire() {
+    public void execute() {
 
         // Stop the task if the entity is unregistered.
         if (entity.isUnregistered()) {

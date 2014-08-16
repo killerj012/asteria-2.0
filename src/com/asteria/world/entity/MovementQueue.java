@@ -290,7 +290,7 @@ public class MovementQueue {
             // Build the task that will be scheduled when following.
             followTask = new Task(1, true) {
                 @Override
-                public void fire() {
+                public void execute() {
 
                     // Check if we can still follow the leader.
                     if (!entity.isFollowing()

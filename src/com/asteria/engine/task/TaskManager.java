@@ -73,7 +73,7 @@ public final class TaskManager {
 
         // Fire the task before adding it, if needed.
         if (task.isInitialRun()) {
-            task.fire();
+            task.execute();
         }
 
         // Add the task to the queue.

@@ -117,7 +117,7 @@ public class TaskChainExecutor {
         // The main task that will fire all of the tasks in the chain.
         TaskManager.submit(new Task(1, false) {
             @Override
-            public void fire() {
+            public void execute() {
 
                 // Shutdown if this executor has been canceled.
                 if (!runningExecutor) {
@@ -139,7 +139,7 @@ public class TaskChainExecutor {
                 delayPassed++;
 
                 if (delayPassed == nextTask.delay() || nextTask.delay() == 0) {
-                    nextTask.fire();
+                    nextTask.execute();
                     operationTasks.remove();
                     delayPassed = 0;
                 }
@@ -218,9 +218,7 @@ public class TaskChainExecutor {
      *            the tasks to append to the chain.
      */
     public void appendAll(Collection<TaskChain> tasks) {
-        for (TaskChain t : tasks) {
-            append(t);
-        }
+        tasks.stream().forEach(t -> append(t));
     }
 
     /**
@@ -230,7 +228,7 @@ public class TaskChainExecutor {
      *            the tasks to append to the chain.
      */
     public void appendAll(TaskChain[] tasks) {
-        appendAll(Arrays.asList(tasks));
+        Arrays.stream(tasks).forEach(t -> append(t));
     }
 
     /**

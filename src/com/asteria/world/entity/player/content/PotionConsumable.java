@@ -279,7 +279,7 @@ public enum PotionConsumable {
 
                 TaskManager.submit(new Task(50, false) {
                     @Override
-                    public void fire() {
+                    public void execute() {
                         player.decrementPoisonImmunity(50);
                         if (player.getPoisonImmunity() == 50) {
                             player
@@ -343,7 +343,7 @@ public enum PotionConsumable {
         if (player.getDragonFireImmunity() <= 0) {
             TaskManager.submit(new Task(30, false) {
                 @Override
-                public void fire() {
+                public void execute() {
                     player.decrementDragonFireImmunity(30);
 
                     if (player.getDragonFireImmunity() == 30) {

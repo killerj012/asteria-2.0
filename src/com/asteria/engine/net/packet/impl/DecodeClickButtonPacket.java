@@ -852,7 +852,7 @@ public class DecodeClickButtonPacket extends PacketDecoder {
 
                 TaskManager.submit(new Task(1, false) {
                     @Override
-                    public void fire() {
+                    public void execute() {
                         if (!player.isSpecialActivated()) {
                             this.cancel();
                             return;

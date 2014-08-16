@@ -30,7 +30,7 @@ public class CombatHookTask extends Task {
     }
 
     @Override
-    public void fire() {
+    public void execute() {
 
         // Check if the builder is in cooldown mode before proceeding. If the
         // builder is in cooldown mode we decrement a timer that will reset the

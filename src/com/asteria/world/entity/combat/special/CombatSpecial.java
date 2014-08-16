@@ -92,7 +92,7 @@ public enum CombatSpecial {
 
             TaskManager.submit(new Task(1, false) {
                 @Override
-                public void fire() {
+                public void execute() {
                     player.animation(new Animation(426));
                     player.highGraphic(new Graphic(250));
                     new Projectile(player, target, 249, 44, 3, 43, 31, 0)

@@ -64,7 +64,7 @@ public abstract class EventListener extends Task {
     public abstract void run();
 
     @Override
-    public void fire() {
+    public void execute() {
 
         // Don't proceed unless unflagged.
         if (listenFor()) {

@@ -87,7 +87,7 @@ public class NpcDeath extends EntityDeath<Npc> {
         if (entity.isRespawn()) {
             TaskManager.submit(new Task(entity.getRespawnTime(), false) {
                 @Override
-                public void fire() {
+                public void execute() {
                     Npc npc = new Npc(entity.getNpcId(), entity
                             .getOriginalPosition());
                     npc.setRespawn(true);

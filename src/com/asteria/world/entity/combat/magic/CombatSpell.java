@@ -40,7 +40,7 @@ public abstract class CombatSpell extends Spell {
         if (castProjectile(cast, castOn) != null) {
             TaskManager.submit(new Task(2, false) {
                 @Override
-                public void fire() {
+                public void execute() {
                     castProjectile(cast, castOn).sendProjectile();
                     this.cancel();
                 }

@@ -1,5 +1,6 @@
 package com.asteria.world.entity.combat;
 
+import com.asteria.Main;
 import com.asteria.engine.task.TaskManager;
 import com.asteria.util.Utility;
 import com.asteria.world.entity.Entity;

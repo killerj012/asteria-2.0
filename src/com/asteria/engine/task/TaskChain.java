@@ -10,8 +10,8 @@ package com.asteria.engine.task;
  */
 public interface TaskChain {
 
-    /** The logic ran when this task is fired. */
-    public void fire();
+    /** The code ran when this task is fired. */
+    public void execute();
 
     /**
      * The delay for this task that will come into effect once the previous task

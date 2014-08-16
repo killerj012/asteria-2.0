@@ -27,7 +27,7 @@ public class CombatTeleblockEffect extends Task {
     }
 
     @Override
-    public void fire() {
+    public void execute() {
 
         // Timer is at or below 0 so send them a message saying they're not
         // blocked anymore

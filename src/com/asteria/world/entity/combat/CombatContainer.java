@@ -1,6 +1,9 @@
 package com.asteria.world.entity.combat;
 
-import com.asteria.util.GenericAction;
+import java.util.Arrays;
+import java.util.Objects;
+import java.util.function.Consumer;
+
 import com.asteria.world.entity.Entity;
 import com.asteria.world.entity.Entity.EntityType;
 import com.asteria.world.entity.Hit;
@@ -120,12 +123,8 @@ public class CombatContainer {
      * @param action
      *            the action to perform on every single hit.
      */
-    protected final void allHits(GenericAction<CombatHit> action) {
-        for (CombatHit hit : hits) {
-            if (hit == null)
-                continue;
-            action.run(hit);
-        }
+    protected final void allHits(Consumer<CombatHit> c) {
+        Arrays.stream(hits).filter(Objects::nonNull).forEach(c);
     }
 
     /**

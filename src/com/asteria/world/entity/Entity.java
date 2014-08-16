@@ -361,7 +361,7 @@ public abstract class Entity {
 
         TaskManager.submit(new Task(1, false) {
             @Override
-            public void fire() {
+            public void execute() {
                 if (unregistered) {
                     this.cancel();
                     return;
@@ -390,7 +390,7 @@ public abstract class Entity {
 
         TaskManager.submit(new Task(1, false) {
             @Override
-            public void fire() {
+            public void execute() {
                 if (unregistered) {
                     this.cancel();
                     return;

@@ -39,7 +39,7 @@ public class CombatPrayerTask extends Task {
     }
 
     @Override
-    public void fire() {
+    public void execute() {
 
         // Decrement the countdown and drain prayer points if needed.
         for (int i = 0; i < player.getPrayerActive().length; i++) {

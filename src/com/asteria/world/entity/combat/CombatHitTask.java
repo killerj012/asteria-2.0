@@ -59,7 +59,7 @@ public class CombatHitTask extends Task {
     }
 
     @Override
-    public void fire() {
+    public void execute() {
 
         // Stop the task if the target isn't registered or has died.
         if (attacker.isDead() || attacker.isUnregistered()) {

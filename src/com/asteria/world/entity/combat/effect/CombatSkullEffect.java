@@ -28,7 +28,7 @@ public class CombatSkullEffect extends Task {
     }
 
     @Override
-    public void fire() {
+    public void execute() {
 
         // Timer is at or below 0 so we can remove the skull.
         if (player.getSkullTimer() <= 0) {

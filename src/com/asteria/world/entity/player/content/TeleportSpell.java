@@ -31,7 +31,7 @@ public abstract class TeleportSpell extends Spell {
 
                 TaskManager.submit(new Task(1, false) {
                     @Override
-                    public void fire() {
+                    public void execute() {
                         if (player.getTeleportStage() == 1) {
                             player.graphic(new Graphic(308));
                             player.setTeleportStage(2);
@@ -54,7 +54,7 @@ public abstract class TeleportSpell extends Spell {
 
                 TaskManager.submit(new Task(1, false) {
                     @Override
-                    public void fire() {
+                    public void execute() {
                         if (player.getTeleportStage() == 1) {
                             player.graphic(new Graphic(392));
                             player.setTeleportStage(2);

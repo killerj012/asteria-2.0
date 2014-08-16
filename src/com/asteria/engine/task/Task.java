@@ -4,7 +4,8 @@ import java.util.Iterator;
 import java.util.Objects;
 
 /**
- * A dynamic cycle based task that carries out general game logic.
+ * A dynamic cycle based task that carries out general game code on the game
+ * thread.
  * 
  * @author lare96
  */
@@ -56,8 +57,8 @@ public abstract class Task {
         this.bind(DEFAULT_KEY);
     }
 
-    /** The logic ran when the task is fired. */
-    public abstract void fire();
+    /** The code ran when the task is fired. */
+    public abstract void execute();
 
     /**
      * Tasks can override this method to run more logic once it has been
@@ -87,7 +88,7 @@ public abstract class Task {
             try {
 
                 // Run the logic within the task.
-                fire();
+                execute();
             } catch (Exception e) {
 
                 // Print any errors we may come across.

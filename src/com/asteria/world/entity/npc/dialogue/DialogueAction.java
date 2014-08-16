@@ -1,6 +1,6 @@
 package com.asteria.world.entity.npc.dialogue;
 
-import com.asteria.util.GenericAction;
+import java.util.function.Consumer;
 
 /**
  * A dynamic stage that when together with other dialogue actions forms a
@@ -8,6 +8,6 @@ import com.asteria.util.GenericAction;
  * 
  * @author lare96
  */
-public interface DialogueAction extends GenericAction<Dialogue> {
+public interface DialogueAction extends Consumer<Dialogue> {
 
 }

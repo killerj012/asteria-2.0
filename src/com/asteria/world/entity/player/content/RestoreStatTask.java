@@ -27,7 +27,7 @@ public class RestoreStatTask extends Task {
     }
 
     @Override
-    public void fire() {
+    public void execute() {
         for (Player player : World.getPlayers()) {
             if (player == null) {
                 continue;
