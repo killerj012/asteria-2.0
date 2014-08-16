@@ -117,7 +117,7 @@ public class HostGateway {
      *            the host to add to the text file.
      */
     public static void addBannedHost(final String host) {
-        GameEngine.getSequentialPool().execute(new Runnable() {
+        GameEngine.getServiceExecutor().execute(new Runnable() {
             @Override
             public void run() {
                 try (FileWriter writer = new FileWriter(new File(

@@ -1,8 +1,10 @@
 package com.asteria.world;
 
 import java.util.concurrent.Phaser;
+import java.util.concurrent.ThreadPoolExecutor;
 
 import com.asteria.engine.GameEngine;
+import com.asteria.engine.ThreadPoolFactory;
 import com.asteria.engine.ThreadPoolFactory.BlockingThreadPool;
 import com.asteria.engine.net.Session.Stage;
 import com.asteria.world.entity.EntityContainer;
@@ -26,6 +28,11 @@ public final class World {
 
     /** All of the registered NPCs. */
     private static final EntityContainer<Npc> npcs = new EntityContainer<>(1500);
+
+    /** A concurrent pool that executes code in parallel. */
+    private static ThreadPoolExecutor updateExecutor = ThreadPoolFactory
+        .createThreadPool("Concurrent-Thread",
+        Runtime.getRuntime().availableProcessors(), Thread.MAX_PRIORITY, 5);
 
     /** Performs processing on all registered entities. */
     public static void tick() {
@@ -224,7 +231,7 @@ public final class World {
 
             // Terminate any thread pools.
             GameEngine.getConcurrentPool().shutdown();
-            GameEngine.getSequentialPool().shutdown();
+            GameEngine.getServiceExecutor().shutdown();
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
@@ -248,7 +255,7 @@ public final class World {
         }
 
         // Push the save task to the sequential pool.
-        GameEngine.getSequentialPool().execute(new WritePlayerFileTask(player));
+        GameEngine.getServiceExecutor().execute(new WritePlayerFileTask(player));
     }
 
     /**

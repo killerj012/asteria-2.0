@@ -26,8 +26,7 @@ import com.asteria.world.object.WorldObjectManager;
 import com.asteria.world.shop.Shop;
 
 /**
- * The main class which contains the first method executed when this application
- * is ran.
+ * The main class of this server.
  * 
  * @author lare96
  */
@@ -41,7 +40,7 @@ public final class Main {
     public static final String NAME = "Asteria 2.0";
 
     /**
-     * The first method invoked when the server is ran.
+     * The main method of this server.
      * 
      * @param args
      *            the array of runtime arguments.

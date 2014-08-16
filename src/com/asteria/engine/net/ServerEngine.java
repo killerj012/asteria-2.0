@@ -132,7 +132,7 @@ public final class ServerEngine {
 
                 // Accept the key asynchronously if needed.
                 try {
-                    GameEngine.getSequentialPool().execute(new Runnable() {
+                    GameEngine.getServiceExecutor().execute(new Runnable() {
 
                         /** A thread safe integer for holding the times looped. */
                         private final AtomicInteger loopsMade = new AtomicInteger();

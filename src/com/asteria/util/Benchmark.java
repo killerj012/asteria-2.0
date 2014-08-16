@@ -93,7 +93,7 @@ public final class Benchmark {
         }
 
         // No use doing this on the game thread, send it to the sequential pool.
-        GameEngine.getSequentialPool().execute(new Runnable() {
+        GameEngine.getServiceExecutor().execute(new Runnable() {
             @Override
             public void run() {
                 try (FileWriter writer = new FileWriter(new File(

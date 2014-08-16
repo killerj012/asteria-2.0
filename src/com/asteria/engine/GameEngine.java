@@ -10,46 +10,32 @@ import com.asteria.engine.task.TaskManager;
 import com.asteria.world.World;
 
 /**
- * A {@link Thread} that fires all game logic and gives access to multiple
- * thread pools that carry out work.
+ * A sequential task ran by the {@link #gameExecutor} that executes game related
+ * code such as cycled tasks, network events, and the updating of entities every
+ * <tt>600</tt>ms.
  * 
  * @author lare96
  */
 public final class GameEngine implements Runnable {
 
-    /** An executor that is dedicated to running game logic. */
-    private static ScheduledExecutorService gameExecutor;
-
-    /** A thread pool that handles short lived concurrent game related tasks. */
-    private static ThreadPoolExecutor concurrent;
-
-    /** A thread pool that handles short lived sequential game related tasks. */
-    private static ThreadPoolExecutor sequential;
+    /** A sequential executor that acts as the main game thread. */
+    private static final ScheduledExecutorService gameExecutor = Executors
+        .newSingleThreadScheduledExecutor(new ThreadProvider("Game-Thread",
+            Thread.NORM_PRIORITY, false));
 
     /**
-     * Start the core components of the engine.
-     * 
-     * @throws Exception
-     *             if any errors occur during the initialization.
+     * A thread pool that executes code in a sequential fashion. This thread
+     * pool should be used to carry out any short lived tasks that don't have to
+     * be done on the game thread.
      */
-    public static void init() throws Exception {
+    private static final ThreadPoolExecutor serviceExecutor = ThreadPoolFactory
+        .createThreadPool("Service-Thread", 1, Thread.MIN_PRIORITY, 5);
 
-        // Check if we have already started the engine.
-        if (gameExecutor != null) {
-            throw new IllegalStateException(
-                "The engine has already been started!");
-        }
-
-        // Create all of the executors.
-        gameExecutor = Executors
-            .newSingleThreadScheduledExecutor(new ThreadProvider(
-                "Engine-Thread", Thread.NORM_PRIORITY, false));
-        concurrent = ThreadPoolFactory.createThreadPool("Concurrent-Thread",
-            Runtime.getRuntime().availableProcessors(), Thread.MAX_PRIORITY, 5);
-        sequential = ThreadPoolFactory.createThreadPool("Sequential-Thread", 1,
-            Thread.MIN_PRIORITY, 5);
-
-        // Start ticking the game at 600ms intervals.
+    /**
+     * Schedule the task that will execute game code at 600ms intervals. This
+     * method should only be called <b>once</b> when the server is launched.
+     */
+    public static void init() {
         gameExecutor.scheduleAtFixedRate(new GameEngine(), 0, 600,
             TimeUnit.MILLISECONDS);
     }
@@ -76,22 +62,13 @@ public final class GameEngine implements Runnable {
     }
 
     /**
-     * Gets the thread pool that handles concurrent tasks.
+     * Gets the thread pool that executes code in a sequential fashion. This
+     * thread pool should be used to carry out any short lived tasks that don't
+     * have to be done on the game thread.
      * 
-     * @return the thread pool that handles concurrent tasks.
+     * @return the thread pool that executes code in a sequential fashion.
      */
-    public static ThreadPoolExecutor getConcurrentPool() {
-        return concurrent;
+    public static ThreadPoolExecutor getServiceExecutor() {
+        return serviceExecutor;
     }
-
-    /**
-     * Gets the thread pool that handles sequential tasks.
-     * 
-     * @return the thread pool that handles sequential tasks.
-     */
-    public static ThreadPoolExecutor getSequentialPool() {
-        return sequential;
-    }
-
-    private GameEngine() {}
 }
