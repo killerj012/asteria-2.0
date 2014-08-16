@@ -547,12 +547,12 @@ public final class Utility {
 
                 RSAPrivateKeySpec privSpec = factory.getKeySpec(privateKey,
                         RSAPrivateKeySpec.class);
-                writeKey("./data/rsa/rsapriv.txt", privSpec.getModulus(),
+                writeKey("./data/rsa/rsa_private.txt", privSpec.getModulus(),
                         privSpec.getPrivateExponent());
 
                 RSAPublicKeySpec pubSpec = factory.getKeySpec(publicKey,
                         RSAPublicKeySpec.class);
-                writeKey("./data/rsa/rsapub.txt", pubSpec.getModulus(),
+                writeKey("./data/rsa/rsa_public.txt", pubSpec.getModulus(),
                         pubSpec.getPublicExponent());
             } catch (Exception e) {
                 e.printStackTrace();
