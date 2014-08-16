@@ -28,7 +28,7 @@ import com.asteria.world.entity.player.Player;
  */
 public final class ServerEngine {
 
-    // TODO: Throttle packet
+    // TODO: Throttle packets?
 
     /** A logger for printing information. */
     private static Logger logger = Logger.getLogger(ServerEngine.class
@@ -308,29 +308,30 @@ public final class ServerEngine {
         }
 
         // Handle all of the selected events.
-        for (final Iterator<SelectionKey> iterator = selector.selectedKeys()
-            .iterator(); iterator.hasNext();) {
-            SelectionKey key = iterator.next();
+        Iterator<SelectionKey> it = selector.selectedKeys().iterator();
+
+        while (it.hasNext()) {
+            SelectionKey key = it.next();
 
             if (!key.isValid()) {
-                iterator.remove();
+                it.remove();
             } else if (key.isAcceptable()) {
                 try {
                     acceptClients();
                 } finally {
-                    iterator.remove();
+                    it.remove();
                 }
             } else if (key.isReadable()) {
                 try {
                     decodePackets(key);
                 } finally {
-                    iterator.remove();
+                    it.remove();
                 }
             } else if (key.isWritable()) {
                 try {
                     sendQueuedData(key);
                 } finally {
-                    iterator.remove();
+                    it.remove();
                 }
             }
         }

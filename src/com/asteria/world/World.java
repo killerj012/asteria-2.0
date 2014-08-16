@@ -24,21 +24,29 @@ public final class World {
 
     /** All of the registered players. */
     private static final EntityContainer<Player> players = new EntityContainer<>(
-            1000);
+        1000);
 
     /** All of the registered NPCs. */
     private static final EntityContainer<Npc> npcs = new EntityContainer<>(1500);
 
-    /** A concurrent pool that executes code in parallel. */
-    private static ThreadPoolExecutor updateExecutor = ThreadPoolFactory
-        .createThreadPool("Concurrent-Thread",
-        Runtime.getRuntime().availableProcessors(), Thread.MAX_PRIORITY, 5);
+    /** The synchronizer that will block until updating is completed. */
+    private static final Phaser synchronizer = new Phaser(1);
 
-    /** Performs processing on all registered entities. */
+    /** A thread pool that will update players in parallel. */
+    private static final ThreadPoolExecutor updateExecutor = ThreadPoolFactory
+        .createThreadPool("Update-Thread", Runtime.getRuntime()
+            .availableProcessors(), Thread.MAX_PRIORITY, 5);
+
+    /**
+     * The method that executes code for all in-game entities every <tt>600</tt>
+     * ms. Updating is parallelized using the {@link #updateExecutor} to execute
+     * the code concurrently and the {@link #synchronizer} to block the game
+     * thread until it's finished.
+     */
     public static void tick() {
         try {
 
-            // Perform any general logic processing for players.
+            // Perform any general processing for players.
             for (Player player : players) {
                 if (player == null) {
                     continue;
@@ -52,7 +60,7 @@ public final class World {
                 }
             }
 
-            // Perform any general logic processing for npcs.
+            // Perform any general processing for npcs.
             for (Npc npc : npcs) {
                 if (npc == null) {
                     continue;
@@ -66,16 +74,16 @@ public final class World {
                 }
             }
 
-            // Perform updating for players in parallel.
-            final Phaser phaser = new Phaser(1);
-            phaser.bulkRegister(players.getSize());
+            // Perform updating for players in parallel using the updateExecutor
+            // and synchronizer.
+            synchronizer.bulkRegister(players.getSize());
 
             for (final Player player : players) {
                 if (player == null) {
                     continue;
                 }
 
-                GameEngine.getConcurrentPool().execute(new Runnable() {
+                updateExecutor.execute(new Runnable() {
                     @Override
                     public void run() {
 
@@ -97,15 +105,15 @@ public final class World {
                                 // Arrive at the phaser regardless if there was
                                 // an error or not.
                             } finally {
-                                phaser.arrive();
+                                synchronizer.arriveAndDeregister();
                             }
                         }
                     }
                 });
             }
 
-            // Wait here until updating is complete.
-            phaser.arriveAndAwaitAdvance();
+            // Wait here until updating is complete
+            synchronizer.arriveAndAwaitAdvance();
 
             // Reset all players and prepare them for the next cycle.
             for (Player player : players) {
@@ -230,7 +238,7 @@ public final class World {
             pool.fireAndAwait();
 
             // Terminate any thread pools.
-            GameEngine.getConcurrentPool().shutdown();
+            updateExecutor.shutdown();
             GameEngine.getServiceExecutor().shutdown();
         } catch (Exception e) {
             e.printStackTrace();
@@ -255,7 +263,8 @@ public final class World {
         }
 
         // Push the save task to the sequential pool.
-        GameEngine.getServiceExecutor().execute(new WritePlayerFileTask(player));
+        GameEngine.getServiceExecutor()
+            .execute(new WritePlayerFileTask(player));
     }
 
     /**

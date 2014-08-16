@@ -434,6 +434,9 @@ public class ItemContainer extends AbstractCollection<Item> {
      *         {@link NullPointerException} if no items are on this slot.
      */
     public int getItemId(int slot) {
+        if (items[slot] == null)
+            return -1;
+
         return items[slot].getId();
     }
 
