@@ -96,8 +96,7 @@ public class ItemContainer extends AbstractCollection<Item> {
             newSlot = getFreeSlot();
         }
 
-        if ((item.getDefinition().isStackable() || policy
-            .equals(Policy.STACK_ALWAYS)) && !policy.equals(Policy.STACK_NEVER)) {
+        if (item.getDefinition().isStackable() || policy == Policy.STACK_ALWAYS && policy != Policy.STACK_NEVER) {
             for (int i = 0; i < items.length; i++) {
                 if (items[i] != null && items[i].getId() == item.getId()) {
                     set(i, new Item(items[i].getId(),
@@ -241,8 +240,7 @@ public class ItemContainer extends AbstractCollection<Item> {
      *         <code>false</code> otherwise.
      */
     public boolean spaceFor(Item item) {
-        if ((item.getDefinition().isStackable() || policy
-            .equals(Policy.STACK_ALWAYS)) && !policy.equals(Policy.STACK_NEVER)) {
+        if (item.getDefinition().isStackable() || policy == Policy.STACK_ALWAYS && policy != Policy.STACK_NEVER) {
             for (int i = 0; i < items.length; i++) {
                 if (items[i] != null && items[i].getId() == item.getId()) {
                     int totalCount = item.getAmount() + items[i].getAmount();
@@ -537,7 +535,8 @@ public class ItemContainer extends AbstractCollection<Item> {
 
     @Override
     public <T> T[] toArray(T[] a) {
-        throw new UnsupportedOperationException();
+        throw new UnsupportedOperationException(
+            "This operation is not supported, 'toArray()' should be used instead.");
     }
 
     @Override
@@ -552,13 +551,14 @@ public class ItemContainer extends AbstractCollection<Item> {
 
             @Override
             public boolean hasNext() {
-                return !(currentIndex + 1 > capacity);
+                return currentIndex++ <= capacity;
             }
 
             @Override
             public Item next() {
                 if (currentIndex >= capacity) {
-                    throw new ArrayIndexOutOfBoundsException();
+                    throw new ArrayIndexOutOfBoundsException(
+                        "Nothing left to iterate over!");
                 }
 
                 int i = currentIndex;
@@ -569,7 +569,8 @@ public class ItemContainer extends AbstractCollection<Item> {
             @Override
             public void remove() {
                 if (lastElementIndex < 0) {
-                    throw new IllegalStateException();
+                    throw new IllegalStateException(
+                        "Can only call 'remove()' once in call to 'next()'.");
                 }
 
                 ItemContainer.this.remove(items[lastElementIndex],

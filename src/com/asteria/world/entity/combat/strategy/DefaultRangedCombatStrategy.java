@@ -60,14 +60,14 @@ public class DefaultRangedCombatStrategy implements CombatStrategy {
             }
 
             entity.animation(new Animation(npc.getDefinition()
-                    .getAttackAnimation()));
+                .getAttackAnimation()));
             entity.highGraphic(new Graphic(ammo.getGraphic()));
-            new Projectile(entity, victim, ammo.getProjectile(),
-                    ammo.getDelay(), ammo.getSpeed(), ammo.getStartHeight(),
-                    ammo.getEndHeight(), 0).sendProjectile();
+            new Projectile(entity, victim, ammo.getProjectile(), ammo
+                .getDelay(), ammo.getSpeed(), ammo.getStartHeight(), ammo
+                .getEndHeight(), 0).sendProjectile();
 
             return new CombatContainer(entity, victim, 1, CombatType.RANGED,
-                    true);
+                true);
         }
 
         // Create the player instance.
@@ -89,9 +89,9 @@ public class DefaultRangedCombatStrategy implements CombatStrategy {
 
         if (!player.isSpecialActivated()) {
             player.highGraphic(new Graphic(ammo.getGraphic()));
-            new Projectile(player, victim, ammo.getProjectile(),
-                    ammo.getDelay(), ammo.getSpeed(), ammo.getStartHeight(),
-                    ammo.getEndHeight(), 0).sendProjectile();
+            new Projectile(player, victim, ammo.getProjectile(), ammo
+                .getDelay(), ammo.getSpeed(), ammo.getStartHeight(), ammo
+                .getEndHeight(), 0).sendProjectile();
         }
 
         // And finally create the combat container.
@@ -135,11 +135,12 @@ public class DefaultRangedCombatStrategy implements CombatStrategy {
             distance = 7;
             break;
         default:
-            throw new IllegalStateException();
+            throw new IllegalStateException("Invalid ranged weapon: " + player
+                .getWeapon().name());
         }
 
         return distance + (player.getFightType().getStyle() == FightStyle.DEFENSIVE ? 2
-                : 0);
+            : 0);
     }
 
     /**
@@ -150,12 +151,12 @@ public class DefaultRangedCombatStrategy implements CombatStrategy {
      *            the player to start the animation for.
      */
     private void startAnimation(Player player) {
-        if (player.getEquipment()
-                .get(Utility.EQUIPMENT_SLOT_WEAPON).getDefinition()
-                .getItemName().startsWith("Karils")) {
+        if (player.getEquipment().get(Utility.EQUIPMENT_SLOT_WEAPON)
+            .getDefinition().getItemName().startsWith("Karils")) {
             player.animation(new Animation(2075));
         } else {
-            player.animation(new Animation(player.getFightType().getAnimation()));
+            player
+                .animation(new Animation(player.getFightType().getAnimation()));
         }
     }
 
@@ -171,41 +172,39 @@ public class DefaultRangedCombatStrategy implements CombatStrategy {
     private boolean checkAmmo(Player player) {
 
         // Get the item in the arrows slot.
-        Item item = player.getEquipment()
-                .get(Utility.EQUIPMENT_SLOT_ARROWS);
+        Item item = player.getEquipment().get(Utility.EQUIPMENT_SLOT_ARROWS);
 
         // Check if we have an item in the arrows slot.
         if (item == null) {
             player.getPacketBuilder().sendMessage(
-                    "You do not have any ammo in your quiver.");
+                "You do not have any ammo in your quiver.");
             player.getCombatBuilder().reset();
             return false;
         }
 
         // Check the arrows for each type of ranged weapon.
         if (player.getWeapon() == WeaponInterface.SHORTBOW || player
-                .getWeapon() == WeaponInterface.LONGBOW) {
+            .getWeapon() == WeaponInterface.LONGBOW) {
             if (!CombatFactory.arrowsEquipped(player)) {
                 player.getPacketBuilder().sendMessage(
-                        "You need to use arrows with your bow.");
+                    "You need to use arrows with your bow.");
                 player.getCombatBuilder().reset();
                 return false;
             }
         } else if (player.getWeapon() == WeaponInterface.CROSSBOW) {
-            if (player.getEquipment()
-                    .get(Utility.EQUIPMENT_SLOT_WEAPON).getDefinition()
-                    .getItemName().startsWith("Karils") && !item
-                    .getDefinition().getItemName().endsWith("rack")) {
+            if (player.getEquipment().get(Utility.EQUIPMENT_SLOT_WEAPON)
+                .getDefinition().getItemName().startsWith("Karils") && !item
+                .getDefinition().getItemName().endsWith("rack")) {
                 player.getPacketBuilder().sendMessage(
-                        "You need to use bolt racks with this crossbow.");
+                    "You need to use bolt racks with this crossbow.");
                 player.getCombatBuilder().reset();
                 return false;
             } else if (!player.getEquipment()
-                    .get(Utility.EQUIPMENT_SLOT_WEAPON).getDefinition()
-                    .getItemName().startsWith("Karils") && !CombatFactory
-                    .boltsEquipped(player)) {
+                .get(Utility.EQUIPMENT_SLOT_WEAPON).getDefinition()
+                .getItemName().startsWith("Karils") && !CombatFactory
+                .boltsEquipped(player)) {
                 player.getPacketBuilder().sendMessage(
-                        "You need to use bolts with your crossbow.");
+                    "You need to use bolts with your crossbow.");
                 player.getCombatBuilder().reset();
                 return false;
             }
@@ -223,12 +222,11 @@ public class DefaultRangedCombatStrategy implements CombatStrategy {
 
         // Determine which slot we are decrementing ammo from.
         int slot = player.getWeapon() == WeaponInterface.SHORTBOW || player
-                .getWeapon() == WeaponInterface.LONGBOW || player.getWeapon() == WeaponInterface.CROSSBOW ? Utility.EQUIPMENT_SLOT_ARROWS
-                : Utility.EQUIPMENT_SLOT_WEAPON;
+            .getWeapon() == WeaponInterface.LONGBOW || player.getWeapon() == WeaponInterface.CROSSBOW ? Utility.EQUIPMENT_SLOT_ARROWS
+            : Utility.EQUIPMENT_SLOT_WEAPON;
 
         // Set the ammo we are currently using.
-        player.setFireAmmo(player.getEquipment().get(slot)
-                .getId());
+        player.setFireAmmo(player.getEquipment().get(slot).getId());
 
         // Decrement the ammo in the selected slot.
         player.getEquipment().get(slot).decrementAmount();
@@ -240,7 +238,7 @@ public class DefaultRangedCombatStrategy implements CombatStrategy {
         // If we are at 0 ammo remove the item from the equipment completely.
         if (player.getEquipment().get(slot).getAmount() == 0) {
             player.getPacketBuilder().sendMessage(
-                    "That was your last piece of ammo!");
+                "That was your last piece of ammo!");
             player.getEquipment().set(slot, null);
 
             if (slot == Utility.EQUIPMENT_SLOT_WEAPON) {

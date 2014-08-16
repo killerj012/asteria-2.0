@@ -152,7 +152,7 @@ public enum PotionConsumable {
 
     /** The enum set of potions. */
     private static final Set<PotionConsumable> ALL_POTIONS = EnumSet
-            .allOf(PotionConsumable.class);
+        .allOf(PotionConsumable.class);
 
     /**
      * Create a new {@link PotionConsumable}.
@@ -262,18 +262,19 @@ public enum PotionConsumable {
      *            the player to do this action for.
      * @param boolean superPotion if the boolean is a super potion.
      */
+    // TODO: This can easily be done through a system timer.
     private static void doAntiPoison(final Player player, boolean superPotion) {
         if (player.isPoisoned()) {
             player.setPoisonDamage(0);
             player.getPacketBuilder().sendMessage(
-                    "You have been cured of your poison!");
+                "You have been cured of your poison!");
         }
 
         if (superPotion) {
 
             if (player.getPoisonImmunity() <= 0) {
                 player.getPacketBuilder().sendMessage(
-                        "You have been granted immunity against poison.");
+                    "You have been granted immunity against poison.");
                 player.incrementPoisonImmunity(500);
 
                 TaskManager.submit(new Task(50, false) {
@@ -281,9 +282,10 @@ public enum PotionConsumable {
                     public void fire() {
                         player.decrementPoisonImmunity(50);
                         if (player.getPoisonImmunity() == 50) {
-                            player.getPacketBuilder()
-                                    .sendMessage(
-                                            "Your resistance to poison is about to wear off!");
+                            player
+                                .getPacketBuilder()
+                                .sendMessage(
+                                    "Your resistance to poison is about to wear off!");
                         } else if (player.getPoisonImmunity() <= 0) {
                             cancel();
                         }
@@ -292,15 +294,15 @@ public enum PotionConsumable {
                     @Override
                     public void onCancel() {
                         player.getPacketBuilder().sendMessage(
-                                "Your resistance to poison has worn off!");
+                            "Your resistance to poison has worn off!");
                         player.setPoisonImmunity(0);
                     }
 
                 }.bind(player));
             } else if (player.getPoisonImmunity() > 0) {
                 player.getPacketBuilder().sendMessage(
-                        "Your immunity against poison has been restored!");
-                player.incrementPoisonImmunity(250);
+                    "Your immunity against poison has been restored!");
+                player.setPoisonImmunity(500);
             }
         }
     }
@@ -330,28 +332,25 @@ public enum PotionConsumable {
      * @param player
      *            the player to do this action for..
      */
+    // TODO: This can easily be done through a system timer.
     private static void doAntiFire(final Player player) {
-        // TODO: When king black dragon is done, check if immunity is
-        // above 0. If not then deal fire damage.
-        //
-        // if(player.getDragonFireImmunity() > 0) {
-        // player.getPacketBuilder().sendMessage("You are immune to dragonfire!");
-        // return;
-        // }
+        player
+            .getPacketBuilder()
+            .sendMessage(
+                player.getDragonFireImmunity() <= 0 ? "You have been granted immunity against dragon fire."
+                    : "Your immunity against dragon fire has been restored.");
 
-        if (player.getPoisonImmunity() <= 0) {
-            player.getPacketBuilder().sendMessage(
-                    "You have been granted immunity against dragon fire.");
-            player.incrementDragonFireImmunity(360);
-
+        if (player.getDragonFireImmunity() <= 0) {
             TaskManager.submit(new Task(30, false) {
                 @Override
                 public void fire() {
                     player.decrementDragonFireImmunity(30);
+
                     if (player.getDragonFireImmunity() == 30) {
-                        player.getPacketBuilder()
-                                .sendMessage(
-                                        "Your resistance to dragon fire is about to wear off!");
+                        player
+                            .getPacketBuilder()
+                            .sendMessage(
+                                "Your resistance to dragon fire is about to wear off!");
                     } else if (player.getDragonFireImmunity() <= 0) {
                         cancel();
                     }
@@ -360,16 +359,13 @@ public enum PotionConsumable {
                 @Override
                 public void onCancel() {
                     player.getPacketBuilder().sendMessage(
-                            "Your resistance to dragon fire has worn off!");
+                        "Your resistance to dragon fire has worn off!");
                     player.setDragonFireImmunity(0);
                 }
 
             }.bind(player));
-        } else if (player.getPoisonImmunity() > 0) {
-            player.getPacketBuilder().sendMessage(
-                    "Your immunity against dragon fire has been increased.");
-            player.incrementDragonFireImmunity(180);
         }
+        player.setDragonFireImmunity(360);
     }
 
     /**

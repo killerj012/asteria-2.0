@@ -62,11 +62,11 @@ public class Position {
      */
     public boolean inLocation(Location other, boolean inclusive) {
         return !inclusive ? this.x > other.getSouthWestX() && this.x < other
-                .getNorthEastX() && this.y > other.getSouthWestY() && this.y < other
-                .getNorthEastY()
-                : this.x >= other.getSouthWestX() && this.x <= other
-                        .getNorthEastX() && this.y >= other.getSouthWestY() && this.y <= other
-                        .getNorthEastY();
+            .getNorthEastX() && this.y > other.getSouthWestY() && this.y < other
+            .getNorthEastY()
+            : this.x >= other.getSouthWestX() && this.x <= other
+                .getNorthEastX() && this.y >= other.getSouthWestY() && this.y <= other
+                .getNorthEastY();
     }
 
     /**
@@ -115,8 +115,6 @@ public class Position {
         int y = Utility.inclusiveRandom(amount);
 
         switch (Utility.inclusiveRandom(3)) {
-        case 0:
-            return move(x, y);
         case 1:
             return move(-x, -y);
         case 2:
@@ -124,7 +122,7 @@ public class Position {
         case 3:
             return move(x, -y);
         default:
-            throw new IllegalStateException();
+            return move(x, y);
         }
     }
 
@@ -334,6 +332,6 @@ public class Position {
             return false;
 
         return Math.abs(position.getX() - this.getX()) <= distance && Math
-                .abs(position.getY() - this.getY()) <= distance;
+            .abs(position.getY() - this.getY()) <= distance;
     }
 }

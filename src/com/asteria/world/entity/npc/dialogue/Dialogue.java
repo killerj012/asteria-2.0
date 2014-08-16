@@ -234,7 +234,8 @@ public class Dialogue {
     private static void validateLength(String... text) {
         if (Arrays.stream(text).filter(Objects::nonNull).anyMatch(
             s -> s.length() < 0 || s.length() > MAXIMUM_DIALOGUE_LENGTH)) {
-            throw new IllegalStateException();
+            throw new IllegalStateException(
+                "Dialogue length too long, maximum length is: " + MAXIMUM_DIALOGUE_LENGTH);
         }
     }
 

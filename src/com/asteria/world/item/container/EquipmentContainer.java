@@ -220,7 +220,8 @@ public class EquipmentContainer extends ItemContainer {
      */
     @Override
     public final boolean add(Item item, int slot) {
-        throw new UnsupportedOperationException();
+        throw new UnsupportedOperationException(
+            "This method is not supported by this container implementation.");
     }
 
     /**
@@ -229,7 +230,8 @@ public class EquipmentContainer extends ItemContainer {
      */
     @Override
     public final boolean add(Item item) {
-        throw new UnsupportedOperationException();
+        throw new UnsupportedOperationException(
+            "This method is not supported by this container implementation.");
     }
     
     /**
@@ -238,7 +240,8 @@ public class EquipmentContainer extends ItemContainer {
      */
     @Override
     public final boolean addAll(Collection<? extends Item> c) {
-        throw new UnsupportedOperationException();
+        throw new UnsupportedOperationException(
+            "This method is not supported by this container implementation.");
     }
 
     /**
@@ -247,7 +250,8 @@ public class EquipmentContainer extends ItemContainer {
      */
     @Override
     public final boolean remove(Item item, int slot) {
-        throw new UnsupportedOperationException();
+        throw new UnsupportedOperationException(
+            "This method is not supported by this container implementation.");
     }
 
     /**
@@ -256,7 +260,8 @@ public class EquipmentContainer extends ItemContainer {
      */
     @Override
     public final boolean remove(Item item) {
-        throw new UnsupportedOperationException();
+        throw new UnsupportedOperationException(
+            "This method is not supported by this container implementation.");
     }
 
     /**
@@ -265,6 +270,7 @@ public class EquipmentContainer extends ItemContainer {
      */
     @Override
     public final boolean removeAll(Collection<?> c) {
-        throw new UnsupportedOperationException();
+        throw new UnsupportedOperationException(
+            "This method is not supported by this container implementation.");
     }
 }

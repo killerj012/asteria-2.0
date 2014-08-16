@@ -81,10 +81,11 @@ public class GroundItem {
             break;
         case SEEN_BY_OWNER:
             World.getPlayerByHash(player.getUsernameHash()).getPacketBuilder()
-                    .sendRemoveGroundItem(this);
+                .sendRemoveGroundItem(this);
             break;
         default:
-            throw new IllegalStateException();
+            throw new IllegalStateException(
+                "Invalid ground item state: " + state.name());
         }
     }
 
@@ -114,7 +115,7 @@ public class GroundItem {
 
                 if (p.getPosition().withinDistance(getPosition(), 60)) {
                     p.getPacketBuilder().sendGroundItem(
-                            new GroundItem(item, position, null));
+                        new GroundItem(item, position, null));
                 }
             }
             player = null;
@@ -125,7 +126,8 @@ public class GroundItem {
             it.remove();
             break;
         default:
-            throw new IllegalStateException();
+            throw new IllegalStateException(
+                "Invalid ground item state: " + state.name());
         }
     }
 

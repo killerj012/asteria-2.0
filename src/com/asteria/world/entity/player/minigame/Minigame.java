@@ -13,6 +13,8 @@ import com.asteria.world.map.Position;
  */
 public abstract class Minigame {
 
+    // TODO: Add more functionality, rewrite documentation, less redundancy.
+
     /**
      * Fired when an {@link Player} logs in while in the minigame boundary.
      * 

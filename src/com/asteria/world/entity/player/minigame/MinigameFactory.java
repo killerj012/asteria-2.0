@@ -12,6 +12,8 @@ import com.asteria.world.entity.player.Player;
  */
 public final class MinigameFactory {
 
+    // TODO: Rewrite this, add more functionality.
+
     /** A map containing all of the minigames. */
     private static Map<String, Minigame> minigames = new HashMap<>();
 

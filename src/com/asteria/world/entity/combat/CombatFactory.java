@@ -35,6 +35,11 @@ import com.asteria.world.map.Position;
  */
 public final class CombatFactory {
 
+    // TODO: KBD and dragon combat strategies, as an example of how to make
+    // bosses.
+    // TODO: When KBD is done, check if immunity is above 0. If not then deal
+    // fire damage.
+
     /** If combat debug messages should be sent. */
     // Turn this on if you're trying to debug the formulas, or if you just want
     // to see how the hits are calculated :)
@@ -90,9 +95,8 @@ public final class CombatFactory {
      */
     public static boolean fullVeracs(Entity entity) {
         return entity.type() == EntityType.NPC ? ((Npc) entity).getDefinition()
-                .getName().equals("Verac the Defiled") : ((Player) entity)
-            .getEquipment()
-                .containsAll(4753, 4757, 4759, 4755);
+            .getName().equals("Verac the Defiled") : ((Player) entity)
+            .getEquipment().containsAll(4753, 4757, 4759, 4755);
     }
 
     /**
@@ -104,9 +108,8 @@ public final class CombatFactory {
      */
     public static boolean fullDharoks(Entity entity) {
         return entity.type() == EntityType.NPC ? ((Npc) entity).getDefinition()
-                .getName().equals("Dharok the Wretched") : ((Player) entity)
-            .getEquipment()
-                .containsAll(4716, 4720, 4722, 4718);
+            .getName().equals("Dharok the Wretched") : ((Player) entity)
+            .getEquipment().containsAll(4716, 4720, 4722, 4718);
     }
 
     /**
@@ -118,9 +121,8 @@ public final class CombatFactory {
      */
     public static boolean fullKarils(Entity entity) {
         return entity.type() == EntityType.NPC ? ((Npc) entity).getDefinition()
-                .getName().equals("Karil the Tainted") : ((Player) entity)
-            .getEquipment()
-                .containsAll(4732, 4736, 4738, 4734);
+            .getName().equals("Karil the Tainted") : ((Player) entity)
+            .getEquipment().containsAll(4732, 4736, 4738, 4734);
     }
 
     /**
@@ -132,9 +134,8 @@ public final class CombatFactory {
      */
     public static boolean fullAhrims(Entity entity) {
         return entity.type() == EntityType.NPC ? ((Npc) entity).getDefinition()
-                .getName().equals("Ahrim the Blighted") : ((Player) entity)
-            .getEquipment()
-                .containsAll(4708, 4712, 4714, 4710);
+            .getName().equals("Ahrim the Blighted") : ((Player) entity)
+            .getEquipment().containsAll(4708, 4712, 4714, 4710);
     }
 
     /**
@@ -146,9 +147,8 @@ public final class CombatFactory {
      */
     public static boolean fullTorags(Entity entity) {
         return entity.type() == EntityType.NPC ? ((Npc) entity).getDefinition()
-                .getName().equals("Torag the Corrupted") : ((Player) entity)
-            .getEquipment()
-                .containsAll(4745, 4749, 4751, 4747);
+            .getName().equals("Torag the Corrupted") : ((Player) entity)
+            .getEquipment().containsAll(4745, 4749, 4751, 4747);
     }
 
     /**
@@ -160,9 +160,8 @@ public final class CombatFactory {
      */
     public static boolean fullGuthans(Entity entity) {
         return entity.type() == EntityType.NPC ? ((Npc) entity).getDefinition()
-                .getName().equals("Guthan the Infested") : ((Player) entity)
-            .getEquipment()
-                .containsAll(4724, 4728, 4730, 4726);
+            .getName().equals("Guthan the Infested") : ((Player) entity)
+            .getEquipment().containsAll(4724, 4728, 4730, 4726);
     }
 
     /**
@@ -174,13 +173,12 @@ public final class CombatFactory {
      */
     public static boolean crystalBow(Player player) {
         Item item;
-        if ((item = player.getEquipment()
-                .get(Utility.EQUIPMENT_SLOT_WEAPON)) == null) {
+        if ((item = player.getEquipment().get(Utility.EQUIPMENT_SLOT_WEAPON)) == null) {
             return false;
         }
 
-        return item.getDefinition().getItemName().toLowerCase()
-                .contains("crystal bow");
+        return item.getDefinition().getItemName().toLowerCase().contains(
+            "crystal bow");
     }
 
     /**
@@ -192,15 +190,14 @@ public final class CombatFactory {
      */
     public static boolean arrowsEquipped(Player player) {
         Item item;
-        if ((item = player.getEquipment()
-                .get(Utility.EQUIPMENT_SLOT_ARROWS)) == null) {
+        if ((item = player.getEquipment().get(Utility.EQUIPMENT_SLOT_ARROWS)) == null) {
             return false;
         }
 
         return !(!item.getDefinition().getItemName().endsWith("arrow") && !item
-                .getDefinition().getItemName().endsWith("arrow(p)") && !item
-                .getDefinition().getItemName().endsWith("arrow(p+)") && !item
-                .getDefinition().getItemName().endsWith("arrow(p++)"));
+            .getDefinition().getItemName().endsWith("arrow(p)") && !item
+            .getDefinition().getItemName().endsWith("arrow(p+)") && !item
+            .getDefinition().getItemName().endsWith("arrow(p++)"));
     }
 
     /**
@@ -212,15 +209,14 @@ public final class CombatFactory {
      */
     public static boolean boltsEquipped(Player player) {
         Item item;
-        if ((item = player.getEquipment()
-                .get(Utility.EQUIPMENT_SLOT_ARROWS)) == null) {
+        if ((item = player.getEquipment().get(Utility.EQUIPMENT_SLOT_ARROWS)) == null) {
             return false;
         }
 
         return !(!item.getDefinition().getItemName().endsWith("bolts") && !item
-                .getDefinition().getItemName().endsWith("bolts(p)") && !item
-                .getDefinition().getItemName().endsWith("bolts(p+)") && !item
-                .getDefinition().getItemName().endsWith("bolts(p++)"));
+            .getDefinition().getItemName().endsWith("bolts(p)") && !item
+            .getDefinition().getItemName().endsWith("bolts(p+)") && !item
+            .getDefinition().getItemName().endsWith("bolts(p++)"));
     }
 
     /**
@@ -288,7 +284,7 @@ public final class CombatFactory {
      * @return the combat level difference.
      */
     public static int combatLevelDifference(int combatLevel,
-            int otherCombatLevel) {
+        int otherCombatLevel) {
         if (combatLevel > otherCombatLevel) {
             return (combatLevel - otherCombatLevel);
         } else if (otherCombatLevel > combatLevel) {
@@ -312,18 +308,18 @@ public final class CombatFactory {
     public static Hit getHit(Entity entity, Entity victim, CombatType type) {
         switch (type) {
         case MELEE:
-            return new Hit(Utility.inclusiveRandom(1,
-                    CombatFactory.calculateMaxMeleeHit(entity, victim)));
+            return new Hit(Utility.inclusiveRandom(1, CombatFactory
+                .calculateMaxMeleeHit(entity, victim)));
         case RANGED:
-            return new Hit(Utility.inclusiveRandom(1,
-                    CombatFactory.calculateMaxRangedHit(entity, victim)));
+            return new Hit(Utility.inclusiveRandom(1, CombatFactory
+                .calculateMaxRangedHit(entity, victim)));
         case MAGIC:
             if (CombatFactory.DEBUG_COMBAT && entity.type() == EntityType.PLAYER)
                 ((Player) entity).getPacketBuilder().sendMessage(
-                        "[DEBUG]: Maximum hit this turn is [" + entity
-                                .getCurrentlyCasting().maximumHit() + "].");
+                    "[DEBUG]: Maximum hit this turn is [" + entity
+                        .getCurrentlyCasting().maximumHit() + "].");
             return new Hit(Utility.inclusiveRandom(0, entity
-                    .getCurrentlyCasting().maximumHit()));
+                .getCurrentlyCasting().maximumHit()));
         default:
             throw new IllegalArgumentException("Invalid combat type: " + type);
         }
@@ -342,7 +338,7 @@ public final class CombatFactory {
      * @return true if the hit was successful, or in other words accurate.
      */
     public static boolean rollAccuracy(Entity attacker, Entity victim,
-            CombatType type) {
+        CombatType type) {
         boolean veracEffect = false;
 
         if (type == CombatType.MELEE) {
@@ -362,17 +358,17 @@ public final class CombatFactory {
             Player player = (Player) attacker;
 
             equipmentBonus = type == CombatType.MAGIC ? player.getBonus()[Utility.ATTACK_MAGIC]
-                    : player.getBonus()[player.getFightType().getBonusType()];
+                : player.getBonus()[player.getFightType().getBonusType()];
             bonusType = player.getFightType().getCorrespondingBonus();
             if (type == CombatType.MELEE) {
                 if (CombatPrayer.isActivated(player,
-                        CombatPrayer.CLARITY_OF_THOUGHT)) {
+                    CombatPrayer.CLARITY_OF_THOUGHT)) {
                     prayerMod = 1.05;
                 } else if (CombatPrayer.isActivated(player,
-                        CombatPrayer.IMPROVED_REFLEXES)) {
+                    CombatPrayer.IMPROVED_REFLEXES)) {
                     prayerMod = 1.10;
                 } else if (CombatPrayer.isActivated(player,
-                        CombatPrayer.INCREDIBLE_REFLEXES)) {
+                    CombatPrayer.INCREDIBLE_REFLEXES)) {
                     prayerMod = 1.15;
                 }
             } else if (type == CombatType.RANGED) {
@@ -394,7 +390,7 @@ public final class CombatFactory {
         }
 
         double attackCalc = Math.floor(equipmentBonus + attacker
-                .getBaseAttack(type)) + 8;
+            .getBaseAttack(type)) + 8;
         attackCalc *= prayerMod;
         attackCalc += styleBonus;
 
@@ -411,10 +407,10 @@ public final class CombatFactory {
 
             if (bonusType == -1) {
                 equipmentBonus = type == CombatType.MAGIC ? player.getBonus()[Utility.DEFENCE_MAGIC]
-                        : player.getSkills()[Skills.DEFENCE].getLevel();
+                    : player.getSkills()[Skills.DEFENCE].getLevel();
             } else {
                 equipmentBonus = type == CombatType.MAGIC ? player.getBonus()[Utility.DEFENCE_MAGIC]
-                        : player.getBonus()[bonusType];
+                    : player.getBonus()[bonusType];
             }
 
             if (CombatPrayer.isActivated(player, CombatPrayer.THICK_SKIN)) {
@@ -422,7 +418,7 @@ public final class CombatFactory {
             } else if (CombatPrayer.isActivated(player, CombatPrayer.ROCK_SKIN)) {
                 prayerMod = 1.10;
             } else if (CombatPrayer
-                    .isActivated(player, CombatPrayer.STEEL_SKIN)) {
+                .isActivated(player, CombatPrayer.STEEL_SKIN)) {
                 prayerMod = 1.15;
             }
 
@@ -434,7 +430,7 @@ public final class CombatFactory {
         }
 
         double defenceCalc = Math.floor(equipmentBonus + victim
-                .getBaseDefence(type)) + 8;
+            .getBaseDefence(type)) + 8;
         defenceCalc *= prayerMod;
         defenceCalc += styleBonus;
 
@@ -447,18 +443,17 @@ public final class CombatFactory {
         double A = Math.floor(attackCalc);
         double D = Math.floor(defenceCalc);
         double hitSucceed = A < D ? (A - 1.0) / (2.0 * D)
-                : 1.0 - (D + 1.0) / (2.0 * A);
+            : 1.0 - (D + 1.0) / (2.0 * A);
         hitSucceed = hitSucceed >= 1.0 ? 0.99 : hitSucceed <= 0.0 ? 0.01
-                : hitSucceed;
+            : hitSucceed;
 
         if (attacker.type() == EntityType.PLAYER && CombatFactory.DEBUG_COMBAT) {
             ((Player) attacker)
-                    .getPacketBuilder()
-                    .sendMessage(
-                            "[DEBUG] Your roll [" + (Math
-                                    .round(attackCalc * 1000.0) / 1000.0) + "] : Victim's roll [" + (Math
-                                    .round(defenceCalc * 1000.0) / 1000.0) + "] : Chance to hit [" + (100 * Math
-                                    .round(hitSucceed * 1000.0) / 1000.0) + "%]");
+                .getPacketBuilder()
+                .sendMessage(
+                    "[DEBUG] Your roll [" + (Math.round(attackCalc * 1000.0) / 1000.0) + "] : Victim's roll [" + (Math
+                        .round(defenceCalc * 1000.0) / 1000.0) + "] : Chance to hit [" + (100 * Math
+                        .round(hitSucceed * 1000.0) / 1000.0) + "%]");
         }
         return hitSucceed >= Utility.RANDOM.nextDouble();
     }
@@ -503,10 +498,10 @@ public final class CombatFactory {
         if (CombatPrayer.isActivated(player, CombatPrayer.BURST_OF_STRENGTH)) {
             prayerMultiplier = 1.05;
         } else if (CombatPrayer.isActivated(player,
-                CombatPrayer.SUPERHUMAN_STRENGTH)) {
+            CombatPrayer.SUPERHUMAN_STRENGTH)) {
             prayerMultiplier = 1.1;
         } else if (CombatPrayer.isActivated(player,
-                CombatPrayer.ULTIMATE_STRENGTH)) {
+            CombatPrayer.ULTIMATE_STRENGTH)) {
             prayerMultiplier = 1.15;
         }
         // else if
@@ -536,8 +531,8 @@ public final class CombatFactory {
 
         int effectiveStrengthDamage = (int) ((strengthLevel * prayerMultiplier * otherBonusMultiplier) + combatStyleBonus);
         double baseDamage = 1.3 + (effectiveStrengthDamage / 10) + (player
-                .getBonus()[Utility.BONUS_STRENGTH] / 80) + ((effectiveStrengthDamage * player
-                .getBonus()[Utility.BONUS_STRENGTH]) / 640);
+            .getBonus()[Utility.BONUS_STRENGTH] / 80) + ((effectiveStrengthDamage * player
+            .getBonus()[Utility.BONUS_STRENGTH]) / 640);
 
         if (player.isSpecialActivated()) {
             specialMultiplier = player.getCombatSpecial().getStrengthBonus();
@@ -547,8 +542,8 @@ public final class CombatFactory {
 
         if (CombatFactory.fullDharoks(player)) {
             maxHit += (player.getSkills()[Skills.HITPOINTS]
-                    .getLevelForExperience() - player.getSkills()[Skills.HITPOINTS]
-                    .getLevel()) * 0.35;
+                .getLevelForExperience() - player.getSkills()[Skills.HITPOINTS]
+                .getLevel()) * 0.35;
         }
 
         if (victim.type() == EntityType.NPC) {
@@ -563,7 +558,7 @@ public final class CombatFactory {
         }
         if (CombatFactory.DEBUG_COMBAT)
             player.getPacketBuilder().sendMessage(
-                    "[DEBUG]: Maximum hit this turn is [" + maxHit + "].");
+                "[DEBUG]: Maximum hit this turn is [" + maxHit + "].");
         return maxHit;
 
     }
@@ -634,7 +629,7 @@ public final class CombatFactory {
         }
         if (CombatFactory.DEBUG_COMBAT)
             player.getPacketBuilder().sendMessage(
-                    "[DEBUG]: Maximum hit this turn is [" + maxHit + "].");
+                "[DEBUG]: Maximum hit this turn is [" + maxHit + "].");
         return maxHit;
     }
 
@@ -693,8 +688,8 @@ public final class CombatFactory {
 
         // Check if we need to reset the combat session.
         if (builder.getVictim().isUnregistered() || builder.getEntity()
-                .isUnregistered() || builder.getEntity().isDead() || builder
-                .getVictim().isDead()) {
+            .isUnregistered() || builder.getEntity().isDead() || builder
+            .getVictim().isDead()) {
             builder.reset();
             return false;
         }
@@ -709,12 +704,12 @@ public final class CombatFactory {
 
         // Here we check if we are already in combat with another entity.
         if (!Location.inMultiCombat(builder.getEntity()) && builder
-                .isBeingAttacked() && !builder.getVictim().equals(
-                builder.getLastAttacker())) {
+            .isBeingAttacked() && !builder.getVictim().equals(
+            builder.getLastAttacker())) {
 
             if (builder.getEntity().type() == EntityType.PLAYER)
                 ((Player) builder.getEntity()).getPacketBuilder().sendMessage(
-                        "You are already under attack!");
+                    "You are already under attack!");
             builder.reset();
             return false;
         }
@@ -722,12 +717,11 @@ public final class CombatFactory {
         // Here we check if the entity we are attacking is already in
         // combat.
         if (!Location.inMultiCombat(builder.getEntity()) && builder.getVictim()
-                .getCombatBuilder().isBeingAttacked() && !builder.getVictim()
-                .getCombatBuilder().getLastAttacker()
-                .equals(builder.getEntity())) {
+            .getCombatBuilder().isBeingAttacked() && !builder.getVictim()
+            .getCombatBuilder().getLastAttacker().equals(builder.getEntity())) {
             if (builder.getEntity().type() == EntityType.PLAYER)
                 ((Player) builder.getEntity()).getPacketBuilder().sendMessage(
-                        "They are already under attack!");
+                    "They are already under attack!");
             builder.reset();
             return false;
         }
@@ -745,7 +739,7 @@ public final class CombatFactory {
             } else if (builder.getVictim().type() == EntityType.PLAYER) {
                 if (!Location.inWilderness(builder.getVictim())) {
                     player.getPacketBuilder().sendMessage(
-                            "They are not in the wilderness!");
+                        "They are not in the wilderness!");
                     builder.reset();
                     return false;
                 }
@@ -757,9 +751,9 @@ public final class CombatFactory {
             Npc npc = (Npc) builder.getEntity();
 
             if (builder.getVictim().getCombatBuilder().isCooldown() && !npc
-                    .getPosition().isViewableFrom(npc.getOriginalPosition()) || !builder
-                    .getVictim().getCombatBuilder().isBeingAttacked() && !npc
-                    .getPosition().isViewableFrom(npc.getOriginalPosition())) {
+                .getPosition().isViewableFrom(npc.getOriginalPosition()) || !builder
+                .getVictim().getCombatBuilder().isBeingAttacked() && !npc
+                .getPosition().isViewableFrom(npc.getOriginalPosition())) {
                 builder.reset();
                 return false;
             }
@@ -778,7 +772,7 @@ public final class CombatFactory {
         Position attacker = builder.getEntity().getPosition();
         Position victim = builder.getVictim().getPosition();
         int distance = builder.getStrategy()
-                .attackDistance(builder.getEntity());
+            .attackDistance(builder.getEntity());
         MovementQueue movement = builder.getEntity().getMovementQueue();
 
         // We're moving so increase the distance.
@@ -808,7 +802,7 @@ public final class CombatFactory {
      *            the builder to apply prayer effects to.
      */
     protected static void applyPrayer(CombatContainer container,
-            CombatBuilder builder) {
+        CombatBuilder builder) {
 
         // If we aren't checking the accuracy, then don't bother doing any of
         // this.
@@ -819,7 +813,7 @@ public final class CombatFactory {
         // The attacker is an npc, and the victim is a player so we completely
         // cancel the hits if the right prayer is active.
         if (builder.getVictim().type() == EntityType.PLAYER && builder
-                .getEntity().type() == EntityType.NPC) {
+            .getEntity().type() == EntityType.NPC) {
             Player victim = (Player) builder.getVictim();
             Npc attacker = (Npc) builder.getEntity();
 
@@ -829,9 +823,8 @@ public final class CombatFactory {
             }
 
             // It's not verac so we cancel all of the hits.
-            if (CombatPrayer
-                    .isActivated(victim, CombatPrayer
-                            .getProtectingPrayer(container.getCombatType()))) {
+            if (CombatPrayer.isActivated(victim, CombatPrayer
+                .getProtectingPrayer(container.getCombatType()))) {
                 container.allHits(context -> context.setAccurate(false));
             }
             return;
@@ -840,7 +833,7 @@ public final class CombatFactory {
         // The attacker is an player, and the victim is a npc so we only reduce
         // the damage by 20% and the accuracy at random.
         if (builder.getVictim().type() == EntityType.PLAYER && builder
-                .getEntity().type() == EntityType.PLAYER) {
+            .getEntity().type() == EntityType.PLAYER) {
             final Player attacker = (Player) builder.getEntity();
             Player victim = (Player) builder.getVictim();
 
@@ -848,41 +841,42 @@ public final class CombatFactory {
             // protection.
             if (CombatFactory.fullVeracs(attacker)) {
                 if (CombatFactory.DEBUG_COMBAT)
-                    attacker.getPacketBuilder()
-                            .sendMessage(
-                                    "[DEBUG]: Chance of opponents prayer cancelling hit [0%:" + CombatFactory.PRAYER_ACCURACY_REDUCTION + "%]");
+                    attacker
+                        .getPacketBuilder()
+                        .sendMessage(
+                            "[DEBUG]: Chance of opponents prayer cancelling hit [0%:" + CombatFactory.PRAYER_ACCURACY_REDUCTION + "%]");
                 return;
             }
 
             // They aren't wearing veracs so lets reduce the accuracy and hits.
-            if (CombatPrayer
-                    .isActivated(victim, CombatPrayer
-                            .getProtectingPrayer(container.getCombatType()))) {
+            if (CombatPrayer.isActivated(victim, CombatPrayer
+                .getProtectingPrayer(container.getCombatType()))) {
 
-                container
-                        .allHits(context -> {
+                container.allHits(context -> {
 
-                            // First reduce the damage.
-                            int hit = context.getHit().getDamage();
-                            double mod = Math
-                                    .abs(1 - CombatFactory.PRAYER_DAMAGE_REDUCTION);
-                            context.getHit().setDamage((int) (hit * mod));
-                            if (CombatFactory.DEBUG_COMBAT)
-                                attacker.getPacketBuilder()
-                                        .sendMessage(
-                                                "[DEBUG]: Damage reduced by opponents prayer [" + (hit - context
-                                                        .getHit().getDamage()) + "]");
+                    // First reduce the damage.
+                    int hit = context.getHit().getDamage();
+                    double mod = Math
+                        .abs(1 - CombatFactory.PRAYER_DAMAGE_REDUCTION);
+                    context.getHit().setDamage((int) (hit * mod));
+                    if (CombatFactory.DEBUG_COMBAT)
+                        attacker
+                            .getPacketBuilder()
+                            .sendMessage(
+                                "[DEBUG]: Damage reduced by opponents prayer [" + (hit - context
+                                    .getHit().getDamage()) + "]");
 
-                            // Then reduce the accuracy.
-                            mod = Math.round(Utility.RANDOM.nextDouble() * 100.0) / 100.0;
-                            if (CombatFactory.DEBUG_COMBAT)
-                                attacker.getPacketBuilder()
-                                        .sendMessage(
-                                                "[DEBUG]: Chance of opponents prayer cancelling hit [" + mod + "/" + CombatFactory.PRAYER_ACCURACY_REDUCTION + "]");
-                            if (mod <= CombatFactory.PRAYER_ACCURACY_REDUCTION) {
-                                context.setAccurate(false);
-                            }
-                        });
+                    // Then reduce the accuracy.
+                    mod = Math.round(Utility.RANDOM.nextDouble() * 100.0) / 100.0;
+                    if (CombatFactory.DEBUG_COMBAT)
+                        attacker
+                            .getPacketBuilder()
+                            .sendMessage(
+                                "[DEBUG]: Chance of opponents prayer cancelling hit [" + mod + "/" + CombatFactory.PRAYER_ACCURACY_REDUCTION + "]");
+                    if (mod <= CombatFactory.PRAYER_ACCURACY_REDUCTION) {
+                        context.setAccurate(false);
+                    }
+                });
             }
             return;
         }
@@ -899,7 +893,7 @@ public final class CombatFactory {
      *            the total amount of damage dealt.
      */
     protected static void giveExperience(CombatBuilder builder,
-            CombatContainer container, int damage) {
+        CombatContainer container, int damage) {
 
         // This attack does not give any experience.
         if (container.getExperience().length == 0 && container.getCombatType() != CombatType.MAGIC) {
@@ -915,7 +909,7 @@ public final class CombatFactory {
             // Add the experience exclusively for magic if needed.
             if (container.getCombatType() == CombatType.MAGIC) {
                 exp = (int) (damage * 4d) + builder.getEntity()
-                        .getCurrentlyCasting().baseExperience();
+                    .getCurrentlyCasting().baseExperience();
                 hitpointsExp = (int) (exp / 3d);
 
                 Skills.experience(player, exp, Skills.MAGIC);
@@ -947,7 +941,7 @@ public final class CombatFactory {
      */
     // TODO: Use abstraction for this, will need it when more effects are added.
     protected static void handleArmorEffects(CombatBuilder builder,
-            CombatContainer container, int damage) {
+        CombatContainer container, int damage) {
 
         // 25% chance of these barrows armor effects happening.
         if (Utility.exclusiveRandom(4) == 0) {
@@ -972,10 +966,10 @@ public final class CombatFactory {
 
                 // The ahrims effect is here.
                 if (CombatFactory.fullAhrims(builder.getEntity()) && victim
-                        .getSkills()[Skills.STRENGTH].getLevel() >= victim
-                        .getSkills()[Skills.STRENGTH].getLevelForExperience()) {
+                    .getSkills()[Skills.STRENGTH].getLevel() >= victim
+                    .getSkills()[Skills.STRENGTH].getLevelForExperience()) {
                     victim.getSkills()[Skills.STRENGTH].decreaseLevel(Utility
-                            .inclusiveRandom(1, 10));
+                        .inclusiveRandom(1, 10));
                     Skills.refresh(victim, Skills.STRENGTH);
                     victim.graphic(new Graphic(400));
                     return;
@@ -983,11 +977,11 @@ public final class CombatFactory {
 
                 // The karils effect is here.
                 if (CombatFactory.fullKarils(builder.getEntity()) && victim
-                        .getSkills()[Skills.AGILITY].getLevel() >= victim
-                        .getSkills()[Skills.AGILITY].getLevelForExperience()) {
+                    .getSkills()[Skills.AGILITY].getLevel() >= victim
+                    .getSkills()[Skills.AGILITY].getLevelForExperience()) {
                     victim.graphic(new Graphic(401));
                     victim.getSkills()[Skills.AGILITY].decreaseLevel(Utility
-                            .inclusiveRandom(1, 10));
+                        .inclusiveRandom(1, 10));
                     Skills.refresh(victim, Skills.AGILITY);
                     return;
                 }
@@ -1006,26 +1000,27 @@ public final class CombatFactory {
      *            the total amount of damage dealt.
      */
     protected static void handlePrayerEffects(CombatBuilder builder,
-            CombatContainer container, int damage) {
+        CombatContainer container, int damage) {
 
         // Prayer effects can only be done with victims that are players.
         if (builder.getVictim().type() == EntityType.PLAYER && container
-                .getHits().length != 0) {
+            .getHits().length != 0) {
             Player victim = (Player) builder.getVictim();
 
             // The redemption prayer effect.
             if (CombatPrayer.isActivated(victim, CombatPrayer.REDEMPTION) && victim
-                    .getSkills()[Skills.HITPOINTS].getLevel() <= (victim
-                    .getSkills()[Skills.HITPOINTS].getLevelForExperience() / 10)) {
+                .getSkills()[Skills.HITPOINTS].getLevel() <= (victim
+                .getSkills()[Skills.HITPOINTS].getLevelForExperience() / 10)) {
                 victim.getSkills()[Skills.HITPOINTS]
-                        .increaseLevel(Utility.inclusiveRandom(
-                                1,
-                                (int) (victim.getSkills()[Skills.HITPOINTS]
-                                        .getLevelForExperience() * CombatFactory.REDEMPTION_PRAYER_HEAL)));
+                    .increaseLevel(Utility
+                        .inclusiveRandom(
+                            1,
+                            (int) (victim.getSkills()[Skills.HITPOINTS]
+                                .getLevelForExperience() * CombatFactory.REDEMPTION_PRAYER_HEAL)));
                 victim.graphic(new Graphic(436));
                 victim.getSkills()[Skills.PRAYER].setLevel(0, true);
                 victim.getPacketBuilder().sendMessage(
-                        "You've run out of prayer points!");
+                    "You've run out of prayer points!");
                 CombatPrayer.deactivateAll(victim);
                 Skills.refresh(victim, Skills.PRAYER);
                 Skills.refresh(victim, Skills.HITPOINTS);
@@ -1037,35 +1032,35 @@ public final class CombatFactory {
 
                 // The retribution prayer effect.
                 if (CombatPrayer.isActivated(victim, CombatPrayer.RETRIBUTION) && victim
-                        .getSkills()[Skills.HITPOINTS].getLevel() < 1) {
+                    .getSkills()[Skills.HITPOINTS].getLevel() < 1) {
                     victim.graphic(new Graphic(437));
 
                     if (Location.inWilderness(victim) || MinigameFactory
-                            .inMinigame(victim) && !Location
-                            .inMultiCombat(victim)) {
-                        if (builder
+                        .inMinigame(victim) && !Location.inMultiCombat(victim)) {
+                        if (builder.getEntity().getPosition().withinDistance(
+                            victim.getPosition(),
+                            CombatFactory.RETRIBUTION_RADIUS)) {
+                            builder
                                 .getEntity()
-                                .getPosition()
-                                .withinDistance(victim.getPosition(),
-                                        CombatFactory.RETRIBUTION_RADIUS)) {
-                            builder.getEntity()
-                                    .dealDamage(
-                                            new Hit(
-                                                    Utility.inclusiveRandom(CombatFactory.MAXIMUM_RETRIBUTION_DAMAGE)));
+                                .dealDamage(
+                                    new Hit(
+                                        Utility
+                                            .inclusiveRandom(CombatFactory.MAXIMUM_RETRIBUTION_DAMAGE)));
                         }
                     } else if (Location.inWilderness(victim) || MinigameFactory
-                            .inMinigame(victim) && Location
-                            .inMultiCombat(victim)) {
+                        .inMinigame(victim) && Location.inMultiCombat(victim)) {
                         for (Player player : victim.getLocalPlayers()) {
                             if (player == null) {
                                 continue;
                             }
 
                             if (!player.equals(victim) && player.getPosition()
-                                    .withinDistance(victim.getPosition(),
-                                            CombatFactory.RETRIBUTION_RADIUS)) {
-                                player.dealDamage(new Hit(
-                                        Utility.inclusiveRandom(CombatFactory.MAXIMUM_RETRIBUTION_DAMAGE)));
+                                .withinDistance(victim.getPosition(),
+                                    CombatFactory.RETRIBUTION_RADIUS)) {
+                                player
+                                    .dealDamage(new Hit(
+                                        Utility
+                                            .inclusiveRandom(CombatFactory.MAXIMUM_RETRIBUTION_DAMAGE)));
                             }
                         }
                     }
@@ -1073,7 +1068,7 @@ public final class CombatFactory {
 
                 // The smite prayer effect.
                 if (CombatPrayer.isActivated((Player) builder.getEntity(),
-                        CombatPrayer.SMITE)) {
+                    CombatPrayer.SMITE)) {
                     victim.getSkills()[Skills.PRAYER].decreaseLevel(damage / 4);
                     Skills.refresh(victim, Skills.PRAYER);
                 }
