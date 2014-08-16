@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.FileWriter;
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Scanner;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
@@ -28,14 +29,11 @@ public class HostGateway {
     public static final int MAX_CONNECTIONS_PER_HOST = 1;
 
     /** Used to keep track of hosts and their amount of connections. */
-    private static ConcurrentHashMap<String, Integer> hostMap = new ConcurrentHashMap<>();
+    private static Map<String, Integer> hostMap = new ConcurrentHashMap<>();
 
     /** Used to keep track of banned hosts. */
     private static Set<String> bannedHosts = Collections
             .synchronizedSet(new HashSet<String>());
-
-    /** This class cannot be instantiated. */
-    private HostGateway() {}
 
     /**
      * Checks the host into the gateway.
@@ -60,7 +58,7 @@ public class HostGateway {
         }
 
         // Retrieve the amount of connections this host has.
-        Integer amount = hostMap.putIfAbsent(host, 1);
+        Integer amount = hostMap.put(host, 1);
 
         // If the host was not in the map, they're clear to go.
         if (amount == null) {
@@ -76,7 +74,7 @@ public class HostGateway {
         }
 
         // Otherwise, replace the key with the next value if it was present.
-        hostMap.putIfAbsent(host, amount + 1);
+        hostMap.put(host, amount + 1);
         logger.info("Session request from " + host + "<" + hostMap.get(host) + "> accepted.");
         return true;
     }
@@ -106,7 +104,7 @@ public class HostGateway {
         } else if (amount > 1) {
 
             // Otherwise decrement the amount of connections stored.
-            hostMap.putIfAbsent(host, amount - 1);
+            hostMap.put(host, amount - 1);
         }
     }
 
@@ -156,7 +154,7 @@ public class HostGateway {
      * 
      * @return the map of connections.
      */
-    public static ConcurrentHashMap<String, Integer> getHostMap() {
+    public static Map<String, Integer> getHostMap() {
         return hostMap;
     }
 
@@ -168,4 +166,6 @@ public class HostGateway {
     public static Set<String> getBannedHosts() {
         return bannedHosts;
     }
+
+    private HostGateway() {}
 }

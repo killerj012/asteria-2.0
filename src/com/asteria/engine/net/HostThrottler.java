@@ -1,5 +1,6 @@
 package com.asteria.engine.net;
 
+import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Logger;
 
@@ -18,7 +19,7 @@ public class HostThrottler {
             .getSimpleName());
 
     /** A map of hosts and their respective timers. */
-    private static ConcurrentHashMap<String, Stopwatch> timeMap = new ConcurrentHashMap<>();
+    private static Map<String, Stopwatch> timeMap = new ConcurrentHashMap<>();
 
     /**
      * The maximum amount of connections allowed per
@@ -75,7 +76,7 @@ public class HostThrottler {
 
         // If the host is connecting for the first time (has no other clients
         // logged in) then the host is added to the the map with its own timer.
-        timeMap.putIfAbsent(host, new Stopwatch().reset());
+        timeMap.put(host, new Stopwatch().reset());
         return true;
     }
 
@@ -84,7 +85,7 @@ public class HostThrottler {
      * 
      * @return the map of hosts and their respective timers.
      */
-    public static ConcurrentHashMap<String, Stopwatch> getTimeMap() {
+    public static Map<String, Stopwatch> getTimeMap() {
         return timeMap;
     }
 }
