@@ -89,7 +89,7 @@ public abstract class Entity {
     private Position currentRegion = new Position();
 
     /** The last time you were hit. */
-    private Stopwatch lastCombat = new Stopwatch().headStart(10000);
+    private Stopwatch lastCombat = new Stopwatch().reset(10000);
 
     /** The freeze delay. */
     private long freezeDelay;

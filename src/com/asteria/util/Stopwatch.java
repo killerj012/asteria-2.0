@@ -3,31 +3,33 @@ package com.asteria.util;
 import java.util.concurrent.TimeUnit;
 
 /**
- * A simple timing utility.
+ * A simple timing utility used to throttle or time actions.
  * 
  * @author blakeman8192
  * @author lare96
  */
 public class Stopwatch {
 
-    /** The cached time. */
+    /** The internal cached time for this stopwatch. */
     private long time = System.currentTimeMillis();
 
     /**
-     * Resets with a head start option.
+     * Resets the internal cached time, but instead of resetting it to
+     * <tt>0</tt> it resets it to start at <code>startAt</code>.
      * 
      * @param startAt
-     *            the head start value.
+     *            the time to start this stopwatch at.
+     * @return the stopwatch instance.
      */
-    public Stopwatch headStart(long startAt) {
+    public Stopwatch reset(long startAt) {
         time = System.currentTimeMillis() - startAt;
         return this;
     }
 
     /**
-     * Resets this stopwatch.
+     * Resets the internal cached time to <tt>0</tt>.
      * 
-     * @return this stopwatch.
+     * @return the stopwatch instance.
      */
     public Stopwatch reset() {
         time = System.currentTimeMillis();
@@ -38,7 +40,7 @@ public class Stopwatch {
      * Returns the amount of time elapsed since this object was initialized, or
      * since the last call to the <code>reset()</code> method.
      * 
-     * @return the elapsed time, in milliseconds.
+     * @return the elapsed time in <code>MILLISECONDS</code>.
      */
     public long elapsed() {
         return System.currentTimeMillis() - time;
@@ -46,13 +48,13 @@ public class Stopwatch {
 
     /**
      * Returns the amount of time elapsed since this object was initialized, or
-     * since the last call to the <code>reset()</code> method, in the argued
-     * time unit.
+     * since the last call to the <code>reset()</code> method in
+     * <code>unit</code>.
      * 
      * @param unit
      *            the time unit to convert the elapsed time into.
      * 
-     * @return the elapsed time, in the argued time unit.
+     * @return the elapsed time in <code>unit</code>.
      */
     public long elapsed(TimeUnit unit) {
         return unit.convert(elapsed(), TimeUnit.MILLISECONDS);
