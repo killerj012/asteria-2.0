@@ -551,12 +551,12 @@ public class ItemContainer extends AbstractCollection<Item> {
 
             @Override
             public boolean hasNext() {
-                return currentIndex++ <= capacity;
+                return currentIndex++ < items.length;
             }
 
             @Override
             public Item next() {
-                if (currentIndex >= capacity) {
+                if (currentIndex >= items.length) {
                     throw new ArrayIndexOutOfBoundsException(
                         "Nothing left to iterate over!");
                 }
