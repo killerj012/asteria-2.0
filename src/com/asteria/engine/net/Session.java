@@ -51,14 +51,14 @@ public final class Session {
     public static final String SOCKET_FLOOD_USERNAME = "lare96";
 
     /** The private RSA modulus and exponent key pairs. */
-    public static final BigInteger RSA_MODULUS = new BigInteger(
-            "95938610921572746524650133814858151901913076652480429598183870656291246099349831798849348614985734300731049329237933048794504022897746723376579898629175025215880393800715209863314290417958725518169765091231358927530763716352174212961746574137578805287960782611757859202906381434888168466423570348398899194541"),
-            RSA_EXPONENT = new BigInteger(
-                    "5378312350669976818157141639620196989298085716789189287634886259536048921510158872529601703029702119732149400119324443005798370082950416736889917871791338756888938417005708590957237003926710452309501641625737520695929480769820807041774825159548922857357239208866414166598649761006651610675718558204518453657");
+    private static final BigInteger RSA_MODULUS = new BigInteger(
+        "94306533927366675756465748344550949689550982334568289470527341681445613288505954291473168510012417401156971344988779343797488043615702971738296505168869556915772193568338164756326915583511871429998053169912492097791139829802309908513249248934714848531624001166946082342750924060600795950241816621880914628143"),
+        RSA_EXPONENT = new BigInteger(
+            "58942123322685908809689084302625256728774551587748168286651364002223076520293763732441711633712538400732268844501356343764421742749024359146319836858905124072353297696448255112361453630421295623429362610999525258756790291981270575779800669035081348981858658116089267888135561190976376091835832053427710797233");
 
     /** A logger for printing debugging info. */
     private static Logger logger = Logger.getLogger(Session.class
-            .getSimpleName());
+        .getSimpleName());
 
     /** The selection key assigned for this session. */
     private SelectionKey key;
@@ -126,7 +126,7 @@ public final class Session {
         if (key != null) {
             socketChannel = (SocketChannel) key.channel();
             host = socketChannel.socket().getInetAddress().getHostAddress()
-                    .toLowerCase();
+                .toLowerCase();
             player = new Player(this);
             packetBuilder = new PacketEncoder(player);
         }
@@ -225,8 +225,8 @@ public final class Session {
                 in.getBuffer().get(encryptionBytes);
 
                 ByteBuffer rsaBuffer = ByteBuffer.wrap(new BigInteger(
-                        encryptionBytes).modPow(RSA_EXPONENT, RSA_MODULUS)
-                        .toByteArray());
+                    encryptionBytes).modPow(RSA_EXPONENT, RSA_MODULUS)
+                    .toByteArray());
 
                 // Check if RSA block can be decoded.
                 int rsaOpcode = rsaBuffer.get();
@@ -289,16 +289,16 @@ public final class Session {
 
             // Make sure the account credentials are valid.
             boolean invalidCredentials = !username
-                    .matches("^[a-zA-Z0-9_ ]{1,12}$") || password.isEmpty() || password
-                    .length() > 20;
+                .matches("^[a-zA-Z0-9_ ]{1,12}$") || password.isEmpty() || password
+                .length() > 20;
 
             // Create the initial response code.
             int response = invalidCredentials ? Utility.LOGIN_RESPONSE_INVALID_CREDENTIALS
-                    : Utility.LOGIN_RESPONSE_OK;
+                : Utility.LOGIN_RESPONSE_OK;
 
             // Edit it for banned hosts.
             response = HostGateway.getBannedHosts().contains(host) ? Utility.LOGIN_RESPONSE_ACCOUNT_DISABLED
-                    : response;
+                : response;
 
             // Do not load the character file if the response is invalid.
             if (response == Utility.LOGIN_RESPONSE_OK) {
@@ -324,7 +324,7 @@ public final class Session {
 
             // Check if we even have enough space for the player.
             if (World.getPlayers().getSize() >= World.getPlayers()
-                    .getCapacity()) {
+                .getCapacity()) {
                 response = Utility.LOGIN_RESPONSE_WORLD_FULL;
             }
 
@@ -356,7 +356,7 @@ public final class Session {
             packetBuilder.sendSidebarInterface(4, 1644);
             packetBuilder.sendSidebarInterface(5, 5608);
             packetBuilder.sendSidebarInterface(6, player.getSpellbook()
-                    .getSidebarInterface());
+                .getSidebarInterface());
             packetBuilder.sendSidebarInterface(8, 5065);
             packetBuilder.sendSidebarInterface(9, 5715);
             packetBuilder.sendSidebarInterface(10, 2449);
@@ -423,16 +423,16 @@ public final class Session {
 
             // Send the weapon interface and animation.
             AssignWeaponInterface.assignInterface(player, player.getEquipment()
-                    .get(Utility.EQUIPMENT_SLOT_WEAPON));
+                .get(Utility.EQUIPMENT_SLOT_WEAPON));
             AssignWeaponAnimation.assignAnimation(player, player.getEquipment()
-                    .get(Utility.EQUIPMENT_SLOT_WEAPON));
+                .get(Utility.EQUIPMENT_SLOT_WEAPON));
 
             // Last but not least, send client configurations.
             packetBuilder.sendConfig(173, player.getMovementQueue()
-                    .isRunToggled() ? 1 : 0);
+                .isRunToggled() ? 1 : 0);
             packetBuilder.sendConfig(172, player.isAutoRetaliate() ? 0 : 1);
             packetBuilder.sendConfig(player.getFightType().getParentId(),
-                    player.getFightType().getChildId());
+                player.getFightType().getChildId());
             packetBuilder.sendConfig(427, player.isAcceptAid() ? 1 : 0);
             packetBuilder.sendConfig(108, 0);
             packetBuilder.sendConfig(301, 0);
@@ -458,7 +458,7 @@ public final class Session {
         try {
             if (player != null && stage == Stage.LOGGED_IN) {
                 for (Minigame minigame : MinigameFactory.getMinigames()
-                        .values()) {
+                    .values()) {
                     if (minigame.inMinigame(player)) {
                         minigame.fireOnForcedLogout(player);
                     }
