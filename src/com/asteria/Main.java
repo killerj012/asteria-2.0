@@ -26,8 +26,8 @@ import com.asteria.world.object.WorldObjectManager;
 import com.asteria.world.shop.Shop;
 
 /**
- * The 'origin' class which contains the first method executed when this
- * application is ran.
+ * The main class which contains the first method executed when this application
+ * is ran.
  * 
  * @author lare96
  */

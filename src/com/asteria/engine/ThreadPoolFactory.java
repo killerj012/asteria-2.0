@@ -120,7 +120,7 @@ public final class ThreadPoolFactory {
         /**
          * Appends the argued {@link Runnable} to the queue of pending tasks.
          * When this pool is ran using <code>fireAndAwait()</code> all of the
-         * pending tasks will be submitted in <i>FIFO</> order.
+         * pending tasks will be executed in <i>FIFO</> order.
          * 
          * @param r
          *            the task to add to the queue of pending tasks.
