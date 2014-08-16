@@ -34,8 +34,8 @@ import com.asteria.world.shop.Shop;
 public final class Main {
 
     /** The logger for printing information. */
-    private static final Logger logger = Logger.getLogger(Main.class
-            .getSimpleName());
+    private static Logger logger = Logger.getLogger(Main.class
+        .getSimpleName());
 
     /** The name of this server. */
     public static final String NAME = "Asteria 2.0";
@@ -46,7 +46,6 @@ public final class Main {
      * @param args
      *            the array of runtime arguments.
      */
-    // XXX: Loading in parallel?
     public static void main(String[] args) {
         try {
             // The stopwatch for timing how long all this takes.
@@ -98,8 +97,8 @@ public final class Main {
             logger.info("The engine is now running!");
 
             // Asteria is now online!
-            logger.info(NAME + " is now online! ".concat("[took " + timer
-                    .elapsed() + " ms]"));
+            logger
+                .info(NAME + " is now online! [took " + timer.elapsed() + "ms]");
 
             // Start miscellaneous tasks.
             TaskManager.submit(new RestoreStatTask());
@@ -108,7 +107,7 @@ public final class Main {
 
             // An error occurred, print it.
             logger.log(Level.SEVERE,
-                    "An error occured while starting " + Main.NAME + "!", e);
+                "An error occured while starting " + Main.NAME + "!", e);
         }
     }
 
