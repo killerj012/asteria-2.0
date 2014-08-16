@@ -1,5 +1,6 @@
 package com.asteria.engine.net.packet.impl;
 
+import com.asteria.Main;
 import com.asteria.engine.net.ProtocolBuffer;
 import com.asteria.engine.net.packet.PacketDecoder;
 import com.asteria.engine.net.packet.PacketOpcodeHeader;
@@ -60,7 +61,7 @@ public class DecodeMovementPacket extends PacketDecoder {
         int steps = (length - 5) / 2;
         int[][] path = new int[steps][2];
         int firstStepX = buf.readShort(ProtocolBuffer.ValueType.A,
-                ProtocolBuffer.ByteOrder.LITTLE);
+            ProtocolBuffer.ByteOrder.LITTLE);
 
         for (int i = 0; i < steps; i++) {
             path[i][0] = buf.readByte();
@@ -69,18 +70,20 @@ public class DecodeMovementPacket extends PacketDecoder {
         int firstStepY = buf.readShort(ProtocolBuffer.ByteOrder.LITTLE);
         player.getMovementQueue().reset();
         player.getMovementQueue().setRunPath(
-                buf.readByte(ProtocolBuffer.ValueType.C) == 1);
+            buf.readByte(ProtocolBuffer.ValueType.C) == 1);
         player.getMovementQueue().addToPath(
-                new Position(firstStepX, firstStepY));
+            new Position(firstStepX, firstStepY));
 
         for (int i = 0; i < steps; i++) {
             path[i][0] += firstStepX;
             path[i][1] += firstStepY;
             player.getMovementQueue().addToPath(
-                    new Position(path[i][0], path[i][1]));
+                new Position(path[i][0], path[i][1]));
         }
         player.getMovementQueue().finish();
-        player.getPacketBuilder().sendMessage(
+
+        if (Main.DEBUG)
+            player.getPacketBuilder().sendMessage(
                 "DEBUG[walking= " + player.getPosition().getRegion() + "]");
     }
 }

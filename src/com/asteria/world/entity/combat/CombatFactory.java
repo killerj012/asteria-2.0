@@ -40,11 +40,6 @@ public final class CombatFactory {
     // TODO: When KBD is done, check if immunity is above 0. If not then deal
     // fire damage.
 
-    /** If combat debug messages should be sent. */
-    // Turn this on if you're trying to debug the formulas, or if you just want
-    // to see how the hits are calculated :)
-    protected static final boolean DEBUG_COMBAT = true;
-
     /** The amount of time it takes for cached damage to timeout. */
     // Damage cached for currently 60 seconds will not be accounted for.
     public static final long DAMAGE_CACHE_TIMEOUT = 60000;
@@ -314,7 +309,7 @@ public final class CombatFactory {
             return new Hit(Utility.inclusiveRandom(1, CombatFactory
                 .calculateMaxRangedHit(entity, victim)));
         case MAGIC:
-            if (CombatFactory.DEBUG_COMBAT && entity.type() == EntityType.PLAYER)
+            if (Main.DEBUG && entity.type() == EntityType.PLAYER)
                 ((Player) entity).getPacketBuilder().sendMessage(
                     "[DEBUG]: Maximum hit this turn is [" + entity
                         .getCurrentlyCasting().maximumHit() + "].");
@@ -447,7 +442,7 @@ public final class CombatFactory {
         hitSucceed = hitSucceed >= 1.0 ? 0.99 : hitSucceed <= 0.0 ? 0.01
             : hitSucceed;
 
-        if (attacker.type() == EntityType.PLAYER && CombatFactory.DEBUG_COMBAT) {
+        if (attacker.type() == EntityType.PLAYER && Main.DEBUG) {
             ((Player) attacker)
                 .getPacketBuilder()
                 .sendMessage(
@@ -556,7 +551,7 @@ public final class CombatFactory {
                 maxHit += (int) ((0.30) * (maxHit));
             }
         }
-        if (CombatFactory.DEBUG_COMBAT)
+        if (Main.DEBUG)
             player.getPacketBuilder().sendMessage(
                 "[DEBUG]: Maximum hit this turn is [" + maxHit + "].");
         return maxHit;
@@ -627,7 +622,7 @@ public final class CombatFactory {
                 maxHit += (int) ((0.30) * (maxHit));
             }
         }
-        if (CombatFactory.DEBUG_COMBAT)
+        if (Main.DEBUG)
             player.getPacketBuilder().sendMessage(
                 "[DEBUG]: Maximum hit this turn is [" + maxHit + "].");
         return maxHit;
@@ -840,7 +835,7 @@ public final class CombatFactory {
             // If wearing veracs, the attacker will hit through prayer
             // protection.
             if (CombatFactory.fullVeracs(attacker)) {
-                if (CombatFactory.DEBUG_COMBAT)
+                if (Main.DEBUG)
                     attacker
                         .getPacketBuilder()
                         .sendMessage(
@@ -859,7 +854,7 @@ public final class CombatFactory {
                     double mod = Math
                         .abs(1 - CombatFactory.PRAYER_DAMAGE_REDUCTION);
                     context.getHit().setDamage((int) (hit * mod));
-                    if (CombatFactory.DEBUG_COMBAT)
+                    if (Main.DEBUG)
                         attacker
                             .getPacketBuilder()
                             .sendMessage(
@@ -868,7 +863,7 @@ public final class CombatFactory {
 
                     // Then reduce the accuracy.
                     mod = Math.round(Utility.RANDOM.nextDouble() * 100.0) / 100.0;
-                    if (CombatFactory.DEBUG_COMBAT)
+                    if (Main.DEBUG)
                         attacker
                             .getPacketBuilder()
                             .sendMessage(

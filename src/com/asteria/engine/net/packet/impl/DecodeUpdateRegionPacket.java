@@ -1,5 +1,6 @@
 package com.asteria.engine.net.packet.impl;
 
+import com.asteria.Main;
 import com.asteria.engine.net.ProtocolBuffer;
 import com.asteria.engine.net.packet.PacketDecoder;
 import com.asteria.engine.net.packet.PacketOpcodeHeader;
@@ -24,12 +25,12 @@ public class DecodeUpdateRegionPacket extends PacketDecoder {
             WorldObjectManager.load(player);
             GroundItemManager.load(player);
             player.displayInterfaces();
-            player.getPacketBuilder()
-                    .sendMessage(
-                            "DEBUG[region= " + player.getPosition()
-                                    .getRegion() + "]");
             player.getTolerance().reset();
             player.setUpdateRegion(false);
+
+            if (Main.DEBUG)
+                player.getPacketBuilder().sendMessage(
+                    "DEBUG[region= " + player.getPosition().getRegion() + "]");
         }
     }
 }

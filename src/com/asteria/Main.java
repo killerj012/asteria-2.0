@@ -38,6 +38,9 @@ public final class Main {
 
     /** The name of this server. */
     public static final String NAME = "Asteria 2.0";
+    
+    /** If debugging messages should be printed. */
+    public static final boolean DEBUG = true;
 
     /**
      * The main method of this server.
