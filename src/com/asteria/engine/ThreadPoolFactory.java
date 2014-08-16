@@ -2,45 +2,45 @@ package com.asteria.engine;
 
 import java.util.LinkedList;
 import java.util.Queue;
-import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Phaser;
-import java.util.concurrent.RejectedExecutionHandler;
 import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.ThreadPoolExecutor.CallerRunsPolicy;
 import java.util.concurrent.TimeUnit;
+import java.util.logging.Logger;
 
 /**
- * A static factory class that manages the creation of all thread pools used to
- * carry out asynchronous work throughout the server.
+ * A class that contains functions to manage the creation and configuration of
+ * all {@link ThreadPoolExecutor}s used to execute code throughout the server.
  * 
  * @author lare96
  */
 public final class ThreadPoolFactory {
 
     /**
-     * Creates a new {@link ThreadPoolExecutor} ready to carry out work. All
-     * pools are pre-started by default and will terminate after not receiving
-     * work for the argued timeout value.
+     * Creates a new {@link ThreadPoolExecutor} with the argued settings. All
+     * pools created through this method have their core threads started and
+     * will terminate after being idle for the argued timeout value.
      * 
-     * @param poolName
-     *            the name of this thread pool.
-     * @param poolSize
-     *            the size of this thread pool.
-     * @param poolPriority
-     *            the priority of this thread pool.
+     * @param name
+     *            the name of the threads in this thread pool.
+     * @param size
+     *            the maximum amount of threads that will be allocated in this
+     *            thread pool.
+     * @param priority
+     *            the priority of threads in this thread pool.
      * @param timeout
-     *            how long in minutes it takes for threads in this pool to
-     *            timeout.
-     * @return the newly constructed thread pool.
+     *            how long in minutes it takes for an idle thread in this thread
+     *            pool to be deallocated.
+     * @return the new thread pool with the argued settings.
      */
-    public static ThreadPoolExecutor createThreadPool(String poolName,
-            int poolSize, int poolPriority, long timeout) {
+    public static ThreadPoolExecutor createThreadPool(String name, int size,
+        int priority, long timeout) {
         ThreadPoolExecutor threadPool = (ThreadPoolExecutor) Executors
-                .newFixedThreadPool(poolSize);
-        threadPool.setThreadFactory(new ThreadProvider(poolName, poolPriority,
-                true));
+            .newFixedThreadPool(size);
+        threadPool.setThreadFactory(new ThreadProvider(name, priority, true));
         threadPool
-                .setRejectedExecutionHandler(new ThreadPoolRejectedExecutionHook());
+            .setRejectedExecutionHandler(new IndicationCallerRunsPolicy());
         threadPool.setKeepAliveTime(timeout, TimeUnit.MINUTES);
         threadPool.allowCoreThreadTimeOut(true);
         threadPool.prestartAllCoreThreads();
@@ -48,79 +48,78 @@ public final class ThreadPoolFactory {
     }
 
     /**
-     * Tasks that have been rejected by thread pools created using the
-     * <code>createThreadPool</code> method are redirected to this execution
-     * hook.
+     * A handler for rejected tasks that runs the rejected task directly in the
+     * calling thread of the <code>execute</code> method, unless the executor
+     * has been shut down, in which case the task is discarded. The difference
+     * between this handler and {@link CallerRunsPolicy} is that this handler
+     * will print off an indication of what happened.
      * 
      * @author lare96
      */
-    private static class ThreadPoolRejectedExecutionHook implements
-            RejectedExecutionHandler {
+    private static class IndicationCallerRunsPolicy extends CallerRunsPolicy {
+
+        /** The logger for printing information. */
+        private Logger logger = Logger
+            .getLogger(IndicationCallerRunsPolicy.class.getSimpleName());
 
         @Override
-        public void rejectedExecution(Runnable r, ThreadPoolExecutor pool) {
-            throw new ThreadPoolRejectedExecutionException(
-                    r,
-                    pool,
-                    pool.getQueue().remainingCapacity() == 0 ? "No more space in the work queue!"
-                            : pool.isShutdown() ? "The pool is not running!"
-                                    : "reason unknown!");
+        public void rejectedExecution(Runnable r, ThreadPoolExecutor e) {
+            super.rejectedExecution(r, e);
+            logger
+                .warning(e.isShutdown() ? "Task discared by thread pool: " + e
+                    .toString()
+                    : "Task executed on calling thread by thread pool: " + e
+                        .toString());
         }
     }
 
     /**
-     * An exception thrown when a task is rejected by a thread pool for whatever
-     * reason.
-     * 
-     * @author lare96
-     */
-    private static class ThreadPoolRejectedExecutionException extends
-            RuntimeException {
-
-        /**
-         * Create a new {@link ThreadPoolRejectedExecutionException}.
-         * 
-         * @param r
-         *            the task that was rejected.
-         * @param reason
-         *            the reason this task was rejected.
-         */
-        public ThreadPoolRejectedExecutionException(Runnable r,
-                ThreadPoolExecutor pool, String reason) {
-            super("REJECTED EXECUTION[runnable= " + r + ", factory= " + pool
-                    .getThreadFactory() + ", reason= " + reason + "]");
-        }
-
-        /** The generated serial version UID. */
-        private static final long serialVersionUID = 3292401103671200953L;
-    }
-
-    /**
-     * A thread pool that will concurrently execute a set of {@link Runnable}s
-     * in the order they were appended.
+     * A thread pool that will execute a queue of tasks and block until all of
+     * them have completed. The tasks are first appended to the internal queue
+     * using the {@link #append} method and then ran using the
+     * {@link #fireAndAwait} method. Once the pool is ran it will be shutdown
+     * and can no longer be used. This class is <b>NOT</b> intended for use
+     * across multiple threads.
      * 
      * @author lare96
      */
     public static final class BlockingThreadPool {
 
-        /** The backing executor that will execute pending tasks in parallel. */
-        private final ExecutorService executor = Executors
-                .newFixedThreadPool(Runtime.getRuntime().availableProcessors());
+        /** The backing thread pool that will execute the pending tasks. */
+        private final ThreadPoolExecutor executor;
 
         /** The phaser that blocks the calling thread until the tasks finish. */
-        private final Phaser phaser = new Phaser(1);
+        private final Phaser phaser;
 
-        /**
-         * A queue that will hold all of the pending tasks. Only the calling
-         * thread will be accessing this queue so it does not need to be a
-         * thread safe implementation.
-         */
+        /** A queue that will hold all of the pending tasks. */
         private final Queue<Runnable> pendingTasks = new LinkedList<>();
 
         /**
-         * Appends the argued {@link Runnable} to the queue of pending tasks.
-         * When this pool is ran using <code>fireAndAwait()</code> all of the
-         * pending tasks will be executed in <i>FIFO</> order.
+         * Create a new {@link BlockingThreadPool} with the argued size.
+         * 
+         * @param size
+         *            the maximum amount of threads that will be allocated in
+         *            this thread pool.
+         */
+        public BlockingThreadPool(int size) {
+            this.executor = ThreadPoolFactory.createThreadPool(
+                "Blocking-Thread", size, Thread.NORM_PRIORITY, Long.MAX_VALUE);
+            this.executor.allowCoreThreadTimeOut(false);
+            this.phaser = new Phaser(1);
+        }
+
+        /**
+         * Create a new {@link BlockingThreadPool} with the size equal to how
+         * many processors are available to the JVM.
+         */
+        public BlockingThreadPool() {
+            this(Runtime.getRuntime().availableProcessors());
+        }
+
+        /**
+         * Appends the argued task to the queue of pending tasks. When this pool
+         * is ran using <code>fireAndAwait()</code> all of the pending tasks
+         * will be executed in <i>FIFO</> order.
          * 
          * @param r
          *            the task to add to the queue of pending tasks.
@@ -147,9 +146,9 @@ public final class ThreadPoolFactory {
         }
 
         /**
-         * Submit all of the pending tasks to the backing executor and wait for
-         * them to complete. Once all of the tasks have completed the backing
-         * executor will shutdown.
+         * Submit all of the pending tasks to the backing thread pool and wait
+         * for them to complete. Once all of the tasks have completed the
+         * backing thread pool will shutdown.
          */
         public void fireAndAwait() {
 
