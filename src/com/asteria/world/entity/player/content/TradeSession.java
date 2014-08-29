@@ -291,12 +291,11 @@ public class TradeSession {
      */
     private String getDisplayName(Player player) {
         return player.getCapitalizedUsername().concat(
-                player.getCapitalizedUsername()
-                        .concat(player.getRights().equalTo(
+                player.getRights().equalTo(
                                 PlayerRights.MODERATOR) ? "@cr1@" : player
                                 .getRights()
                                 .greaterThan(PlayerRights.MODERATOR) ? "@cr2@"
-                                : ""));
+                                : "");
     }
 
     /**
